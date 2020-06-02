@@ -1,4 +1,5 @@
 import random
+import asyncio
 import discord
 from discord.ext import commands
 from discord.ext.commands import BucketType, cooldown
@@ -13,6 +14,14 @@ class Waifus(commands.Cog):
     @cooldown(1, 5, BucketType.channel)
     async def kakashi(self, ctx):
         channels = ["bot-commands"]
+        if str(ctx.channel) not in channels:
+            message = await ctx.send("Sorry! I only work in #bot-commands!")
+
+            # Let the user read the message for 2.5 seconds
+            await asyncio.sleep(2.5)
+            # Delete the message
+            await message.delete()
+
         if str(ctx.channel) in channels:
             kakashi1 = "https://cdn.discordapp.com/attachments/714671068941647933/717201077346238514/image0.jpg"
             kakashi2 = "https://cdn.discordapp.com/attachments/714671068941647933/717201077669331036/image1.jpg"

@@ -104,7 +104,7 @@ async def roles(ctx):
 # Bot ~Kakashi command for Zara
 @client.command(aliases=['Kakashi'])
 @cooldown(1, 10, BucketType.channel)
-async def kakashi(ctx):
+async def kakashi(ctx, channel=None):
     kakashi1 = "https://cdn.discordapp.com/attachments/714671068941647933/717201077346238514/image0.jpg"
     kakashi2 = "https://cdn.discordapp.com/attachments/714671068941647933/717201077669331036/image1.jpg"
     kakashi3 = "https://cdn.discordapp.com/attachments/714671068941647933/717201077941829722/image2.jpg"
@@ -154,8 +154,7 @@ async def kakashi(ctx):
                     kakashi31, kakashi32, kakashi33, kakashi34, kakashi35, kakashi36, kakashi37, kakashi38, kakashi39,
                     kakashi40]
 
-    if ctx != client.get_channel(669812887564320769):
-        await ctx.send('Sorry, I only work in Bot Commands!')
+    if channel != client.get_channel(669812887564320769):
         await error()
 
     embed = discord.Embed(title="```Random Kakashi Image```", colour=discord.Colour(0xff0000), )
@@ -163,13 +162,9 @@ async def kakashi(ctx):
     await ctx.send(embed=embed)
 
 @client.event
-async def error(ctx):
-    message = await ctx.send('Sorry, I only work in Bot Commands!')
-
-    # Let the user read the message for 1.5 seconds
-    await asyncio.sleep(1.5)
-    ## delete the message
-    await message.delete()
+async def error():
+    channel = client.get_channel(669812887564320769)
+    await channel.send('Sorry, I only work in Bot Commands!')
 
 
 # Bot Event for handling cooldown error

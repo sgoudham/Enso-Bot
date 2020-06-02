@@ -14,16 +14,16 @@ async def on_ready():
     await client.change_presence(activity=discord.Game(name='Reading Yaoi'))
 
 
-@client.event(aliases=["Hug"])
+@client.command(aliases=["Hug"])
 @commands.has_any_role('Hamothy')
-async def Hug(self, ctx):
+async def hug(self, ctx):
     await self.bot.say("hugs {}".format(ctx.message.author.mention()))
 
 
 # Bot ~Ping command in milliseconds
-@client.command(aliases=["ping"])
+@client.command(aliases=["Ping"])
 @commands.has_any_role('Hamothy')
-async def Ping(ctx):
+async def ping(ctx):
     await ctx.send(f'Pong! {round(client.latency * 1000)}ms')
 
 
@@ -98,9 +98,9 @@ async def roles(ctx):
 
 
 # Bot ~Kakashi command for Zara
-@client.command(aliases=['kakashi'])
+@client.command(aliases=['Kakashi'])
 @cooldown(1, 10, BucketType.channel)
-async def Kakashi(ctx):
+async def kakashi(ctx):
     kakashi1 = "https://cdn.discordapp.com/attachments/714671068941647933/717201077346238514/image0.jpg"
     kakashi2 = "https://cdn.discordapp.com/attachments/714671068941647933/717201077669331036/image1.jpg"
     kakashi3 = "https://cdn.discordapp.com/attachments/714671068941647933/717201077941829722/image2.jpg"

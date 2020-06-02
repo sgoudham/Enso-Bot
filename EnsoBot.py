@@ -32,6 +32,7 @@ async def ping(ctx):
 # Bot ~8Ball command
 @client.command(aliases=['8ball'])
 @cooldown(1, 2, BucketType.channel)
+@client.get_channel(669812887564320769)
 async def _8ball(ctx, *, question):
     Responses = ["Hamothy is preoccupied with catching a case",
                  "Kate decides it will come true",
@@ -104,7 +105,7 @@ async def roles(ctx):
 # Bot ~Kakashi command for Zara
 @client.command(aliases=['Kakashi'])
 @cooldown(1, 10, BucketType.channel)
-async def kakashi(ctx, channel=None):
+async def kakashi(ctx):
     kakashi1 = "https://cdn.discordapp.com/attachments/714671068941647933/717201077346238514/image0.jpg"
     kakashi2 = "https://cdn.discordapp.com/attachments/714671068941647933/717201077669331036/image1.jpg"
     kakashi3 = "https://cdn.discordapp.com/attachments/714671068941647933/717201077941829722/image2.jpg"
@@ -154,9 +155,6 @@ async def kakashi(ctx, channel=None):
                     kakashi31, kakashi32, kakashi33, kakashi34, kakashi35, kakashi36, kakashi37, kakashi38, kakashi39,
                     kakashi40]
 
-    if channel != client.get_channel(669812887564320769):
-        await error()
-
     embed = discord.Embed(title="```Random Kakashi Image```", colour=discord.Colour(0xff0000), )
     embed.set_image(url=random.choice(kakashiArray))
     await ctx.send(embed=embed)
@@ -166,7 +164,6 @@ async def error():
     channel = client.get_channel(669812887564320769)
     await channel.send('Sorry, I only work in Bot Commands!')
 
-
 # Bot Event for handling cooldown error
 @client.event
 async def on_command_error(ctx, error):
@@ -174,7 +171,7 @@ async def on_command_error(ctx, error):
         message = await ctx.send(f'That command is on cooldown. Try again in {error.retry_after:,.2f} seconds.')
 
         #Let the user read the message for 1.5 seconds
-        await asyncio.sleep(1.5)
+        await asyncio.sleep(2.5)
         ## delete the message
         await message.delete()
 

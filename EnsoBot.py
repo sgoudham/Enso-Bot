@@ -1,5 +1,6 @@
 import discord
 import asyncio
+import sys
 import random
 from discord.ext import commands
 from discord.ext.commands import BucketType, cooldown
@@ -153,9 +154,22 @@ async def kakashi(ctx):
                     kakashi31, kakashi32, kakashi33, kakashi34, kakashi35, kakashi36, kakashi37, kakashi38, kakashi39,
                     kakashi40]
 
+    if ctx != client.get_channel(669812887564320769):
+        await ctx.send('Sorry, I only work in Bot Commands!')
+        await error()
+
     embed = discord.Embed(title="```Random Kakashi Image```", colour=discord.Colour(0xff0000), )
     embed.set_image(url=random.choice(kakashiArray))
     await ctx.send(embed=embed)
+
+@client.event
+async def error(ctx):
+    message = await ctx.send('Sorry, I only work in Bot Commands!')
+
+    # Let the user read the message for 1.5 seconds
+    await asyncio.sleep(1.5)
+    ## delete the message
+    await message.delete()
 
 
 # Bot Event for handling cooldown error

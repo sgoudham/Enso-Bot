@@ -1,7 +1,8 @@
 import discord
+import random
 from discord.ext import commands
 
-client = commands.Bot(command_prefix = ';')
+client = commands.Bot(command_prefix = '~')
 
 @client.event
 async def on_ready():
@@ -21,16 +22,24 @@ async def on_member_removed(member):
 async def Ping(ctx):
     await ctx.send(f'Pong! {round(client.latency * 1000)}ms')
 
-#@client.command(aliases = ['8ball'])
-#async def _8ball(ctx, *, question):
-#    Responses = ["Hamothy believes it is certain",
-#                 "Kate decides it will come true",
-#                 "Josh doesn't believe.",
-#                 "Izzy can't predict this",
-#                 "Idk idiot lmao",
-#                 "Why are you even askin me",
-#                 "its not like i can read ur question"]
-#    await ctx.send(f'Question: {question}\nAnswer: {random.choice(Responses)}')
+@client.command(aliases = ['8ball'])
+async def _8ball(ctx, *, question):
+    Responses = ["Hamothy is preoccupied with catching a case",
+                 "Kate decides it will come true",
+                 "Josh doesn't believe",
+                 "Izzy can't predict this",
+                 "Idk idiot lmao",
+                 "Why are you even askin me",
+                 "its not like i can read ur question",
+                 "Shut the fuck up NOW",
+                 "Zara wants to protest your question",
+                 "Stitch will definitely get back to you",
+                 "Zara slams you to the wall",
+                 "Kate is too busy reading yaoi to answer your question",
+                 "Marshall says Yes",
+                 "It- It's not lik- It's not like I want to answer your question or anything *tsundere noises*",
+                 "Connor is too busy making tea and simping for beautiful women to reply to this"]
+    await ctx.send(f'Question: {question}\nAnswer: {random.choice(Responses)}')
 
 @client.command()
 @commands.has_any_role('Hamothy')

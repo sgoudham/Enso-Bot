@@ -29,6 +29,7 @@ async def ping(ctx):
 
 # Bot ~8Ball command
 @client.command(aliases=['8ball'])
+@cooldown(1, 2, BucketType.channel)
 async def _8ball(ctx, *, question):
     Responses = ["Hamothy is preoccupied with catching a case",
                  "Kate decides it will come true",

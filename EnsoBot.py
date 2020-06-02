@@ -7,7 +7,7 @@ client = commands.Bot(command_prefix = '~')
 @client.event
 async def on_ready():
     print('Bot is ready.')
-    await client.change_presence(activity=discord.Game(name='With Tiddies'))
+    await client.change_presence(activity=discord.Game(name='Reading Yaoi'))
 
 @client.event
 async def on_member_join(member):
@@ -29,16 +29,27 @@ async def _8ball(ctx, *, question):
                  "Josh doesn't believe",
                  "Izzy can't predict this",
                  "Idk idiot lmao",
-                 "Why are you even askin me",
-                 "its not like i can read ur question",
+                 "Why are you even asking me",
+                 "Tt's not like I can read your question",
                  "Shut the fuck up NOW",
                  "Zara wants to protest your question",
                  "Stitch will definitely get back to you",
-                 "Zara slams you to the wall",
+                 "*Kakashi slams you to the wall*",
                  "Kate is too busy reading yaoi to answer your question",
                  "Marshall says Yes",
                  "It- It's not lik- It's not like I want to answer your question or anything *tsundere noises*",
-                 "Connor is too busy making tea and simping for beautiful women to reply to this"]
+                 "Connor is too busy making tea and simping for beautiful women to reply to this",
+                 "Maybe",
+                 "Who said you could ask that question?",
+                 "Ifrah cannot answer that",
+                 "Hussein be spitting too much fire to look at your weak ass question",
+                 "Literally no one gives a shit",
+                 "N O spells NO",
+                 "Find something better to do with your spare time smh",
+                 "Sure but did you know that Izzy smells?",
+                 "No but did you know that Stitch smells?",
+                 "Get your dick back in your pants smh",
+                 "Get the fuck back to horny jail RIGHT NOW"]
     await ctx.send(f'Question: {question}\nAnswer: {random.choice(Responses)}')
 
 @client.command()

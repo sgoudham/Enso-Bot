@@ -6,21 +6,18 @@ from discord.ext.commands import BucketType, cooldown
 # Bot Prefix
 client = commands.Bot(command_prefix='~')
 
+
 # Bot Status on Discord
 @client.event
 async def on_ready():
     print('Bot is ready.')
     await client.change_presence(activity=discord.Game(name='Reading Yaoi'))
 
-@client.event
-@commands.has_any_role('Hamothy')
-async def best(message):
-    # we do not want the bot to reply to itself
-    if message.author == client.user:
-        return
 
-    myid = '<@154840866496839680>'
-    await client.send_message(message.channel, ' : %s is the best ' % myid)
+@client.event(aliases=["Hug"])
+@commands.has_any_role('Hamothy')
+async def Hug(self, ctx):
+    await self.bot.say("hugs {}".format(ctx.message.author.mention()))
 
 
 # Bot ~Ping command in milliseconds
@@ -158,7 +155,7 @@ async def Kakashi(ctx):
     await ctx.send(embed=embed)
 
 
-#Bot Event for handling cooldown error
+# Bot Event for handling cooldown error
 @client.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandOnCooldown):

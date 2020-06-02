@@ -12,6 +12,16 @@ async def on_ready():
     print('Bot is ready.')
     await client.change_presence(activity=discord.Game(name='Reading Yaoi'))
 
+@client.event
+@commands.has_any_role('Hamothy')
+async def best(message):
+    # we do not want the bot to reply to itself
+    if message.author == client.user:
+        return
+    if message.content.startswith('!best'):
+        myid = '<@154840866496839680>'
+        await client.send_message(message.channel, ' : %s is the best ' % myid)
+
 
 # Bot ~Ping command in milliseconds
 @client.command(aliases=["ping"])
@@ -159,16 +169,6 @@ async def on_command_error(ctx, error):
 async def on_command_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
         await ctx.send('Please input the correct amount of arguments')
-
-@client.event
-@commands.has_any_role('Hamothy')
-async def best(message):
-    # we do not want the bot to reply to itself
-    if message.author == client.user:
-        return
-    if message.content.startswith('!best'):
-        myid = '<@154840866496839680>'
-        await client.send_message(message.channel, ' : %s is the best ' % myid)
 
 
 client.run('NzE2NzAxNjk5MTQ1NzI4MDk0.XtWFiw.KZrh9Tkp9vTY9JYSgZfpg2P4mlQ')

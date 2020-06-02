@@ -162,10 +162,12 @@ async def kakashi(ctx):
 @client.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandOnCooldown):
-        await ctx.send(f'That command is on cooldown. Try again in {error.retry_after:,.2f} seconds.')
-        await asyncio.sleep(3)
+        message = await ctx.send(f'That command is on cooldown. Try again in {error.retry_after:,.2f} seconds.')
+
+        #Let the user read the message for 1.5 seconds
+        await asyncio.sleep(1.5)
         ## delete the message
-        await ctx.delete()
+        await message.delete()
 
 
 client.run('NzE2NzAxNjk5MTQ1NzI4MDk0.XtWFiw.KZrh9Tkp9vTY9JYSgZfpg2P4mlQ')

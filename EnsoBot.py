@@ -50,7 +50,16 @@ async def _8ball(ctx, *, question):
                  "Get your dick back in your pants smh",
                  "Get the fuck back to horny jail RIGHT NOW",
                  "Nick Cock Bro",
-                 "Nice Tits"]
+                 "Nice Tits",
+                 "Dm Cloud for the answer",
+                 "No",
+                 "Yes",
+                 "Pffft you wish",
+                 "Taz doesn't believe it come to fruition",
+                 "Never in a million years",
+                 "Pathetic. You're wasting your time",
+                 "Taz is too busy simping over Anonymous to care",
+                 "Leave me alone. I'm sad :("]
     await ctx.send(f'Question: {question}\nAnswer: {random.choice(Responses)}')
 
 
@@ -83,7 +92,7 @@ async def roles(ctx):
 
 # Bot ~Kakashi command for Zara
 @client.command(aliases=['kakashi'])
-@cooldown(1, 5, BucketType.channel)
+@cooldown(1, 10, BucketType.channel)
 async def Kakashi(ctx):
     kakashi1 = "https://cdn.discordapp.com/attachments/714671068941647933/717201077346238514/image0.jpg"
     kakashi2 = "https://cdn.discordapp.com/attachments/714671068941647933/717201077669331036/image1.jpg"
@@ -138,10 +147,28 @@ async def Kakashi(ctx):
     embed.set_image(url=random.choice(kakashiArray))
     await ctx.send(embed=embed)
 
+
+#Bot Event for handling cooldown error
 @client.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandOnCooldown):
         await ctx.send(f'That command is on cooldown. Try again in {error.retry_after:,.2f} seconds.')
+
+#Bot Event for handling missing requirements error
+@client.event
+async def on_command_error(ctx, error):
+    if isinstance(error, commands.MissingRequiredArgument):
+        await ctx.send('Please input the correct amount of arguments')
+
+@client.event
+@commands.has_any_role('Hamothy')
+async def best(message):
+    # we do not want the bot to reply to itself
+    if message.author == client.user:
+        return
+    if message.content.startswith('!best'):
+        myid = '<@154840866496839680>'
+        await client.send_message(message.channel, ' : %s is the best ' % myid)
 
 
 client.run('NzE2NzAxNjk5MTQ1NzI4MDk0.XtWFiw.KZrh9Tkp9vTY9JYSgZfpg2P4mlQ')

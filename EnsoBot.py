@@ -1,6 +1,8 @@
 import discord
 import random
 from discord.ext import commands
+from discord.ext.commands import BucketType, cooldown
+
 
 # Bot Prefix
 client = commands.Bot(command_prefix='~')
@@ -82,6 +84,7 @@ async def roles(ctx):
 
 #Bot ~Kakashi command for Zara
 @client.command(aliases=['kakashi'])
+@cooldown(1, 5, BucketType.channel)
 async def Kakashi(ctx):
     kakashi1 = "https://cdn.discordapp.com/attachments/714671068941647933/717201077346238514/image0.jpg"
     kakashi2 = "https://cdn.discordapp.com/attachments/714671068941647933/717201077669331036/image1.jpg"

@@ -5,19 +5,16 @@ from discord.ext import commands
 # Bot Prefix
 client = commands.Bot(command_prefix='~')
 
-
-# server_id = 663651584399507476
-
-@client.event
-@commands.has_any_role('Hamothy')
-async def users(ctx):
-    id = client.get_guild(663651584399507476)
-
-    await ctx.send(f"""Number of Members: {id.member_count}""")
-
-
 # Instantiates a list for all the cogs
 extensions = ['cogs.WaifuImages', 'cogs.FunCommands']
+
+
+@client.command()
+@commands.has_any_role('Hamothy')
+async def users(ctx):
+    server_id = client.get_guild(663651584399507476)
+
+    await ctx.send(f"""Number of Members: {server_id.member_count}""")
 
 # Calls the cogs
 if __name__ == '__main__':

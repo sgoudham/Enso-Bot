@@ -5,6 +5,18 @@ from discord.ext import commands
 # Bot Prefix
 client = commands.Bot(command_prefix='~')
 
+#server_id = 663651584399507476
+
+@client.event
+@commands.has_any_role('Hamothy')
+async def on_message(message):
+    id = client.get_guild(663651584399507476)
+
+    if message.content.find("hello") != -1:
+        await message.channel.send("Hi")
+    elif message.content == "users":
+        await message.channel.send(f"""Number of Members: {id.member_count}""")
+
 # Instantiates a list for all the cogs
 extensions = ['cogs.WaifuImages', 'cogs.FunCommands']
 

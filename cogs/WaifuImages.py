@@ -60,7 +60,7 @@ class Waifus(commands.Cog):
         kakashi46 = "https://cdn.discordapp.com/attachments/714671068941647933/717206622249943050/image4.jpg"
         kakashi47 = "https://cdn.discordapp.com/attachments/714671068941647933/717206622489018458/image5.jpg"
         kakashi48 = "https://cdn.discordapp.com/attachments/714671068941647933/717206622979489792/image6.jpg"
-        kakashi49 = ""
+        """kakashi49 = ""
         kakashi50 = ""
         kakashi51 = ""
         kakashi52 = ""
@@ -112,7 +112,7 @@ class Waifus(commands.Cog):
         kakashi98 = ""
         kakashi99 = ""
         kakashi100 = ""
-
+"""
         kakashi_array = [kakashi1, kakashi2, kakashi3, kakashi4, kakashi5, kakashi6, kakashi7, kakashi8, kakashi9,
                          kakashi10,
                          kakashi11, kakashi12, kakashi13, kakashi14, kakashi15, kakashi16, kakashi17, kakashi18,
@@ -125,7 +125,7 @@ class Waifus(commands.Cog):
                          kakashi39,
                          kakashi40,
                          kakashi41, kakashi42, kakashi43, kakashi44, kakashi45, kakashi46, kakashi47, kakashi48,
-                         kakashi49,
+                         """kakashi49,
                          kakashi50,
                          kakashi51, kakashi52, kakashi53, kakashi54, kakashi55, kakashi56, kakashi57, kakashi58,
                          kakashi59,
@@ -141,7 +141,7 @@ class Waifus(commands.Cog):
                          kakashi90,
                          kakashi91, kakashi92, kakashi93, kakashi94, kakashi95, kakashi96, kakashi97, kakashi98,
                          kakashi99,
-                         kakashi100]
+                         kakashi100"""]
 
         embed = discord.Embed(title="```Random Kakashi Image```", colour=discord.Colour(0xff0000), )
         embed.set_image(url=random.choice(kakashi_array))

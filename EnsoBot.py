@@ -3,10 +3,8 @@ import random
 from discord.ext import commands
 from discord.ext.commands import BucketType, cooldown
 
-
 # Bot Prefix
 client = commands.Bot(command_prefix='~')
-
 
 # Bot Status on Discord
 @client.event
@@ -82,7 +80,8 @@ async def roles(ctx):
 
     await ctx.send(embed=embed)
 
-#Bot ~Kakashi command for Zara
+
+# Bot ~Kakashi command for Zara
 @client.command(aliases=['kakashi'])
 @cooldown(1, 5, BucketType.channel)
 async def Kakashi(ctx):
@@ -128,13 +127,21 @@ async def Kakashi(ctx):
     kakashi40 = "https://cdn.discordapp.com/attachments/714671068941647933/717206156673679380/image6.gif"
 
     kakashiArray = [kakashi1, kakashi2, kakashi3, kakashi4, kakashi5, kakashi6, kakashi7, kakashi8, kakashi9, kakashi10,
-                    kakashi11, kakashi12, kakashi13, kakashi14, kakashi15, kakashi16, kakashi17, kakashi18, kakashi19, kakashi20,
-                    kakashi21, kakashi22, kakashi23, kakashi24, kakashi25, kakashi26, kakashi27, kakashi28, kakashi29, kakashi30,
-                    kakashi31, kakashi32, kakashi33, kakashi34, kakashi35, kakashi36, kakashi37, kakashi38, kakashi39, kakashi40]
+                    kakashi11, kakashi12, kakashi13, kakashi14, kakashi15, kakashi16, kakashi17, kakashi18, kakashi19,
+                    kakashi20,
+                    kakashi21, kakashi22, kakashi23, kakashi24, kakashi25, kakashi26, kakashi27, kakashi28, kakashi29,
+                    kakashi30,
+                    kakashi31, kakashi32, kakashi33, kakashi34, kakashi35, kakashi36, kakashi37, kakashi38, kakashi39,
+                    kakashi40]
 
-    embed = discord.Embed(title="```Random Kakashi Image```", colour=discord.Colour(0xff0000),)
+    embed = discord.Embed(title="```Random Kakashi Image```", colour=discord.Colour(0xff0000), )
     embed.set_image(url=random.choice(kakashiArray))
     await ctx.send(embed=embed)
+
+@client.event
+async def on_command_error(ctx, error):
+    if isinstance(error, commands.CommandOnCooldown):
+        await ctx.send(f'That command is on cooldown. Try again in {error.retry_after:,.2f} seconds.')
 
 
 client.run('NzE2NzAxNjk5MTQ1NzI4MDk0.XtWFiw.KZrh9Tkp9vTY9JYSgZfpg2P4mlQ')

@@ -9,14 +9,6 @@ async def on_ready():
     print('Bot is ready.')
     await client.change_presence(activity=discord.Game(name='Reading Yaoi'))
 
-@client.event
-async def on_member_join(member):
-    print (f'{member} has joined the server')
-
-@client.event
-async def on_member_removed(member):
-    print (f'{member} has has left the server')
-
 @client.command(aliases = ["ping"])
 @commands.has_any_role('Hamothy')
 async def Ping(ctx):
@@ -30,7 +22,7 @@ async def _8ball(ctx, *, question):
                  "Izzy can't predict this",
                  "Idk idiot lmao",
                  "Why are you even asking me",
-                 "Tt's not like I can read your question",
+                 "It's not like I can read your question",
                  "Shut the fuck up NOW",
                  "Zara wants to protest your question",
                  "Stitch will definitely get back to you",
@@ -49,7 +41,9 @@ async def _8ball(ctx, *, question):
                  "Sure but did you know that Izzy smells?",
                  "No but did you know that Stitch smells?",
                  "Get your dick back in your pants smh",
-                 "Get the fuck back to horny jail RIGHT NOW"]
+                 "Get the fuck back to horny jail RIGHT NOW",
+                 "Nick Cock Bro",
+                 "Nice Tits"]
     await ctx.send(f'Question: {question}\nAnswer: {random.choice(Responses)}')
 
 @client.command()

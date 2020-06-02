@@ -1,4 +1,5 @@
 import discord
+import asyncio
 import random
 from discord.ext import commands
 from discord.ext.commands import BucketType, cooldown
@@ -69,6 +70,7 @@ async def _8ball(ctx, *, question):
                  "Taz is too busy simping over Anonymous to care",
                  "Leave me alone. I'm sad :("]
     await ctx.send(f'Question: {question}\nAnswer: {random.choice(Responses)}')
+
 
 
 # Bot ~roles command allows for an embed message about
@@ -161,6 +163,9 @@ async def kakashi(ctx):
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandOnCooldown):
         await ctx.send(f'That command is on cooldown. Try again in {error.retry_after:,.2f} seconds.')
+        await asyncio.sleep(3)
+        ## delete the message
+        await ctx.delete()
 
 
 client.run('NzE2NzAxNjk5MTQ1NzI4MDk0.XtWFiw.KZrh9Tkp9vTY9JYSgZfpg2P4mlQ')

@@ -75,19 +75,22 @@ class Fun(commands.Cog):
 
         channels = ["bot-commands"]
 
-        with open('8ballcommands.txt') as file:
+        with open('eightball.txt') as file:
             _8ball_array = file.readlines()
 
-        if str(ctx.channel) in channels:
-            await ctx.send(f'Question: {question}\nAnswer: {random.choice(_8ball_array)}')
-        else:
-            message = await ctx.send(error_function())
-            # Let the user read the message for 2.5 seconds
-            await asyncio.sleep(2.5)
-            # Delete the message
-            await message.delete()
+            if str(ctx.channel) in channels:
 
-        file.close()
+                await ctx.send(f'Question: {question}\nAnswer: {random.choice(_8ball_array)}')
+
+            else:
+                message = await ctx.send(error_function())
+
+                # Let the user read the message for 2.5 seconds
+                await asyncio.sleep(2.5)
+                # Delete the message
+                await message.delete()
+
+            file.close()
 
 
 def error_function():

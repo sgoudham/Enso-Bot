@@ -16,14 +16,6 @@ class Waifus(commands.Cog):
 
         channels = ["bot-commands"]
 
-        if str(ctx.channel) not in channels:
-            message = await ctx.send(error_function())
-
-            # Let the user read the message for 2.5 seconds
-            await asyncio.sleep(2.5)
-            # Delete the message
-            await message.delete()
-
         with open('kakashiImages.txt') as file:
             kakashi_array = file.readlines()
 
@@ -32,6 +24,13 @@ class Waifus(commands.Cog):
             embed = discord.Embed(title="```Random Kakashi Image```", colour=discord.Colour(0xff0000), )
             embed.set_image(url=random.choice(kakashi_array))
             await ctx.send(embed=embed)
+        else:
+            message = await ctx.send(error_function())
+
+            # Let the user read the message for 2.5 seconds
+            await asyncio.sleep(2.5)
+            # Delete the message
+            await message.delete()
 
         file.close()
 

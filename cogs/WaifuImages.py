@@ -11,7 +11,7 @@ class Waifus(commands.Cog):
 
     # Bot ~Kakashi command for Zara
     @commands.command(aliases=['Kakashi'])
-    @cooldown(1, 5, BucketType.channel)
+    @cooldown(1, 0.5, BucketType.channel)
     async def kakashi(self, ctx):
         channels = ["bot-commands"]
         if str(ctx.channel) not in channels:

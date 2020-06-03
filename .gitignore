@@ -1,2 +1,2 @@
 #Hiding Token
-*.env
+.env

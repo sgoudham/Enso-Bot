@@ -64,7 +64,7 @@ class Fun(commands.Cog):
             f"{target.mention} You're great, keep going Σd(˘ꇴ˘๑)",
             f"I'd simp for {target.mention} anyday :flushed: :heart_eyes: :flushed: ",
             f"{target.mention} Even the ugliest clothes won't ruin your look (｡•̀ᴗ -)☆",
-            f"",
+            f"{target.mention} You’re that “Nothing” when people ask me what I’m thinking about.",
             f"",
             f"",
             f"",

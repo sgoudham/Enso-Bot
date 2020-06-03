@@ -4,7 +4,7 @@ from discord.ext import commands
 
 # Bot Prefix
 client = commands.Bot(command_prefix='~')
-token = open("token.txt", "r").readline()
+token = open("token/token.txt", "r").readline()
 
 # Instantiates a list for all the cogs
 extensions = ['cogs.WaifuImages', 'cogs.FunCommands']

@@ -72,7 +72,12 @@ class Fun(commands.Cog):
     @commands.command(aliases=['8ball', '8Ball'])
     @cooldown(1, 5, BucketType.channel)
     async def _8ball(self, ctx, *, question):
+
         channels = ["bot-commands"]
+
+        with open('kakashiImages.txt') as file:
+            _8ball_array = file.readlines()
+        
         if str(ctx.channel) not in channels:
             message = await ctx.send(error_function())
 

@@ -28,9 +28,12 @@ class Waifus(commands.Cog):
             kakashi_array = file.readlines()
 
         if str(ctx.channel) in channels:
+
             embed = discord.Embed(title="```Random Kakashi Image```", colour=discord.Colour(0xff0000), )
             embed.set_image(url=random.choice(kakashi_array))
             await ctx.send(embed=embed)
+
+        file.close()
 
 
 def error_function():

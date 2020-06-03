@@ -6,6 +6,8 @@ from discord.ext import commands
 
 client = commands.Bot(command_prefix='~')
 #token = open("DiscordToken/token.txt", "rt").readline()
+with open('DiscordToken/token.txt') as file:
+    token = file.readline()
 
 # Instantiates a list for all the cogs
 extensions = ['cogs.WaifuImages', 'cogs.FunCommands']
@@ -83,7 +85,7 @@ async def on_command_error(ctx, error):
         await message.delete()
 
 
-client.run('NzE2NzAxNjk5MTQ1NzI4MDk0.XtgJXg.NDNj2I522O0lTm3W357TDVen948')
+client.run(token)
 
 
 '''

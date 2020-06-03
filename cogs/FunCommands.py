@@ -48,7 +48,7 @@ class Fun(commands.Cog):
     @commands.has_any_role('Hamothy', "izzy")
     async def compliment(self, ctx, target: discord.Member):
         responses = [
-            f"{target.mention} is the most adorable uwu :heart_eyes: :heart_eyes: ",
+            f"{target.mention} is the most adorable uwu :heart_eyes: :heart_eyes:",
             f"{target.mention} You have my ENTIRE HEART UvU",
             f"{target.mention} Hun you're CUTE UwU :pleading_face: :flushed: :pleading_face: :flushed: :pleading_face:",
             f"I love {target.mention} so so much :heartbeat: :heartbeat: :heartbeat: ",
@@ -56,8 +56,19 @@ class Fun(commands.Cog):
             f"{target.mention} I admire your greatness so much that I consider making a fan club to become your #1 fan (´꒳`)",
             f"{target.mention} has no flaws, only special effects :))",
             f"{target.mention}'s smile is brighter than sunlight, so smile more often ( ◠‿◠ )",
+            f"{target.mention} Your smile is so beautiful it blinds me :heart_eyes: :heart_eyes:",
             f"",
             f"",
+            f"",
+            f"",
+            f"",
+            f"",
+            f"",
+            f"",
+            f"",
+            f"",
+            f"",
+
         ]
 
         # await ctx.send(random.choice(responses))

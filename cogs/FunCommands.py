@@ -36,16 +36,15 @@ class Fun(commands.Cog):
             f"#{target.mention}IsOverParty",
             f"I hope {target.mention} drops dead with a curable disease that doctors simply didn’t feel like curing :)",
             f"{target.mention} You know there's no vaccine for stupidity right?",
-            f"",
-            f"",
-            f"",
-            f"",
+            #f"",
+            #f"",
+            #f"",
+            #f"",
         ]
 
         await ctx.send(random.choice(responses))
 
     @commands.command(aliases=['comp', 'Compliment', 'Comp'])
-    @commands.has_any_role('Hamothy', "izzy")
     async def compliment(self, ctx, target: discord.Member):
         responses = [
             f"{target.mention} is the most adorable uwu :heart_eyes: :heart_eyes:",
@@ -65,10 +64,9 @@ class Fun(commands.Cog):
             f"I'd simp for {target.mention} anyday :flushed: :heart_eyes: :flushed: ",
             f"{target.mention} Even the ugliest clothes won't ruin your look (｡•̀ᴗ -)☆",
             f"{target.mention} You’re that “Nothing” when people ask me what I’m thinking about.",
-            f"",
-            f"",
-            f"",
-
+            #f"",
+            #f"",
+            #f"",
         ]
 
         # await ctx.send(random.choice(responses))

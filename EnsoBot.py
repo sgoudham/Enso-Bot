@@ -3,8 +3,9 @@ import discord
 from discord.ext import commands
 
 # Bot Prefix
+client = discord.Client()
 client = commands.Bot(command_prefix='~')
-token = open("DiscordToken/token.txt", "rt").readlines()
+token = open("DiscordToken/token.txt", "rt").readline()
 
 # Instantiates a list for all the cogs
 extensions = ['cogs.WaifuImages', 'cogs.FunCommands']

@@ -10,8 +10,8 @@ class Fun(commands.Cog):
 
     # Bot ~8Ball command
     @commands.command(aliases=['8ball', '8Ball'])
-    @cooldown(1, 3, BucketType.channel)
-    async def _8ball(self, ctx, *, question):
+    @cooldown(1, 5, BucketType.channel)
+    async def _8ball(self, ctx, question):
         channels = ["bot-commands"]
         if str(ctx.channel) not in channels:
             message = await ctx.send("Sorry! I only work in #bot-commands!")
@@ -20,6 +20,8 @@ class Fun(commands.Cog):
             await asyncio.sleep(2.5)
             # Delete the message
             await message.delete()
+
+        if str(ctx.channel) in channels:
             responses = [
                 "Hamothy is preoccupied with catching a case",
                 "The prophet Kate believes it will come true",
@@ -76,7 +78,6 @@ class Fun(commands.Cog):
                 "Hamothy has used his godlike like powers to align the stars for you, it must be true",
                 "Gabriel appears out of thin air and smites you",
                 "Yes yes yes!!!",
-                "No I don't care about your question, where is my podcast!??!?"
             ]
             await ctx.send(f'Question: {question}\nAnswer: {random.choice(responses)}')
 

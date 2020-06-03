@@ -8,15 +8,6 @@ client = commands.Bot(command_prefix='~')
 # Instantiates a list for all the cogs
 extensions = ['cogs.WaifuImages', 'cogs.FunCommands']
 
-
-
-@client.command()
-@commands.has_any_role('Hamothy')
-async def users(ctx):
-    server_id = client.get_guild(663651584399507476)
-
-    await ctx.send(f"""Number of Members: {server_id.member_count}""")
-
 # Calls the cogs
 if __name__ == '__main__':
     for ext in extensions:
@@ -35,12 +26,6 @@ async def on_ready():
 @commands.has_any_role('Hamothy')
 async def ping(ctx):
     await ctx.send(f'Pong! {round(client.latency * 1000)}ms')
-
-
-# @client.command(aliases=["Hug"])
-# @commands.has_any_role('Hamothy')
-# async def bruh(self, ctx):
-#    await self.bot.say("hugs {}".format(ctx.message.author.mention()))
 
 
 # Bot ~roles command allows for an embed message about
@@ -96,3 +81,12 @@ async def on_command_error(ctx, error):
 
 
 client.run('NzE2NzAxNjk5MTQ1NzI4MDk0.XtWFiw.KZrh9Tkp9vTY9JYSgZfpg2P4mlQ')
+
+'''
+@client.command()
+@commands.has_any_role('Hamothy')
+async def users(ctx):
+    server_id = client.get_guild(663651584399507476)
+
+    await ctx.send(f"""Number of Members: {server_id.member_count}""") 
+'''

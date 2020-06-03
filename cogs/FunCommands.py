@@ -12,7 +12,8 @@ class Fun(commands.Cog):
     @commands.command(aliases=['Attack'])
     @commands.has_any_role('Hamothy', "izzy")
     async def attack(self, ctx, target: discord.Member):
-        responses = [f"{target.mention} is stinky",
+        responses = [
+                     f"{target.mention} is stinky",
                      f"{target.mention} is ugly",
                      f"{target.mention} has a gigantic nose",
                      f"{target.mention} gets no views on their tiktok",
@@ -34,24 +35,46 @@ class Fun(commands.Cog):
                      f"I know this was made for me to insult but it’s kinda hard to be a hateful cunt like {target.mention} :star_struck::star_struck:",
                      f"#{target.mention}IsOverParty",
                      f"I hope {target.mention} drops dead with a curable disease that doctors simply didn’t feel like curing :)",
+                     f"{target.mention} You know there's no vaccine for stupidity right?",
                      f"",
                      f"",
                      f"",
                      f"",
-                     f"",
-                     ]
-
-#/warn @Call Me♥#5566 Pissing me off when I'm pissed off with people not posting in #general-media
+                    ]
 
         await ctx.send(random.choice(responses))
+
+    @commands.command(aliases=['comp', 'Compliment', 'Comp'])
+    @commands.has_any_role('Hamothy', "izzy")
+    async def compliment(self, ctx, target: discord.Member):
+        responses = [
+                     f"{target.mention} is the most adorable uwu :heart_eyes: :heart_eyes: ",
+                     f"{target.mention} You have my ENTIRE HEART UvU",
+                     f"{target.mention} Hun you're CUTE UwU :pleading_face: :flushed: :pleading_face: :flushed: :pleading_face:",
+                     f"I love {target.mention} so so much :heartbeat: :heartbeat: :heartbeat: ",
+                     f"My heart is full of love for you {target.mention}",
+                     f"{target.mention} I admire your greatness so much that I consider making a fan club to become your #1 fan (´꒳`)",
+                     f"{target.mention} has no flaws, only special effects :))",
+                     f"{target.mention}'s smile is brighter than sunlight, so smile more often ( ◠‿◠ )",
+                     f"",
+                     f"",
+                    ]
+
+        # await ctx.send(random.choice(responses))
+        await ctx.send(random.choice(responses))
+
+    # @client.command(aliases=["Hug"])
+    # @commands.has_any_role('Hamothy')
+    # async def hug(self, ctx):
+    #    await self.bot.say("hugs {}".format(ctx.message.author.mention()))
 
     # Bot ~8Ball command
     @commands.command(aliases=['8ball', '8Ball'])
     @cooldown(1, 5, BucketType.channel)
-    async def _8ball(self, ctx, *,  question):
+    async def _8ball(self, ctx, *, question):
         channels = ["bot-commands"]
         if str(ctx.channel) not in channels:
-            message = await ctx.send("Sorry! I only work in #bot-commands!")
+            message = await ctx.send(error_function())
 
             # Let the user read the message for 2.5 seconds
             await asyncio.sleep(2.5)
@@ -67,7 +90,6 @@ class Fun(commands.Cog):
                 "Idk idiot lmao",
                 "Why are you even asking me",
                 "It's not like I can read your question",
-                "Shut the fuck up NOW",
                 "Zara wants to protest your question",
                 "Stitch will definitely get back to you",
                 "*Kakashi slams you to the wall*",
@@ -83,16 +105,14 @@ class Fun(commands.Cog):
                 "Find something better to do with your spare time smh",
                 "Sure but did you know that Izzy smells?",
                 "No but did you know that Stitch smells?",
-                "Get your dick back in your pants smh",
-                "Get the fuck back to horny jail RIGHT NOW",
+                "Get back to horny jail RIGHT NOW",
                 "Nick Cock Bro",
                 "Nice Tits",
-                "Dm Cloud for the answer",
                 "No",
                 "Yes",
                 "Pffft you wish",
                 "Never in a million years",
-                "Pathetic. You're wasting your time",
+                "You're wasting your time asking me",
                 "Taz is too busy simping over Anonymous to care",
                 "Leave me alone. I'm sad :(",
                 "Shoot your Shot King",
@@ -111,12 +131,23 @@ class Fun(commands.Cog):
                 "Marshall would love to agree with you",
                 "That's so litty titty bro",
                 "I'm Izzy and I approve of this message",
-                "Naughty naughty girl",
+                "Inna would love to agree with you",
                 "Hamothy has used his godlike like powers to align the stars for you, it must be true",
                 "Gabriel appears out of thin air and smites you",
                 "Yes yes yes!!!",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+
             ]
             await ctx.send(f'Question: {question}\nAnswer: {random.choice(responses)}')
+
+
+def error_function():
+    return "Sorry! I only work in #bot-commands!"
 
 
 def setup(bot):

@@ -3,8 +3,6 @@ import discord
 from discord.ext import commands
 
 # Bot Prefix
-from discord.ext.commands import bot
-
 client = commands.Bot(command_prefix='~')
 token = open("DiscordToken/token.txt", "rt").readline()
 

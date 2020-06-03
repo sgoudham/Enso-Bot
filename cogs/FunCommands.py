@@ -36,7 +36,7 @@ class Fun(commands.Cog):
             f"#{target.mention}IsOverParty",
             f"I hope {target.mention} drops dead with a curable disease that doctors simply didn’t feel like curing :)",
             f"{target.mention} You know there's no vaccine for stupidity right?",
-            f"",
+            f"{target.mention} bruh moment",
             f"",
             f"",
             f"",

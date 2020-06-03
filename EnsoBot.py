@@ -9,6 +9,7 @@ client = commands.Bot(command_prefix='~')
 extensions = ['cogs.WaifuImages', 'cogs.FunCommands']
 
 
+
 @client.command()
 @commands.has_any_role('Hamothy')
 async def users(ctx):

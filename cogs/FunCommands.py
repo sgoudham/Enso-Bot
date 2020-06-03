@@ -1,5 +1,6 @@
 import random
 import asyncio
+import discord
 from discord.ext import commands
 from discord.ext.commands import BucketType, cooldown
 
@@ -8,10 +9,46 @@ class Fun(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    @commands.command(aliases=['Attack'])
+    @commands.has_any_role('Hamothy', "izzy")
+    async def attack(self, ctx, target: discord.Member):
+        responses = [f"{target.mention} is stinky",
+                     f"{target.mention} is ugly",
+                     f"{target.mention} has a gigantic nose",
+                     f"{target.mention} gets no views on their tiktok",
+                     f"{target.mention} is obviously compensating for something :eyes:",
+                     f"{target.mention} DIE DIE DIE :knife: :skull:",
+                     f"{target.mention} is so annoying smh :rolling_eyes:",
+                     f"I'd say {target.mention} was dropped as a child but they would have be to held to dropped in the first place",
+                     f"I hate {target.mention}",
+                     f"{target.mention} close your legs, it smells like clam chowder :face_vomiting: :face_vomiting: :nauseated_face: :nauseated_face:",
+                     f"I bet {target.mention} can't reach the wall cabinets without a booster chair",
+                     f"{target.mention} Browses 4Chan and Reddit all day looking for love",
+                     f"{target.mention} Your forehead could be used as a landing pad",
+                     f"I bet {target.mention} you likes eating watermelon with the rind.",
+                     f"{target.mention} You were the first creation to make god say oops",
+                     f"{target.mention} You have delusions of adequacy",
+                     f"{target.mention} I treasure the time I don't spend with you",
+                     f"Don't be ashamed of yourself {target.mention}, that's your parent's job",
+                     f"I don't have the energy to pretend I like {target.mention} today",
+                     f"I know this was made for me to insult but it’s kinda hard to be a hateful cunt like {target.mention} :star_struck::star_struck:",
+                     f"#{target.mention}IsOverParty",
+                     f"I hope {target.mention} drops dead with a curable disease that doctors simply didn’t feel like curing :)",
+                     f"",
+                     f"",
+                     f"",
+                     f"",
+                     f"",
+                     ]
+
+#/warn @Call Me♥#5566 Pissing me off when I'm pissed off with people not posting in #general-media
+
+        await ctx.send(random.choice(responses))
+
     # Bot ~8Ball command
     @commands.command(aliases=['8ball', '8Ball'])
     @cooldown(1, 5, BucketType.channel)
-    async def _8ball(self, ctx, question):
+    async def _8ball(self, ctx, *,  question):
         channels = ["bot-commands"]
         if str(ctx.channel) not in channels:
             message = await ctx.send("Sorry! I only work in #bot-commands!")
@@ -80,6 +117,7 @@ class Fun(commands.Cog):
                 "Yes yes yes!!!",
             ]
             await ctx.send(f'Question: {question}\nAnswer: {random.choice(responses)}')
+
 
 def setup(bot):
     bot.add_cog(Fun(bot))

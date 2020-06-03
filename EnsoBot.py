@@ -82,7 +82,7 @@ async def on_command_error(ctx, error):
         await message.delete()
 
 
-client.run(token)
+client.run()
 
 '''
 @client.command()

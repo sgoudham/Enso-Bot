@@ -77,7 +77,7 @@ class Fun(commands.Cog):
 
         with open('kakashiImages.txt') as file:
             _8ball_array = file.readlines()
-        
+
         if str(ctx.channel) not in channels:
             message = await ctx.send(error_function())
 

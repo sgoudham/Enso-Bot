@@ -4,6 +4,7 @@ from discord.ext import commands
 
 # Bot Prefix
 client = commands.Bot(command_prefix='~')
+token = open("token.txt", "r").readline()
 
 # Instantiates a list for all the cogs
 extensions = ['cogs.WaifuImages', 'cogs.FunCommands']
@@ -69,6 +70,7 @@ async def on_command_error(ctx, error):
         # Delete the message
         await message.delete()
 
+
 @client.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandOnCooldown):
@@ -80,7 +82,7 @@ async def on_command_error(ctx, error):
         await message.delete()
 
 
-client.run('NzE2NzAxNjk5MTQ1NzI4MDk0.XtWFiw.KZrh9Tkp9vTY9JYSgZfpg2P4mlQ')
+client.run(token)
 
 '''
 @client.command()

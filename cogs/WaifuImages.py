@@ -40,7 +40,7 @@ class Waifus(commands.Cog):
                 # Delete the message
                 await message.delete()
 
-            file.close()
+        file.close()
 
     # Bot ~Toga command for Josh
     @commands.command(aliases=['Toga'])
@@ -70,7 +70,7 @@ class Waifus(commands.Cog):
                 # Delete the message
                 await message.delete()
 
-            file.close()
+        file.close()
 
 
 def error_function():

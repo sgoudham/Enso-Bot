@@ -7,10 +7,8 @@ from discord.ext import commands
 # Getting the Bot token from Environment Variables
 API_TOKEN = config('DISCORD_TOKEN')
 
-
 # Bot Prefix
 client = commands.Bot(command_prefix='~')
-
 
 # Instantiates a list for all the cogs
 extensions = ['cogs.WaifuImages', 'cogs.FunCommands']
@@ -88,8 +86,10 @@ async def on_command_error(ctx, error):
         await message.delete()
 
 
-client.run(API_TOKEN)
-
+try:
+    client.run(API_TOKEN)
+except discord.errors.LoginFailure as e:
+    print("Login unsuccessful.")
 
 '''
 @client.command()

@@ -1,7 +1,6 @@
 import asyncio
 import pathlib
 import random
-
 import discord
 from discord.ext import commands
 from discord.ext.commands import BucketType, cooldown
@@ -101,7 +100,6 @@ class Fun(commands.Cog):
             _8ball_array = file.readlines()
 
             if str(ctx.channel) in channels:
-
                 await ctx.send(f'Question: {question}\nAnswer: {random.choice(_8ball_array)}')
 
             else:
@@ -112,7 +110,7 @@ class Fun(commands.Cog):
                 # Delete the message
                 await message.delete()
 
-            file.close()
+        file.close()
 
 
 def error_function():

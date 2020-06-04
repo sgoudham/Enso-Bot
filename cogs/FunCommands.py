@@ -39,7 +39,7 @@ class Fun(commands.Cog):
             f"{target.mention} You know there's no vaccine for stupidity right?",
         ]
 
-        #
+        # Sending out a random response from the array "responses"
         await ctx.send(random.choice(responses))
 
     @commands.command(aliases=['comp', 'Compliment', 'Comp'])
@@ -75,9 +75,9 @@ class Fun(commands.Cog):
             f"Josh would kill Toga for you anyday {target.mention}",
             f"Zara would pick you over Kakashi :heart_eyes: :heart_eyes: {target.mention}",
             f"{target.mention} The thought of you leaving me is too much to bear. Stay with me forever :pleading_face: :pleading_face:",
-            f"",
-            f"",
-            f""
+            f"{target.mention}From a scale of 1-10, you’re 9 I’m the 1 you need <:Kawaii:676203363922214953> <:Kawaii:676203363922214953> <:Kawaii:676203363922214953> ",
+            f"You're... You're SHREKTACULAR :heart_eyes: :flushed: :heart_eyes: {target.mention}",
+            # f""
         ]
 
         # await ctx.send(random.choice(responses))

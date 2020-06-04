@@ -75,17 +75,6 @@ async def on_command_error(ctx, error):
         await message.delete()
 
 
-@client.event
-async def on_command_error(ctx, error):
-    if isinstance(error, commands.CommandOnCooldown):
-        message = await ctx.send(f'That command is on cooldown. Try again in {error.retry_after:,.2f} seconds.')
-
-        # Let the user read the message for 2.5 seconds
-        await asyncio.sleep(2.5)
-        # Delete the message
-        await message.delete()
-
-
 try:
     client.run(API_TOKEN)
 except discord.errors.LoginFailure as e:

@@ -83,10 +83,9 @@ class Fun(commands.Cog):
 
         await ctx.send(random.choice(responses))
 
-    # @client.command(aliases=["Hug"])
-    # @commands.has_any_role('Hamothy')
-    # async def hug(self, ctx):
-    #    await self.bot.say("hugs {}".format(ctx.message.author.mention()))
+    @commands.command(aliases=["Hug"])
+    async def hug(self, ctx):
+        await self.bot.say("hugs {}".format(ctx.message.author.mention()))
 
     # Bot ~8Ball command
     @commands.command(aliases=['8ball', '8Ball'])
@@ -109,6 +108,16 @@ class Fun(commands.Cog):
                 await asyncio.sleep(2.5)
                 # Delete the message
                 await message.delete()
+
+    @commands.Cog.listener()
+    async def on_command_error(self, ctx, target: discord.member):
+        if isinstance(target, commands.MissingRequiredArgument):
+            message = await ctx.send("Uh oh! Couldn't find anyone to mention! Try again!")
+
+            # Let the user read the message for 2.5 seconds
+            await asyncio.sleep(1.5)
+            # Delete the message
+            await message.delete()
 
 
 def error_function():

@@ -17,7 +17,6 @@ class Waifus(commands.Cog):
 
         channels = ["bot-commands"]
 
-        # path = pathlib.Path(r'C:\Users\sgoud\PycharmProjects\EnsoBot\txtfiles\kakashiImages.txt')
         with open('kakashiImages.txt') as file:
             kakashi_array = file.readlines()
 

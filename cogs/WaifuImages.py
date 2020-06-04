@@ -1,4 +1,5 @@
 import asyncio
+import pathlib
 import random
 
 import discord
@@ -17,15 +18,17 @@ class Waifus(commands.Cog):
 
         channels = ["bot-commands"]
 
-        with open('kakashiImages.txt') as file:
+        path = pathlib.Path(r'C:\Users\sgoud\PycharmProjects\EnsoBot\txtfiles\kakashiImages.txt')
+        with open(path, mode='r') as file:
             kakashi_array = file.readlines()
 
             if str(ctx.channel) in channels:
 
-                member = ctx.message.author  # set member as the author
+                # set member as the author
+                member = ctx.message.author
                 userAvatar = member.avatar_url
 
-                embed = discord.Embed(title="**Kakashi**", colour=discord.Colour(0xff0000))
+                embed = discord.Embed(title="**Hatake Kakashi**", colour=discord.Colour(0xff0000))
                 embed.set_image(url=random.choice(kakashi_array))
                 embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url='{}'.format(userAvatar))
                 await ctx.send(embed=embed)
@@ -46,7 +49,8 @@ class Waifus(commands.Cog):
 
         channels = ["bot-commands"]
 
-        with open('togaImages.txt') as file:
+        path = pathlib.Path(r'C:\Users\sgoud\PycharmProjects\EnsoBot\txtfiles\togaImages.txt')
+        with open(path, mode='r') as file:
             toga_array = file.readlines()
 
             if str(ctx.channel) in channels:
@@ -54,7 +58,7 @@ class Waifus(commands.Cog):
                 member = ctx.message.author  # set member as the author
                 userAvatar = member.avatar_url
 
-                embed = discord.Embed(title="**Toga**", colour=discord.Colour(0xff0000))
+                embed = discord.Embed(title="**Himiko Toga**", colour=discord.Colour(0xff0000))
                 embed.set_image(url=random.choice(toga_array))
                 embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url='{}'.format(userAvatar))
                 await ctx.send(embed=embed)

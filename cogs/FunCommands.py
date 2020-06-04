@@ -68,14 +68,14 @@ class Fun(commands.Cog):
             f"{target.mention} I would spend eternity cuddling with you :flushed: :flushed:",
             f"Would you want to go on an e-date together? :pleading_face :point_right: :point_left: {target.mention}",
             f"Let me shoot my shot to you :see_no_evil: :see_no_evil:",
-            f"",
-            f"",
-            f"",
-            f"",
+            # f"",
+            # f"",
+            # f"",
+            # f"",
         ]
 
-        # await ctx.send(random.choice(responses))
-        await ctx.send(f"{target.mention} You have my ENTIRE HEART <:Kawaii:676203363922214953> ")
+        await ctx.send(random.choice(responses))
+        # await ctx.send(f"{target.mention} You have my ENTIRE HEART <:Kawaii:676203363922214953> ")
 
     # @client.command(aliases=["Hug"])
     # @commands.has_any_role('Hamothy')

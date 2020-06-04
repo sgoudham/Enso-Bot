@@ -80,9 +80,7 @@ class Fun(commands.Cog):
             # f""
         ]
 
-        # await ctx.send(random.choice(responses))
-        await ctx.send(
-            f"Would you want to go on an e-date together? :pleading_face: :point_right: :point_left: {target.mention}")
+        await ctx.send(random.choice(responses))
 
     # @client.command(aliases=["Hug"])
     # @commands.has_any_role('Hamothy')

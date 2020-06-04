@@ -1,5 +1,6 @@
-import random
 import asyncio
+import random
+
 import discord
 from discord.ext import commands
 from discord.ext.commands import BucketType, cooldown
@@ -36,10 +37,6 @@ class Fun(commands.Cog):
             f"#{target.mention}IsOverParty",
             f"I hope {target.mention} drops dead with a curable disease that doctors simply didn’t feel like curing :)",
             f"{target.mention} You know there's no vaccine for stupidity right?",
-            #f"",
-            #f"",
-            #f"",
-            #f"",
         ]
 
         await ctx.send(random.choice(responses))
@@ -47,30 +44,38 @@ class Fun(commands.Cog):
     @commands.command(aliases=['comp', 'Compliment', 'Comp'])
     async def compliment(self, ctx, target: discord.Member):
         responses = [
-            f"{target.mention} is the most adorable uwu :heart_eyes: :heart_eyes:",
-            f"{target.mention} You have my ENTIRE HEART uvu",
+            f"{target.mention} is the most adorable uwu <:awie:676201100793085952> <:awie:676201100793085952> <:awie:676201100793085952>",
+            f"{target.mention} You have my ENTIRE HEART <:blushlook1:677310734123663363> <:blushlook2:679524467248201769>",
             f"{target.mention} Hun you're CUTE uwu :pleading_face: :flushed: :pleading_face: :flushed: :pleading_face:",
             f"I love {target.mention} so so much :heartbeat: :heartbeat: :heartbeat: ",
-            f"My heart is full of love for you {target.mention}",
+            f"My heart is full of love for you {target.mention} <:Kawaii:676203363922214953> <:Kawaii:676203363922214953>",
             f"{target.mention} I admire your greatness so much that I consider making a fan club to become your #1 fan (´꒳`)",
             f"{target.mention} has no flaws, only special effects :))",
             f"{target.mention}'s smile is brighter than sunlight, so smile more often ( ◠‿◠ )",
             f"{target.mention} Your smile is so beautiful it blinds me :heart_eyes: :heart_eyes:",
             f"Being on a journey all my life, I will never meet a person as amazing as you are {target.mention}",
-            f"Such a pleasure to be on the same sever with you {target.mention}",
-            f"With {target.mention}, even the worst day will be filled with joy",
+            f"Such a pleasure to be on the same sever with {target.mention} <:boneappleteeth:676202300573876252> <:boneappleteeth:676202300573876252>",
+            f"With {target.mention}, even the worst day will be filled with joy <:GWcentrallHUGS:395628394043277313> <:GWcentrallHUGS:395628394043277313>",
             f"There's no better antidepressant than {target.mention}",
             f"{target.mention} You're great, keep going Σd(˘ꇴ˘๑)",
             f"I'd simp for {target.mention} anyday :flushed: :heart_eyes: :flushed: ",
             f"{target.mention} Even the ugliest clothes won't ruin your look (｡•̀ᴗ -)☆",
-            f"{target.mention} You’re that “Nothing” when people ask me what I’m thinking about.",
-            #f"",
-            #f"",
-            #f"",
+            f"{target.mention} You’re that “nothing” when people ask me what I’m thinking about <:Kawaii:676203363922214953> <:Kawaii:676203363922214953>",
+            f"{target.mention} Somehow you make time stop and fly at the same time <:awie:676201100793085952> <:blushlook1:677310734123663363>",
+            f"{target.mention} is a whole ass SWAGMEAL <:Kawaii:676203363922214953> <:Kawaii:676203363922214953>",
+            f"After meeting {target.mention}, I couldn't imagine living my life without them",
+            f"Take me into your arms and tell me you love me <:blushlook1:677310734123663363> <:blushlook2:679524467248201769> {target.mention}",
+            f"{target.mention} I would spend eternity cuddling with you :flushed: :flushed:",
+            f"Would you want to go on an e-date together? :pleading_face :point_right: :point_left: {target.mention}",
+            f"Let me shoot my shot to you :see_no_evil: :see_no_evil:",
+            f"",
+            f"",
+            f"",
+            f"",
         ]
 
         # await ctx.send(random.choice(responses))
-        await ctx.send(random.choice(responses))
+        await ctx.send(f"{target.mention} You have my ENTIRE HEART <:Kawaii:676203363922214953> ")
 
     # @client.command(aliases=["Hug"])
     # @commands.has_any_role('Hamothy')
@@ -79,7 +84,7 @@ class Fun(commands.Cog):
 
     # Bot ~8Ball command
     @commands.command(aliases=['8ball', '8Ball'])
-    @cooldown(1, 5, BucketType.channel)
+    @cooldown(1, 0.5, BucketType.channel)
     async def _8ball(self, ctx, *, question):
 
         channels = ["bot-commands"]

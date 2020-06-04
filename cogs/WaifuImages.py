@@ -1,5 +1,6 @@
-import random
 import asyncio
+import random
+
 import discord
 from discord.ext import commands
 from discord.ext.commands import BucketType, cooldown
@@ -21,8 +22,37 @@ class Waifus(commands.Cog):
 
             if str(ctx.channel) in channels:
 
-                embed = discord.Embed(title="```Random Kakashi Image```", colour=discord.Colour(0xff0000), )
+                avatar = ctx.avatar_url
+                embed = discord.Embed(title="**Kakashi**", colour=discord.Colour(0xff0000))
                 embed.set_image(url=random.choice(kakashi_array))
+                embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url=f"{avatar}")
+                await ctx.send(embed=embed)
+            else:
+                message = await ctx.send(error_function())
+
+                # Let the user read the message for 2.5 seconds
+                await asyncio.sleep(2.5)
+                # Delete the message
+                await message.delete()
+
+            file.close()
+
+    # Bot ~Toga command for Josh
+    @commands.command(aliases=['Toga'])
+    @cooldown(1, 0, BucketType.channel)
+    async def toga(self, ctx):
+
+        channels = ["bot-commands"]
+
+        with open('togaImages.txt') as file:
+            toga_array = file.readlines()
+
+            if str(ctx.channel) in channels:
+
+                avatar = ctx.avatar_url
+                embed = discord.Embed(title="**Toga**", colour=discord.Colour(0xff0000))
+                embed.set_image(url=random.choice(toga_array))
+                embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url=f"{avatar}")
                 await ctx.send(embed=embed)
             else:
                 message = await ctx.send(error_function())

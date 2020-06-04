@@ -1,15 +1,16 @@
 import asyncio
-import discord
-from discord.ext import commands
-from decouple import config
 
+import discord
+from decouple import config
+from discord.ext import commands
+
+# Getting the Bot token from Environment Variables
 API_TOKEN = config('DISCORD_TOKEN')
 
 
 # Bot Prefix
 client = commands.Bot(command_prefix='~')
 
-#token = open("DiscordToken/token.txt", "rt").readline()
 
 # Instantiates a list for all the cogs
 extensions = ['cogs.WaifuImages', 'cogs.FunCommands']

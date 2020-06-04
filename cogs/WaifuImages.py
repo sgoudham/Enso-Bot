@@ -22,10 +22,12 @@ class Waifus(commands.Cog):
 
             if str(ctx.channel) in channels:
 
-                avatar = ctx.avatar_url
+                member = ctx.message.author  # set member as the author
+                userAvatar = member.avatar_url
+
                 embed = discord.Embed(title="**Kakashi**", colour=discord.Colour(0xff0000))
                 embed.set_image(url=random.choice(kakashi_array))
-                embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url=f"{avatar}")
+                embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url='{}'.format(userAvatar))
                 await ctx.send(embed=embed)
             else:
                 message = await ctx.send(error_function())
@@ -49,10 +51,12 @@ class Waifus(commands.Cog):
 
             if str(ctx.channel) in channels:
 
-                avatar = ctx.avatar_url
+                member = ctx.message.author  # set member as the author
+                userAvatar = member.avatar_url
+
                 embed = discord.Embed(title="**Toga**", colour=discord.Colour(0xff0000))
                 embed.set_image(url=random.choice(toga_array))
-                embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url=f"{avatar}")
+                embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url='{}'.format(userAvatar))
                 await ctx.send(embed=embed)
             else:
                 message = await ctx.send(error_function())

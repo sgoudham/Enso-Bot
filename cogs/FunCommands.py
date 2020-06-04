@@ -96,7 +96,7 @@ class Fun(commands.Cog):
         channels = ["bot-commands"]
 
         path = pathlib.Path(r'C:\Users\sgoud\PycharmProjects\EnsoBot\txtfiles\eightball.txt')
-        with open(path, mode='r') as file:
+        with open(path) as file:
             _8ball_array = file.readlines()
 
             if str(ctx.channel) in channels:

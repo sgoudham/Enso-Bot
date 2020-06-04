@@ -1,5 +1,4 @@
 import asyncio
-import pathlib
 import random
 
 import discord
@@ -18,8 +17,8 @@ class Waifus(commands.Cog):
 
         channels = ["bot-commands"]
 
-        path = pathlib.Path(r'C:\Users\sgoud\PycharmProjects\EnsoBot\txtfiles\kakashiImages.txt')
-        with open(path, mode='r') as file:
+        # path = pathlib.Path(r'C:\Users\sgoud\PycharmProjects\EnsoBot\txtfiles\kakashiImages.txt')
+        with open('kakashiImages.txt') as file:
             kakashi_array = file.readlines()
 
             if str(ctx.channel) in channels:
@@ -49,8 +48,8 @@ class Waifus(commands.Cog):
 
         channels = ["bot-commands"]
 
-        path = pathlib.Path(r'C:\Users\sgoud\PycharmProjects\EnsoBot\txtfiles\togaImages.txt')
-        with open(path, mode='r') as file:
+        # path = pathlib.Path(r'C:\Users\sgoud\PycharmProjects\EnsoBot\txtfiles\togaImages.txt')
+        with open('togaImages.txt') as file:
             toga_array = file.readlines()
 
             if str(ctx.channel) in channels:

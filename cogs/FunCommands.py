@@ -1,6 +1,6 @@
 import asyncio
-import pathlib
 import random
+
 import discord
 from discord.ext import commands
 from discord.ext.commands import BucketType, cooldown
@@ -95,8 +95,8 @@ class Fun(commands.Cog):
 
         channels = ["bot-commands"]
 
-        path = pathlib.Path(r'C:\Users\sgoud\PycharmProjects\EnsoBot\txtfiles\eightball.txt')
-        with open(path) as file:
+        # path = pathlib.Path(r'C:\Users\sgoud\PycharmProjects\EnsoBot\txtfiles\eightball.txt')
+        with open('eightball.txt') as file:
             _8ball_array = file.readlines()
 
             if str(ctx.channel) in channels:

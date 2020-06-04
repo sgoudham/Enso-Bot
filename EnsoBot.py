@@ -47,7 +47,7 @@ async def roles(ctx):
                      icon_url="https://cdn.discordapp.com/attachments/689525645734182916/717137453651066900"
                               "/Rias_Gremory.png")
     embed.set_footer(
-        text="-------------------------------------------------------------------------------------------------------")
+        text="---------------------------------------------------------------------------------")
 
     embed.add_field(name="Cooldown", value="**•XP is gained every time you talk with a 2 minute cooldown.**",
                     inline=True),

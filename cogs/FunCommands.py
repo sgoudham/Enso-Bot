@@ -39,6 +39,7 @@ class Fun(commands.Cog):
             f"{target.mention} You know there's no vaccine for stupidity right?",
         ]
 
+        #
         await ctx.send(random.choice(responses))
 
     @commands.command(aliases=['comp', 'Compliment', 'Comp'])
@@ -66,16 +67,22 @@ class Fun(commands.Cog):
             f"After meeting {target.mention}, I couldn't imagine living my life without them",
             f"Take me into your arms and tell me you love me <:blushlook1:677310734123663363> <:blushlook2:679524467248201769> {target.mention}",
             f"{target.mention} I would spend eternity cuddling with you :flushed: :flushed:",
-            f"Would you want to go on an e-date together? :pleading_face :point_right: :point_left: {target.mention}",
-            f"Let me shoot my shot to you :see_no_evil: :see_no_evil:",
-            # f"",
-            # f"",
-            # f"",
-            # f"",
+            f"Would you want to go on an e-date together? :pleading_face: :point_right: :point_left: {target.mention}",
+            f"Let me shoot my shot to you :see_no_evil: :see_no_evil: {target.mention}",
+            f"Your existence makes me feel so much better {target.mention}",
+            f"You're so hot, even hotter than hell :heart_eyes: {target.mention}",
+            f"{target.mention} You’re so cute that Taz will simp for you anytime :flushed: :heart_eyes: :flushed:",
+            f"Josh would kill Toga for you anyday {target.mention}",
+            f"Zara would pick you over Kakashi :heart_eyes: :heart_eyes: {target.mention}",
+            f"{target.mention} The thought of you leaving me is too much to bear. Stay with me forever :pleading_face: :pleading_face:",
+            f"",
+            f"",
+            f""
         ]
 
-        await ctx.send(random.choice(responses))
-        # await ctx.send(f"{target.mention} You have my ENTIRE HEART <:Kawaii:676203363922214953> ")
+        # await ctx.send(random.choice(responses))
+        await ctx.send(
+            f"Would you want to go on an e-date together? :pleading_face: :point_right: :point_left: {target.mention}")
 
     # @client.command(aliases=["Hug"])
     # @commands.has_any_role('Hamothy')

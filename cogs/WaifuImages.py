@@ -39,8 +39,6 @@ class Waifus(commands.Cog):
                 # Delete the message
                 await message.delete()
 
-        file.close()
-
     # Bot ~Toga command for Josh
     @commands.command(aliases=['Toga'])
     @cooldown(1, 0, BucketType.channel)

@@ -1,5 +1,4 @@
 import asyncio
-import pathlib
 import random
 
 import discord
@@ -96,8 +95,8 @@ class Fun(commands.Cog):
 
         channels = ["bot-commands"]
 
-        path = pathlib.Path(r'C:/Users/sgoud/PycharmProjects/EnsoBot/txtfiles/eightball.txt')
-        with open(path) as file:
+        # path = pathlib.Path(r'C:/Users/sgoud/PycharmProjects/EnsoBot/txtfiles/eightball.txt')
+        with open('eightball.txt') as file:
             _8ball_array = file.readlines()
 
             if str(ctx.channel) in channels:
@@ -110,8 +109,6 @@ class Fun(commands.Cog):
                 await asyncio.sleep(2.5)
                 # Delete the message
                 await message.delete()
-
-        file.close()
 
 
 def error_function():

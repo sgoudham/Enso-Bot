@@ -35,7 +35,9 @@ class Waifus(commands.Cog):
                 embed.set_image(url=random.choice(kakashi_array))
                 embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url='{}'.format(userAvatar))
                 await ctx.send(embed=embed)
+
             else:
+
                 message = await ctx.send(error_function())
 
                 # Let the user read the message for 2.5 seconds
@@ -60,6 +62,7 @@ class Waifus(commands.Cog):
                 embed.set_image(url=random.choice(toga_array))
                 embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url='{}'.format(userAvatar))
                 await ctx.send(embed=embed)
+
             else:
                 message = await ctx.send(error_function())
 

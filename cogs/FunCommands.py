@@ -18,7 +18,7 @@ class Fun(commands.Cog):
         self.bot = bot
 
     @commands.command(aliases=['Attack'])
-    @commands.has_any_role('Hamothy', "izzy")
+    @commands.has_any_role('Hamothy', "izzy", "Servant")
     async def attack(self, ctx, target: discord.Member):
 
         responses = [
@@ -94,11 +94,11 @@ class Fun(commands.Cog):
         await ctx.send(random.choice(responses))
 
     @commands.command(aliases=["Kiss", "kiss"])
-    @commands.has_any_role('Hamothy')
+    @commands.has_any_role('Hamothy', "Servant")
     @cooldown(1, 0.5, BucketType.channel)
     async def kissing(self, ctx, target: discord.Member):
 
-        channels = ["bot-commands"]
+        channels = ["bot-commands", "picto-chat"]
 
         try:
             if str(ctx.channel) in channels:
@@ -134,7 +134,7 @@ class Fun(commands.Cog):
     @cooldown(1, 0.5, BucketType.channel)
     async def _8ball(self, ctx, *, question):
 
-        channels = ["bot-commands"]
+        channels = ["bot-commands", "picto-chat"]
 
         try:
             if str(ctx.channel) in channels:

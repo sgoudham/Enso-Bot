@@ -29,7 +29,7 @@ async def on_ready():
 
 # Bot ~Ping command in milliseconds
 @client.command(aliases=["Ping"])
-@commands.has_any_role('Hamothy')
+@commands.has_any_role('Hamothy', 'Servant')
 async def ping(ctx):
     await ctx.send(f'Pong! {round(client.latency * 1000)}ms')
 

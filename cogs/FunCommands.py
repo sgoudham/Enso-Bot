@@ -98,55 +98,36 @@ class Fun(commands.Cog):
     @cooldown(1, 0.5, BucketType.channel)
     async def kissing(self, ctx, target: discord.Member):
 
-        if commands.has_any_role('Hamothy'):
+        channels = ["bot-commands"]
 
-            with open('kissing.txt') as file:
-                kissing_array = file.readlines()
-
-                # set member as the author
-                member = ctx.message.author
-                userAvatar = member.avatar_url
-
-                embed = discord.Embed(
-                    title=f"<:blushlook1:677310734123663363> <:blushlook2:679524467248201769> | **{member.display_name}** kissed **{target.display_name}**",
-                    colour=discord.Colour(int(random.choice(colours))))
-                embed.set_image(url=random.choice(kissing_array))
-                embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url='{}'.format(userAvatar))
-
-                await ctx.send(embed=embed)
-
-        else:
-            channels = ["bot commands"]
-
+        try:
             if str(ctx.channel) in channels:
 
                 with open('kissing.txt') as file:
                     kissing_array = file.readlines()
 
-                    if str(ctx.channel) in channels:
+                    # set member as the author
+                    member = ctx.message.author
+                    userAvatar = member.avatar_url
 
-                        # set member as the author
-                        member = ctx.message.author
-                        userAvatar = member.avatar_url
+                    embed = discord.Embed(
+                        title=f"<:blushlook1:677310734123663363> <:blushlook2:679524467248201769> | **{member.display_name}** kissed **{target.display_name}**",
+                        colour=discord.Colour(int(random.choice(colours))))
+                    embed.set_image(url=random.choice(kissing_array))
+                    embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url='{}'.format(userAvatar))
 
-                        embed = discord.Embed(
-                            title=f"<:blushlook1:677310734123663363> <:blushlook2:679524467248201769> | **{member.display_name}** kissed **{target.display_name}**",
-                            colour=discord.Colour(int(random.choice(colours))))
-                        embed.set_image(url=random.choice(kissing_array))
-                        embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url='{}'.format(userAvatar))
+                    await ctx.send(embed=embed)
 
-                        await ctx.send(embed=embed)
+            else:
 
-                        #    await self.bot.say("hugs {}".format(ctx.message.author.mention()))
+                message = await ctx.send(error_function())
 
-                    else:
-
-                        message = await ctx.send(error_function())
-
-                        # Let the user read the message for 2.5 seconds
-                        await asyncio.sleep(2.5)
-                        # Delete the message
-                        await message.delete()
+                # Let the user read the message for 2.5 seconds
+                await asyncio.sleep(2.5)
+                # Delete the message
+                await message.delete()
+        except FileNotFoundError as e:
+            print(e)
 
     # Bot ~8Ball command
     @commands.command(aliases=['8ball', '8Ball'])
@@ -155,19 +136,24 @@ class Fun(commands.Cog):
 
         channels = ["bot-commands"]
 
-        with open('eightball.txt') as file:
-            _8ball_array = file.readlines()
-
+        try:
             if str(ctx.channel) in channels:
-                await ctx.send(f'Question: {question}\nAnswer: {random.choice(_8ball_array)}')
+
+                with open('eightball.txt') as file:
+                    _8ball_array = file.readlines()
+
+                    await ctx.send(f'Question: {question}\nAnswer: {random.choice(_8ball_array)}')
 
             else:
+
                 message = await ctx.send(error_function())
 
                 # Let the user read the message for 2.5 seconds
                 await asyncio.sleep(2.5)
                 # Delete the message
                 await message.delete()
+        except FileNotFoundError as e:
+            print(e)
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, target: discord.member):

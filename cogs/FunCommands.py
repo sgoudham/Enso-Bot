@@ -5,6 +5,13 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import BucketType, cooldown
 
+channels = ["bot-commands"]
+
+colours = ["0xff0000", "0x5825ff", "0xff80ed", "0xa0f684", "0x7700cc", "0x0b04d9", "0x3d04ae", "0x000033", "0x00FFFF",
+           "0x120A8F", "0x7FFF0", "0xcc3300",
+           "0x5E260", "0xcc0000", "0x0066cc", "0x7632cd", "0x76a7cd", "0xffa7cd", "0xff24cd", "0xff2443", "0xff7d43",
+           "0xb52243", "0xb522ce", "0xb5f43d"]
+
 
 class Fun(commands.Cog):
     def __init__(self, bot):
@@ -13,6 +20,7 @@ class Fun(commands.Cog):
     @commands.command(aliases=['Attack'])
     @commands.has_any_role('Hamothy', "izzy")
     async def attack(self, ctx, target: discord.Member):
+
         responses = [
             f"{target.mention} is stinky",
             f"{target.mention} is ugly",
@@ -39,11 +47,12 @@ class Fun(commands.Cog):
             f"{target.mention} You know there's no vaccine for stupidity right?",
         ]
 
-        # Sending out a random response from the array "responses"
+        # Sending out a random insult from the array "responses"
         await ctx.send(random.choice(responses))
 
     @commands.command(aliases=['comp', 'Compliment', 'Comp'])
     async def compliment(self, ctx, target: discord.Member):
+
         responses = [
             f"{target.mention} is the most adorable uwu <:awie:676201100793085952> <:awie:676201100793085952> <:awie:676201100793085952>",
             f"{target.mention} You have my ENTIRE HEART <:blushlook1:677310734123663363> <:blushlook2:679524467248201769>",
@@ -81,20 +90,47 @@ class Fun(commands.Cog):
             f"Your taste in music is impeccable {target.mention}"
         ]
 
+        # Sending out a random compliment from the array "responses"
         await ctx.send(random.choice(responses))
 
-    @commands.command(aliases=["Hug"])
-    async def hug(self, ctx):
-        await self.bot.say("hugs {}".format(ctx.message.author.mention()))
+    @commands.command(aliases=["Kiss"])
+    @cooldown(1, 0.5, BucketType.channel)
+    async def kissing(self, ctx, target: discord.Member):
+
+        if str(ctx.channel) in channels:
+
+            with open('kissing.txt') as file:
+                kissing_array = file.readlines()
+
+                if str(ctx.channel) in channels:
+
+                    # set member as the author
+                    member = ctx.message.author
+                    userAvatar = member.avatar_url
+
+                    embed = discord.Embed(title=f"**{ctx.message.author} Kisses {target.display_name}!!**",
+                                          colour=discord.Colour(random.choice(colours)))
+                    embed.set_image(url=random.choice(kissing_array))
+                    embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url='{}'.format(userAvatar))
+
+                    await ctx.send(embed=embed)
+
+                    #    await self.bot.say("hugs {}".format(ctx.message.author.mention()))
+
+                else:
+
+                    message = await ctx.send(error_function())
+
+                    # Let the user read the message for 2.5 seconds
+                    await asyncio.sleep(2.5)
+                    # Delete the message
+                    await message.delete()
 
     # Bot ~8Ball command
     @commands.command(aliases=['8ball', '8Ball'])
     @cooldown(1, 0.5, BucketType.channel)
     async def _8ball(self, ctx, *, question):
 
-        channels = ["bot-commands"]
-
-        # path = pathlib.Path(r'C:/Users/sgoud/PycharmProjects/EnsoBot/txtfiles/eightball.txt')
         with open('eightball.txt') as file:
             _8ball_array = file.readlines()
 

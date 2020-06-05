@@ -7,10 +7,12 @@ from discord.ext.commands import BucketType, cooldown
 
 channels = ["bot-commands"]
 
-colours = ["0xff0000", "0x5825ff", "0xff80ed", "0xa0f684", "0x7700cc", "0x0b04d9", "0x3d04ae", "0x000033", "0x00FFFF",
-           "0x120A8F", "0x7FFF0", "0xcc3300",
-           "0x5E260", "0xcc0000", "0x0066cc", "0x7632cd", "0x76a7cd", "0xffa7cd", "0xff24cd", "0xff2443", "0xff7d43",
-           "0xb52243", "0xb522ce", "0xb5f43d"]
+colours = [0xff0000, 0x5825ff, 0xff80ed, 0xa0f684, 0x7700cc, 0x0b04d9, 0x3d04ae, 0x000033,
+           0x00FFFF,
+           0x120A8F, 0x7FFF0, 0xcc3300,
+           0x5E260, 0xcc0000, 0x0066cc, 0x7632cd, 0x76a7cd, 0xffa7cd, 0xff24cd, 0xff2443,
+           0xff7d43,
+           0xb52243, 0xb522ce, 0xb5f43d]
 
 
 class Waifus(commands.Cog):
@@ -22,8 +24,9 @@ class Waifus(commands.Cog):
     @cooldown(1, 0, BucketType.channel)
     async def kakashi(self, ctx):
 
-        with open('kakashiImages.txt') as file:
-            kakashi_array = file.readlines()
+        try:
+            with open('kakashiImages.txt') as file:
+                kakashi_array = file.readlines()
 
             if str(ctx.channel) in channels:
 
@@ -44,6 +47,8 @@ class Waifus(commands.Cog):
                 await asyncio.sleep(2.5)
                 # Delete the message
                 await message.delete()
+        except Exception as e:
+            print(f'{e}')
 
     # Bot ~Toga command for Josh
     @commands.command(aliases=['Toga'])
@@ -58,7 +63,7 @@ class Waifus(commands.Cog):
                 member = ctx.message.author  # set member as the author
                 userAvatar = member.avatar_url
 
-                embed = discord.Embed(title="**Himiko Toga**", colour=discord.Colour(random.choice(colours)))
+                embed = discord.Embed(title="**Himiko Toga**", colour=discord.Colour(int(random.choice(colours))))
                 embed.set_image(url=random.choice(toga_array))
                 embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url='{}'.format(userAvatar))
                 await ctx.send(embed=embed)

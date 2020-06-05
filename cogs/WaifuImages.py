@@ -47,36 +47,38 @@ class Waifus(commands.Cog):
                 await asyncio.sleep(2.5)
                 # Delete the message
                 await message.delete()
-        except Exception as e:
-            print(f'{e}')
+        except FileNotFoundError as e:
+            print(e)
 
     # Bot ~Toga command for Josh
     @commands.command(aliases=['Toga'])
     @cooldown(1, 0, BucketType.channel)
     async def toga(self, ctx):
 
-        with open('togaImages.txt') as file:
-            toga_array = file.readlines()
+        try:
+            with open('togaImages.txt') as file:
+                toga_array = file.readlines()
 
-            if str(ctx.channel) in channels:
+                if str(ctx.channel) in channels:
 
-                member = ctx.message.author  # set member as the author
-                userAvatar = member.avatar_url
+                    member = ctx.message.author  # set member as the author
+                    userAvatar = member.avatar_url
 
-                embed = discord.Embed(title="**Himiko Toga**", colour=discord.Colour(int(random.choice(colours))))
-                embed.set_image(url=random.choice(toga_array))
-                embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url='{}'.format(userAvatar))
-                await ctx.send(embed=embed)
+                    embed = discord.Embed(title="**Himiko Toga**", colour=discord.Colour(int(random.choice(colours))))
+                    embed.set_image(url=random.choice(toga_array))
+                    embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url='{}'.format(userAvatar))
+                    await ctx.send(embed=embed)
 
-            else:
-                message = await ctx.send(error_function())
+                else:
 
-                # Let the user read the message for 2.5 seconds
-                await asyncio.sleep(2.5)
-                # Delete the message
-                await message.delete()
+                    message = await ctx.send(error_function())
 
-        file.close()
+                    # Let the user read the message for 2.5 seconds
+                    await asyncio.sleep(2.5)
+                    # Delete the message
+                    await message.delete()
+        except FileNotFoundError as e:
+            print(e)
 
 
 def error_function():

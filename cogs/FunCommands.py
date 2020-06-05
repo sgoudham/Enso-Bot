@@ -5,8 +5,6 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import BucketType, cooldown
 
-channels = ["bot-commands"]
-
 colours = [0xff0000, 0x5825ff, 0xff80ed, 0xa0f684, 0x7700cc, 0x0b04d9, 0x3d04ae, 0x000033,
            0x00FFFF,
            0x120A8F, 0x7FFF0, 0xcc3300,
@@ -96,39 +94,59 @@ class Fun(commands.Cog):
         await ctx.send(random.choice(responses))
 
     @commands.command(aliases=["Kiss", "kiss"])
+    @commands.has_any_role('Hamothy')
     @cooldown(1, 0.5, BucketType.channel)
     async def kissing(self, ctx, target: discord.Member):
 
-
-        if str(ctx.channel) in channels:
+        if commands.has_any_role('Hamothy'):
 
             with open('kissing.txt') as file:
                 kissing_array = file.readlines()
 
-                if str(ctx.channel) in channels:
+                # set member as the author
+                member = ctx.message.author
+                userAvatar = member.avatar_url
 
-                    # set member as the author
-                    member = ctx.message.author
-                    userAvatar = member.avatar_url
+                embed = discord.Embed(
+                    title=f"<:blushlook1:677310734123663363> <:blushlook2:679524467248201769> | **{member.display_name}** kissed **{target.display_name}**",
+                    colour=discord.Colour(int(random.choice(colours))))
+                embed.set_image(url=random.choice(kissing_array))
+                embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url='{}'.format(userAvatar))
 
-                    embed = discord.Embed(
-                        title=f"<:blushlook1:677310734123663363> <:blushlook2:679524467248201769> | **{member.display_name}** kissed **{target.display_name}**",
-                        colour=discord.Colour(int(random.choice(colours))))
-                    embed.set_image(url=random.choice(kissing_array))
-                    embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url='{}'.format(userAvatar))
+                await ctx.send(embed=embed)
 
-                    await ctx.send(embed=embed)
+        else:
+            channels = ["bot commands"]
 
-                    #    await self.bot.say("hugs {}".format(ctx.message.author.mention()))
+            if str(ctx.channel) in channels:
 
-                else:
+                with open('kissing.txt') as file:
+                    kissing_array = file.readlines()
 
-                    message = await ctx.send(error_function())
+                    if str(ctx.channel) in channels:
 
-                    # Let the user read the message for 2.5 seconds
-                    await asyncio.sleep(2.5)
-                    # Delete the message
-                    await message.delete()
+                        # set member as the author
+                        member = ctx.message.author
+                        userAvatar = member.avatar_url
+
+                        embed = discord.Embed(
+                            title=f"<:blushlook1:677310734123663363> <:blushlook2:679524467248201769> | **{member.display_name}** kissed **{target.display_name}**",
+                            colour=discord.Colour(int(random.choice(colours))))
+                        embed.set_image(url=random.choice(kissing_array))
+                        embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url='{}'.format(userAvatar))
+
+                        await ctx.send(embed=embed)
+
+                        #    await self.bot.say("hugs {}".format(ctx.message.author.mention()))
+
+                    else:
+
+                        message = await ctx.send(error_function())
+
+                        # Let the user read the message for 2.5 seconds
+                        await asyncio.sleep(2.5)
+                        # Delete the message
+                        await message.delete()
 
     # Bot ~8Ball command
     @commands.command(aliases=['8ball', '8Ball'])

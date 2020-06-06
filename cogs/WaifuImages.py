@@ -1,6 +1,7 @@
 import asyncio
 import datetime
 import random
+from pathlib import PureWindowsPath
 
 import discord
 from discord.ext import commands
@@ -58,7 +59,8 @@ class Waifus(commands.Cog):
     async def toga(self, ctx):
 
         try:
-            with open('togaImages.txt') as file:
+            path = PureWindowsPath(r'C:\Users\sgoud\PycharmProjects\EnsoBot\images\togaImages.txt')
+            with open(str(path)) as file:
                 toga_array = file.readlines()
 
                 if str(ctx.channel) in channels:

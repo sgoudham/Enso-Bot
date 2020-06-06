@@ -108,7 +108,7 @@ class Fun(commands.Cog):
         try:
             if str(ctx.channel) in channels:
 
-                path = PureWindowsPath('C:/Users/sgoud/PycharmProjects/EnsoBot/images/kissing.txt')
+                path = PureWindowsPath(r'C:\Users\sgoud\PycharmProjects\EnsoBot\images\kissing.txt')
                 with open(str(path)) as file:
                     kissing_array = file.readlines()
 

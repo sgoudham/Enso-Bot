@@ -1,4 +1,5 @@
 import asyncio
+import datetime
 import random
 
 import discord
@@ -116,6 +117,7 @@ class Fun(commands.Cog):
                         colour=discord.Colour(int(random.choice(colours))))
                     embed.set_image(url=random.choice(kissing_array))
                     embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url='{}'.format(userAvatar))
+                    embed.timestamp = datetime.datetime.utcnow()
 
                     await ctx.send(embed=embed)
 

@@ -1,4 +1,5 @@
 import asyncio
+import datetime
 import random
 
 import discord
@@ -37,6 +38,7 @@ class Waifus(commands.Cog):
                 embed = discord.Embed(title="**Hatake Kakashi**", colour=discord.Colour(random.choice(colours)))
                 embed.set_image(url=random.choice(kakashi_array))
                 embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url='{}'.format(userAvatar))
+                embed.timestamp = datetime.datetime.utcnow()
                 await ctx.send(embed=embed)
 
             else:
@@ -67,6 +69,7 @@ class Waifus(commands.Cog):
                     embed = discord.Embed(title="**Himiko Toga**", colour=discord.Colour(int(random.choice(colours))))
                     embed.set_image(url=random.choice(toga_array))
                     embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url='{}'.format(userAvatar))
+                    embed.timestamp = datetime.datetime.utcnow()
                     await ctx.send(embed=embed)
 
                 else:

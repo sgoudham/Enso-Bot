@@ -26,12 +26,14 @@ class CustomHelp(commands.Cog):
 
             embed.add_field(
                 name="\u200b",
-                value="```( ͡°ω ͡°) Waifu/Husbando Commands ( ͡°ω ͡°)```",
+                value="```css" +
+                      "\n ( ͡°ω ͡°) Waifu/Husbando Commands ( ͡°ω ͡°)" +
+                      "```",
                 inline=False)
             embed.add_field(
                 name="\u200b\u200b",
-                value="**➳ ~ping**" +
-                      "\n Returns Pong! Along With The Latency in ms",
+                value="**➳ ~kakashi**" +
+                      "\n Allows for a randomly generated image of Hatake Kakashi",
                 inline=True)
             embed.add_field(
                 name="\u200b",
@@ -45,7 +47,9 @@ class CustomHelp(commands.Cog):
                 inline=True)
             embed.add_field(
                 name="\u200b",
-                value="```( ͡°ω ͡°) Misc Commands ( ͡°ω ͡°)```",
+                value="```css" +
+                      "\n ( ͡°ω ͡°) Misc Commands ( ͡°ω ͡°)" +
+                      "```",
                 inline=False)
             embed.add_field(
                 name="\u200b\u200b",

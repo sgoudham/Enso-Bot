@@ -1,4 +1,5 @@
 import asyncio
+import datetime
 
 import discord
 from decouple import config
@@ -41,6 +42,8 @@ async def roles(ctx):
     embed = discord.Embed(title="```So you wanna know how the leveled roles system works huh?```",
                           colour=discord.Colour(0x30e419),
                           description="------------------------------------------------")
+
+    embed.timestamp = datetime.datetime.utcnow()
 
     embed.set_image(url="https://media.discordapp.net/attachments/669812887564320769/717149671771996180/unknown.png")
     embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/683490529862090814/715010931620446269/image1.jpg")

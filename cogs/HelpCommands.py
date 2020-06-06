@@ -9,7 +9,7 @@ class CustomHelp(commands.Cog):
         self.bot = bot
 
     @commands.command()
-    async def help(self, ctx, ):
+    async def help(self, ctx):
         author = ctx.message.author
 
         try:
@@ -24,7 +24,44 @@ class CustomHelp(commands.Cog):
             embed.set_footer(text=f"{ctx.message.author}",
                              icon_url="https://media.discordapp.net/attachments/689525645734182916/718510466640642099/Rias_Gremory.png")
 
-            embed.add_field(name="~ping", value="Returns Pong! Along With The Latency in ms", inline=False)
+            embed.add_field(
+                name="\u200b",
+                value="```( ͡°ω ͡°) Waifu/Husbando Commands ( ͡°ω ͡°)```",
+                inline=False)
+            embed.add_field(
+                name="\u200b\u200b",
+                value="**➳ ~ping**" +
+                      "\n Returns Pong! Along With The Latency in ms",
+                inline=True)
+            embed.add_field(
+                name="\u200b",
+                value="**➳ ~rules**" +
+                      "\n Returns the entire ruleset for the server (Perms: Co-Owner)",
+                inline=True)
+            embed.add_field(
+                name="\u200b",
+                value="**➳ ~roles**" +
+                      "\n Shows you how the leveling and xp system works, as well as displaying the order of leveled roles (Perms: Co-Owner)",
+                inline=True)
+            embed.add_field(
+                name="\u200b",
+                value="```( ͡°ω ͡°) Misc Commands ( ͡°ω ͡°)```",
+                inline=False)
+            embed.add_field(
+                name="\u200b\u200b",
+                value="**➳ ~ping**" +
+                      "\n Returns Pong! Along With The Latency in ms",
+                inline=True)
+            embed.add_field(
+                name="\u200b",
+                value="**➳ ~rules**" +
+                      "\n Returns the entire ruleset for the server (Perms: Co-Owner)",
+                inline=True)
+            embed.add_field(
+                name="\u200b",
+                value="**➳ ~roles**" +
+                      "\n Shows you how the leveling and xp system works, as well as displaying the order of leveled roles (Perms: Co-Owner)",
+                inline=True)
 
             await author.send(embed=embed)
         except Exception as e:

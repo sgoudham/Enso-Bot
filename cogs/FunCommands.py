@@ -51,6 +51,7 @@ class Fun(commands.Cog):
         await ctx.send(random.choice(responses))
 
     @commands.command(aliases=['comp', 'Compliment', 'Comp'])
+    @cooldown(1, 2, BucketType.channel)
     async def compliment(self, ctx, target: discord.Member):
 
         responses = [

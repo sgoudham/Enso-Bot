@@ -67,7 +67,7 @@ class Fun(commands.Cog):
             f"{target.mention} Your smile is so beautiful it blinds me :heart_eyes: :heart_eyes:",
             f"Being on a journey all my life, I will never meet a person as amazing as you are {target.mention}",
             f"Such a pleasure to be on the same sever with {target.mention} <:boneappleteeth:676202300573876252> <:boneappleteeth:676202300573876252>",
-            f"With {target.mention}, even the worst day will be filled with joy <:GWcentrallHUGS:395628394043277313> <:GWcentrallHUGS:395628394043277313>",
+            f"With {target.mention}, even the worst day will be filled with joy <:hug:718248629034549299> <:hug:718248629034549299>",
             f"There's no better antidepressant than {target.mention}",
             f"{target.mention} You're great, keep going Σd(˘ꇴ˘๑)",
             f"I'd simp for {target.mention} anyday :flushed: :heart_eyes: :flushed: ",
@@ -100,7 +100,7 @@ class Fun(commands.Cog):
     @cooldown(1, 0.5, BucketType.channel)
     async def kissing(self, ctx, target: discord.Member):
 
-        channels = ["bot-commands", "picto-chat"]
+        channels = ["bot-commands", "picto-chat", "general"]
 
         try:
             if str(ctx.channel) in channels:

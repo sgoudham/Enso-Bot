@@ -89,14 +89,14 @@ class Fun(commands.Cog):
             f"{target.mention}From a scale of 1-10, you’re 9 I’m the 1 you need <:Kawaii:676203363922214953> <:Kawaii:676203363922214953> <:Kawaii:676203363922214953> ",
             f"You're... You're SHREKTACULAR :heart_eyes: :flushed: :heart_eyes: {target.mention}",
             f"{target.mention} Your beauty renders me speechless... :heart_eyes: :heart_eyes:"
-            f"Your taste in music is impeccable {target.mention}"
+            f"Your taste in music is impeccable {target.mention}",
+            f"{target.mention}I can't stop thinking about you :see_no_evil: :see_no_evil:"
         ]
 
         # Sending out a random compliment from the array "responses"
         await ctx.send(random.choice(responses))
 
     @commands.command(aliases=["Kiss", "kiss"])
-    @commands.has_any_role('Hamothy', "Servant")
     @cooldown(1, 0.5, BucketType.channel)
     async def kissing(self, ctx, target: discord.Member):
 

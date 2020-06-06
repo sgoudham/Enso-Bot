@@ -1,6 +1,7 @@
 import asyncio
 import datetime
 import random
+from pathlib import PureWindowsPath
 
 import discord
 from discord.ext import commands
@@ -90,7 +91,8 @@ class Fun(commands.Cog):
             f"You're... You're SHREKTACULAR :heart_eyes: :flushed: :heart_eyes: {target.mention}",
             f"{target.mention} Your beauty renders me speechless... :heart_eyes: :heart_eyes:"
             f"Your taste in music is impeccable {target.mention}",
-            f"{target.mention}I can't stop thinking about you :see_no_evil: :see_no_evil:"
+            f"{target.mention}I can't stop thinking about you :see_no_evil: :see_no_evil:",
+            f""
         ]
 
         # Sending out a random compliment from the array "responses"
@@ -102,10 +104,12 @@ class Fun(commands.Cog):
 
         channels = ["bot-commands", "picto-chat", "general"]
 
+
         try:
             if str(ctx.channel) in channels:
 
-                with open('kissing.txt') as file:
+                path = PureWindowsPath('C:/Users/sgoud/PycharmProjects/EnsoBot/images/kissing.txt')
+                with open(str(path)) as file:
                     kissing_array = file.readlines()
 
                     # set member as the author

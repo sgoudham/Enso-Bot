@@ -36,7 +36,7 @@ class Fun(commands.Cog):
             f"I bet {target.mention} can't reach the wall cabinets without a booster chair",
             f"{target.mention} Browses 4Chan and Reddit all day looking for love",
             f"{target.mention} Your forehead could be used as a landing pad",
-            f"I bet {target.mention} you likes eating watermelon with the rind.",
+            f"I bet {target.mention} likes eating watermelon with the rind.",
             f"{target.mention} You were the first creation to make god say oops",
             f"{target.mention} You have delusions of adequacy",
             f"{target.mention} I treasure the time I don't spend with you",

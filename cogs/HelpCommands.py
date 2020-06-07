@@ -55,6 +55,12 @@ class CustomHelp(commands.Cog):
                 inline=True)
             embed.add_field(
                 name="\u200b",
+                value="**➳ ~cuddle**" +
+                      "\n Allows the user to cuddle someone in the server" +
+                      "\n *(Perms: Everyone)*",
+                inline=True)
+            embed.add_field(
+                name="\u200b",
                 value="```css" +
                       "\n ( ͡°ω ͡°) Waifu/Husbando Commands ( ͡°ω ͡°)" +
                       "```",

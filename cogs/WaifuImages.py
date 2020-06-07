@@ -84,6 +84,38 @@ class Waifus(commands.Cog):
         except FileNotFoundError as e:
             print(e)
 
+    # Bot ~Tamaki command for Kate
+    @commands.command(aliases=['Tamaki'])
+    @cooldown(1, 0, BucketType.channel)
+    async def tamaki(self, ctx):
+
+        try:
+            with open('images/tamakiImages.txt') as file:
+                tamaki_array = file.readlines()
+
+            if str(ctx.channel) in channels:
+
+                # set member as the author
+                member = ctx.message.author
+                userAvatar = member.avatar_url
+
+                embed = discord.Embed(title="**Tamaki Suoh**", colour=discord.Colour(random.choice(colours)))
+                embed.set_image(url=random.choice(tamaki_array))
+                embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url='{}'.format(userAvatar))
+                embed.timestamp = datetime.datetime.utcnow()
+                await ctx.send(embed=embed)
+
+            else:
+
+                message = await ctx.send(error_function())
+
+                # Let the user read the message for 2.5 seconds
+                await asyncio.sleep(2.5)
+                # Delete the message
+                await message.delete()
+        except FileNotFoundError as e:
+            print(e)
+
 
 def error_function():
     return "Sorry! I only work in #bot-commands!"

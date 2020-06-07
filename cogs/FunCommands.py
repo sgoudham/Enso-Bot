@@ -3,7 +3,6 @@ import datetime
 import random
 
 import discord
-import tenorpy
 from discord.ext import commands
 from discord.ext.commands import BucketType, cooldown
 
@@ -18,10 +17,6 @@ colours = [0xff0000, 0x5825ff, 0xff80ed, 0xa0f684, 0x7700cc, 0x0b04d9, 0x3d04ae,
 class Fun(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-
-    t = tenorpy.Tenor()
-    for x in range(20):
-        print(t.random("anime cute cuddle hug"))  # Will return a random
 
     @commands.command(aliases=['Attack'])
     @commands.has_any_role('Hamothy', "izzy", "Servant")
@@ -51,6 +46,7 @@ class Fun(commands.Cog):
             f"#{target.mention}IsOverParty",
             f"I hope {target.mention} drops dead with a curable disease that doctors simply didn’t feel like curing :)",
             f"{target.mention} You know there's no vaccine for stupidity right?",
+            f"{target.mention} You are not very epic at all"
         ]
 
         # Sending out a random insult from the array "responses"
@@ -96,7 +92,6 @@ class Fun(commands.Cog):
             f"{target.mention} Your beauty renders me speechless... :heart_eyes: :heart_eyes:"
             f"Your taste in music is impeccable {target.mention}",
             f"{target.mention}I can't stop thinking about you :see_no_evil: :see_no_evil:",
-            f""
         ]
 
         # Sending out a random compliment from the array "responses"

@@ -5,4 +5,3 @@ certifi
 async-timeout==3.0.1
 python-dotenv~=0.13.0
 python-decouple
-youtube-dl

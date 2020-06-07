@@ -26,7 +26,7 @@ class Waifus(commands.Cog):
     async def kakashi(self, ctx):
 
         try:
-            with open('kakashiImages.txt') as file:
+            with open('images/kakashiImages.txt') as file:
                 kakashi_array = file.readlines()
 
             if str(ctx.channel) in channels:

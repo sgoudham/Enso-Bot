@@ -1,7 +1,6 @@
 import asyncio
 import datetime
 import random
-from pathlib import PureWindowsPath
 
 import discord
 from discord.ext import commands
@@ -108,8 +107,8 @@ class Fun(commands.Cog):
             if str(ctx.channel) in channels:
 
                 # path = PurePath('Ensobot', 'kissing.txt')
-                path = PureWindowsPath('C:', 'Users', 'sgoud' 'PycharmProjects', 'EnsoBot', 'images', 'kissing.txt')
-                with open(str(path)) as file:
+                # path = PureWindowsPath('C:', 'Users', 'sgoud' 'PycharmProjects', 'EnsoBot', 'images', 'kissing.txt')
+                with open('images/kissing.txt') as file:
                     kissing_array = file.readlines()
 
                     # set member as the author
@@ -146,7 +145,7 @@ class Fun(commands.Cog):
         try:
             if str(ctx.channel) in channels:
 
-                with open('eightball.txt') as file:
+                with open('images/eightball.txt') as file:
                     _8ball_array = file.readlines()
 
                     await ctx.send(f'Question: {question}\nAnswer: {random.choice(_8ball_array)}')

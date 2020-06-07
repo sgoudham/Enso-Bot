@@ -45,13 +45,13 @@ class CustomHelp(commands.Cog):
                 name="\u200b",
                 value="**➳ ~compliment**" +
                       "\n Allows the user to compliment someone in the server" +
-                      "\n *(Perms: everyone)*",
+                      "\n *(Perms: Everyone)*",
                 inline=True)
             embed.add_field(
                 name="\u200b",
                 value="**➳ ~kiss**" +
                       "\n Allows the user to kiss someone in the server" +
-                      "\n *(Perms: Co-Owner)*",
+                      "\n *(Perms: Everyone)*",
                 inline=True)
             embed.add_field(
                 name="\u200b",
@@ -63,19 +63,19 @@ class CustomHelp(commands.Cog):
                 name="\u200b\u200b",
                 value="**➳ ~kakashi**" +
                       "\n Allows for a randomly generated image of Hatake Kakashi" +
-                      "\n *(Perms: everyone)*",
+                      "\n *(Perms: Everyone)*",
                 inline=True)
             embed.add_field(
                 name="\u200b",
                 value="**➳ ~toga**" +
                       "\n Allows for a randomly generated image of Himiko Toga to be shown" +
-                      "\n *(Perms: everyone)*",
+                      "\n *(Perms: Everyone)*",
                 inline=True)
             embed.add_field(
                 name="\u200b",
                 value="**➳ ~tamaki**" +
                       "\n Allows for a randomly generated image of Tamaki Suoh to be shown" +
-                      "\n *(Perms: everyone)*",
+                      "\n *(Perms: Everyone)*",
                 inline=True)
             embed.add_field(
                 name="\u200b",
@@ -93,13 +93,13 @@ class CustomHelp(commands.Cog):
                 name="\u200b",
                 value="**➳ ~rules**" +
                       "\n Returns the entire ruleset for the server" +
-                      "\n *(Perms: Co-Owner)*",
+                      "\n *(Perms: Everyone)*",
                 inline=True)
             embed.add_field(
                 name="\u200b",
                 value="**➳ ~roles**" +
                       "\n Shows you how the leveling and xp system works, as well as displaying the order of leveled roles" +
-                      "\n *(Perms: Co-Owner)*",
+                      "\n *(Perms: Everyone)*",
                 inline=True)
 
             await author.send(embed=embed)
@@ -108,7 +108,6 @@ class CustomHelp(commands.Cog):
 
     # Bot ~rules command allows for an embed message about the leveled roles and xp system
     @commands.command(aliases=["Rules", "rule", "Rule"])
-    @commands.has_any_role('Hamothy')
     async def rules(self, ctx, target: discord.Member):
         try:
             embed = discord.Embed(title="```(っ◔◡◔)っ Ensō Rules```", colour=discord.Colour(0xFF69B4),

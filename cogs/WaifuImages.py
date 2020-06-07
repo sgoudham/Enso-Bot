@@ -58,7 +58,7 @@ class Waifus(commands.Cog):
     async def toga(self, ctx):
 
         try:
-            # path = PureWindowsPath(r'C:\Users\sgoud\PycharmProjects\EnsoBot\images\togaImages.txt')
+
             with open('images/togaImages.txt') as file:
                 toga_array = file.readlines()
 

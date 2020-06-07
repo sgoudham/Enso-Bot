@@ -108,7 +108,7 @@ class Fun(commands.Cog):
             if str(ctx.channel) in channels:
 
                 # path = PurePath('Ensobot', 'kissing.txt')
-                path = PurePath('C:', 'Users', 'sgoud' 'PycharmProjects', 'EnsoBot', 'images', 'kissing.txt')
+                path = PurePath('C:', 'Users', 'sgoud' 'PycharmProjects', 'EnsoBot', 'cogs', 'kissing.txt')
                 with open(str(path)) as file:
                     kissing_array = file.readlines()
 

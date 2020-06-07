@@ -1,7 +1,7 @@
 import asyncio
 import datetime
 import random
-from pathlib import PurePath
+from pathlib import PureWindowsPath
 
 import discord
 from discord.ext import commands
@@ -108,7 +108,7 @@ class Fun(commands.Cog):
             if str(ctx.channel) in channels:
 
                 # path = PurePath('Ensobot', 'kissing.txt')
-                path = PurePath('C:', 'Users', 'sgoud', 'PycharmProjects', 'EnsoBot', 'images', 'kissing.txt')
+                path = PureWindowsPath(r'C:', 'Users', 'sgoud' 'PycharmProjects', 'EnsoBot', 'images', 'kissing.txt')
                 with open(str(path)) as file:
                     kissing_array = file.readlines()
 

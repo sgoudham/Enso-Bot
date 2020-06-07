@@ -73,6 +73,12 @@ class CustomHelp(commands.Cog):
                 inline=True)
             embed.add_field(
                 name="\u200b",
+                value="**➳ ~tamaki**" +
+                      "\n Allows for a randomly generated image of Tamaki Suoh to be shown" +
+                      "\n *(Perms: everyone)*",
+                inline=True)
+            embed.add_field(
+                name="\u200b",
                 value="```css" +
                       "\n ( ͡°ω ͡°) Misc Commands ( ͡°ω ͡°)" +
                       "```",

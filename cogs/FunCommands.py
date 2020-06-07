@@ -107,7 +107,7 @@ class Fun(commands.Cog):
             if str(ctx.channel) in channels:
 
                 # path = PurePath('Ensobot', 'kissing.txt')
-                with open(str('C:/Users/sgoud/PycharmProjects/EnsoBot/images/kissing.txt')) as file:
+                with open(str('C:/Users/sgoud/PycharmProjects/EnsoBot/cogs/kissing.txt')) as file:
                     kissing_array = file.readlines()
 
                     # set member as the author

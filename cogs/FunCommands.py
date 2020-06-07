@@ -101,13 +101,11 @@ class Fun(commands.Cog):
     @cooldown(1, 0.5, BucketType.channel)
     async def kissing(self, ctx, target: discord.Member):
 
-        channels = ["bot-commands", "picto-chat", "general"]
+        channels = ["bot-commands", "picto-chat"]
 
         try:
             if str(ctx.channel) in channels:
 
-                # path = PurePath('Ensobot', 'kissing.txt')
-                # path = PureWindowsPath('C:', 'Users', 'sgoud' 'PycharmProjects', 'EnsoBot', 'images', 'kissing.txt')
                 with open('images/kissing.txt') as file:
                     kissing_array = file.readlines()
 
@@ -119,6 +117,42 @@ class Fun(commands.Cog):
                         title=f"<:blushlook1:677310734123663363> <:blushlook2:679524467248201769> | **{member.display_name}** kissed **{target.display_name}**",
                         colour=discord.Colour(int(random.choice(colours))))
                     embed.set_image(url=random.choice(kissing_array))
+                    embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url='{}'.format(userAvatar))
+                    embed.timestamp = datetime.datetime.utcnow()
+
+                    await ctx.send(embed=embed)
+
+            else:
+
+                message = await ctx.send(error_function())
+
+                # Let the user read the message for 2.5 seconds
+                await asyncio.sleep(2.5)
+                # Delete the message
+                await message.delete()
+        except FileNotFoundError as e:
+            print(e)
+
+    @commands.command(aliases=["Cuddle", "cdle", "cud"])
+    @cooldown(1, 0.5, BucketType.channel)
+    async def cuddle(self, ctx, target: discord.Member):
+
+        channels = ["bot-commands", "picto-chat"]
+
+        try:
+            if str(ctx.channel) in channels:
+
+                with open('images/cuddling.txt') as file:
+                    cuddling_array = file.readlines()
+
+                    # set member as the author
+                    member = ctx.message.author
+                    userAvatar = member.avatar_url
+
+                    embed = discord.Embed(
+                        title=f"<a:huh:676195228872474643> <a:huh:676195228872474643> | **{member.display_name}** cuddles **{target.display_name}**",
+                        colour=discord.Colour(int(random.choice(colours))))
+                    embed.set_image(url=random.choice(cuddling_array))
                     embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url='{}'.format(userAvatar))
                     embed.timestamp = datetime.datetime.utcnow()
 

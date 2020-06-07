@@ -40,7 +40,7 @@
 “Hamothy LOVES this question and nods approvingly“
 “I don't have the energy to answer this question...“
 “The Swedish fish agrees“
-“You're better off asking Dyno Ensō is in a bad mood right now :(“
+“You're better off asking Dyno, Ensō is in a bad mood right now :(“
 “The answer lies within your heart“
 “All the signs point to yes!“
 “Marshall would love to agree with you“
@@ -53,3 +53,5 @@
 "niKki sAys gO gEts tHeM HorSie"
 "<:Lukas:718940468137951253>"
 "McRib has not deemed you worthy of a response"
+"Tucker is horny and will reply later"
+"D"

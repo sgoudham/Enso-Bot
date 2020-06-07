@@ -215,8 +215,8 @@ class CustomHelp(commands.Cog):
 
     # Bot ~roles command allows for an embed message about
     @commands.command()
-    @commands.has_any_role('Hamothy')
     async def roles(self, ctx):
+        author = ctx.message.author
 
         try:
             embed = discord.Embed(title="```So you wanna know how the leveled roles system works huh?```",
@@ -236,17 +236,17 @@ class CustomHelp(commands.Cog):
                 text="---------------------------------------------------------------------------------")
 
             embed.add_field(name="Cooldown", value="**•XP is gained every time you talk with a 2 minute cooldown.**",
-                            inline=True),
+                            inline=False),
             embed.add_field(name="Message Length",
                             value="**•XP is not determined by the size of the message. You will not get more XP just because "
                                   "the message is bigger.**",
-                            inline=True),
+                            inline=False),
             embed.add_field(name="Roles",
                             value="**•As seen below, those are the colours and roles that will be achieved upon gaining that "
                                   "amount of experience**",
-                            inline=True)
+                            inline=False)
 
-            await ctx.send(embed=embed)
+            await author.send(embed=embed)
         except Exception as e:
             print(e)
 

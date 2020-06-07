@@ -1,0 +1,10 @@
+README.md
+setup.cfg
+setup.py
+tenorpy/__init__.py
+tenorpy/tenorpy.py
+tenorpy.egg-info/PKG-INFO
+tenorpy.egg-info/SOURCES.txt
+tenorpy.egg-info/dependency_links.txt
+tenorpy.egg-info/requires.txt
+tenorpy.egg-info/top_level.txt

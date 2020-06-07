@@ -3,6 +3,7 @@ import datetime
 import random
 
 import discord
+import tenorpy
 from discord.ext import commands
 from discord.ext.commands import BucketType, cooldown
 
@@ -17,6 +18,10 @@ colours = [0xff0000, 0x5825ff, 0xff80ed, 0xa0f684, 0x7700cc, 0x0b04d9, 0x3d04ae,
 class Fun(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+
+    t = tenorpy.Tenor()
+    for x in range(20):
+        print(t.random("anime cute cuddle hug"))  # Will return a random
 
     @commands.command(aliases=['Attack'])
     @commands.has_any_role('Hamothy', "izzy", "Servant")

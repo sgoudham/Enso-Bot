@@ -169,6 +169,40 @@ class Fun(commands.Cog):
         except FileNotFoundError as e:
             print(e)
 
+    @commands.command(aliases=["lem", "Lemon", "Lem"])
+    @cooldown(1, 2, BucketType.channel)
+    async def lemon(self, ctx, target: discord.Member):
+
+        channels = ["bot-commands", "picto-chat", "general"]
+
+        try:
+            if str(ctx.channel) in channels:
+
+                # set member as the author
+                member = ctx.message.author
+                userAvatar = member.avatar_url
+
+                embed = discord.Embed(
+                    title=f"<a:huh:676195228872474643> <a:huh:676195228872474643> | **{member.display_name}** Gives A Lemon To **{target.display_name}**",
+                    colour=discord.Colour(int(random.choice(colours))))
+                embed.set_image(
+                    url="https://media.discordapp.net/attachments/718484280925224981/719629805263257630/lemon.gif")
+                embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url='{}'.format(userAvatar))
+                embed.timestamp = datetime.datetime.utcnow()
+
+                await ctx.send(embed=embed)
+
+            else:
+
+                message = await ctx.send(error_function())
+
+                # Let the user read the message for 2.5 seconds
+                await asyncio.sleep(2.5)
+                # Delete the message
+                await message.delete()
+        except FileNotFoundError as e:
+            print(e)
+
     # Bot ~8Ball command
     @commands.command(aliases=['8ball', '8Ball'])
     @cooldown(1, 0.5, BucketType.channel)
@@ -194,16 +228,6 @@ class Fun(commands.Cog):
                 await message.delete()
         except FileNotFoundError as e:
             print(e)
-
-    @commands.Cog.listener()
-    async def on_command_error(self, ctx, target: discord.member):
-        if isinstance(target, commands.MissingRequiredArgument):
-            message = await ctx.send("Uh oh! Couldn't find anyone to mention! Try again!")
-
-            # Let the user read the message for 2.5 seconds
-            await asyncio.sleep(1.5)
-            # Delete the message
-            await message.delete()
 
 
 def error_function():

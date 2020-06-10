@@ -19,7 +19,7 @@ class Fun(commands.Cog):
         self.bot = bot
 
     @commands.command(aliases=['Attack'])
-    @commands.has_any_role('Hamothy', "izzy", "Servant")
+    @commands.has_any_role('Hamothy', "izzy", "Servant", "public relations")
     async def attack(self, ctx, target: discord.Member):
 
         responses = [
@@ -47,6 +47,10 @@ class Fun(commands.Cog):
             f"I hope {target.mention} drops dead with a curable disease that doctors simply didn’t feel like curing :)",
             f"{target.mention} You know there's no vaccine for stupidity right?",
             f"{target.mention} You are not very epic at all"
+            f"You make Kpop Fancams 24/7 for validation on the internet {target.mention}",
+            f"Your mother wanted to drop you on the head when you were little {target.mention}",
+            f"{target.mention} You're the CEO of Racism",
+            f"{target.mention} has no common sense"
         ]
 
         # Sending out a random insult from the array "responses"
@@ -174,7 +178,9 @@ class Fun(commands.Cog):
     async def lemon(self, ctx, target: discord.Member):
 
         channels = ["bot-commands", "picto-chat", "general"]
-
+        lemon_array = ["https://media.discordapp.net/attachments/669812887564320769/720093589056520202/lemon.gif",
+                       "https://media.discordapp.net/attachments/669812887564320769/720093575492272208/lemon2.gif",
+                       "https://media.discordapp.net/attachments/718484280925224981/719629805263257630/lemon.gif"]
         try:
             if str(ctx.channel) in channels:
 
@@ -185,8 +191,7 @@ class Fun(commands.Cog):
                 embed = discord.Embed(
                     title=f"<a:huh:676195228872474643> <a:huh:676195228872474643> | **{member.display_name}** Gives A Lemon To **{target.display_name}**",
                     colour=discord.Colour(int(random.choice(colours))))
-                embed.set_image(
-                    url="https://media.discordapp.net/attachments/718484280925224981/719629805263257630/lemon.gif")
+                embed.set_image(url=random.choice(lemon_array))
                 embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url='{}'.format(userAvatar))
                 embed.timestamp = datetime.datetime.utcnow()
 

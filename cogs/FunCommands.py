@@ -105,7 +105,7 @@ class Fun(commands.Cog):
     @cooldown(1, 0.5, BucketType.channel)
     async def kissing(self, ctx, target: discord.Member):
 
-        channels = ["bot-commands", "picto-chat"]
+        channels = ["bot-commands"]
 
         try:
             if str(ctx.channel) in channels:
@@ -141,7 +141,7 @@ class Fun(commands.Cog):
     @cooldown(1, 0.5, BucketType.channel)
     async def cuddle(self, ctx, target: discord.Member):
 
-        channels = ["bot-commands", "picto-chat"]
+        channels = ["bot-commands"]
 
         try:
             if str(ctx.channel) in channels:
@@ -177,7 +177,7 @@ class Fun(commands.Cog):
     @cooldown(1, 2, BucketType.channel)
     async def lemon(self, ctx, target: discord.Member):
 
-        channels = ["bot-commands", "picto-chat", "general"]
+        channels = ["bot-commands", "general"]
         lemon_array = ["https://media.discordapp.net/attachments/669812887564320769/720093589056520202/lemon.gif",
                        "https://media.discordapp.net/attachments/669812887564320769/720093575492272208/lemon2.gif",
                        "https://media.discordapp.net/attachments/718484280925224981/719629805263257630/lemon.gif"]
@@ -213,7 +213,7 @@ class Fun(commands.Cog):
     @cooldown(1, 0.5, BucketType.channel)
     async def _8ball(self, ctx, *, question):
 
-        channels = ["bot-commands", "picto-chat"]
+        channels = ["bot-commands"]
 
         try:
             if str(ctx.channel) in channels:

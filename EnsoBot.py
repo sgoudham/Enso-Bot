@@ -24,7 +24,7 @@ if __name__ == '__main__':
 @client.event
 async def on_ready():
     print('Bot is ready.')
-    await client.change_presence(activity=discord.Game(name='Izzy UvU <3'))
+    await client.change_presence(activity=discord.Game(name="I'm scared"))
 
 
 # Bot ~Ping command in milliseconds

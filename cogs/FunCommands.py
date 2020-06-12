@@ -19,7 +19,7 @@ class Fun(commands.Cog):
         self.bot = bot
 
     @commands.command(aliases=['Attack'])
-    @commands.has_any_role('Hamothy', "izzy", "Servant", "public relations")
+    @commands.has_any_role('Hamothy', "izzy", "Servant", "pubic relations")
     async def attack(self, ctx, target: discord.Member):
 
         responses = [

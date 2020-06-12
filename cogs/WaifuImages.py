@@ -6,7 +6,7 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import BucketType, cooldown
 
-channels = ["bot-commands"]
+channels = ["bot-commands", 'picto-chat']
 
 colours = [0xff0000, 0x5825ff, 0xff80ed, 0xa0f684, 0x7700cc, 0x0b04d9, 0x3d04ae, 0x000033,
            0x00FFFF,

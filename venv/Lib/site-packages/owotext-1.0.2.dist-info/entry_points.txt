@@ -1,0 +1,3 @@
+[console_scripts]
+owo = owotext.owo:main
+

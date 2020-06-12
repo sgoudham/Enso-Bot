@@ -8,3 +8,5 @@ python-decouple
 tenorpy
 youtube-dl
 ffmpeg
+discord.py
+owotext

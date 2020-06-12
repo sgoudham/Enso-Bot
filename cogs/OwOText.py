@@ -2,6 +2,7 @@ import random
 
 from discord.ext import commands
 # OwO Impowt da wibwawy ÙωÙ
+from discord.ext.commands import cooldown, BucketType
 from owotext import OwO
 
 vowels = ['a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U']
@@ -37,15 +38,8 @@ class OwOText(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    """@commands.command(aliases=['OwO'])
-    async def owo(self, ctx):
-        # Huohhhh. Setup da convewtew ʕʘ‿ʘʔ
-        uwu = OwO()
-        owo = uwu.whatsthis(ctx.message.content)
-
-        await ctx.send(owo)"""
-
     @commands.Cog.listener()
+    @cooldown(1, 1.5, BucketType.channel)
     async def on_message(self, message):
         if message.author.bot:
             return

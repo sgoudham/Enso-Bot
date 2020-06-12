@@ -4,7 +4,6 @@ import random
 
 import discord
 from discord.ext import commands
-from discord.ext.commands import BucketType, cooldown
 
 channels = ["bot-commands"]
 
@@ -22,10 +21,10 @@ class Waifus(commands.Cog):
 
     # Bot ~Kakashi command for Zara
     @commands.command(aliases=['Kakashi'])
-    @cooldown(1, 0, BucketType.channel)
     async def kakashi(self, ctx):
 
         try:
+
             with open('images/kakashiImages.txt') as file:
                 kakashi_array = file.readlines()
 
@@ -49,12 +48,12 @@ class Waifus(commands.Cog):
                 await asyncio.sleep(2.5)
                 # Delete the message
                 await message.delete()
+
         except FileNotFoundError as e:
             print(e)
 
     # Bot ~Toga command for Josh
     @commands.command(aliases=['Toga'])
-    @cooldown(1, 0, BucketType.channel)
     async def toga(self, ctx):
 
         try:
@@ -81,12 +80,12 @@ class Waifus(commands.Cog):
                     await asyncio.sleep(2.5)
                     # Delete the message
                     await message.delete()
+
         except FileNotFoundError as e:
             print(e)
 
     # Bot ~Tamaki command for Kate
     @commands.command(aliases=['Tamaki'])
-    @cooldown(1, 0, BucketType.channel)
     async def tamaki(self, ctx):
 
         try:
@@ -117,6 +116,7 @@ class Waifus(commands.Cog):
             print(e)
 
 
+# Error handling function to make sure that the commands only work in bot-commands
 def error_function():
     return "Sorry! I only work in #bot-commands!"
 

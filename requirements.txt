@@ -7,3 +7,4 @@ python-dotenv~=0.13.0
 python-decouple
 tenorpy
 youtube-dl
+ffmpeg

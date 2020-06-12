@@ -1,3 +1,4 @@
+import asyncio
 import random
 
 from discord.ext import commands
@@ -38,8 +39,35 @@ class OwOText(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    @commands.command()
+    @cooldown(1, 2, BucketType.channel)
+    async def owo(self, ctx):
+        if ctx.message.content.startswith("~owo"):
+            msg = ctx.message.content.split("~owo ", 1)
+
+            uwu = OwO()
+            owo = uwu.whatsthis(str(msg[-1]))
+
+            await ctx.message.channel.send(owo)
+
+    # Bot Event for handling cooldown error
     @commands.Cog.listener()
-    @cooldown(1, 1.5, BucketType.channel)
+    async def on_command_error(self, ctx, error):
+        if isinstance(error, commands.CommandOnCooldown):
+            message = await ctx.send(f'That command is on cooldown. Try again in {error.retry_after:,.2f} seconds.')
+
+            # Let the user read the message for 2.5 seconds
+            await asyncio.sleep(2.5)
+            # Delete the message
+            await message.delete()
+
+
+def setup(bot):
+    bot.add_cog(OwOText(bot))
+
+    """  
+ @commands.Cog.listener()
+    @cooldown(1, 6, BucketType.channel)
     async def on_message(self, message):
         if message.author.bot:
             return
@@ -50,7 +78,4 @@ class OwOText(commands.Cog):
             owo = uwu.whatsthis(str(msg[-1]))
 
             await message.channel.send(owo)
-
-
-def setup(bot):
-    bot.add_cog(OwOText(bot))
+    """

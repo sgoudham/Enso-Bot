@@ -105,7 +105,7 @@ class Fun(commands.Cog):
     @cooldown(1, 0.5, BucketType.channel)
     async def kissing(self, ctx, target: discord.Member):
 
-        channels = ["bot-commands"]
+        channels = ["bot-commands", 'general']
 
         try:
             if str(ctx.channel) in channels:
@@ -141,7 +141,7 @@ class Fun(commands.Cog):
     @cooldown(1, 0.5, BucketType.channel)
     async def cuddle(self, ctx, target: discord.Member):
 
-        channels = ["bot-commands"]
+        channels = ["bot-commands", 'general']
 
         try:
             if str(ctx.channel) in channels:

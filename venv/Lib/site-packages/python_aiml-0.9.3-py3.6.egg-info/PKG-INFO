@@ -1,0 +1,30 @@
+Metadata-Version: 1.1
+Name: python-aiml
+Version: 0.9.3
+Summary: An interpreter package for AIML, the Artificial Intelligence Markup Language
+Home-page: https://github.com/paulovn/python-aiml
+Author: Paulo Villegas
+Author-email: paulo.vllgs@gmail.com
+License: UNKNOWN
+Download-URL: https://github.com/paulovn/python-aiml/tarball/v0.9.3
+Description: python-aiml implements an interpreter for AIML, the Artificial Intelligence
+        Markup Language developed by Dr. Richard Wallace of the A.L.I.C.E. Foundation.
+        It can be used to implement a conversational AI program.
+        
+        Forked from PyAIML 0.8.6 (https://github.com/cdwfs/pyaiml) 
+        PyAIML (c) Cort Stratton
+        
+Platform: any
+Classifier: Development Status :: 4 - Beta
+Classifier: Environment :: Console
+Classifier: Intended Audience :: Developers
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.4
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Programming Language :: Python :: 3.6
+Classifier: License :: OSI Approved :: BSD License
+Classifier: Operating System :: OS Independent
+Classifier: Topic :: Communications :: Chat
+Classifier: Topic :: Scientific/Engineering :: Artificial Intelligence

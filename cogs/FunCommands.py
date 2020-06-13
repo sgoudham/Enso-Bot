@@ -121,8 +121,20 @@ class Fun(commands.Cog):
                 await asyncio.sleep(2.5)
                 # Delete the message
                 await message.delete()
+
         except FileNotFoundError as e:
             print(e)
+
+    # Bot ~8Ball command
+    @commands.command(aliases=['Lukas'])
+    @cooldown(1, 0.5, BucketType.channel)
+    @commands.has_any_role('Lukas (Server Booster)')
+    async def lukas(self, ctx):
+        lukasID = '<@395653002050011166>'
+        bubzID = '<@422588717744652289>'
+
+        await ctx.send(
+            f"{lukasID} loves {bubzID} with all his heart <:awie:676201100793085952> <:awie:676201100793085952>")
 
 
 def setup(bot):

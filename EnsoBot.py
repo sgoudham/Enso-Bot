@@ -12,7 +12,8 @@ client = commands.Bot(command_prefix='~')
 client.remove_command('help')
 
 # Instantiates a list for all the cogs
-extensions = ['cogs.WaifuImages', 'cogs.FunCommands', 'cogs.Music', 'cogs.HelpCommands', 'cogs.OwOText']
+extensions = ['cogs.WaifuImages', 'cogs.FunCommands', 'cogs.Music',
+              'cogs.HelpCommands', 'cogs.OwOText', 'cogs.Embeds']
 
 # Calls the cogs
 if __name__ == '__main__':

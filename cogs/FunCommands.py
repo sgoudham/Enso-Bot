@@ -213,7 +213,7 @@ class Fun(commands.Cog):
     @cooldown(1, 0.5, BucketType.channel)
     async def _8ball(self, ctx, *, question):
 
-        channels = ["bot-commands"]
+        channels = ["bot-commands", "general"]
 
         try:
             if str(ctx.channel) in channels:

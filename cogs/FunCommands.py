@@ -6,12 +6,9 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import BucketType, cooldown
 
-colours = [0xff0000, 0x5825ff, 0xff80ed, 0xa0f684, 0x7700cc, 0x0b04d9, 0x3d04ae, 0x000033,
-           0x00FFFF,
-           0x120A8F, 0x7FFF0, 0xcc3300,
-           0x5E260, 0xcc0000, 0x0066cc, 0x7632cd, 0x76a7cd, 0xffa7cd, 0xff24cd, 0xff2443,
-           0xff7d43,
-           0xb52243, 0xb522ce, 0xb5f43d]
+import config
+
+colour_list = [c for c in config.colors.values()]
 
 
 class Fun(commands.Cog):
@@ -119,7 +116,7 @@ class Fun(commands.Cog):
 
                     embed = discord.Embed(
                         title=f"<:blushlook1:677310734123663363> <:blushlook2:679524467248201769> | **{member.display_name}** kissed **{target.display_name}**",
-                        colour=discord.Colour(int(random.choice(colours))))
+                        colour=discord.Colour(int(random.choice(colour_list))))
                     embed.set_image(url=random.choice(kissing_array))
                     embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url='{}'.format(userAvatar))
                     embed.timestamp = datetime.datetime.utcnow()
@@ -155,7 +152,7 @@ class Fun(commands.Cog):
 
                     embed = discord.Embed(
                         title=f"<a:huh:676195228872474643> <a:huh:676195228872474643> | **{member.display_name}** cuddles **{target.display_name}**",
-                        colour=discord.Colour(int(random.choice(colours))))
+                        colour=discord.Colour(int(random.choice(colour_list))))
                     embed.set_image(url=random.choice(cuddling_array))
                     embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url='{}'.format(userAvatar))
                     embed.timestamp = datetime.datetime.utcnow()
@@ -190,7 +187,7 @@ class Fun(commands.Cog):
 
                 embed = discord.Embed(
                     title=f"<a:huh:676195228872474643> <a:huh:676195228872474643> | **{member.display_name}** Gives A Lemon To **{target.display_name}**",
-                    colour=discord.Colour(int(random.choice(colours))))
+                    colour=discord.Colour(int(random.choice(colour_list))))
                 embed.set_image(url=random.choice(lemon_array))
                 embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url='{}'.format(userAvatar))
                 embed.timestamp = datetime.datetime.utcnow()

@@ -36,6 +36,12 @@ class CustomHelp(commands.Cog):
                       "\n *(Perms: everyone)*",
                 inline=True)
             embed.add_field(
+                name="\u200b\u200b",
+                value="**➳ ~owo**" +
+                      "\n Converts the sentence typed into 'owo' text " +
+                      "\n *(Perms: everyone)*",
+                inline=True)
+            embed.add_field(
                 name="\u200b",
                 value="**➳ ~lemon**" +
                       "\n Allows the user to give a lemon to someone in the server" +

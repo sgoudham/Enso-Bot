@@ -64,18 +64,3 @@ class OwOText(commands.Cog):
 
 def setup(bot):
     bot.add_cog(OwOText(bot))
-
-    """  
- @commands.Cog.listener()
-    @cooldown(1, 6, BucketType.channel)
-    async def on_message(self, message):
-        if message.author.bot:
-            return
-        if message.content.startswith("owo"):
-            msg = message.content.split("owo ", 1)
-
-            uwu = OwO()
-            owo = uwu.whatsthis(str(msg[-1]))
-
-            await message.channel.send(owo)
-    """

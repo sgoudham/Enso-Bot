@@ -133,8 +133,13 @@ class Fun(commands.Cog):
         lukasID = '<@395653002050011166>'
         bubzID = '<@422588717744652289>'
 
-        await ctx.send(
-            f"{lukasID} loves {bubzID} with all his heart <:awie:676201100793085952> <:awie:676201100793085952>")
+        responses = [
+            f"{lukasID} loves {bubzID} with all his heart <:awie:676201100793085952> <:awie:676201100793085952>",
+            f"{lukasID} and {bubzID} are raising their rabbits <:blushlook1:677310734123663363> <:blushlook2:679524467248201769>",
+            f"{lukasID} is having a cult meeting <a:Monka:402587773594238986>",
+            f"{bubzID} is {lukasID}’s Ehefrau"]
+
+        await ctx.send(random.choice(responses))
 
 
 def setup(bot):

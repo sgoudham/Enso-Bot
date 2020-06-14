@@ -1,18 +1,9 @@
 """
-The :mod:`websockets.handshake` module deals with the WebSocket opening
-handshake according to `section 4 of RFC 6455`_.
+:mod:`websockets.handshake` provides helpers for the WebSocket handshake.
+
+See `section 4 of RFC 6455`_.
 
 .. _section 4 of RFC 6455: http://tools.ietf.org/html/rfc6455#section-4
-
-It provides functions to implement the handshake with any existing HTTP
-library. You must pass to these functions:
-
-- A ``set_header`` function accepting a header name and a header value,
-- A ``get_header`` function accepting a header name and returning the header
-  value.
-
-The inputs and outputs of ``get_header`` and ``set_header`` are :class:`str`
-objects containing only ASCII characters.
 
 Some checks cannot be performed because they depend too much on the
 context; instead, they're documented below.
@@ -35,104 +26,160 @@ To open a connection, a client must:
 """
 
 import base64
+import binascii
 import hashlib
 import random
+from typing import List
 
-from .exceptions import InvalidHandshake
+from .exceptions import InvalidHeader, InvalidHeaderValue, InvalidUpgrade
+from .headers import ConnectionOption, UpgradeProtocol, parse_connection, parse_upgrade
+from .http import Headers, MultipleValuesError
 
 
-__all__ = [
-    'build_request', 'check_request',
-    'build_response', 'check_response',
-]
+__all__ = ["build_request", "check_request", "build_response", "check_response"]
 
 GUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"
 
 
-def build_request(set_header):
+def build_request(headers: Headers) -> str:
     """
     Build a handshake request to send to the server.
 
-    Return the ``key`` which must be passed to :func:`check_response`.
+    Update request headers passed in argument.
+
+    :param headers: request headers
+    :returns: ``key`` which must be passed to :func:`check_response`
 
     """
-    rand = bytes(random.getrandbits(8) for _ in range(16))
-    key = base64.b64encode(rand).decode()
-    set_header('Upgrade', 'WebSocket')
-    set_header('Connection', 'Upgrade')
-    set_header('Sec-WebSocket-Key', key)
-    set_header('Sec-WebSocket-Version', '13')
+    raw_key = bytes(random.getrandbits(8) for _ in range(16))
+    key = base64.b64encode(raw_key).decode()
+    headers["Upgrade"] = "websocket"
+    headers["Connection"] = "Upgrade"
+    headers["Sec-WebSocket-Key"] = key
+    headers["Sec-WebSocket-Version"] = "13"
     return key
 
 
-def check_request(get_header):
+def check_request(headers: Headers) -> str:
     """
     Check a handshake request received from the client.
 
-    If the handshake is valid, this function returns the ``key`` which must be
-    passed to :func:`build_response`.
-
-    Otherwise it raises an :exc:`~websockets.exceptions.InvalidHandshake`
-    exception and the server must return an error like 400 Bad Request.
-
     This function doesn't verify that the request is an HTTP/1.1 or higher GET
-    request and doesn't perform Host and Origin checks. These controls are
-    usually performed earlier in the HTTP request handling code. They're the
-    responsibility of the caller.
+    request and doesn't perform ``Host`` and ``Origin`` checks. These controls
+    are usually performed earlier in the HTTP request handling code. They're
+    the responsibility of the caller.
+
+    :param headers: request headers
+    :returns: ``key`` which must be passed to :func:`build_response`
+    :raises ~websockets.exceptions.InvalidHandshake: if the handshake request
+        is invalid; then the server must return 400 Bad Request error
 
     """
+    connection: List[ConnectionOption] = sum(
+        [parse_connection(value) for value in headers.get_all("Connection")], []
+    )
+
+    if not any(value.lower() == "upgrade" for value in connection):
+        raise InvalidUpgrade("Connection", ", ".join(connection))
+
+    upgrade: List[UpgradeProtocol] = sum(
+        [parse_upgrade(value) for value in headers.get_all("Upgrade")], []
+    )
+
+    # For compatibility with non-strict implementations, ignore case when
+    # checking the Upgrade header. It's supposed to be 'WebSocket'.
+    if not (len(upgrade) == 1 and upgrade[0].lower() == "websocket"):
+        raise InvalidUpgrade("Upgrade", ", ".join(upgrade))
+
     try:
-        assert get_header('Upgrade').lower() == 'websocket'
-        assert any(
-            token.strip() == 'upgrade'
-            for token in get_header('Connection').lower().split(','))
-        key = get_header('Sec-WebSocket-Key')
-        assert len(base64.b64decode(key.encode(), validate=True)) == 16
-        assert get_header('Sec-WebSocket-Version') == '13'
-    except Exception as exc:
-        raise InvalidHandshake("Invalid request") from exc
-    else:
-        return key
+        s_w_key = headers["Sec-WebSocket-Key"]
+    except KeyError:
+        raise InvalidHeader("Sec-WebSocket-Key")
+    except MultipleValuesError:
+        raise InvalidHeader(
+            "Sec-WebSocket-Key", "more than one Sec-WebSocket-Key header found"
+        )
+
+    try:
+        raw_key = base64.b64decode(s_w_key.encode(), validate=True)
+    except binascii.Error:
+        raise InvalidHeaderValue("Sec-WebSocket-Key", s_w_key)
+    if len(raw_key) != 16:
+        raise InvalidHeaderValue("Sec-WebSocket-Key", s_w_key)
+
+    try:
+        s_w_version = headers["Sec-WebSocket-Version"]
+    except KeyError:
+        raise InvalidHeader("Sec-WebSocket-Version")
+    except MultipleValuesError:
+        raise InvalidHeader(
+            "Sec-WebSocket-Version", "more than one Sec-WebSocket-Version header found"
+        )
+
+    if s_w_version != "13":
+        raise InvalidHeaderValue("Sec-WebSocket-Version", s_w_version)
+
+    return s_w_key
 
 
-def build_response(set_header, key):
+def build_response(headers: Headers, key: str) -> None:
     """
     Build a handshake response to send to the client.
 
-    ``key`` comes from :func:`check_request`.
+    Update response headers passed in argument.
+
+    :param headers: response headers
+    :param key: comes from :func:`check_request`
 
     """
-    set_header('Upgrade', 'WebSocket')
-    set_header('Connection', 'Upgrade')
-    set_header('Sec-WebSocket-Accept', accept(key))
+    headers["Upgrade"] = "websocket"
+    headers["Connection"] = "Upgrade"
+    headers["Sec-WebSocket-Accept"] = accept(key)
 
 
-def check_response(get_header, key):
+def check_response(headers: Headers, key: str) -> None:
     """
     Check a handshake response received from the server.
-
-    ``key`` comes from :func:`build_request`.
-
-    If the handshake is valid, this function returns ``None``.
-
-    Otherwise it raises an :exc:`~websockets.exceptions.InvalidHandshake`
-    exception.
 
     This function doesn't verify that the response is an HTTP/1.1 or higher
     response with a 101 status code. These controls are the responsibility of
     the caller.
 
+    :param headers: response headers
+    :param key: comes from :func:`build_request`
+    :raises ~websockets.exceptions.InvalidHandshake: if the handshake response
+        is invalid
+
     """
+    connection: List[ConnectionOption] = sum(
+        [parse_connection(value) for value in headers.get_all("Connection")], []
+    )
+
+    if not any(value.lower() == "upgrade" for value in connection):
+        raise InvalidUpgrade("Connection", " ".join(connection))
+
+    upgrade: List[UpgradeProtocol] = sum(
+        [parse_upgrade(value) for value in headers.get_all("Upgrade")], []
+    )
+
+    # For compatibility with non-strict implementations, ignore case when
+    # checking the Upgrade header. It's supposed to be 'WebSocket'.
+    if not (len(upgrade) == 1 and upgrade[0].lower() == "websocket"):
+        raise InvalidUpgrade("Upgrade", ", ".join(upgrade))
+
     try:
-        assert get_header('Upgrade').lower() == 'websocket'
-        assert any(
-            token.strip() == 'upgrade'
-            for token in get_header('Connection').lower().split(','))
-        assert get_header('Sec-WebSocket-Accept') == accept(key)
-    except Exception as exc:
-        raise InvalidHandshake("Invalid response") from exc
+        s_w_accept = headers["Sec-WebSocket-Accept"]
+    except KeyError:
+        raise InvalidHeader("Sec-WebSocket-Accept")
+    except MultipleValuesError:
+        raise InvalidHeader(
+            "Sec-WebSocket-Accept", "more than one Sec-WebSocket-Accept header found"
+        )
+
+    if s_w_accept != accept(key):
+        raise InvalidHeaderValue("Sec-WebSocket-Accept", s_w_accept)
 
 
-def accept(key):
+def accept(key: str) -> str:
     sha1 = hashlib.sha1((key + GUID).encode()).digest()
     return base64.b64encode(sha1).decode()

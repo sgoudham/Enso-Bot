@@ -58,6 +58,17 @@ async def on_command_error(ctx, target: discord.member):
         await message.delete()
 
 
+@client.event
+async def on_command_error(ctx, error):
+    if isinstance(error, commands.CheckFailure):
+        message = await ctx.send("Uh oh! You don't have permission to use this command!")
+
+        # Let the user read the message for 2.5 seconds
+        await asyncio.sleep(1.5)
+        # Delete the message
+        await message.delete()
+
+
 try:
     client.run(API_TOKEN)
 except discord.errors.LoginFailure as e:

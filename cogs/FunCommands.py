@@ -128,7 +128,7 @@ class Fun(commands.Cog):
     # Bot ~8Ball command
     @commands.command(aliases=['Lukas'])
     @cooldown(1, 0.5, BucketType.channel)
-    @commands.has_any_role('Lukas (Server Booster)', 'Hamothy')
+    @commands.has_any_role('Lukas (Server Booster)')
     async def lukas(self, ctx):
         lukasID = '<@395653002050011166>'
         bubzID = '<@422588717744652289>'

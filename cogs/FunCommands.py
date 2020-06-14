@@ -145,7 +145,11 @@ class Fun(commands.Cog):
     @commands.command(aliases=['Flip'])
     @cooldown(1, 2, BucketType.channel)
     async def flip(self, ctx):
-        responses = ["smol pp", "huge pp"]
+        pp_array = ["smol pp", "huge pp"]
+        pewds_array = ["floor gang", "ceiling gang"]
+        chippy_array = ["couch gang", "chair gang"]
+
+        responses = random.choice([pp_array, pewds_array, chippy_array])
 
         await ctx.send(f"{ctx.author.mention} {random.choice(responses)}")
 

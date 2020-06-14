@@ -128,7 +128,7 @@ class Fun(commands.Cog):
     # Bot ~8Ball command
     @commands.command(aliases=['Lukas'])
     @cooldown(1, 0.5, BucketType.channel)
-    @commands.has_any_role('Lukas (Server Booster)')
+    @commands.has_any_role('Lukas (Server Booster)', 'Hamothy')
     async def lukas(self, ctx):
         lukasID = '<@395653002050011166>'
         bubzID = '<@422588717744652289>'
@@ -136,10 +136,18 @@ class Fun(commands.Cog):
         responses = [
             f"{lukasID} loves {bubzID} with all his heart <:awie:676201100793085952> <:awie:676201100793085952>",
             f"{lukasID} and {bubzID} are raising their rabbits <:blushlook1:677310734123663363> <:blushlook2:679524467248201769>",
-            f"{lukasID} is having a cult meeting <a:Monka:402587773594238986>",
+            f"{lukasID} is having a cult meeting",
             f"{bubzID} is {lukasID}’s Ehefrau"]
 
         await ctx.send(random.choice(responses))
+        # await ctx.send("<a:Monka:402587773594238986>")
+
+    @commands.command(aliases=['Flip'])
+    @cooldown(1, 2, BucketType.channel)
+    async def flip(self, ctx):
+        responses = ["smol pp", "huge pp"]
+
+        await ctx.send(f"{ctx.author.mention} {random.choice(responses)}")
 
 
 def setup(bot):

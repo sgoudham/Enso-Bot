@@ -93,10 +93,13 @@ class Fun(commands.Cog):
             f"{target.mention} Your beauty renders me speechless... :heart_eyes: :heart_eyes:"
             f"Your taste in music is impeccable {target.mention}",
             f"{target.mention}I can't stop thinking about you :see_no_evil: :see_no_evil:",
+            f"{target.mention} Your wedding will be wonderful, but the y is silent <a:huh:676195228872474643> <a:huh:676195228872474643>"
+            f"{target.mention} Hammy would give up his lifelong goals just to have a chance with you <a:huh:676195228872474643> <a:huh:676195228872474643>"
         ]
 
         # Sending out a random compliment from the array "responses"
         await ctx.send(random.choice(responses))
+        # await ctx.send(f"{target.mention} Your wedding will be wonderful, but the y is silent <a:huh:676195228872474643> <a:huh:676195228872474643>")
 
     # Bot ~8Ball command
     @commands.command(aliases=['8ball', '8Ball'])
@@ -145,14 +148,37 @@ class Fun(commands.Cog):
     @commands.command(aliases=['Flip'])
     @cooldown(1, 2, BucketType.channel)
     async def flip(self, ctx):
-        pp_array = ["smol pp", "huge pp"]
-        pewds_array = ["floor gang", "ceiling gang"]
-        chippy_array = ["couch gang", "chair gang"]
+        pp_array = ["Smol pp", "Huge pp"]
+        pewds_array = ["Floor Gang", "Ceiling Gang"]
+        chippy_array = ["Couch gang", "Chair Gang"]
 
         responses = random.choice([pp_array, pewds_array, chippy_array])
 
         await ctx.send(f"{ctx.author.mention} {random.choice(responses)}")
 
+    @commands.command()
+    async def death(self, ctx, target: discord.member):
+        player1 = ctx.author.mention
+        player2 = target.mention
+
+        await ctx.send(f"Deathmatch started! **{player1}** vs **{player2}**")
+
 
 def setup(bot):
     bot.add_cog(Fun(bot))
+
+    """# Bot ~8Ball command
+    @commands.command(aliases=['dm', 'Deathmatch'])
+    @cooldown(1, 0.5, BucketType.channel)
+    async def death(self, ctx):
+
+        channels = ["ensobottesting"]
+        player1 = ctx.author.mention
+        player2 = target.mention
+
+        p1hp = 100
+        p2hp = 100
+
+        await ctx.send("Deathmatch")
+
+"""

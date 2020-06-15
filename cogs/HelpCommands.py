@@ -49,6 +49,12 @@ class CustomHelp(commands.Cog):
                 inline=True)
             embed.add_field(
                 name="\u200b",
+                value="**➳ ~flip**" +
+                      "\n Allows the user to 'throw a coin' and get a response with a 50/50 chance" +
+                      "\n *(Perms: Everyone)*",
+                inline=True)
+            embed.add_field(
+                name="\u200b",
                 value="**➳ ~attack**" +
                       "\n Allows the user to throw an insult to someone in the server" +
                       "\n *(Perms: Co-Owner)*",

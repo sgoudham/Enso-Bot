@@ -82,3 +82,81 @@ async def users(ctx):
 
     await ctx.send(f"""Number of Members: {server_id.member_count}""") 
 '''
+
+"""
+@client.event
+async def on_message(message, target: discord.Member,):
+    player1 = message.author.mention
+    player2 = target.mention
+    channel = message.channel
+
+    if message.content.startswith('~punch'):
+        channel = message.channel
+        await channel.send(f"**Deathmatch started! {player1} vs {player2}**"
+                           f"\n What do you want to do {message.author}?"
+                           f"\n 1) Punch"
+                           f"\n 2) Kick")
+
+        def check(m):
+            return m.content == 'punch' and m.channel == channel
+
+        msg = await client.wait_for('f"**{player1} punched {player2} for {punch(p2)} damage!**"', check=check)
+        await channel.send(msg)
+        
+        
+@client.event
+async def on_message(message):
+    if message.content.startswith('~hello'):
+        channel = message.channel
+        await channel.send('Say hello!')
+
+        def check(m):
+            return m.content == 'hello' and m.channel == channel
+
+        msg = await client.wait_for('message', check=check)
+        await channel.send('Hello {.author}!'.format(msg))
+        
+        
+def check(author):
+def inner_check(message):
+    return message.author == author and message.content == "Hello"
+
+return inner_check
+
+msg = await client.wait_for('message', check=check(ctx.author), timeout=30)
+await ctx.send(msg)
+
+# def check(m):
+#    return m.content == 'punch' and m.channel == channel
+
+# = await client.wait_for('message', check=check)
+# await channel.send(f"**{player1} punched {player2} for {punch(p2)} damage!**")
+except Exception as e:
+print(e) 
+
+
+@client.command(aliases=["dm"])
+async def deathmatch(ctx, target: discord.Member):
+    player1 = ctx.author.mention
+    player2 = target.mention
+    channel = ctx.channel
+
+    p1 = 100
+    p2 = 100
+
+    await ctx.send(f"**Deathmatch started! {player1} vs {player2}**"
+                   f"\n What do you want to do {ctx.author}?"
+                   f"\n 1) Punch"
+                   f"\n 2) Kick")
+
+    def check(m):
+        return m.content == 'punch' and m.channel == channel
+
+    msg = await client.wait_for('message', check=check)
+    await channel.send(msg)
+    
+def punch(p2, player1, player2):
+    damage = random.randint(1, 100)
+    p2 -= damage
+    return f"**{player1} punched {player2} for {punch(p2)} damage!**"
+"""

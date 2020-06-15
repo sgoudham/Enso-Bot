@@ -156,13 +156,6 @@ class Fun(commands.Cog):
 
         await ctx.send(f"{ctx.author.mention} {random.choice(responses)}")
 
-    @commands.command()
-    async def death(self, ctx, target: discord.member):
-        player1 = ctx.author.mention
-        player2 = target.mention
-
-        await ctx.send(f"Deathmatch started! **{player1}** vs **{player2}**")
-
 
 def setup(bot):
     bot.add_cog(Fun(bot))
@@ -180,5 +173,26 @@ def setup(bot):
         p2hp = 100
 
         await ctx.send("Deathmatch")
+
+    @commands.command()
+    async def death(self, ctx, target: discord.Member):
+        player1 = ctx.author.mention
+        player2 = target.mention
+        channel = ctx.channel
+
+        p1 = 100
+        p2 = 100
+
+        await ctx.send(f"**Deathmatch started! {player1} vs {player2}**"
+                       f"\n What do you want to do {ctx.author}?"
+                       f"\n 1) Punch"
+                       f"\n 2) Kick")
+
+        msg = await client.wait_for(f"**{player1} punched {player2} for {punch(p2)} damage!**", check=check)
+        # await channel.send('Hello {.author}!'.format(msg))
+        # await ctx.send(f"**{player1} punched {player2} for {punch(p2)} damage!**")
+        await ctx.send(f"{msg}")
+
+
 
 """

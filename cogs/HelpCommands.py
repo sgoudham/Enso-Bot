@@ -125,6 +125,12 @@ class CustomHelp(commands.Cog):
                       "\n Shows you how the leveling and xp system works, as well as displaying the order of leveled roles" +
                       "\n *(Perms: Everyone)*",
                 inline=True)
+            embed.add_field(
+                name="\u200b\u200b",
+                value="**➳ ~rolemenu**" +
+                      "\n Allows for the users to get self ping-able roles" +
+                      "\n *(Perms: Co-Owner)*",
+                inline=True)
 
             await author.send(embed=embed)
         except Exception as e:

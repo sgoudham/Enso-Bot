@@ -150,6 +150,7 @@ async def role_menu(ctx):
         print(e)
 
 
+# Bot event for enabling roles to be added to users when they react to the embedded message
 @client.event
 async def on_raw_reaction_add(payload):
     try:
@@ -171,6 +172,7 @@ async def on_raw_reaction_add(payload):
         print(e)
 
 
+# Bot event for enabling roles to be removed from users when they unreact to the embedded messaged
 @client.event
 async def on_raw_reaction_remove(payload):
     try:

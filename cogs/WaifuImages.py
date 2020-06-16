@@ -33,7 +33,7 @@ class Waifus(commands.Cog):
 
                 embed = discord.Embed(title="**Hatake Kakashi**", colour=discord.Colour(random.choice(colour_list)))
                 embed.set_image(url=random.choice(kakashi_array))
-                embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url='{}'.format(userAvatar))
+                embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
                 embed.timestamp = datetime.datetime.utcnow()
                 await ctx.send(embed=embed)
 
@@ -66,7 +66,7 @@ class Waifus(commands.Cog):
                     embed = discord.Embed(title="**Himiko Toga**",
                                           colour=discord.Colour(int(random.choice(colour_list))))
                     embed.set_image(url=random.choice(toga_array))
-                    embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url='{}'.format(userAvatar))
+                    embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
                     embed.timestamp = datetime.datetime.utcnow()
                     await ctx.send(embed=embed)
 
@@ -98,7 +98,7 @@ class Waifus(commands.Cog):
 
                 embed = discord.Embed(title="**Tamaki Suoh**", colour=discord.Colour(random.choice(colour_list)))
                 embed.set_image(url=random.choice(tamaki_array))
-                embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url='{}'.format(userAvatar))
+                embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
                 embed.timestamp = datetime.datetime.utcnow()
                 await ctx.send(embed=embed)
 
@@ -110,6 +110,38 @@ class Waifus(commands.Cog):
                 await asyncio.sleep(2.5)
                 # Delete the message
                 await message.delete()
+        except FileNotFoundError as e:
+            print(e)
+
+    # Bot ~marshy command for Zara
+    @commands.command(aliases=['marshy', 'Marshall'])
+    async def marshall(self, ctx):
+
+        try:
+            with open('images/marshallImages.txt') as file:
+                marsh_array = file.readlines()
+
+            if str(ctx.channel) in channels:
+
+                # set member as the author
+                member = ctx.message.author
+                userAvatar = member.avatar_url
+
+                embed = discord.Embed(title=f"**Marshy Pie UwU**", colour=discord.Colour(random.choice(colour_list)))
+                embed.set_image(url=random.choice(marsh_array))
+                embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
+                embed.timestamp = datetime.datetime.utcnow()
+                await ctx.send(embed=embed)
+
+            else:
+
+                message = await ctx.send(error_function())
+
+                # Let the user read the message for 2.5 seconds
+                await asyncio.sleep(2.5)
+                # Delete the message
+                await message.delete()
+
         except FileNotFoundError as e:
             print(e)
 

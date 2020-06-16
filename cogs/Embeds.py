@@ -24,7 +24,7 @@ class Embeds(commands.Cog):
         try:
             if str(ctx.channel) in channels:
 
-                with open('images/kissing.txt') as file:
+                with open('images/FunCommands/kissing.txt') as file:
                     kissing_array = file.readlines()
 
                     # set member as the author
@@ -58,7 +58,7 @@ class Embeds(commands.Cog):
         try:
             if str(ctx.channel) in channels:
 
-                with open('images/cuddling.txt') as file:
+                with open('images/FunCommands/cuddling.txt') as file:
                     cuddling_array = file.readlines()
 
                     # set member as the author

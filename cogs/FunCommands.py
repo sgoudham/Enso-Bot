@@ -111,7 +111,7 @@ class Fun(commands.Cog):
         try:
             if str(ctx.channel) in channels:
 
-                with open('images/eightball.txt') as file:
+                with open('images/FunCommands/eightball.txt') as file:
                     _8ball_array = file.readlines()
 
                     await ctx.send(f'Question: {question}\nAnswer: {random.choice(_8ball_array)}')

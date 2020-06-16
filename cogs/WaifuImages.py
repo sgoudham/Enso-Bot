@@ -22,7 +22,7 @@ class Waifus(commands.Cog):
 
         try:
 
-            with open('images/kakashiImages.txt') as file:
+            with open('images/WaifuImages/kakashiImages.txt') as file:
                 kakashi_array = file.readlines()
 
             if str(ctx.channel) in channels:
@@ -55,7 +55,7 @@ class Waifus(commands.Cog):
 
         try:
 
-            with open('images/togaImages.txt') as file:
+            with open('images/WaifuImages/togaImages.txt') as file:
                 toga_array = file.readlines()
 
                 if str(ctx.channel) in channels:
@@ -87,7 +87,7 @@ class Waifus(commands.Cog):
     async def tamaki(self, ctx):
 
         try:
-            with open('images/tamakiImages.txt') as file:
+            with open('images/WaifuImages/tamakiImages.txt') as file:
                 tamaki_array = file.readlines()
 
             if str(ctx.channel) in channels:
@@ -118,7 +118,7 @@ class Waifus(commands.Cog):
     async def ensoperson(self, ctx):
 
         try:
-            with open('images/serverMembers.txt') as file:
+            with open('images/ServerImages/serverMembers.txt') as file:
                 marsh_array = file.readlines()
 
             if str(ctx.channel) in channels:

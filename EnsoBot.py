@@ -107,7 +107,7 @@ async def on_member_join(member):
         print(e)
 
 
-# Allowing
+# Allowing people to get ping-able self roles
 @client.command(name="rolemenu")
 @commands.has_any_role('Hamothy')
 async def role_menu(ctx):

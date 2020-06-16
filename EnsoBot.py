@@ -109,6 +109,7 @@ async def on_member_join(member):
 
 # Allowing
 @client.command(name="rolemenu")
+@commands.has_any_role('Hamothy')
 async def role_menu(ctx):
     try:
         channel = client.get_channel(722347423913213992)

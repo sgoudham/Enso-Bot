@@ -113,12 +113,12 @@ class Waifus(commands.Cog):
         except FileNotFoundError as e:
             print(e)
 
-    # Bot ~marshy command for Zara
-    @commands.command(aliases=['marshy', 'Marshall'])
-    async def marshall(self, ctx):
+    # Bot ~ensoPerson command for the server members
+    @commands.command(aliases=['enso', 'Ensoperson'])
+    async def ensoperson(self, ctx):
 
         try:
-            with open('images/marshallImages.txt') as file:
+            with open('images/serverMembers.txt') as file:
                 marsh_array = file.readlines()
 
             if str(ctx.channel) in channels:
@@ -127,7 +127,8 @@ class Waifus(commands.Cog):
                 member = ctx.message.author
                 userAvatar = member.avatar_url
 
-                embed = discord.Embed(title=f"**Marshy Pie UwU**", colour=discord.Colour(random.choice(colour_list)))
+                embed = discord.Embed(title=f"**Oh Look! A Cute Person **",
+                                      colour=discord.Colour(random.choice(colour_list)))
                 embed.set_image(url=random.choice(marsh_array))
                 embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
                 embed.timestamp = datetime.datetime.utcnow()

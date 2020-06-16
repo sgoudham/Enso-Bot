@@ -3,6 +3,8 @@ import datetime
 import discord
 from discord.ext import commands
 
+from EnsoBot import client
+
 
 class CustomHelp(commands.Cog):
     def __init__(self, bot):
@@ -270,6 +272,42 @@ class CustomHelp(commands.Cog):
                             inline=False)
 
             await author.send(embed=embed)
+        except Exception as e:
+            print(e)
+
+    # Bot ~roles command allows for an embed message about roles
+    @commands.Cog.listener()
+    async def on_member_join(self, member):
+        channel = client.get_channel(669771571337887765)
+
+        try:
+            embed = discord.Embed(title="```Welcome To Ensō!```",
+                                  colour=discord.Colour(0x30e419))
+
+            embed.timestamp = datetime.datetime.utcnow()
+
+            embed.set_thumbnail(url="https://media.discordapp.net/attachments/683490529862090814/715010931620446269"
+                                    "/image1.jpg?width=658&height=658")
+            embed.set_image(
+                url="https://cdn.discordapp.com/attachments/714671068941647933/717144047252275270/f4d7de6463d3ada02058a094fd6917ac.gif")
+            embed.set_author(name="Hamothy", icon_url="https://cdn.discordapp.com/attachments/689525645734182916"
+                                                      "/718510466640642099/Rias_Gremory.png")
+            embed.set_footer(text=f"Hamothy#5619",
+                             icon_url="https://media.discordapp.net/attachments/689525645734182916/718510466640642099/Rias_Gremory.png")
+            embed.add_field(
+                name="\u200b",
+                value=f"Hello {member.mention}! We hope you enjoy your stay in this server! ",
+                inline=False)
+            embed.add_field(
+                name="\u200b",
+                value=f"Be sure to check out our <#669815048658747392> channel to read the rules and <#683490529862090814> channel to get caught up with any changes! ",
+                inline=False)
+            embed.add_field(
+                name="\u200b",
+                value=f"Last but not least, feel free to go into <#669775971297132556> to introduce yourself!",
+                inline=False)
+
+            await channel.send(embed=embed)
         except Exception as e:
             print(e)
 

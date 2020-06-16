@@ -10,6 +10,7 @@ import config
 from cogs.FunCommands import error_function
 
 colour_list = [c for c in config.colors.values()]
+channels = ["bot-commands", 'general']
 
 
 class Embeds(commands.Cog):
@@ -19,8 +20,6 @@ class Embeds(commands.Cog):
     @commands.command(aliases=["Kiss", "kiss"])
     @cooldown(1, 0.5, BucketType.channel)
     async def kissing(self, ctx, target: discord.Member):
-
-        channels = ["bot-commands", 'general']
 
         try:
             if str(ctx.channel) in channels:
@@ -56,8 +55,6 @@ class Embeds(commands.Cog):
     @cooldown(1, 0.5, BucketType.channel)
     async def cuddle(self, ctx, target: discord.Member):
 
-        channels = ["bot-commands", 'general']
-
         try:
             if str(ctx.channel) in channels:
 
@@ -92,7 +89,6 @@ class Embeds(commands.Cog):
     @cooldown(1, 2, BucketType.channel)
     async def lemon(self, ctx, target: discord.Member):
 
-        channels = ["bot-commands", "general"]
         lemon_array = ["https://media.discordapp.net/attachments/669812887564320769/720093589056520202/lemon.gif",
                        "https://media.discordapp.net/attachments/669812887564320769/720093575492272208/lemon2.gif",
                        "https://media.discordapp.net/attachments/718484280925224981/719629805263257630/lemon.gif"]

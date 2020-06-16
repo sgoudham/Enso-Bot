@@ -86,7 +86,7 @@ class CustomHelp(commands.Cog):
             embed.add_field(
                 name="\u200b\u200b",
                 value="**➳ ~kakashi**" +
-                      "\n Allows for a randomly generated image of Hatake Kakashi" +
+                      "\n Allows for a randomly generated image of Hatake Kakashi to be shown" +
                       "\n *(Perms: Everyone)*",
                 inline=True)
             embed.add_field(
@@ -99,6 +99,12 @@ class CustomHelp(commands.Cog):
                 name="\u200b",
                 value="**➳ ~tamaki**" +
                       "\n Allows for a randomly generated image of Tamaki Suoh to be shown" +
+                      "\n *(Perms: Everyone)*",
+                inline=True)
+            embed.add_field(
+                name="\u200b\u200b",
+                value="**➳ ~enso**" +
+                      "\n Allows for a randomly generated image of someone in the server to be shown" +
                       "\n *(Perms: Everyone)*",
                 inline=True)
             embed.add_field(

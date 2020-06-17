@@ -135,7 +135,7 @@ class Waifus(commands.Cog):
                 # Delete the message
                 await message.delete()
         else:
-            array = ['hussein', 'inna', 'kaiju', 'kate', 'lukas', 'marshall', 'stitch', 'zara', 'josh', 'angie']
+            array = ['hussein', 'inna', 'kaiju', 'kate', 'lukas', 'marshall', 'stitch', 'zara', 'josh', 'ange']
 
             with open(f'images/ServerMembers/{random.choice(array)}.txt') as file:
                 array = file.readlines()

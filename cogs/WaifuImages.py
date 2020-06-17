@@ -121,7 +121,7 @@ class Waifus(commands.Cog):
         array = ['hussein', 'inna', 'kaiju', 'kate', 'lukas',
                  'marshall', 'stitch', 'zara', 'josh', 'ange',
                  'gria', 'lilu', 'marcus', 'eric', 'ifrah',
-                 'janet', 'connor', 'taz']
+                 'janet', 'connor', 'taz', 'ryder']
 
         if name:
             try:

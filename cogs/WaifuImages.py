@@ -118,6 +118,11 @@ class Waifus(commands.Cog):
     @commands.command(aliases=['enso', 'Ensoperson'])
     @cooldown(1, 0.5, BucketType.channel)
     async def ensoperson(self, ctx, name=None):
+        array = ['hussein', 'inna', 'kaiju', 'kate', 'lukas',
+                 'marshall', 'stitch', 'zara', 'josh', 'ange',
+                 'gria', 'lilu', 'marcus', 'eric', 'ifrah',
+                 'janet', 'connor', 'taz']
+
         if name:
             try:
                 with open(f'images/ServerMembers/{name}.txt') as file:
@@ -135,9 +140,6 @@ class Waifus(commands.Cog):
                 # Delete the message
                 await message.delete()
         else:
-            array = ['hussein', 'inna', 'kaiju', 'kate', 'lukas',
-                     'marshall', 'stitch', 'zara', 'josh', 'ange',
-                     'gria', 'lilu', 'marcus', 'eric', 'ifrah']
 
             with open(f'images/ServerMembers/{random.choice(array)}.txt') as file:
                 array = file.readlines()

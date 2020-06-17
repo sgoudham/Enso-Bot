@@ -121,24 +121,38 @@ class Waifus(commands.Cog):
         array = ['hussein', 'inna', 'kaiju', 'kate', 'lukas',
                  'marshall', 'stitch', 'zara', 'josh', 'ange',
                  'gria', 'lilu', 'marcus', 'eric', 'ifrah',
-                 'janet', 'connor', 'taz', 'ryder']
+                 'janet', 'connor', 'taz', 'ryder', 'clarity']
+
+        proper_name = name.lower()
 
         if name:
             try:
-                with open(f'images/ServerMembers/{name}.txt') as file:
+                if proper_name == 'studentjon':
+                    with open(f'images/ServerMembers/{proper_name}.txt') as file:
+                        images_array = file.readlines()
+                        name2 = "Student Jon"
+
+                        embed = displayServerImage(images_array, ctx, name2)
+                        await ctx.send(embed=embed)
+                        exit()
+
+                with open(f'images/ServerMembers/{proper_name}.txt') as file:
                     images_array = file.readlines()
 
-                    embed = displayServerImage(images_array, ctx, name)
+                    embed = displayServerImage(images_array, ctx, proper_name)
                     await ctx.send(embed=embed)
             except Exception as e:
                 print(e)
 
-                message = await ctx.send("Sorry! That person doesn't exist!!")
+                await ctx.send(f"Sorry! That person doesn't exist!! Try the names listed below!")
+                for name in array:
+                    await ctx.send(name.capitalize())
 
-                # Let the user read the message for 2.5 seconds
-                await asyncio.sleep(2.5)
-                # Delete the message
-                await message.delete()
+                # col_width = max(len(word) for row in array for word in row) + 2  # padding
+                # for row in array:
+                #    formattedmsg = ("\n".join(word.ljust(col_width) for word in row))
+                #   await ctx.send(formattedmsg.capitalize())
+
         else:
 
             with open(f'images/ServerMembers/{random.choice(array)}.txt') as file:

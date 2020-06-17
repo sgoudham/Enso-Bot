@@ -78,6 +78,7 @@ async def on_command_error(ctx, error):
 async def on_member_join(member):
     # Set the channel id to "newpeople"
     new_people = client.get_channel(669771571337887765)
+    # Set the channel id to "general"
     general = client.get_channel(663651584399507481)
 
     # Surround with try/except to catch any exceptions that may occur

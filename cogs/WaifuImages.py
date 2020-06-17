@@ -1,6 +1,7 @@
 import asyncio
 import datetime
 import random
+import string
 
 import discord
 from discord.ext import commands
@@ -122,7 +123,7 @@ class Waifus(commands.Cog):
                  'marshall', 'stitch', 'zara', 'josh', 'ange',
                  'gria', 'lilu', 'marcus', 'eric', 'ifrah',
                  'janet', 'connor', 'taz', 'ryder', 'clarity',
-                 'izzy']
+                 'izzy', 'david']
 
         if name:
             proper_name = name.lower()
@@ -135,6 +136,12 @@ class Waifus(commands.Cog):
 
             except Exception as e:
                 print(e)
+
+                await ctx.send(f"Sorry! That person doesn't exist!! Try the names listed below!")
+
+                nice = string.capwords(', '.join(map(str, array)))
+                await ctx.send(nice)
+
         else:
             with open(f'images/ServerMembers/{random.choice(array)}.txt') as file:
                 array = file.readlines()

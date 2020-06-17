@@ -119,10 +119,10 @@ class Waifus(commands.Cog):
     @commands.command(aliases=['enso', 'Ensoperson'])
     @cooldown(1, 0.5, BucketType.channel)
     async def ensoperson(self, ctx, name=None):
-        array = string.capwords(['hussein', 'inna', 'kaiju', 'kate', 'lukas',
-                                 'marshall', 'stitch', 'zara', 'josh', 'ange',
-                                 'gria', 'lilu', 'marcus', 'eric', 'ifrah',
-                                 'janet', 'connor', 'taz', 'ryder', 'clarity'])
+        array = ['hussein', 'inna', 'kaiju', 'kate', 'lukas',
+                 'marshall', 'stitch', 'zara', 'josh', 'ange',
+                 'gria', 'lilu', 'marcus', 'eric', 'ifrah',
+                 'janet', 'connor', 'taz', 'ryder', 'clarity']
 
         proper_name = name.lower()
 
@@ -138,10 +138,8 @@ class Waifus(commands.Cog):
 
                 await ctx.send(f"Sorry! That person doesn't exist!! Try the names listed below!")
 
-                col_width = max(len(word) for row in array for word in row) + 2  # padding
-                for row in array:
-                    formattedmsg = ("".join(word.ljust(col_width) for word in row))
-                    await ctx.send(formattedmsg)
+                nice = string.capwords(', '.join(map(str, array)))
+                await ctx.send(nice)
 
         else:
 

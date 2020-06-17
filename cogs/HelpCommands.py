@@ -103,8 +103,9 @@ class CustomHelp(commands.Cog):
                 inline=True)
             embed.add_field(
                 name="\u200b\u200b",
-                value="**➳ ~enso**" +
-                      "\n Allows for a randomly generated image of someone in the server to be shown" +
+                value="**➳ ~enso [person]**" +
+                      "\n Allows for a randomly generated image of the member specified" +
+                      "\n (Using ~enso by itself shall generate a random image of someone within all the server)" +
                       "\n *(Perms: Everyone)*",
                 inline=True)
             embed.add_field(

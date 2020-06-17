@@ -26,7 +26,8 @@ if __name__ == '__main__':
 @client.event
 async def on_ready():
     print('Bot is ready.')
-    await client.change_presence(activity=discord.Streaming(name="My Marriage!! 😍 💍"))
+    await client.change_presence(
+        activity=discord.Streaming(name="My Marriage!! 😍 💍", url="https://www.twitch.tv/goudham"))
 
 
 # Bot ~Ping command in milliseconds
@@ -76,7 +77,8 @@ async def on_command_error(ctx, error):
 @client.event
 async def on_member_join(member):
     # Set the channel id to "newpeople"
-    channel = client.get_channel(669771571337887765)
+    new_people = client.get_channel(669771571337887765)
+    general = client.get_channel(663651584399507481)
 
     # Surround with try/except to catch any exceptions that may occur
     try:
@@ -102,7 +104,11 @@ async def on_member_join(member):
             value=f"Last but not least, feel free to go into <#669775971297132556> to introduce yourself!",
             inline=False)
 
-        await channel.send(embed=embed)
+        await new_people.send(embed=embed)
+
+        general_welcome = f"Welcome to the server! {member.mention} I hope you enjoy your stay here. Please go into <#722347423913213992> to choose some ping-able roles for events!"
+
+        await general.send(general_welcome)
     except Exception as e:
         print(e)
 

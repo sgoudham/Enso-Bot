@@ -115,10 +115,72 @@ class Waifus(commands.Cog):
 
     # Bot ~ensoPerson command for the server members
     @commands.command(aliases=['enso', 'Ensoperson'])
-    async def ensoperson(self, ctx):
+    async def ensoperson(self, ctx, name=None):
+        if name:
+            try:
+                with open(f'images/ServerMembers/{name}.txt') as file:
+                    images_array = file.readlines()
 
-        try:
-            with open('images/ServerImages/serverMembers.txt') as file:
+                    embed = displayServerImage(images_array, ctx, name)
+                    await ctx.send(embed=embed)
+            except Exception as e:
+                print(e)
+
+                message = await ctx.send("Sorry! That person doesn't exist!!")
+
+                # Let the user read the message for 2.5 seconds
+                await asyncio.sleep(2.5)
+                # Delete the message
+                await message.delete()
+        else:
+            array = ['hussein', 'inna', 'kaiju', 'kate', 'lukas', 'marshall', 'stitch', 'zara', 'josh']
+
+            with open(f'images/ServerMembers/{random.choice(array)}.txt') as file:
+                array = file.readlines()
+
+            if str(ctx.channel) in channels:
+                # set member as the author
+                member = ctx.message.author
+                userAvatar = member.avatar_url
+
+                embed = discord.Embed(
+                    title=f"**Oh Look! A Cute Person <a:huh:676195228872474643> <a:huh:676195228872474643> **",
+                    colour=discord.Colour(random.choice(colour_list)))
+                embed.set_image(url=random.choice(array))
+                embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
+                embed.timestamp = datetime.datetime.utcnow()
+                await ctx.send(embed=embed)
+
+
+def displayServerImage(array, ctx, name):
+    if str(ctx.channel) in channels:
+        # set member as the author
+        member = ctx.message.author
+        userAvatar = member.avatar_url
+
+        embed = discord.Embed(
+            title=f"**Oh Look! A Cute Picture of {name.capitalize()}!! <a:huh:676195228872474643> <a:huh:676195228872474643> **",
+            colour=discord.Colour(random.choice(colour_list)))
+        embed.set_image(url=random.choice(array))
+        embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
+        embed.timestamp = datetime.datetime.utcnow()
+
+    return embed
+
+
+# Error handling function to make sure that the commands only work in bot-commands
+def error_function():
+    return "Sorry! I only work in #bot-commands!"
+
+
+def setup(bot):
+    bot.add_cog(Waifus(bot))
+
+
+"""
+
+
+            with open('images/ServerMembers/serverMembers.txt') as file:
                 marsh_array = file.readlines()
 
             if str(ctx.channel) in channels:
@@ -142,15 +204,5 @@ class Waifus(commands.Cog):
                 await asyncio.sleep(2.5)
                 # Delete the message
                 await message.delete()
-
-        except FileNotFoundError as e:
-            print(e)
-
-
-# Error handling function to make sure that the commands only work in bot-commands
-def error_function():
-    return "Sorry! I only work in #bot-commands!"
-
-
-def setup(bot):
-    bot.add_cog(Waifus(bot))
+                
+    """

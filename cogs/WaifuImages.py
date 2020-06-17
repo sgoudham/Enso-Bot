@@ -165,16 +165,28 @@ class Waifus(commands.Cog):
 
 def displayServerImage(array, ctx, name):
     if str(ctx.channel) in channels:
-        # set member as the author
-        member = ctx.message.author
-        userAvatar = member.avatar_url
+        if name is 'studentjon':
+            # set member as the author
+            member = ctx.message.author
+            userAvatar = member.avatar_url
 
-        embed = discord.Embed(
-            title=f"**Oh Look! A Cute Picture of {name.capitalize()}!! <a:huh:676195228872474643> <a:huh:676195228872474643> **",
-            colour=discord.Colour(random.choice(colour_list)))
-        embed.set_image(url=random.choice(array))
-        embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
-        embed.timestamp = datetime.datetime.utcnow()
+            embed = discord.Embed(
+                title=f"**Oh Look! A Cute Picture of Student Jon!! <a:huh:676195228872474643> <a:huh:676195228872474643> **",
+                colour=discord.Colour(random.choice(colour_list)))
+            embed.set_image(url=random.choice(array))
+            embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
+            embed.timestamp = datetime.datetime.utcnow()
+        else:
+            # set member as the author
+            member = ctx.message.author
+            userAvatar = member.avatar_url
+
+            embed = discord.Embed(
+                title=f"**Oh Look! A Cute Picture of {name.capitalize()}!! <a:huh:676195228872474643> <a:huh:676195228872474643> **",
+                colour=discord.Colour(random.choice(colour_list)))
+            embed.set_image(url=random.choice(array))
+            embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
+            embed.timestamp = datetime.datetime.utcnow()
 
     return embed
 

@@ -10,7 +10,7 @@ import config
 from cogs.FunCommands import error_function
 
 colour_list = [c for c in config.colors.values()]
-channels = ["bot-commands", 'general']
+channels = ["enso-chan-commands", 'general']
 
 
 class Embeds(commands.Cog):

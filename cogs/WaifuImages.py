@@ -8,7 +8,7 @@ from discord.ext.commands import cooldown, BucketType
 
 import config
 
-channels = ["bot-commands"]
+channels = ["enso-chan-commands"]
 
 colour_list = [c for c in config.colors.values()]
 
@@ -171,7 +171,7 @@ def displayServerImage(array, ctx, name):
 
 # Error handling function to make sure that the commands only work in bot-commands
 def error_function():
-    return "Sorry! I only work in #bot-commands!"
+    return "Sorry! I only work in #enso-chan-commands!"
 
 
 def setup(bot):

@@ -127,15 +127,6 @@ class Waifus(commands.Cog):
 
         if name:
             try:
-                if proper_name == 'studentjon':
-                    with open(f'images/ServerMembers/{proper_name}.txt') as file:
-                        images_array = file.readlines()
-                        name2 = "Student Jon"
-
-                        embed = displayServerImage(images_array, ctx, name2)
-                        await ctx.send(embed=embed)
-                        exit()
-
                 with open(f'images/ServerMembers/{proper_name}.txt') as file:
                     images_array = file.readlines()
 

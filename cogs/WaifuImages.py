@@ -165,7 +165,7 @@ class Waifus(commands.Cog):
 
 def displayServerImage(array, ctx, name):
     if str(ctx.channel) in channels:
-        if name is 'studentjon':
+        if name == 'studentjon':
             # set member as the author
             member = ctx.message.author
             userAvatar = member.avatar_url

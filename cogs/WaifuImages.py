@@ -1,6 +1,7 @@
 import asyncio
 import datetime
 import random
+import string
 
 import discord
 from discord.ext import commands
@@ -118,10 +119,10 @@ class Waifus(commands.Cog):
     @commands.command(aliases=['enso', 'Ensoperson'])
     @cooldown(1, 0.5, BucketType.channel)
     async def ensoperson(self, ctx, name=None):
-        array = ['hussein', 'inna', 'kaiju', 'kate', 'lukas',
-                 'marshall', 'stitch', 'zara', 'josh', 'ange',
-                 'gria', 'lilu', 'marcus', 'eric', 'ifrah',
-                 'janet', 'connor', 'taz', 'ryder', 'clarity']
+        array = string.capwords(['hussein', 'inna', 'kaiju', 'kate', 'lukas',
+                                 'marshall', 'stitch', 'zara', 'josh', 'ange',
+                                 'gria', 'lilu', 'marcus', 'eric', 'ifrah',
+                                 'janet', 'connor', 'taz', 'ryder', 'clarity'])
 
         proper_name = name.lower()
 
@@ -136,13 +137,11 @@ class Waifus(commands.Cog):
                 print(e)
 
                 await ctx.send(f"Sorry! That person doesn't exist!! Try the names listed below!")
-                for name in array:
-                    await ctx.send(name.capitalize())
 
-                # col_width = max(len(word) for row in array for word in row) + 2  # padding
-                # for row in array:
-                #    formattedmsg = ("\n".join(word.ljust(col_width) for word in row))
-                #   await ctx.send(formattedmsg.capitalize())
+                col_width = max(len(word) for row in array for word in row) + 2  # padding
+                for row in array:
+                    formattedmsg = ("".join(word.ljust(col_width) for word in row))
+                    await ctx.send(formattedmsg)
 
         else:
 

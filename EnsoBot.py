@@ -107,7 +107,8 @@ async def on_member_join(member):
 
         await new_people.send(embed=embed)
 
-        general_welcome = f"Welcome to the server! {member.mention} I hope you enjoy your stay here. Please go into <#722347423913213992> to choose some ping-able roles for events!"
+        general_welcome = f"Welcome to the server! {member.mention} I hope you enjoy your stay here. Please go into " \
+                          f"<#722347423913213992> to choose some ping-able roles for events! "
 
         await general.send(general_welcome)
     except Exception as e:

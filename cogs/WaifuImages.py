@@ -1,7 +1,6 @@
 import asyncio
 import datetime
 import random
-import string
 
 import discord
 from discord.ext import commands
@@ -124,25 +123,18 @@ class Waifus(commands.Cog):
                  'gria', 'lilu', 'marcus', 'eric', 'ifrah',
                  'janet', 'connor', 'taz', 'ryder', 'clarity']
 
-        proper_name = name.lower()
-
         if name:
+            proper_name = name.lower()
             try:
                 with open(f'images/ServerMembers/{proper_name}.txt') as file:
                     images_array = file.readlines()
 
                     embed = displayServerImage(images_array, ctx, proper_name)
                     await ctx.send(embed=embed)
+
             except Exception as e:
                 print(e)
-
-                await ctx.send(f"Sorry! That person doesn't exist!! Try the names listed below!")
-
-                nice = string.capwords(', '.join(map(str, array)))
-                await ctx.send(nice)
-
         else:
-
             with open(f'images/ServerMembers/{random.choice(array)}.txt') as file:
                 array = file.readlines()
 
@@ -152,7 +144,7 @@ class Waifus(commands.Cog):
                 userAvatar = member.avatar_url
 
                 embed = discord.Embed(
-                    title=f"**Oh Look! A Cute Person <a:huh:676195228872474643> <a:huh:676195228872474643> **",
+                    title=f"Oh Look! A Cute Person <a:huh:676195228872474643> <a:huh:676195228872474643> ",
                     colour=discord.Colour(random.choice(colour_list)))
                 embed.set_image(url=random.choice(array))
                 embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
@@ -162,30 +154,18 @@ class Waifus(commands.Cog):
 
 def displayServerImage(array, ctx, name):
     if str(ctx.channel) in channels:
-        if name == 'studentjon':
-            # set member as the author
-            member = ctx.message.author
-            userAvatar = member.avatar_url
+        # set member as the author
+        member = ctx.message.author
+        userAvatar = member.avatar_url
 
-            embed = discord.Embed(
-                title=f"**Oh Look! A Cute Picture of Student Jon!! <a:huh:676195228872474643> <a:huh:676195228872474643> **",
-                colour=discord.Colour(random.choice(colour_list)))
-            embed.set_image(url=random.choice(array))
-            embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
-            embed.timestamp = datetime.datetime.utcnow()
-        else:
-            # set member as the author
-            member = ctx.message.author
-            userAvatar = member.avatar_url
+        embed = discord.Embed(
+            title=f"**Oh Look! A Cute Picture of {name.capitalize()}!! <a:huh:676195228872474643> <a:huh:676195228872474643> **",
+            colour=discord.Colour(random.choice(colour_list)))
+        embed.set_image(url=random.choice(array))
+        embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
+        embed.timestamp = datetime.datetime.utcnow()
 
-            embed = discord.Embed(
-                title=f"**Oh Look! A Cute Picture of {name.capitalize()}!! <a:huh:676195228872474643> <a:huh:676195228872474643> **",
-                colour=discord.Colour(random.choice(colour_list)))
-            embed.set_image(url=random.choice(array))
-            embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
-            embed.timestamp = datetime.datetime.utcnow()
-
-    return embed
+        return embed
 
 
 # Error handling function to make sure that the commands only work in bot-commands

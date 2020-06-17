@@ -116,7 +116,7 @@ class Waifus(commands.Cog):
 
     # Bot ~ensoPerson command for the server members
     @commands.command(aliases=['enso', 'Ensoperson'])
-    @cooldown(1, 1.5, BucketType.channel)
+    @cooldown(1, 0.5, BucketType.channel)
     async def ensoperson(self, ctx, name=None):
         if name:
             try:

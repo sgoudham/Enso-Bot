@@ -4,6 +4,7 @@ import random
 
 import discord
 from discord.ext import commands
+from discord.ext.commands import cooldown, BucketType
 
 import config
 
@@ -115,6 +116,7 @@ class Waifus(commands.Cog):
 
     # Bot ~ensoPerson command for the server members
     @commands.command(aliases=['enso', 'Ensoperson'])
+    @cooldown(1, 1.5, BucketType.channel)
     async def ensoperson(self, ctx, name=None):
         if name:
             try:

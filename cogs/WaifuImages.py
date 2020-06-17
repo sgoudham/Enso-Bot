@@ -137,7 +137,7 @@ class Waifus(commands.Cog):
         else:
             array = ['hussein', 'inna', 'kaiju', 'kate', 'lukas',
                      'marshall', 'stitch', 'zara', 'josh', 'ange',
-                     'gria']
+                     'gria', 'lilu', 'marcus', 'eric']
 
             with open(f'images/ServerMembers/{random.choice(array)}.txt') as file:
                 array = file.readlines()

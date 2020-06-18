@@ -117,7 +117,7 @@ class Waifus(commands.Cog):
 
     # Bot ~ensoPerson command for the server members
     @commands.command(aliases=['enso', 'Ensoperson'])
-    @cooldown(5, 2, BucketType.user)
+    @cooldown(1, 1, BucketType.user)
     async def ensoperson(self, ctx, name=None):
         array = ['hussein', 'inna', 'kaiju', 'kate', 'lukas',
                  'marshall', 'stitch', 'zara', 'josh', 'ange',

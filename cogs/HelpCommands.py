@@ -1,3 +1,4 @@
+import asyncio
 import datetime
 
 import discord
@@ -146,6 +147,14 @@ class CustomHelp(commands.Cog):
                 inline=True)
 
             await author.send(embed=embed)
+
+            message = await ctx.send(helpDm())
+
+            # Let the user read the message for 2.5 seconds
+            await asyncio.sleep(10)
+            # Delete the message
+            await message.delete()
+
         except Exception as e:
             print(e)
 
@@ -252,6 +261,13 @@ class CustomHelp(commands.Cog):
                 inline=False)
 
             await ctx.send(embed=embed)
+
+            message = await ctx.send(helpDm())
+
+            # Let the user read the message for 2.5 seconds
+            await asyncio.sleep(10)
+            # Delete the message
+            await message.delete()
         except Exception as e:
             print(e)
 
@@ -289,8 +305,22 @@ class CustomHelp(commands.Cog):
                             inline=False)
 
             await author.send(embed=embed)
+
+            message = await ctx.send(helpDm())
+
+            # Let the user read the message for 2.5 seconds
+            await asyncio.sleep(10)
+            # Delete the message
+            await message.delete()
         except Exception as e:
             print(e)
+
+
+def helpDm():
+    hamothyID = '<@&715412394968350756>'
+
+    return f"I've just pinged your dms UwU! <a:huh:676195228872474643> <a:huh:676195228872474643>" \
+           f"\nPlease ping my owner {hamothyID} for any issues/questions you have!"
 
 
 def setup(bot):

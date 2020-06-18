@@ -161,6 +161,8 @@ class CustomHelp(commands.Cog):
     # Bot ~rules command allows for an embed message about the leveled roles and xp system
     @commands.command(aliases=["Rules", "rule", "Rule"])
     async def rules(self, ctx, target: discord.Member):
+        author = ctx.message.author
+
         try:
             embed = discord.Embed(title="```(っ◔◡◔)っ Ensō Rules```", colour=discord.Colour(0xFF69B4),
                                   description="``` ヽ(͡◕ ͜ʖ ͡◕)ﾉ Please respect the following rules that are going to be listed below ヽ(͡◕ ͜ʖ ͡◕)ﾉ ```")
@@ -260,7 +262,7 @@ class CustomHelp(commands.Cog):
                       f", or my co-owner, {target.mention}**",
                 inline=False)
 
-            await ctx.send(embed=embed)
+            await author.send(embed=embed)
 
             message = await ctx.send(helpDm())
 

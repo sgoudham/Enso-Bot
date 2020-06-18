@@ -1,5 +1,6 @@
 import asyncio
 import datetime
+from asyncio import sleep
 
 import discord
 from decouple import config
@@ -17,12 +18,23 @@ client.remove_command('help')
 
 # Instantiates a list for all the cogs
 extensions = ['cogs.WaifuImages', 'cogs.FunCommands', 'cogs.Music',
-              'cogs.HelpCommands', 'cogs.OwOText', 'cogs.Embeds', 'cogs.GetInfo']
+              'cogs.HelpCommands', 'cogs.OwOText', 'cogs.Embeds',
+              'cogs.GetInfo', 'cogs.Reminder']
 
 # Calls the cogs
 if __name__ == '__main__':
     for ext in extensions:
         client.load_extension(ext)
+
+
+@client.command()
+async def remind(ctx, time=None):
+    author = ctx.message.author
+    if time:
+        await sleep(float(time))
+        await author.send("uwu")
+    else:
+        await author.send("owo")
 
 
 # Bot Status on Discord
@@ -247,7 +259,6 @@ async def on_raw_reaction_remove(payload):
 
     except Exception as ex:
         print(ex)
-
 
 # Run the bot, allowing to come online
 try:

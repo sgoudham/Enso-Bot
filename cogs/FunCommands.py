@@ -45,7 +45,7 @@ class Fun(commands.Cog):
             f"#{target.mention}IsOverParty",
             f"I hope {target.mention} drops dead with a curable disease that doctors simply didn’t feel like curing :)",
             f"{target.mention} You know there's no vaccine for stupidity right?",
-            f"{target.mention} You are not very epic at all"
+            f"{target.mention} You are not very epic at all",
             f"You make Kpop Fancams 24/7 for validation on the internet {target.mention}",
             f"Your mother wanted to drop you on the head when you were little {target.mention}",
             f"{target.mention} You're the CEO of Racism",
@@ -92,11 +92,11 @@ class Fun(commands.Cog):
             f"{target.mention} The thought of you leaving me is too much to bear. Stay with me forever :pleading_face: :pleading_face:",
             f"{target.mention}From a scale of 1-10, you’re 9 I’m the 1 you need <:Kawaii:676203363922214953> <:Kawaii:676203363922214953> <:Kawaii:676203363922214953> ",
             f"You're... You're SHREKTACULAR :heart_eyes: :flushed: :heart_eyes: {target.mention}",
-            f"{target.mention} Your beauty renders me speechless... :heart_eyes: :heart_eyes:"
+            f"{target.mention} Your beauty renders me speechless... :heart_eyes: :heart_eyes:",
             f"Your taste in music is impeccable {target.mention}",
             f"{target.mention}I can't stop thinking about you :see_no_evil: :see_no_evil:",
-            f"{target.mention} Your wedding will be wonderful, but the y is silent <a:huh:676195228872474643> <a:huh:676195228872474643>"
-            f"{target.mention} Hammy would give up his lifelong goals just to have a chance with you <a:huh:676195228872474643> <a:huh:676195228872474643>"
+            f"{target.mention} Your wedding will be wonderful, but the y is silent <a:huh:676195228872474643> <a:huh:676195228872474643>",
+            f"{target.mention} Hammy would give up his lifelong goals just to have a chance with you <a:huh:676195228872474643> <a:huh:676195228872474643>",
         ]
 
         # Sending out a random compliment from the array "responses"
@@ -104,7 +104,7 @@ class Fun(commands.Cog):
         # await ctx.send(f"{target.mention} Your wedding will be wonderful, but the y is silent <a:huh:676195228872474643> <a:huh:676195228872474643>")
 
     # Bot ~8Ball command
-    @commands.command(aliases=['8ball', '8Ball'])
+    @commands.command(aliases=['8ball', '8Ball', ' 8Ball'])
     @cooldown(1, 1, BucketType.user)
     async def _8ball(self, ctx, *, question):
 
@@ -163,19 +163,7 @@ def setup(bot):
     bot.add_cog(Fun(bot))
 
     """# Bot ~8Ball command
-    @commands.command(aliases=['dm', 'Deathmatch'])
-    @cooldown(1, 0.5, BucketType.channel)
-    async def death(self, ctx):
-
-        channels = ["ensobottesting"]
-        player1 = ctx.author.mention
-        player2 = target.mention
-
-        p1hp = 100
-        p2hp = 100
-
-        await ctx.send("Deathmatch")
-
+    
     @commands.command()
     async def death(self, ctx, target: discord.Member):
         player1 = ctx.author.mention
@@ -185,16 +173,28 @@ def setup(bot):
         p1 = 100
         p2 = 100
 
-        await ctx.send(f"**Deathmatch started! {player1} vs {player2}**"
-                       f"\n What do you want to do {ctx.author}?"
-                       f"\n 1) Punch"
-                       f"\n 2) Kick")
+        await ctx.send()
 
         msg = await client.wait_for(f"**{player1} punched {player2} for {punch(p2)} damage!**", check=check)
         # await channel.send('Hello {.author}!'.format(msg))
         # await ctx.send(f"**{player1} punched {player2} for {punch(p2)} damage!**")
         await ctx.send(f"{msg}")
+    @commands.command(aliases=['dm', 'Deathmatch'])
+    @cooldown(1, 1, BucketType.user)
+    async def death(self, ctx, target: discord.Member):
 
+        channels = ["enso-chan-commands"]
+        player1 = ctx.author.mention
+        player2 = target.mention
+
+        p1hp = 100
+        p2hp = 100
+
+        while p1hp or p2hp > 0:
+            await ctx.send(f"**Deathmatch started! {player1} vs {player2}**"
+                           f"\n {player1} {random.choose()}"
+                           f"\n 1) Punch"
+                           f"\n 2) Kick")
 
 
 """

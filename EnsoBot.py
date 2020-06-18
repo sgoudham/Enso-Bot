@@ -8,8 +8,11 @@ from discord.ext import commands
 # Getting the Bot token from Environment Variables
 API_TOKEN = config('DISCORD_TOKEN')
 
-# Bot Prefix
-client = commands.Bot(command_prefix='~')
+# Bot Initiation
+client = commands.Bot(  # Create a new bot
+    command_prefix="~",  # Set the prefix
+    description='Ensō~Chan!',  # Set a description for the bot
+    owner_id=154840866496839680)  # Your unique User ID
 client.remove_command('help')
 
 # Instantiates a list for all the cogs
@@ -30,7 +33,7 @@ async def on_ready():
 
     # Sets the bots status on discord for everyone to view
     await client.change_presence(
-        activity=discord.Streaming(name="Falling in Love Again 😍 ", url="https://www.twitch.tv/goudham"))
+        activity=discord.Game(name="Falling in Love Again 😍 ", url="https://www.twitch.tv/goudham"))
 
 
 # Bot ~Ping command in milliseconds

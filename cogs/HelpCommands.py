@@ -61,6 +61,12 @@ class CustomHelp(commands.Cog):
                 inline=True)
             embed.add_field(
                 name="\u200b",
+                value="**➳ ~slap**" +
+                      "\n Allows the user to slap someone in the server" +
+                      "\n *(Perms: Everyone)*",
+                inline=True)
+            embed.add_field(
+                name="\u200b",
                 value="**➳ ~compliment**" +
                       "\n Allows the user to compliment someone in the server" +
                       "\n *(Perms: Everyone)*",

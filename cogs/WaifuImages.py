@@ -1,4 +1,3 @@
-import asyncio
 import datetime
 import random
 import string
@@ -8,6 +7,7 @@ from discord.ext import commands
 from discord.ext.commands import cooldown, BucketType
 
 import config
+from cogs.Embeds import errorFunction
 
 channels = ["enso-chan-commands"]
 
@@ -41,12 +41,7 @@ class Waifus(commands.Cog):
 
             else:
 
-                message = await ctx.send(error_function())
-
-                # Let the user read the message for 2.5 seconds
-                await asyncio.sleep(2.5)
-                # Delete the message
-                await message.delete()
+                await errorFunction(ctx)
 
         except FileNotFoundError as e:
             print(e)
@@ -74,12 +69,7 @@ class Waifus(commands.Cog):
 
                 else:
 
-                    message = await ctx.send(error_function())
-
-                    # Let the user read the message for 2.5 seconds
-                    await asyncio.sleep(2.5)
-                    # Delete the message
-                    await message.delete()
+                    await errorFunction(ctx)
 
         except FileNotFoundError as e:
             print(e)
@@ -106,12 +96,8 @@ class Waifus(commands.Cog):
 
             else:
 
-                message = await ctx.send(error_function())
+                await errorFunction(ctx)
 
-                # Let the user read the message for 2.5 seconds
-                await asyncio.sleep(2.5)
-                # Delete the message
-                await message.delete()
         except FileNotFoundError as e:
             print(e)
 
@@ -174,11 +160,6 @@ def displayServerImage(array, ctx, name):
         embed.timestamp = datetime.datetime.utcnow()
 
         return embed
-
-
-# Error handling function to make sure that the commands only work in bot-commands
-def error_function():
-    return "Sorry! I only work in #enso-chan-commands!"
 
 
 def setup(bot):

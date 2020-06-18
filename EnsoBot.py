@@ -198,6 +198,11 @@ async def on_raw_reaction_remove(payload):
         print(e)
 
 
+# Error handling function to make sure that the commands only work in enso-chan-commands
+def error_function():
+    return "Sorry! I only work in #enso-chan-commands!"
+
+
 # Run the bot, allowing to come online
 try:
     client.run(API_TOKEN)

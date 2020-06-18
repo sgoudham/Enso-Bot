@@ -7,7 +7,7 @@ from discord.ext import commands
 from discord.ext.commands import BucketType, cooldown
 
 import config
-from cogs.FunCommands import error_function
+from EnsoBot import error_function
 
 colour_list = [c for c in config.colors.values()]
 channels = ["enso-chan-commands", 'general']
@@ -42,12 +42,8 @@ class Embeds(commands.Cog):
 
             else:
 
-                message = await ctx.send(error_function())
-
-                # Let the user read the message for 2.5 seconds
-                await asyncio.sleep(2.5)
-                # Delete the message
-                await message.delete()
+                await errorFunction(ctx)
+                #
         except FileNotFoundError as e:
             print(e)
 
@@ -76,12 +72,8 @@ class Embeds(commands.Cog):
 
             else:
 
-                message = await ctx.send(error_function())
+                await errorFunction(ctx)
 
-                # Let the user read the message for 2.5 seconds
-                await asyncio.sleep(2.5)
-                # Delete the message
-                await message.delete()
         except FileNotFoundError as e:
             print(e)
 
@@ -110,12 +102,8 @@ class Embeds(commands.Cog):
 
             else:
 
-                message = await ctx.send(error_function())
+                await errorFunction(ctx)
 
-                # Let the user read the message for 2.5 seconds
-                await asyncio.sleep(2.5)
-                # Delete the message
-                await message.delete()
         except FileNotFoundError as e:
             print(e)
 
@@ -143,15 +131,19 @@ class Embeds(commands.Cog):
                 await ctx.send(embed=embed)
 
             else:
+                await errorFunction(ctx)
 
-                message = await ctx.send(error_function())
-
-                # Let the user read the message for 2.5 seconds
-                await asyncio.sleep(2.5)
-                # Delete the message
-                await message.delete()
         except FileNotFoundError as e:
             print(e)
+
+
+async def errorFunction(ctx):
+    message = await ctx.send(error_function())
+
+    # Let the user read the message for 2.5 seconds
+    await asyncio.sleep(2.5)
+    # Delete the message
+    await message.delete()
 
 
 def setup(bot):

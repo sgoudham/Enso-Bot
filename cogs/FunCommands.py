@@ -1,4 +1,3 @@
-import asyncio
 import random
 
 import discord
@@ -6,7 +5,7 @@ from discord.ext import commands
 from discord.ext.commands import BucketType, cooldown
 
 import config
-from cogs.WaifuImages import error_function
+from cogs.Embeds import errorFunction
 
 colour_list = [c for c in config.colors.values()]
 
@@ -118,12 +117,7 @@ class Fun(commands.Cog):
 
             else:
 
-                message = await ctx.send(error_function())
-
-                # Let the user read the message for 2.5 seconds
-                await asyncio.sleep(2.5)
-                # Delete the message
-                await message.delete()
+                await errorFunction(ctx)
 
         except FileNotFoundError as e:
             print(e)

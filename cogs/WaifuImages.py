@@ -119,11 +119,11 @@ class Waifus(commands.Cog):
     @commands.command(aliases=['enso', 'Ensoperson'])
     @cooldown(1, 1, BucketType.user)
     async def ensoperson(self, ctx, name=None):
-        array = ['hussein', 'inna', 'kaiju', 'kate', 'lukas',
-                 'marshall', 'stitch', 'zara', 'josh', 'ange',
+        array = ['hammy', 'hussein', 'inna', 'kaiju', 'kate',
+                 'lukas', 'marshall', 'stitch', 'zara', 'josh',
                  'gria', 'lilu', 'marcus', 'eric', 'ifrah',
-                 'janet', 'connor', 'taz', 'ryder', 'clarity',
-                 'izzy', 'david']
+                 'janet', 'connor', 'taz', 'ryder', 'ange',
+                 'izzy', 'david' 'clarity']
 
         if name:
             proper_name = name.lower()

@@ -8,6 +8,7 @@ from discord.ext.commands import BucketType, cooldown
 import config
 from cogs.Embeds import error_function
 
+# Grabbing the list of colours defined in the config.py file
 colour_list = [c for c in config.colors.values()]
 
 
@@ -15,8 +16,9 @@ class Fun(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    # ~attack command for only co-owners only
     @commands.command(aliases=['Attack'])
-    @commands.has_any_role('Hamothy', "izzy", "Servant", "pubic relations")
+    @commands.has_any_role('Hamothy', "izzy")
     async def attack(self, ctx, target: discord.Member):
 
         responses = [
@@ -54,7 +56,7 @@ class Fun(commands.Cog):
         await ctx.send(random.choice(responses))
 
     @commands.command(aliases=['comp', 'Compliment', 'Comp'])
-    @cooldown(1, 2, BucketType.channel)
+    @cooldown(1, 1, BucketType.user)
     async def compliment(self, ctx, target: discord.Member):
 
         responses = [
@@ -103,7 +105,7 @@ class Fun(commands.Cog):
 
     # Bot ~8Ball command
     @commands.command(aliases=['8ball', '8Ball'])
-    @cooldown(1, 0.5, BucketType.channel)
+    @cooldown(1, 1, BucketType.user)
     async def _8ball(self, ctx, *, question):
 
         channels = ["enso-chan-commands", "general"]
@@ -130,7 +132,7 @@ class Fun(commands.Cog):
 
     # Bot ~8Ball command
     @commands.command(aliases=['Lukas'])
-    @cooldown(1, 0.5, BucketType.channel)
+    @cooldown(1, 1, BucketType.user)
     @commands.has_any_role('Lukas (Server Booster)')
     async def lukas(self, ctx):
         lukasID = '<@395653002050011166>'
@@ -146,7 +148,7 @@ class Fun(commands.Cog):
         # await ctx.send("<a:Monka:402587773594238986>")
 
     @commands.command(aliases=['Flip'])
-    @cooldown(1, 2, BucketType.channel)
+    @cooldown(1, 1, BucketType.user)
     async def flip(self, ctx):
         pp_array = ["Smol pp", "Huge pp"]
         pewds_array = ["Floor Gang", "Ceiling Gang"]

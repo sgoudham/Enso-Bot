@@ -14,7 +14,7 @@ client.remove_command('help')
 
 # Instantiates a list for all the cogs
 extensions = ['cogs.WaifuImages', 'cogs.FunCommands', 'cogs.Music',
-              'cogs.HelpCommands', 'cogs.OwOText', 'cogs.Embeds']
+              'cogs.HelpCommands', 'cogs.OwOText', 'cogs.Embeds', 'cogs.GetInfo']
 
 # Calls the cogs
 if __name__ == '__main__':

@@ -1,6 +1,6 @@
 # EnsōBot
 
-![alt text](https://media.discordapp.net/attachments/683490529862090814/715010931620446269/image1.jpg?width=658&height=658)
+![alt text](https://media.discordapp.net/attachments/683490529862090814/715010931620446269/image1.jpg?width=512&height=512)
 
 The EnsōBot for the Ensō server on discord! 
 

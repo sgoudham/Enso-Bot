@@ -41,7 +41,7 @@ class Embeds(commands.Cog):
                     await ctx.send(embed=embed)
 
             else:
-                message = error_function()
+                message = await ctx.send(error_function())
 
                 # Let the user read the message for 2.5 seconds
                 await asyncio.sleep(2.5)
@@ -75,7 +75,7 @@ class Embeds(commands.Cog):
                     await ctx.send(embed=embed)
 
             else:
-                message = error_function()
+                message = await ctx.send(error_function())
 
                 # Let the user read the message for 2.5 seconds
                 await asyncio.sleep(2.5)
@@ -109,7 +109,7 @@ class Embeds(commands.Cog):
                     await ctx.send(embed=embed)
 
             else:
-                message = error_function()
+                message = await ctx.send(error_function())
 
                 # Let the user read the message for 2.5 seconds
                 await asyncio.sleep(2.5)
@@ -143,7 +143,7 @@ class Embeds(commands.Cog):
                 await ctx.send(embed=embed)
 
             else:
-                message = error_function()
+                message = await ctx.send(error_function())
 
                 # Let the user read the message for 2.5 seconds
                 await asyncio.sleep(2.5)
@@ -152,6 +152,7 @@ class Embeds(commands.Cog):
 
         except FileNotFoundError as e:
             print(e)
+
 
 def setup(bot):
     bot.add_cog(Embeds(bot))

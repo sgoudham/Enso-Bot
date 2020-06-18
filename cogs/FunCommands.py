@@ -118,7 +118,7 @@ class Fun(commands.Cog):
 
             else:
 
-                message = error_function()
+                message = await ctx.send(error_function())
 
                 # Let the user read the message for 2.5 seconds
                 await asyncio.sleep(2.5)

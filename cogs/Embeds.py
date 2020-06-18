@@ -1,3 +1,4 @@
+import asyncio
 import datetime
 import random
 
@@ -40,9 +41,13 @@ class Embeds(commands.Cog):
                     await ctx.send(embed=embed)
 
             else:
+                message = error_function()
 
-                await errorFunction()
-                #
+                # Let the user read the message for 2.5 seconds
+                await asyncio.sleep(2.5)
+                # Delete the message
+                await message.delete()
+
         except FileNotFoundError as e:
             print(e)
 
@@ -70,8 +75,12 @@ class Embeds(commands.Cog):
                     await ctx.send(embed=embed)
 
             else:
+                message = error_function()
 
-                await errorFunction()
+                # Let the user read the message for 2.5 seconds
+                await asyncio.sleep(2.5)
+                # Delete the message
+                await message.delete()
 
         except FileNotFoundError as e:
             print(e)
@@ -100,8 +109,12 @@ class Embeds(commands.Cog):
                     await ctx.send(embed=embed)
 
             else:
+                message = error_function()
 
-                await errorFunction()
+                # Let the user read the message for 2.5 seconds
+                await asyncio.sleep(2.5)
+                # Delete the message
+                await message.delete()
 
         except FileNotFoundError as e:
             print(e)
@@ -130,15 +143,15 @@ class Embeds(commands.Cog):
                 await ctx.send(embed=embed)
 
             else:
-                await errorFunction()
+                message = error_function()
+
+                # Let the user read the message for 2.5 seconds
+                await asyncio.sleep(2.5)
+                # Delete the message
+                await message.delete()
 
         except FileNotFoundError as e:
             print(e)
-
-
-def errorFunction():
-    return error_function()
-
 
 def setup(bot):
     bot.add_cog(Embeds(bot))

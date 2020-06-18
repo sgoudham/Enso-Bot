@@ -7,7 +7,6 @@ from discord.ext import commands
 from discord.ext.commands import BucketType, cooldown
 
 import config
-from EnsoBot import error_function
 
 colour_list = [c for c in config.colors.values()]
 channels = ["enso-chan-commands", 'general']
@@ -152,6 +151,11 @@ class Embeds(commands.Cog):
 
         except FileNotFoundError as e:
             print(e)
+
+
+# Error handling function to make sure that the commands only work in enso-chan-commands
+def error_function():
+    return "Sorry! I only work in #enso-chan-commands!"
 
 
 def setup(bot):

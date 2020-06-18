@@ -8,7 +8,7 @@ from discord.ext import commands
 from discord.ext.commands import cooldown, BucketType
 
 import config
-from EnsoBot import error_function
+from cogs.Embeds import error_function
 
 channels = ["enso-chan-commands"]
 

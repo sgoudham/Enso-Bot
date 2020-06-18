@@ -6,7 +6,7 @@ from discord.ext import commands
 from discord.ext.commands import BucketType, cooldown
 
 import config
-from EnsoBot import error_function
+from cogs.Embeds import error_function
 
 colour_list = [c for c in config.colors.values()]
 

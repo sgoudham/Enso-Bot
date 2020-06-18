@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Jun 18 18:27:47 2020
-
-@author: Lukas
-"""
 from datetime import datetime
 from datetime import timedelta
 from time import sleep

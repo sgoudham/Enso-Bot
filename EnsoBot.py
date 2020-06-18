@@ -27,7 +27,7 @@ if __name__ == '__main__':
 async def on_ready():
     print('Bot is ready.')
     await client.change_presence(
-        activity=discord.Streaming(name="My Marriage!! 😍 💍", url="https://www.twitch.tv/goudham"))
+        activity=discord.Streaming(name="Falling in Love Again 😍 ", url="https://www.twitch.tv/goudham"))
 
 
 # Bot ~Ping command in milliseconds

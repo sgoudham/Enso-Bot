@@ -107,8 +107,11 @@ async def on_member_join(member):
 
         await new_people.send(embed=embed)
 
+        hamothyID = '<@&715412394968350756>'
+
         general_welcome = f"Welcome to the server! {member.mention} I hope you enjoy your stay here <a:huh:676195228872474643> <a:huh:676195228872474643> " \
-                          f"\nPlease go into <#722347423913213992> to choose some ping-able roles for events! "
+                          f"\nPlease go into <#722347423913213992> to choose some ping-able roles for events! " \
+                          f"\nPlease ping {hamothyID} for any questions about the server and of course, the other staff members!"
 
         await general.send(general_welcome)
     except Exception as e:

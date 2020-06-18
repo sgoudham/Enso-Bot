@@ -51,6 +51,40 @@ class Embeds(commands.Cog):
         except FileNotFoundError as e:
             print(e)
 
+    @commands.command(aliases=["Slap"])
+    @cooldown(1, 0.5, BucketType.channel)
+    async def slap(self, ctx, target: discord.Member):
+
+        try:
+            if str(ctx.channel) in channels:
+
+                with open('images/FunCommands/slapping.txt') as file:
+                    slapping_array = file.readlines()
+
+                    # set member as the author
+                    member = ctx.message.author
+                    userAvatar = member.avatar_url
+
+                    embed = discord.Embed(
+                        title=f"<:Gasp:633091585952841744> <:Gasp:633091585952841744> | **{member.display_name}** slapped **{target.display_name}**",
+                        colour=discord.Colour(int(random.choice(colour_list))))
+                    embed.set_image(url=random.choice(slapping_array))
+                    embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url='{}'.format(userAvatar))
+                    embed.timestamp = datetime.datetime.utcnow()
+
+                    await ctx.send(embed=embed)
+
+            else:
+
+                message = await ctx.send(error_function())
+
+                # Let the user read the message for 2.5 seconds
+                await asyncio.sleep(2.5)
+                # Delete the message
+                await message.delete()
+        except FileNotFoundError as e:
+            print(e)
+
     @commands.command(aliases=["Cuddle", "cdle", "cud"])
     @cooldown(1, 0.5, BucketType.channel)
     async def cuddle(self, ctx, target: discord.Member):

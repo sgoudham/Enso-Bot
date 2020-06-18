@@ -65,7 +65,7 @@ class Embeds(commands.Cog):
                     userAvatar = member.avatar_url
 
                     embed = discord.Embed(
-                        title=f"<:Gasp:633091585952841744> <:Gasp:633091585952841744> | **{member.display_name}** slapped **{target.display_name}**",
+                        title=f"<:baka:718942872061083678> <:baka:718942872061083678> | **{member.display_name}** slapped **{target.display_name}**",
                         colour=discord.Colour(int(random.choice(colour_list))))
                     embed.set_image(url=random.choice(slapping_array))
                     embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url='{}'.format(userAvatar))

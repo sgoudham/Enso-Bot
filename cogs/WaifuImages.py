@@ -41,7 +41,7 @@ class Waifus(commands.Cog):
 
             else:
 
-                await errorFunction(ctx)
+                await errorFunction()
 
         except FileNotFoundError as e:
             print(e)
@@ -69,7 +69,7 @@ class Waifus(commands.Cog):
 
                 else:
 
-                    await errorFunction(ctx)
+                    await errorFunction()
 
         except FileNotFoundError as e:
             print(e)
@@ -96,7 +96,7 @@ class Waifus(commands.Cog):
 
             else:
 
-                await errorFunction(ctx)
+                await errorFunction()
 
         except FileNotFoundError as e:
             print(e)

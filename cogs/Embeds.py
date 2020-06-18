@@ -9,7 +9,7 @@ from discord.ext.commands import BucketType, cooldown
 import config
 
 colour_list = [c for c in config.colors.values()]
-channels = ["enso-chan-commands", 'general']
+channels = ["enso-chan-commands"]
 
 
 class Embeds(commands.Cog):

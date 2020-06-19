@@ -44,7 +44,7 @@ async def on_ready():
     print('Bot is ready.')
 
     # Sets the bots status on discord for everyone to view
-    await client.change_presence(activity=discord.Game(name="With Broken Hearts 💔💔"))
+    await client.change_presence(activity=discord.Game(name="With Izzy 😏😏"))
 
 
 # Bot ~Ping command in milliseconds

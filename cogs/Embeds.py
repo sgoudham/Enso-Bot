@@ -41,7 +41,7 @@ class Embeds(commands.Cog):
                         title=f"<a:huh:676195228872474643> <a:huh:676195228872474643> | **{member.display_name}** kissed **{target.display_name}**",
                         colour=discord.Colour(int(random.choice(config.colour_list))))
                     embed.set_image(url=random.choice(kissing_array))
-                    embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url='{}'.format(userAvatar))
+                    embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
                     embed.timestamp = datetime.datetime.utcnow()
 
                     # Send the embedded message to the user
@@ -87,7 +87,7 @@ class Embeds(commands.Cog):
                         title=f"<:monkaW:718960264896184380> <:monkaW:718960264896184380> | **{member.display_name}** killed **{target.display_name}**",
                         colour=discord.Colour(int(random.choice(config.colour_list))))
                     embed.set_image(url=random.choice(killing_array))
-                    embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url='{}'.format(userAvatar))
+                    embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
                     embed.timestamp = datetime.datetime.utcnow()
 
                     # Send the embedded message to the user
@@ -133,7 +133,7 @@ class Embeds(commands.Cog):
                         title=f"<:blushlook1:677310734123663363> <:blushlook2:679524467248201769> | **{member.display_name}** cuddled **{target.display_name}**",
                         colour=discord.Colour(int(random.choice(config.colour_list))))
                     embed.set_image(url=random.choice(cuddling_array))
-                    embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url='{}'.format(userAvatar))
+                    embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
                     embed.timestamp = datetime.datetime.utcnow()
 
                     # Send the embedded message to the user
@@ -179,7 +179,7 @@ class Embeds(commands.Cog):
                         title=f"<:baka:718942872061083678> <:baka:718942872061083678> | **{member.display_name}** slapped **{target.display_name}**",
                         colour=discord.Colour(int(random.choice(config.colour_list))))
                     embed.set_image(url=random.choice(slapping_array))
-                    embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url='{}'.format(userAvatar))
+                    embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
                     embed.timestamp = datetime.datetime.utcnow()
 
                     # Send the embedded message to the user
@@ -222,10 +222,10 @@ class Embeds(commands.Cog):
 
                     # Set up the embed to display a random patting gif
                     embed = discord.Embed(
-                        title=f"<:baka:718942872061083678> <:baka:718942872061083678> | **{member.display_name}** patted **{target.display_name}**",
+                        title=f":pleading_face: :pleading_face: | **{member.display_name}** patted **{target.display_name}**",
                         colour=discord.Colour(int(random.choice(config.colour_list))))
                     embed.set_image(url=random.choice(patting_array))
-                    embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url='{}'.format(userAvatar))
+                    embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
                     embed.timestamp = datetime.datetime.utcnow()
 
                     # Send the embedded message to the user
@@ -270,7 +270,7 @@ class Embeds(commands.Cog):
                     title=f"<a:huh:676195228872474643> <a:huh:676195228872474643> | **{member.display_name}** Gives A Lemon To **{target.display_name}**",
                     colour=discord.Colour(int(random.choice(config.colour_list))))
                 embed.set_image(url=random.choice(lemon_array))
-                embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url='{}'.format(userAvatar))
+                embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
                 embed.timestamp = datetime.datetime.utcnow()
 
                 # Send the embedded message to the user

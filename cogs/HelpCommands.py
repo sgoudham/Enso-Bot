@@ -5,15 +5,22 @@ import discord
 from discord.ext import commands
 
 
+# Set up the Cog
 class CustomHelp(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
+    # ~help command allows the user to look at the list of commands
+    @commands.command(aliases="Help")
     async def help(self, ctx):
+
+        # Allowing the bot to dm the user
         author = ctx.message.author
 
+        # Surround with try/except to catch any exceptions that may occur
         try:
+
+            # Set up embed to list all the commands within the bot
             embed = discord.Embed(title="```(っ◔◡◔)っ Ensō Commands```", colour=discord.Colour.orange())
 
             embed.timestamp = datetime.datetime.utcnow()
@@ -146,8 +153,10 @@ class CustomHelp(commands.Cog):
                       "\n *(Perms: Co-Owner)*",
                 inline=True)
 
+            # Dm the user the embedded message
             await author.send(embed=embed)
 
+            # Send the helpDm() message to the channel that the user is in
             message = await ctx.send(helpDm())
 
             # Let the user read the message for 2.5 seconds
@@ -158,13 +167,19 @@ class CustomHelp(commands.Cog):
         except Exception as e:
             print(e)
 
-    # Bot ~rules command allows for an embed message about the leveled roles and xp system
+    # ~rules command allows for an embed message about the leveled roles and xp system
     @commands.command(aliases=["Rules", "rule", "Rule"])
     async def rules(self, ctx):
+
+        # Allowing the bot to dm the user
         author = ctx.message.author
+        # Define Izzy's roles ID
         izzyID = '<@397944038440828928'
 
+        # Surround with try/except to catch any exceptions that may occur
         try:
+
+            # Set up embed to list all the rules within the server
             embed = discord.Embed(title="```(っ◔◡◔)っ Ensō Rules```", colour=discord.Colour(0xFF69B4),
                                   description="``` ヽ(͡◕ ͜ʖ ͡◕)ﾉ Please respect the following rules that are going to be listed below ヽ(͡◕ ͜ʖ ͡◕)ﾉ ```")
 
@@ -263,23 +278,31 @@ class CustomHelp(commands.Cog):
                       f", or my co-owner, {izzyID}**",
                 inline=False)
 
+            # Dm the user the embedded message
             await author.send(embed=embed)
 
+            # Send the helpDm() message to the channel that the user is in
             message = await ctx.send(helpDm())
 
             # Let the user read the message for 2.5 seconds
             await asyncio.sleep(10)
             # Delete the message
             await message.delete()
+
         except Exception as e:
             print(e)
 
-    # Bot ~roles command allows for an embed message about roles
+    # ~roles command allows for an embed message about roles
     @commands.command()
     async def roles(self, ctx):
+
+        # Allowing the bot to dm the user
         author = ctx.message.author
 
+        # Surround with try/except to catch any exceptions that may occur
         try:
+
+            # Setting up embedded message about the leveled roles systme within the server
             embed = discord.Embed(title="```So you wanna know how the leveled roles system works huh?```",
                                   colour=discord.Colour(0x30e419),
                                   description="------------------------------------------------")
@@ -307,18 +330,22 @@ class CustomHelp(commands.Cog):
                                   "amount of experience**",
                             inline=False)
 
+            # Dm the user the embedded message
             await author.send(embed=embed)
 
+            # Send the helpDm() message to the channel that the user is in
             message = await ctx.send(helpDm())
 
             # Let the user read the message for 2.5 seconds
             await asyncio.sleep(10)
             # Delete the message
             await message.delete()
+
         except Exception as e:
             print(e)
 
 
+# Send a message to the channel that Enso~Chan has dm'ed them!
 def helpDm():
     hamothyID = '<@&715412394968350756>'
 

@@ -120,7 +120,7 @@ class Fun(commands.Cog):
         # Surround with try/except to catch any exceptions that may occur
         try:
 
-            # If the channel that the command has been sent is included
+            # If the channel that the command has been sent is in the list of accepted channels
             if str(ctx.channel) in channels:
 
                 # Open the file containing all the custom eightball responses

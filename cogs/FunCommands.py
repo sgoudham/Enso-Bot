@@ -12,6 +12,7 @@ from cogs.Embeds import error_function
 colour_list = [c for c in config.colors.values()]
 
 
+# Set up the cog
 class Fun(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -21,6 +22,7 @@ class Fun(commands.Cog):
     @commands.has_any_role('Hamothy', "izzy")
     async def attack(self, ctx, target: discord.Member):
 
+        # Set up array of insults to throw at people
         responses = [
             f"{target.mention} is stinky",
             f"{target.mention} is ugly",
@@ -55,10 +57,13 @@ class Fun(commands.Cog):
         # Sending out a random insult from the array "responses"
         await ctx.send(random.choice(responses))
 
+    # ~compliment command for everyone to use to compliment someone
     @commands.command(aliases=['comp', 'Compliment', 'Comp'])
+    # Added a cooldown, only 1 instance of the command can be sent every second per user
     @cooldown(1, 1, BucketType.user)
     async def compliment(self, ctx, target: discord.Member):
 
+        # Set up array of compliments to throw at people
         responses = [
             f"{target.mention} is the most adorable uwu <:awie:676201100793085952> <:awie:676201100793085952> <:awie:676201100793085952>",
             f"{target.mention} You have my ENTIRE HEART <:blushlook1:677310734123663363> <:blushlook2:679524467248201769>",
@@ -103,23 +108,31 @@ class Fun(commands.Cog):
         await ctx.send(random.choice(responses))
         # await ctx.send(f"{target.mention} Your wedding will be wonderful, but the y is silent <a:huh:676195228872474643> <a:huh:676195228872474643>")
 
-    # Bot ~8Ball command
+    # ~8Ball command
     @commands.command(aliases=['8ball', '8Ball', ' 8Ball'])
+    # Added a cooldown, only 1 instance of the command can be sent every second per user
     @cooldown(1, 1, BucketType.user)
     async def _8ball(self, ctx, *, question):
 
+        # Setting up the channels that the commands can be sent in
         channels = ["enso-chan-commands", "general"]
 
+        # Surround with try/except to catch any exceptions that may occur
         try:
+
+            # If the channel that the command has been sent is included
             if str(ctx.channel) in channels:
 
+                # Open the file containing all the custom eightball responses
                 with open('images/FunCommands/eightball.txt') as file:
+                    # Store the eightball responses in an array
                     _8ball_array = file.readlines()
-
+                    # Repeat the user question and send out a random response from _8ball_array
                     await ctx.send(f'Question: {question}\nAnswer: {random.choice(_8ball_array)}')
 
+            # else the command is sent in an invalid channel
             else:
-
+                # Call error_function() and display it to the user
                 message = await ctx.send(error_function())
 
                 # Let the user read the message for 2.5 seconds
@@ -130,32 +143,41 @@ class Fun(commands.Cog):
         except FileNotFoundError as e:
             print(e)
 
-    # Bot ~8Ball command
+    # ~Lukas command that only Lukas can use
     @commands.command(aliases=['Lukas'])
+    # Added a cooldown, only 1 instance of the command can be sent every second per user
     @cooldown(1, 1, BucketType.user)
     @commands.has_any_role('Lukas (Server Booster)')
     async def lukas(self, ctx):
+
+        # Define the id's of Bubz and Lukas
         lukasID = '<@395653002050011166>'
         bubzID = '<@422588717744652289>'
 
+        # Set up array of responses that Lukas wants the bot to display
         responses = [
             f"{lukasID} loves {bubzID} with all his heart <:awie:676201100793085952> <:awie:676201100793085952>",
             f"{lukasID} and {bubzID} are raising their rabbits <:blushlook1:677310734123663363> <:blushlook2:679524467248201769>",
             f"{lukasID} is having a cult meeting",
             f"{bubzID} is {lukasID}’s Ehefrau"]
 
+        # Send one of the responses of the responses array to Lukas
         await ctx.send(random.choice(responses))
-        # await ctx.send("<a:Monka:402587773594238986>")
 
+    # ~Flip command to allow for 50/50 chance decisions
     @commands.command(aliases=['Flip'])
     @cooldown(1, 1, BucketType.user)
     async def flip(self, ctx):
+
+        # Define 3 arrays that only have 2 strings stored in them
         pp_array = ["Smol pp", "Huge pp"]
         pewds_array = ["Floor Gang", "Ceiling Gang"]
         chippy_array = ["Couch gang", "Chair Gang"]
 
+        # Creating a 50/50 chance by choosing the array first
         responses = random.choice([pp_array, pewds_array, chippy_array])
 
+        # Send out one of the responses stored in the array
         await ctx.send(f"{ctx.author.mention} {random.choice(responses)}")
 
 

@@ -132,6 +132,7 @@ class Fun(commands.Cog):
 
             # else the command is sent in an invalid channel
             else:
+
                 # Call error_function() and display it to the user
                 message = await ctx.send(error_function())
 

@@ -10,10 +10,6 @@ from discord.ext.commands import cooldown, BucketType
 import config
 from cogs.Embeds import error_function
 
-channels = ["enso-chan-commands"]
-
-colour_list = [c for c in config.colors.values()]
-
 
 class Waifus(commands.Cog):
     def __init__(self, bot):
@@ -23,18 +19,21 @@ class Waifus(commands.Cog):
     @commands.command(aliases=['Kakashi'])
     async def kakashi(self, ctx):
 
+        # Surround with try/except to catch any exceptions that may occur
         try:
 
             with open('images/WaifuImages/kakashiImages.txt') as file:
                 kakashi_array = file.readlines()
 
-            if str(ctx.channel) in channels:
+            # If the channel that the command has been sent is in the list of accepted channels
+            if str(ctx.channel) in config.channels:
 
-                # set member as the author
+                # Set member as the author
                 member = ctx.message.author
                 userAvatar = member.avatar_url
 
-                embed = discord.Embed(title="**Hatake Kakashi**", colour=discord.Colour(random.choice(colour_list)))
+                embed = discord.Embed(title="**Hatake Kakashi**",
+                                      colour=discord.Colour(random.choice(config.colour_list)))
                 embed.set_image(url=random.choice(kakashi_array))
                 embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
                 embed.timestamp = datetime.datetime.utcnow()
@@ -61,26 +60,28 @@ class Waifus(commands.Cog):
             with open('images/WaifuImages/togaImages.txt') as file:
                 toga_array = file.readlines()
 
-                if str(ctx.channel) in channels:
+            # If the channel that the command has been sent is in the list of accepted channels
+            if str(ctx.channel) in config.channels:
 
-                    member = ctx.message.author  # set member as the author
-                    userAvatar = member.avatar_url
+                # Set member as the author
+                member = ctx.message.author
+                userAvatar = member.avatar_url
 
-                    embed = discord.Embed(title="**Himiko Toga**",
-                                          colour=discord.Colour(int(random.choice(colour_list))))
-                    embed.set_image(url=random.choice(toga_array))
-                    embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
-                    embed.timestamp = datetime.datetime.utcnow()
-                    await ctx.send(embed=embed)
+                embed = discord.Embed(title="**Himiko Toga**",
+                                      colour=discord.Colour(int(random.choice(config.colour_list))))
+                embed.set_image(url=random.choice(toga_array))
+                embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
+                embed.timestamp = datetime.datetime.utcnow()
+                await ctx.send(embed=embed)
 
-                else:
+            else:
 
-                    message = await ctx.send(error_function())
+                message = await ctx.send(error_function())
 
-                    # Let the user read the message for 2.5 seconds
-                    await asyncio.sleep(2.5)
-                    # Delete the message
-                    await message.delete()
+                # Let the user read the message for 2.5 seconds
+                await asyncio.sleep(2.5)
+                # Delete the message
+                await message.delete()
 
         except FileNotFoundError as e:
             print(e)
@@ -93,13 +94,14 @@ class Waifus(commands.Cog):
             with open('images/WaifuImages/tamakiImages.txt') as file:
                 tamaki_array = file.readlines()
 
-            if str(ctx.channel) in channels:
+            # If the channel that the command has been sent is in the list of accepted channels
+            if str(ctx.channel) in config.channels:
 
                 # set member as the author
                 member = ctx.message.author
                 userAvatar = member.avatar_url
 
-                embed = discord.Embed(title="**Tamaki Suoh**", colour=discord.Colour(random.choice(colour_list)))
+                embed = discord.Embed(title="**Tamaki Suoh**", colour=discord.Colour(random.choice(config.colour_list)))
                 embed.set_image(url=random.choice(tamaki_array))
                 embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
                 embed.timestamp = datetime.datetime.utcnow()
@@ -126,7 +128,7 @@ class Waifus(commands.Cog):
                  'gria', 'lilu', 'marcus', 'eric', 'ifrah',
                  'janet', 'connor', 'taz', 'ryder', 'ange',
                  'izzy', 'david', 'clarity', 'angel', 'chloe',
-                 'corona']
+                 'corona', 'skye']
 
         if name:
             proper_name = name.lower()
@@ -149,14 +151,15 @@ class Waifus(commands.Cog):
             with open(f'images/ServerMembers/{random.choice(array)}.txt') as file:
                 array = file.readlines()
 
-            if str(ctx.channel) in channels:
-                # set member as the author
+            # If the channel that the command has been sent is in the list of accepted channels
+            if str(ctx.channel) in config.channels:
+                # Set member as the author
                 member = ctx.message.author
                 userAvatar = member.avatar_url
 
                 embed = discord.Embed(
                     title=f"Oh Look! A Cute Person <a:huh:676195228872474643> <a:huh:676195228872474643> ",
-                    colour=discord.Colour(random.choice(colour_list)))
+                    colour=discord.Colour(random.choice(config.colour_list)))
                 embed.set_image(url=random.choice(array))
                 embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
                 embed.timestamp = datetime.datetime.utcnow()
@@ -164,14 +167,15 @@ class Waifus(commands.Cog):
 
 
 def displayServerImage(array, ctx, name):
-    if str(ctx.channel) in channels:
-        # set member as the author
+    # If the channel that the command has been sent is in the list of accepted channels
+    if str(ctx.channel) in config.channels:
+        # Set member as the author
         member = ctx.message.author
         userAvatar = member.avatar_url
 
         embed = discord.Embed(
             title=f"**Oh Look! A Cute Picture of {name.capitalize()}!! <a:huh:676195228872474643> <a:huh:676195228872474643> **",
-            colour=discord.Colour(random.choice(colour_list)))
+            colour=discord.Colour(random.choice(config.colour_list)))
         embed.set_image(url=random.choice(array))
         embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
         embed.timestamp = datetime.datetime.utcnow()

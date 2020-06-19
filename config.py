@@ -42,7 +42,10 @@ colors = {
 # Allowed channel for Enso~Chan commands
 channels = ["enso-chan-commands"]
 
-# Grabbing the list of colours defined in the config.py file
+# Grabbing the list of colours
 colour_list = [c for c in colors.values()]
 
-marriage_active = False
+# Instantiates a list for all the cogs
+extensions = ['cogs.WaifuImages', 'cogs.FunCommands', 'cogs.Music',
+              'cogs.HelpCommands', 'cogs.OwOText', 'cogs.Embeds',
+              'cogs.GetInfo', 'cogs.Reminder']

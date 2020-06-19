@@ -54,7 +54,7 @@ class Fun(commands.Cog):
             f"{target.mention} has no common sense"
         ]
 
-        # Sending out a random insult from the array "responses
+        # Sending out a random insult from the array "responses"
         await ctx.send(random.choice(responses))
 
     # ~compliment command for everyone to use to compliment someone

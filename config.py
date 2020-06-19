@@ -38,3 +38,8 @@ colors = {
     'SEA_GREEN': 0x2E8B57,
     'MEDIUM_VIOLET_RED': 0xC71585,
 }
+
+channels = ["enso-chan-commands"]
+
+# Grabbing the list of colours defined in the config.py file
+colour_list = [c for c in colors.values()]

@@ -125,7 +125,8 @@ class Waifus(commands.Cog):
                  'lukas', 'marshall', 'stitch', 'zara', 'josh',
                  'gria', 'lilu', 'marcus', 'eric', 'ifrah',
                  'janet', 'connor', 'taz', 'ryder', 'ange',
-                 'izzy', 'david', 'clarity', 'angel']
+                 'izzy', 'david', 'clarity', 'angel', 'chloe',
+                 '']
 
         if name:
             proper_name = name.lower()

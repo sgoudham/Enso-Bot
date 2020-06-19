@@ -39,7 +39,10 @@ colors = {
     'MEDIUM_VIOLET_RED': 0xC71585,
 }
 
+# Allowed channel for Enso~Chan commands
 channels = ["enso-chan-commands"]
 
 # Grabbing the list of colours defined in the config.py file
 colour_list = [c for c in colors.values()]
+
+marriage_active = False

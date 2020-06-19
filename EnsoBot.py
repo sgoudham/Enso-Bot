@@ -132,7 +132,7 @@ async def on_member_join(member):
         await new_people.send(embed=embed)
 
         # Set hamothyID equal to my id in discord
-        izzyID = '<@664585078487252993>'
+        izzyID = '<@&664585078487252993>'
 
         # String for welcoming people in the #general channel
         general_welcome = f"Welcome to the server! {member.mention} I hope you enjoy your stay here <a:huh:676195228872474643> <a:huh:676195228872474643> " \

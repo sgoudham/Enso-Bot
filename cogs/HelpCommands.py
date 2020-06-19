@@ -11,7 +11,7 @@ class CustomHelp(commands.Cog):
         self.bot = bot
 
     # ~help command allows the user to look at the list of commands
-    @commands.command(aliases="Help")
+    @commands.command(aliases=["Help"])
     async def help(self, ctx):
 
         # Allowing the bot to dm the user
@@ -71,6 +71,18 @@ class CustomHelp(commands.Cog):
                 name="\u200b",
                 value="**➳ ~slap**" +
                       "\n Allows the user to slap someone in the server" +
+                      "\n *(Perms: Everyone)*",
+                inline=True)
+            embed.add_field(
+                name="\u200b",
+                value="**➳ ~kill**" +
+                      "\n Allows the user to kill someone in the server" +
+                      "\n *(Perms: Everyone)*",
+                inline=True)
+            embed.add_field(
+                name="\u200b",
+                value="**➳ ~pat**" +
+                      "\n Allows the user to pat someone in the server" +
                       "\n *(Perms: Everyone)*",
                 inline=True)
             embed.add_field(
@@ -293,7 +305,7 @@ class CustomHelp(commands.Cog):
             print(e)
 
     # ~roles command allows for an embed message about roles
-    @commands.command()
+    @commands.command(aliases=["Roles"])
     async def roles(self, ctx):
 
         # Allowing the bot to dm the user

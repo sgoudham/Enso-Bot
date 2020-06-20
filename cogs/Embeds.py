@@ -6,7 +6,7 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import BucketType, cooldown
 
-import Config
+import settings
 
 
 # Set up the Cog
@@ -24,7 +24,7 @@ class Embeds(commands.Cog):
         try:
 
             # If the channel that the command has been sent is in the list of accepted channels
-            if str(ctx.channel) in Config.channels:
+            if str(ctx.channel) in settings.channels:
 
                 # Open the file containing the kissing gifs
                 with open('images/FunCommands/kissing.txt') as file:
@@ -39,7 +39,7 @@ class Embeds(commands.Cog):
                     # Set up the embed to display a random kissing gif
                     embed = discord.Embed(
                         title=f"<a:huh:676195228872474643> <a:huh:676195228872474643> | **{member.display_name}** kissed **{target.display_name}**",
-                        colour=discord.Colour(int(random.choice(Config.colour_list))))
+                        colour=discord.Colour(int(random.choice(settings.colour_list))))
                     embed.set_image(url=random.choice(kissing_array))
                     embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
                     embed.timestamp = datetime.datetime.utcnow()
@@ -70,7 +70,7 @@ class Embeds(commands.Cog):
         try:
 
             # If the channel that the command has been sent is in the list of accepted channels
-            if str(ctx.channel) in Config.channels:
+            if str(ctx.channel) in settings.channels:
 
                 # Open the file containing the killing gifs
                 with open('images/FunCommands/killing.txt') as file:
@@ -85,7 +85,7 @@ class Embeds(commands.Cog):
                     # Set up the embed to display a random killing gif
                     embed = discord.Embed(
                         title=f"<:monkaW:718960264896184380> <:monkaW:718960264896184380> | **{member.display_name}** killed **{target.display_name}**",
-                        colour=discord.Colour(int(random.choice(Config.colour_list))))
+                        colour=discord.Colour(int(random.choice(settings.colour_list))))
                     embed.set_image(url=random.choice(killing_array))
                     embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
                     embed.timestamp = datetime.datetime.utcnow()
@@ -116,7 +116,7 @@ class Embeds(commands.Cog):
         try:
 
             # If the channel that the command has been sent is in the list of accepted channels
-            if str(ctx.channel) in Config.channels:
+            if str(ctx.channel) in settings.channels:
 
                 # Open the file containing the cuddling gifs
                 with open('images/FunCommands/cuddling.txt') as file:
@@ -131,7 +131,7 @@ class Embeds(commands.Cog):
                     # Set up the embed to display a random cuddling gif
                     embed = discord.Embed(
                         title=f"<:blushlook1:677310734123663363> <:blushlook2:679524467248201769> | **{member.display_name}** cuddled **{target.display_name}**",
-                        colour=discord.Colour(int(random.choice(Config.colour_list))))
+                        colour=discord.Colour(int(random.choice(settings.colour_list))))
                     embed.set_image(url=random.choice(cuddling_array))
                     embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
                     embed.timestamp = datetime.datetime.utcnow()
@@ -162,7 +162,7 @@ class Embeds(commands.Cog):
         try:
 
             # If the channel that the command has been sent is in the list of accepted channels
-            if str(ctx.channel) in Config.channels:
+            if str(ctx.channel) in settings.channels:
 
                 # Open the file containing the cuddling gifs
                 with open('images/FunCommands/slapping.txt') as file:
@@ -177,7 +177,7 @@ class Embeds(commands.Cog):
                     # Set up the embed to display a random slapping gif
                     embed = discord.Embed(
                         title=f"<:baka:718942872061083678> <:baka:718942872061083678> | **{member.display_name}** slapped **{target.display_name}**",
-                        colour=discord.Colour(int(random.choice(Config.colour_list))))
+                        colour=discord.Colour(int(random.choice(settings.colour_list))))
                     embed.set_image(url=random.choice(slapping_array))
                     embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
                     embed.timestamp = datetime.datetime.utcnow()
@@ -208,7 +208,7 @@ class Embeds(commands.Cog):
         try:
 
             # If the channel that the command has been sent is in the list of accepted channels
-            if str(ctx.channel) in Config.channels:
+            if str(ctx.channel) in settings.channels:
 
                 # Open the file containing the patting gifs
                 with open('images/FunCommands/patting.txt') as file:
@@ -223,7 +223,7 @@ class Embeds(commands.Cog):
                     # Set up the embed to display a random patting gif
                     embed = discord.Embed(
                         title=f":pleading_face: :pleading_face: | **{member.display_name}** patted **{target.display_name}**",
-                        colour=discord.Colour(int(random.choice(Config.colour_list))))
+                        colour=discord.Colour(int(random.choice(settings.colour_list))))
                     embed.set_image(url=random.choice(patting_array))
                     embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
                     embed.timestamp = datetime.datetime.utcnow()
@@ -258,7 +258,7 @@ class Embeds(commands.Cog):
         try:
 
             # If the channel that the command has been sent is in the list of accepted channels
-            if str(ctx.channel) in Config.channels:
+            if str(ctx.channel) in settings.channels:
 
                 # Set member as the author
                 member = ctx.message.author
@@ -268,7 +268,7 @@ class Embeds(commands.Cog):
                 # Set up the embed to display a random lemon gif
                 embed = discord.Embed(
                     title=f"<a:huh:676195228872474643> <a:huh:676195228872474643> | **{member.display_name}** Gives A Lemon To **{target.display_name}**",
-                    colour=discord.Colour(int(random.choice(Config.colour_list))))
+                    colour=discord.Colour(int(random.choice(settings.colour_list))))
                 embed.set_image(url=random.choice(lemon_array))
                 embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
                 embed.timestamp = datetime.datetime.utcnow()

@@ -5,11 +5,11 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import BucketType, cooldown
 
-import Config
+import settings
 from cogs.Embeds import error_function
 
-# Grabbing the list of colours defined in the Config.py file
-colour_list = [c for c in Config.colors.values()]
+# Grabbing the list of colours defined in the settings.py file
+colour_list = [c for c in settings.colors.values()]
 
 
 # Set up the cog
@@ -180,6 +180,15 @@ class Fun(commands.Cog):
 
         # Send out one of the responses stored in the array
         await ctx.send(f"{ctx.author.mention} {random.choice(responses)}")
+
+    # ~dm only allows me to dm anyone through the bot
+    @commands.command()
+    @commands.has_any_role('Hamothy', 'Servant')
+    async def dm(self, ctx, member: discord.Member, *, text):
+        # Send the message typed the mentioned user
+        await member.send(text)
+
+        await ctx.message.delete()
 
 
 def setup(bot):

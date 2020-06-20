@@ -222,7 +222,7 @@ class Embeds(commands.Cog):
 
                     # Set up the embed to display a random patting gif
                     embed = discord.Embed(
-                        title=f":pleading_face: :pleading_face: | **{member.display_name}** patted **{target.display_name}**",
+                        title=f"<:xoxo:679893117482303564> <:xoxo:679893117482303564> | **{member.display_name}** patted **{target.display_name} on the head**",
                         colour=discord.Colour(int(random.choice(settings.colour_list))))
                     embed.set_image(url=random.choice(patting_array))
                     embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))

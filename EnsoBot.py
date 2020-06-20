@@ -1,12 +1,13 @@
 import asyncio
 import datetime
-from asyncio import sleep
 
 import discord
 from decouple import config
 from discord.ext import commands
 
 # Getting the Bot token from Environment Variables
+import settings
+
 API_TOKEN = config('DISCORD_TOKEN')
 
 # Bot Initiation
@@ -14,27 +15,13 @@ client = commands.Bot(  # Create a new bot
     command_prefix="~",  # Set the prefix
     description='Ensō~Chan!',  # Set a description for the bot
     owner_id=154840866496839680)  # Your unique User ID
+# Removes the default help command
 client.remove_command('help')
 
-# Instantiates a list for all the cogs
-extensions = ['cogs.WaifuImages', 'cogs.FunCommands', 'cogs.Music',
-              'cogs.HelpCommands', 'cogs.OwOText', 'cogs.Embeds',
-              'cogs.GetInfo', 'cogs.Reminder']
-
-# Calls the cogs
+# Calls the cogs from the settings.py file and loads them
 if __name__ == '__main__':
-    for ext in extensions:
+    for ext in settings.extensions:
         client.load_extension(ext)
-
-
-@client.command()
-async def remind(ctx, time=None):
-    author = ctx.message.author
-    if time:
-        await sleep(float(time))
-        await author.send("uwu")
-    else:
-        await author.send("owo")
 
 
 # Bot Status on Discord
@@ -53,6 +40,14 @@ async def on_ready():
 async def ping(ctx):
     # Send the latency of the bot (ms)
     await ctx.send(f'Pong! {round(client.latency * 1000)}ms')
+
+
+@client.event
+async def on_message(message):
+    channel = client.get_channel(721449922838134876)
+    if message.channel == message.author.dm_channel:
+        await channel.send(message.content)
+    await client.process_commands(message)
 
 
 # Bot Event for handling cooldown error
@@ -260,6 +255,29 @@ async def on_raw_reaction_remove(payload):
     except Exception as ex:
         print(ex)
 
+
+@client.command()
+async def marry(ctx, member: discord.Member):
+    await ctx.send(f"{ctx.author.mention} **proposes to** {member.mention} **Do you accept??** "
+                   f"\nRespond with [y(es)/n(o)]")
+
+    def check(m):
+        return m.author == member
+
+    try:
+        msg = await client.wait_for('message', check=check, timeout=10)
+
+        if msg.content.lower() in ['y', 'yes']:
+            await ctx.send(f"Congratulations! {ctx.author.mention} and {member.mention} are now married to each other!")
+        elif msg.content.lower() in ['n', 'no']:
+            await ctx.send(f"Unlucky, maybe another time! {ctx.author.mention}")
+        else:
+            await ctx.send("I did not understand that, aborting!")
+    except asyncio.TimeoutError as e:
+        print(e)
+        await ctx.send("Looks like you waited too long.")
+
+
 # Run the bot, allowing to come online
 try:
     client.run(API_TOKEN)
@@ -351,4 +369,28 @@ def punch(p2, player1, player2):
     damage = random.randint(1, 100)
     p2 -= damage
     return f"**{player1} punched {player2} for {punch(p2)} damage!**"
+    
+    
+    
+
+@client.command()
+async def marry(ctx, target: discord.Member):
+    def check(message: discord.Message):
+        return message.channel == ctx.channel and message.author != ctx.me
+
+    await ctx.send('foo')
+    foo = await client.wait_for('message', check=check)
+
+    await ctx.send('bar')
+    bar = await client.wait_for('message', check=check)
+    
+    
+@client.command()
+async def dm2(ctx, time=None, *, text):
+    author = ctx.get_user_info(154840866496839680)
+    if time:
+        await asyncio.sleep(float(time))
+        await author.send(text)
+    else:
+        await author.send(text)
 """

@@ -46,7 +46,10 @@ async def ping(ctx):
 async def on_message(message):
     channel = client.get_channel(721449922838134876)
     if message.channel == message.author.dm_channel:
-        await channel.send(message.content)
+        if message.author.id == 154840866496839680:
+            await channel.send(message.content)
+        else:
+            return
     await client.process_commands(message)
 
 

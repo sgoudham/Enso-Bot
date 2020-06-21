@@ -132,7 +132,7 @@ async def on_member_join(member):
 
 # Allowing people to get ping-able self roles
 @client.command(name="rolemenu")
-@commands.has_any_role('Hamothy')
+@commands.is_owner()
 async def role_menu(ctx):
     # Surround with try/except to catch any exceptions that may occur
     try:
@@ -284,18 +284,29 @@ async def marry(ctx, member: discord.Member):
 # Allows the bot to echo the dm's that it receives
 @client.event
 async def on_message(message):
+
     # Get the channel id of the channel it wants to push messages to
     channel = client.get_channel(721449922838134876)
 
     # If the channel that the message is sent in is private
-    if message.channel == discord.ChannelType.private:
+    if message.guild is None:
         # if the message author id is equal to mine
-        if message.author.id == 578919370697342977:
+        author = message.author.name
+        discrim = message.author.discriminator
+        content = message.content
+        time = str(message.created_at)
+
+        with open('logs/dm-logs.txt', "a") as file:
+            file.write("\n")
+            file.write(time + ": " + author + "#" + discrim + ": " + content)
+
+        if message.author.id == 154840866496839680:
             # Echo the message contents to the channel specified
             await channel.send(message.content)
         else:
             # Do nothing
             return
+
     await client.process_commands(message)
 
 

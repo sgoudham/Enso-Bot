@@ -6,7 +6,7 @@ class Reminder(commands.Cog):
         self.bot = bot
 """
     @commands.Cog.listener()
-    @commands.has_any_role('Hamothy')
+    @commands.is.owner()
     async def ():
         time_left = [float(i) for i in str(datetime.now().time()).split(":")]
         time_left = timedelta(hours=2) - timedelta(hours=time_left[0] % 2, minutes=time_left[1], seconds=time_left[2])

@@ -42,42 +42,6 @@ async def ping(ctx):
     await ctx.send(f'Pong! {round(client.latency * 1000)}ms')
 
 
-# Bot Event for handling cooldown error/permission errors
-@client.event
-async def on_command_error(ctx, error):
-    if isinstance(error, commands.CommandOnCooldown):
-        # Send an error message to the user telling them that the command is on cooldown
-        message = await ctx.send(f'That command is on cooldown. Try again in {error.retry_after:,.2f} seconds.')
-
-        # Let the user read the message for 2.5 seconds
-        await asyncio.sleep(2.5)
-        # Delete the message
-        await message.delete()
-
-    # Bot Event for handling permission errors
-    if isinstance(error, commands.CheckFailure):
-        # Send an error message to the user saying that they don't have permission to use this command
-        message = await ctx.send("Uh oh! You don't have permission to use this command!")
-
-        # Let the user read the message for 1.5 seconds
-        await asyncio.sleep(1.5)
-        # Delete the message
-        await message.delete()
-
-
-# Bot Event for handling missing argument error
-@client.event
-async def on_command_error(ctx, target: discord.member):
-    if isinstance(target, commands.MissingRequiredArgument):
-        # Send an error message to the user saying that an argument is missing
-        message = await ctx.send("Uh oh! Couldn't find anyone to mention! Try again!")
-
-        # Let the user read the message for 1.5 seconds
-        await asyncio.sleep(1.5)
-        # Delete the message
-        await message.delete()
-
-
 # Bot event for new member joining, sending an embed introducing them to the server
 @client.event
 async def on_member_join(member):
@@ -284,7 +248,6 @@ async def marry(ctx, member: discord.Member):
 # Allows the bot to echo the dm's that it receives
 @client.event
 async def on_message(message):
-
     # Get the channel id of the channel it wants to push messages to
     channel = client.get_channel(721449922838134876)
 
@@ -327,6 +290,42 @@ async def remind_me(ctx, time=None, *, text):
     else:
         # Instantly Send message to user's dms
         await author.send(text)
+
+
+# Bot Event for handling cooldown error/permission errors
+@client.event
+async def on_command_error(ctx, error):
+    if isinstance(error, commands.CommandOnCooldown):
+        # Send an error message to the user telling them that the command is on cooldown
+        message = await ctx.send(f'That command is on cooldown. Try again in {error.retry_after:,.2f} seconds.')
+
+        # Let the user read the message for 2.5 seconds
+        await asyncio.sleep(2.5)
+        # Delete the message
+        await message.delete()
+
+    # Bot Event for handling permission errors
+    if isinstance(error, commands.CheckFailure):
+        # Send an error message to the user saying that they don't have permission to use this command
+        message = await ctx.send("Uh oh! You don't have permission to use this command!")
+
+        # Let the user read the message for 1.5 seconds
+        await asyncio.sleep(1.5)
+        # Delete the message
+        await message.delete()
+
+
+# Bot Event for handling missing argument error
+@client.event
+async def on_command_error(ctx, target: discord.Member):
+    if isinstance(target, commands.MissingRequiredArgument):
+        # Send an error message to the user saying that an argument is missing
+        message = await ctx.send("Uh oh! Couldn't find anyone to mention! Try again!")
+
+        # Let the user read the message for 1.5 seconds
+        await asyncio.sleep(1.5)
+        # Delete the message
+        await message.delete()
 
 
 # Run the bot, allowing it to come online

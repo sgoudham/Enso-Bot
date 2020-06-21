@@ -250,7 +250,7 @@ async def on_raw_reaction_remove(payload):
 async def marry(ctx, member: discord.Member):
     # Send a message to the channel mentioning the author and the person they want to wed.
     await ctx.send(f"{ctx.author.mention} **Proposes To** {member.mention} **Do you accept??** "
-                   f"\nRespond with [yes/no]")
+                   f"\nRespond with [Yes/No]")
 
     # A check that makes sure that the reply is not from the author
     # and that the reply is in the same channel as the proposal
@@ -300,8 +300,8 @@ async def on_message(message):
 
 
 # ~remindme command to allow the bot to dm you to remind you of something
-@client.command()
-async def remindme(ctx, time=None, *, text):
+@client.command(aliases=["remindme", "rm"])
+async def remind_me(ctx, time=None, *, text):
     # Grab the author and store it in "author"
     author = ctx.message.author
 

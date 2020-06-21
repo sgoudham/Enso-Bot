@@ -3,7 +3,7 @@ import random
 
 import discord
 from discord.ext import commands
-from discord.ext.commands import BucketType, cooldown
+from discord.ext.commands import BucketType
 
 import settings
 from cogs.Embeds import error_function
@@ -60,7 +60,7 @@ class Fun(commands.Cog):
     # ~compliment command for everyone to use to compliment someone
     @commands.command(aliases=['comp', 'Compliment', 'Comp'])
     # Added a cooldown, only 1 instance of the command can be sent every second per user
-    @cooldown(1, 1, BucketType.user)
+    @commands.cooldown(1, 1, BucketType.user)
     async def compliment(self, ctx, target: discord.Member):
 
         # Set up array of compliments to throw at people
@@ -111,7 +111,7 @@ class Fun(commands.Cog):
     # ~8Ball command
     @commands.command(aliases=['8ball', '8Ball', ' 8Ball'])
     # Added a cooldown, only 1 instance of the command can be sent every second per user
-    @cooldown(1, 1, BucketType.user)
+    @commands.cooldown(1, 1, BucketType.user)
     async def _8ball(self, ctx, *, question):
 
         # Setting up the channels that the commands can be sent in
@@ -147,7 +147,7 @@ class Fun(commands.Cog):
     # ~Lukas command that only Lukas can use
     @commands.command(aliases=['Lukas'])
     # Added a cooldown, only 1 instance of the command can be sent every second per user
-    @cooldown(1, 1, BucketType.user)
+    @commands.cooldown(1, 1, BucketType.user)
     @commands.has_any_role('Lukas (Server Booster)')
     async def lukas(self, ctx):
 
@@ -167,7 +167,7 @@ class Fun(commands.Cog):
 
     # ~Flip command to allow for 50/50 chance decisions
     @commands.command(aliases=['Flip'])
-    @cooldown(1, 1, BucketType.user)
+    @commands.cooldown(1, 1, BucketType.user)
     async def flip(self, ctx):
 
         # Define 3 arrays that only have 2 strings stored in them
@@ -183,50 +183,14 @@ class Fun(commands.Cog):
 
     # ~dm only allows me to dm anyone through the bot
     @commands.command()
-    @commands.has_any_role('Hamothy', 'Servant')
+    @commands.is_owner()
     async def dm(self, ctx, member: discord.Member, *, text):
         # Send the message typed the mentioned user
         await member.send(text)
 
+        # Delete the message sent instantly
         await ctx.message.delete()
 
 
 def setup(bot):
     bot.add_cog(Fun(bot))
-
-    """# Bot ~8Ball command
-    
-    @commands.command()
-    async def death(self, ctx, target: discord.Member):
-        player1 = ctx.author.mention
-        player2 = target.mention
-        channel = ctx.channel
-
-        p1 = 100
-        p2 = 100
-
-        await ctx.send()
-
-        msg = await client.wait_for(f"**{player1} punched {player2} for {punch(p2)} damage!**", check=check)
-        # await channel.send('Hello {.author}!'.format(msg))
-        # await ctx.send(f"**{player1} punched {player2} for {punch(p2)} damage!**")
-        await ctx.send(f"{msg}")
-    @commands.command(aliases=['dm', 'Deathmatch'])
-    @cooldown(1, 1, BucketType.user)
-    async def death(self, ctx, target: discord.Member):
-
-        channels = ["enso-chan-commands"]
-        player1 = ctx.author.mention
-        player2 = target.mention
-
-        p1hp = 100
-        p2hp = 100
-
-        while p1hp or p2hp > 0:
-            await ctx.send(f"**Deathmatch started! {player1} vs {player2}**"
-                           f"\n {player1} {random.choose()}"
-                           f"\n 1) Punch"
-                           f"\n 2) Kick")
-
-
-"""

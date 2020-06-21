@@ -36,24 +36,13 @@ async def on_ready():
 
 # Bot ~Ping command in milliseconds
 @client.command(aliases=["Ping"])
-@commands.has_any_role('Hamothy', 'Servant')
+@commands.is_owner()
 async def ping(ctx):
     # Send the latency of the bot (ms)
     await ctx.send(f'Pong! {round(client.latency * 1000)}ms')
 
 
-@client.event
-async def on_message(message):
-    channel = client.get_channel(721449922838134876)
-    if message.channel == message.author.dm_channel:
-        if message.author.id == 154840866496839680:
-            await channel.send(message.content)
-        else:
-            return
-    await client.process_commands(message)
-
-
-# Bot Event for handling cooldown error
+# Bot Event for handling cooldown error/permission errors
 @client.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandOnCooldown):
@@ -65,13 +54,10 @@ async def on_command_error(ctx, error):
         # Delete the message
         await message.delete()
 
-
-# Bot Event for handling missing argument error
-@client.event
-async def on_command_error(ctx, target: discord.member):
-    if isinstance(target, commands.MissingRequiredArgument):
-        # Send an error message to the user saying that an argument is missing
-        message = await ctx.send("Uh oh! Couldn't find anyone to mention! Try again!")
+    # Bot Event for handling permission errors
+    if isinstance(error, commands.CheckFailure):
+        # Send an error message to the user saying that they don't have permission to use this command
+        message = await ctx.send("Uh oh! You don't have permission to use this command!")
 
         # Let the user read the message for 1.5 seconds
         await asyncio.sleep(1.5)
@@ -79,12 +65,12 @@ async def on_command_error(ctx, target: discord.member):
         await message.delete()
 
 
-# Bot Event for handling permission errors
+# Bot Event for handling missing argument error
 @client.event
-async def on_command_error(ctx, error):
-    if isinstance(error, commands.CheckFailure):
-        # Send an error message to the user saying that they don't have persmission to use this command
-        message = await ctx.send("Uh oh! You don't have permission to use this command!")
+async def on_command_error(ctx, target: discord.member):
+    if isinstance(target, commands.MissingRequiredArgument):
+        # Send an error message to the user saying that an argument is missing
+        message = await ctx.send("Uh oh! Couldn't find anyone to mention! Try again!")
 
         # Let the user read the message for 1.5 seconds
         await asyncio.sleep(1.5)
@@ -259,29 +245,80 @@ async def on_raw_reaction_remove(payload):
         print(ex)
 
 
+# ~marry command allows the bot to wed two young lovers together
 @client.command()
 async def marry(ctx, member: discord.Member):
-    await ctx.send(f"{ctx.author.mention} **proposes to** {member.mention} **Do you accept??** "
-                   f"\nRespond with [y(es)/n(o)]")
+    # Send a message to the channel mentioning the author and the person they want to wed.
+    await ctx.send(f"{ctx.author.mention} **Proposes To** {member.mention} **Do you accept??** "
+                   f"\nRespond with [yes/no]")
 
+    # A check that makes sure that the reply is not from the author
+    # and that the reply is in the same channel as the proposal
     def check(m):
-        return m.author == member
+        return m.author == member and m.channel == ctx.channel
 
+    # Surround with try/except to catch any exceptions that may occur
     try:
+        # Wait for the message from the mentioned user
         msg = await client.wait_for('message', check=check, timeout=10)
 
-        if msg.content.lower() in ['y', 'yes']:
-            await ctx.send(f"Congratulations! {ctx.author.mention} and {member.mention} are now married to each other!")
-        elif msg.content.lower() in ['n', 'no']:
-            await ctx.send(f"Unlucky, maybe another time! {ctx.author.mention}")
+        # if the person says yes
+        if msg.content.lower() in ['y', 'yes', 'yea']:
+            # Congratulate them!
+            await ctx.send(
+                f"Congratulations! ヽ(・∀・)ﾉ {ctx.author.mention} and {member.mention} are now married to each other!")
+        # if the person says no
+        elif msg.content.lower() in ['n', 'no', 'nah']:
+            # Try to console the person and wish them the best in their life
+            await ctx.send(f"Unlucky (Ｔ▽Ｔ), maybe another time! {ctx.author.mention}")
         else:
-            await ctx.send("I did not understand that, aborting!")
+            # Abort the process as the message sent did not make sense
+            await ctx.send("Senpaiiii! Speak English Please ⋋_⋌")
+
     except asyncio.TimeoutError as e:
         print(e)
-        await ctx.send("Looks like you waited too long.")
+        # Send out an error message if the user waited too long
+        await ctx.send("Awww they waited too long (✖╭╮✖)")
 
 
-# Run the bot, allowing to come online
+# Allows the bot to echo the dm's that it receives
+@client.event
+async def on_message(message):
+    # Get the channel id of the channel it wants to push messages to
+    channel = client.get_channel(721449922838134876)
+
+    # If the channel that the message is sent in is private
+    if message.channel == discord.ChannelType.private:
+        # if the message author id is equal to mine
+        if message.author.id == 578919370697342977:
+            # Echo the message contents to the channel specified
+            await channel.send(message.content)
+        else:
+            # Do nothing
+            return
+    await client.process_commands(message)
+
+
+# ~remindme command to allow the bot to dm you to remind you of something
+@client.command()
+async def remindme(ctx, time=None, *, text):
+    # Grab the author and store it in "author"
+    author = ctx.message.author
+
+    # If a value for time as been given
+    if time:
+        # Sleep the thread for the amount of time specified by the user
+        await asyncio.sleep(float(time))
+        # Send message to user's dms
+        await author.send(text)
+
+    # else no time has been given
+    else:
+        # Instantly Send message to user's dms
+        await author.send(text)
+
+
+# Run the bot, allowing it to come online
 try:
     client.run(API_TOKEN)
 except discord.errors.LoginFailure as e:
@@ -386,14 +423,4 @@ async def marry(ctx, target: discord.Member):
 
     await ctx.send('bar')
     bar = await client.wait_for('message', check=check)
-    
-    
-@client.command()
-async def dm2(ctx, time=None, *, text):
-    author = ctx.get_user_info(154840866496839680)
-    if time:
-        await asyncio.sleep(float(time))
-        await author.send(text)
-    else:
-        await author.send(text)
 """

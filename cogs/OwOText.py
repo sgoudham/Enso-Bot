@@ -1,4 +1,3 @@
-import asyncio
 import random
 
 from discord.ext import commands
@@ -6,9 +5,11 @@ from discord.ext import commands
 from discord.ext.commands import cooldown, BucketType
 from owotext import OwO
 
+# Defining an array of all the vowels in lowercase and uppercase
 vowels = ['a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U']
 
 
+# -----------------------------------------Code Found Online------------------------------------------------------------
 def last_replace(s, old, new):
     li = s.rsplit(old, 1)
     return new.join(li)
@@ -34,12 +35,16 @@ def text_to_owo(text):
     return text
 
 
+# -----------------------------------------Code Found Online------------------------------------------------------------
+
+# Initiate the cog
 class OwOText(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    # ~owo command allows for text to be 'converted to OWO'
     @commands.command()
-    @cooldown(1, 2, BucketType.channel)
+    @cooldown(1, 1, BucketType.user)
     async def owo(self, ctx):
         if ctx.message.content.startswith("~owo"):
             msg = ctx.message.content.split("~owo ", 1)
@@ -48,17 +53,6 @@ class OwOText(commands.Cog):
             owo = uwu.whatsthis(str(msg[-1]))
 
             await ctx.message.channel.send(owo)
-
-    # Bot Event for handling cooldown error
-    @commands.Cog.listener()
-    async def on_command_error(self, ctx, error):
-        if isinstance(error, commands.CommandOnCooldown):
-            message = await ctx.send(f'That command is on cooldown. Try again in {error.retry_after:,.2f} seconds.')
-
-            # Let the user read the message for 2.5 seconds
-            await asyncio.sleep(2.5)
-            # Delete the message
-            await message.delete()
 
 
 def setup(bot):

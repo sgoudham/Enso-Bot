@@ -224,7 +224,7 @@ async def marry(ctx, member: discord.Member):
     # Surround with try/except to catch any exceptions that may occur
     try:
         # Wait for the message from the mentioned user
-        msg = await client.wait_for('message', check=check, timeout=10)
+        msg = await client.wait_for('message', check=check, timeout=30)
 
         # if the person says yes
         if msg.content.lower() in ['y', 'yes', 'yea']:

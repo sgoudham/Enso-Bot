@@ -176,6 +176,22 @@ class Waifus(commands.Cog):
                  'izzy', 'david', 'clarity', 'angel', 'chloe',
                  'corona', 'skye']
 
+        def displayServerImage(array, ctx, name):
+            # If the channel that the command has been sent is in the list of accepted channels
+            if str(ctx.channel) in settings.channels:
+                # Set member as the author
+                member = ctx.message.author
+                userAvatar = member.avatar_url
+
+                embed = discord.Embed(
+                    title=f"**Look At What A Cutie {name.capitalize()} is!! <a:huh:676195228872474643> <a:huh:676195228872474643> **",
+                    colour=discord.Colour(random.choice(settings.colour_list)))
+                embed.set_image(url=random.choice(array))
+                embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
+                embed.timestamp = datetime.datetime.utcnow()
+
+                return embed
+
         if name:
             proper_name = name.lower()
             try:
@@ -210,23 +226,6 @@ class Waifus(commands.Cog):
                 embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
                 embed.timestamp = datetime.datetime.utcnow()
                 await ctx.send(embed=embed)
-
-
-def displayServerImage(array, ctx, name):
-    # If the channel that the command has been sent is in the list of accepted channels
-    if str(ctx.channel) in settings.channels:
-        # Set member as the author
-        member = ctx.message.author
-        userAvatar = member.avatar_url
-
-        embed = discord.Embed(
-            title=f"**Look At What A Cutie {name.capitalize()} is!! <a:huh:676195228872474643> <a:huh:676195228872474643> **",
-            colour=discord.Colour(random.choice(settings.colour_list)))
-        embed.set_image(url=random.choice(array))
-        embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
-        embed.timestamp = datetime.datetime.utcnow()
-
-        return embed
 
 
 def setup(bot):

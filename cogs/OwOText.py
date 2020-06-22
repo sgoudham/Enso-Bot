@@ -1,4 +1,3 @@
-import asyncio
 import random
 
 from discord.ext import commands
@@ -54,17 +53,6 @@ class OwOText(commands.Cog):
             owo = uwu.whatsthis(str(msg[-1]))
 
             await ctx.message.channel.send(owo)
-
-    # Bot Event for handling cooldown error
-    @commands.Cog.listener()
-    async def on_command_error(self, ctx, error):
-        if isinstance(error, commands.CommandOnCooldown):
-            message = await ctx.send(f'That command is on cooldown. Try again in {error.retry_after:,.2f} seconds.')
-
-            # Let the user read the message for 2.5 seconds
-            await asyncio.sleep(2.5)
-            # Delete the message
-            await message.delete()
 
 
 def setup(bot):

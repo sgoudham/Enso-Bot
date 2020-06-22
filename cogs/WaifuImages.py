@@ -19,14 +19,6 @@ class Waifus(commands.Cog):
     @commands.command(aliases=['Kakashi'])
     async def kakashi(self, ctx):
 
-        global msg
-
-        if ctx.message.content.startswith('~kakashi'):
-            msg = ctx.message.content.split("~", 1)
-
-        array = str(msg[-1]).lower()
-        print(array)
-
         # Surround with try/except to catch any exceptions that may occur
         try:
 
@@ -228,7 +220,7 @@ def displayServerImage(array, ctx, name):
         userAvatar = member.avatar_url
 
         embed = discord.Embed(
-            title=f"**Oh Look! A Cute Picture of {name.capitalize()}!! <a:huh:676195228872474643> <a:huh:676195228872474643> **",
+            title=f"**Look At What A Cutie {name.capitalize()} is!! <a:huh:676195228872474643> <a:huh:676195228872474643> **",
             colour=discord.Colour(random.choice(settings.colour_list)))
         embed.set_image(url=random.choice(array))
         embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
@@ -239,34 +231,3 @@ def displayServerImage(array, ctx, name):
 
 def setup(bot):
     bot.add_cog(Waifus(bot))
-
-
-"""
-
-
-            with open('images/ServerMembers/serverMembers.txt') as file:
-                marsh_array = file.readlines()
-
-            if str(ctx.channel) in channels:
-
-                # set member as the author
-                member = ctx.message.author
-                userAvatar = member.avatar_url
-
-                embed = discord.Embed(title=f"**Oh Look! A Cute Person **",
-                                      colour=discord.Colour(random.choice(colour_list)))
-                embed.set_image(url=random.choice(marsh_array))
-                embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
-                embed.timestamp = datetime.datetime.utcnow()
-                await ctx.send(embed=embed)
-
-            else:
-
-                message = await ctx.send(error_function())
-
-                # Let the user read the message for 2.5 seconds
-                await asyncio.sleep(2.5)
-                # Delete the message
-                await message.delete()
-                
-    """

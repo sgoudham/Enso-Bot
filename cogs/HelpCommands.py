@@ -51,55 +51,55 @@ class CustomHelp(commands.Cog):
                 inline=True)
             embed.add_field(
                 name="\u200b",
-                value="**➳ ~lemon**" +
-                      "\n Allows the user to give a lemon to someone in the server" +
-                      "\n *(Perms: Everyone)*",
-                inline=True)
-            embed.add_field(
-                name="\u200b",
                 value="**➳ ~flip**" +
                       "\n Allows the user to 'throw a coin' and get a response with a 50/50 chance" +
                       "\n *(Perms: Everyone)*",
                 inline=True)
             embed.add_field(
                 name="\u200b",
-                value="**➳ ~attack**" +
+                value="**➳ ~lemon [user]**" +
+                      "\n Allows the user to give a lemon to someone in the server" +
+                      "\n *(Perms: Everyone)*",
+                inline=True)
+            embed.add_field(
+                name="\u200b",
+                value="**➳ ~attack [person]**" +
                       "\n Allows the user to throw an insult to someone in the server" +
                       "\n *(Perms: Co-Owner)*",
                 inline=True)
             embed.add_field(
                 name="\u200b",
-                value="**➳ ~slap**" +
+                value="**➳ ~slap [person]**" +
                       "\n Allows the user to slap someone in the server" +
                       "\n *(Perms: Everyone)*",
                 inline=True)
             embed.add_field(
                 name="\u200b",
-                value="**➳ ~kill**" +
+                value="**➳ ~kill [person]**" +
                       "\n Allows the user to kill someone in the server" +
                       "\n *(Perms: Everyone)*",
                 inline=True)
             embed.add_field(
                 name="\u200b",
-                value="**➳ ~pat**" +
+                value="**➳ ~pat [person]**" +
                       "\n Allows the user to pat someone in the server" +
                       "\n *(Perms: Everyone)*",
                 inline=True)
             embed.add_field(
                 name="\u200b",
-                value="**➳ ~compliment**" +
+                value="**➳ ~compliment [person]**" +
                       "\n Allows the user to compliment someone in the server" +
                       "\n *(Perms: Everyone)*",
                 inline=True)
             embed.add_field(
                 name="\u200b",
-                value="**➳ ~kiss**" +
+                value="**➳ ~kiss [person]**" +
                       "\n Allows the user to kiss someone in the server" +
                       "\n *(Perms: Everyone)*",
                 inline=True)
             embed.add_field(
                 name="\u200b",
-                value="**➳ ~cuddle**" +
+                value="**➳ ~cuddle [person]**" +
                       "\n Allows the user to cuddle someone in the server" +
                       "\n *(Perms: Everyone)*",
                 inline=True)
@@ -126,6 +126,12 @@ class CustomHelp(commands.Cog):
                 value="**➳ ~tamaki**" +
                       "\n Allows for a randomly generated image of Tamaki Suoh to be shown" +
                       "\n *(Perms: Everyone)*",
+                inline=True)
+            embed.add_field(
+                name="\u200b",
+                value="**➳ ~husk**" +
+                      "\n Allows for a randomly generated image of Husk?" +
+                      "\n *(Perms: Kaiju)*",
                 inline=True)
             embed.add_field(
                 name="\u200b\u200b",
@@ -160,9 +166,21 @@ class CustomHelp(commands.Cog):
                 inline=True)
             embed.add_field(
                 name="\u200b\u200b",
-                value="**➳ ~rolemenu**" +
+                value="**➳ ~rolemenu**"
                       "\n Allows for the users to get self ping-able roles" +
                       "\n *(Perms: Co-Owner)*",
+                inline=True)
+            embed.add_field(
+                name="\u200b\u200b",
+                value="**➳ ~dm [person]**" +
+                      "\n Allows Hammmy to dm anyone in the server through Enso~Chan!" +
+                      "\n *(Perms: Co-Owner)*",
+                inline=True)
+            embed.add_field(
+                name="\u200b\u200b",
+                value="**➳ ~remindme [time] [text]**" +
+                      "\n Allows the user to get Enso~Chan to remind them in dms of anything that they want" +
+                      "\n *(Perms: Everyone)*",
                 inline=True)
 
             # Dm the user the embedded message

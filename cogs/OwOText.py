@@ -1,8 +1,9 @@
+import asyncio
 import random
 
 from discord.ext import commands
 # OwO Impowt da wibwawy ÙωÙ
-from discord.ext.commands import BucketType
+from discord.ext.commands import BucketType, cooldown
 from owotext import OwO
 
 # Defining an array of all the vowels in lowercase and uppercase
@@ -44,7 +45,7 @@ class OwOText(commands.Cog):
 
     # ~owo command allows for text to be 'converted to OWO'
     @commands.command()
-    @commands.cooldown(1, 1, BucketType.user)
+    @cooldown(1, 1, BucketType.user)
     async def owo(self, ctx):
         if ctx.message.content.startswith("~owo"):
             msg = ctx.message.content.split("~owo ", 1)
@@ -54,8 +55,7 @@ class OwOText(commands.Cog):
 
             await ctx.message.channel.send(owo)
 
-
-"""    # Bot Event for handling cooldown error
+    # Bot Event for handling cooldown error
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
         if isinstance(error, commands.CommandOnCooldown):
@@ -65,7 +65,6 @@ class OwOText(commands.Cog):
             await asyncio.sleep(2.5)
             # Delete the message
             await message.delete()
-"""
 
 
 def setup(bot):

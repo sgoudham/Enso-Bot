@@ -3,7 +3,7 @@ import random
 
 import discord
 from discord.ext import commands
-from discord.ext.commands import BucketType
+from discord.ext.commands import BucketType, cooldown
 
 import settings
 from cogs.Embeds import error_function
@@ -60,7 +60,7 @@ class Fun(commands.Cog):
     # ~compliment command for everyone to use to compliment someone
     @commands.command(aliases=['comp', 'Compliment', 'Comp'])
     # Added a cooldown, only 1 instance of the command can be sent every second per user
-    @commands.cooldown(1, 1, BucketType.user)
+    @cooldown(1, 1, BucketType.user)
     async def compliment(self, ctx, target: discord.Member):
 
         # Set up array of compliments to throw at people
@@ -106,12 +106,11 @@ class Fun(commands.Cog):
 
         # Sending out a random compliment from the array "responses"
         await ctx.send(random.choice(responses))
-        # await ctx.send(f"{target.mention} Your wedding will be wonderful, but the y is silent <a:huh:676195228872474643> <a:huh:676195228872474643>")
 
     # ~8Ball command
     @commands.command(aliases=['8ball', '8Ball', ' 8Ball'])
     # Added a cooldown, only 1 instance of the command can be sent every second per user
-    @commands.cooldown(1, 1, BucketType.user)
+    @cooldown(1, 1, BucketType.user)
     async def _8ball(self, ctx, *, question):
 
         # Setting up the channels that the commands can be sent in
@@ -147,7 +146,7 @@ class Fun(commands.Cog):
     # ~Lukas command that only Lukas can use
     @commands.command(aliases=['Lukas'])
     # Added a cooldown, only 1 instance of the command can be sent every second per user
-    @commands.cooldown(1, 1, BucketType.user)
+    @cooldown(1, 1, BucketType.user)
     @commands.has_any_role('Lukas (Server Booster)')
     async def lukas(self, ctx):
 
@@ -167,7 +166,7 @@ class Fun(commands.Cog):
 
     # ~Flip command to allow for 50/50 chance decisions
     @commands.command(aliases=['Flip'])
-    @commands.cooldown(1, 1, BucketType.user)
+    @cooldown(1, 1, BucketType.user)
     async def flip(self, ctx):
 
         # Define 3 arrays that only have 2 strings stored in them

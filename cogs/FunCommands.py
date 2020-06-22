@@ -186,6 +186,24 @@ class Fun(commands.Cog):
         # Delete the message sent instantly
         await ctx.message.delete()
 
+    # ~remindme command to allow the bot to dm you to remind you of something
+    @commands.command(aliases=["remindme", "rm"])
+    async def remind_me(self, ctx, time=None, *, text):
+        # Grab the author and store it in "author"
+        author = ctx.author
+
+        # If a value for time as been given
+        if time:
+            # Sleep the thread for the amount of time specified by the user
+            await asyncio.sleep(float(time))
+            # Send message to user's dms
+            await author.send(text)
+
+        # else no time has been given
+        else:
+            # Instantly Send message to user's dms
+            await author.send(text)
+
 
 def setup(bot):
     bot.add_cog(Fun(bot))

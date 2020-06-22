@@ -5,11 +5,7 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import BucketType, cooldown
 
-import settings
 from cogs.Embeds import error_function
-
-# Grabbing the list of colours defined in the settings.py file
-colour_list = [c for c in settings.colors.values()]
 
 
 # Set up the cog

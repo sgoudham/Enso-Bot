@@ -214,7 +214,7 @@ async def on_raw_reaction_remove(payload):
 async def marry(ctx, member: discord.Member):
     # Send a message to the channel mentioning the author and the person they want to wed.
     await ctx.send(f"{ctx.author.mention} **Proposes To** {member.mention} **Do you accept??** "
-                   f"\nRespond with [Yes/No]")
+                   f"\nRespond with [**Y**es/**N**o]")
 
     # A check that makes sure that the reply is not from the author
     # and that the reply is in the same channel as the proposal

@@ -292,40 +292,47 @@ async def remind_me(ctx, time=None, *, text):
         await author.send(text)
 
 
-# Bot Event for handling cooldown error/permission errors
-@client.event
-async def on_command_error(ctx, error):
-    if isinstance(error, commands.CommandOnCooldown):
-        # Send an error message to the user telling them that the command is on cooldown
-        message = await ctx.send(f'That command is on cooldown. Try again in {error.retry_after:,.2f} seconds.')
-
-        # Let the user read the message for 2.5 seconds
-        await asyncio.sleep(2.5)
-        # Delete the message
-        await message.delete()
-
-    # Bot Event for handling permission errors
-    if isinstance(error, commands.CheckFailure):
-        # Send an error message to the user saying that they don't have permission to use this command
-        message = await ctx.send("Uh oh! You don't have permission to use this command!")
-
-        # Let the user read the message for 1.5 seconds
-        await asyncio.sleep(1.5)
-        # Delete the message
-        await message.delete()
-
-
 # Bot Event for handling missing argument error
 @client.event
-async def on_command_error(ctx, target: discord.Member):
-    if isinstance(target, commands.MissingRequiredArgument):
-        # Send an error message to the user saying that an argument is missing
-        message = await ctx.send("Uh oh! Couldn't find anyone to mention! Try again!")
+async def on_command_error(ctx, args2):
+    if isinstance(args2, commands.MissingRequiredArgument):
+        await on_command_missing_user(ctx)
+    elif isinstance(args2, commands.CommandOnCooldown):
+        await on_command_cooldown(ctx, args2)
+    elif isinstance(args2, commands.CheckFailure):
+        await on_command_permission(ctx)
 
-        # Let the user read the message for 1.5 seconds
-        await asyncio.sleep(1.5)
-        # Delete the message
-        await message.delete()
+
+# Async def for handling cooldown error/permission errors
+async def on_command_cooldown(ctx, error):
+    # Send an error message to the user telling them that the command is on cooldown
+    message = await ctx.send(f'That command is on cooldown. Try again in {error.retry_after:,.2f} seconds.')
+
+    # Let the Auser read the message for 2.5 seconds
+    await asyncio.sleep(2.5)
+    # Delete the message
+    await message.delete()
+
+
+# Async def for handling permission errors
+async def on_command_permission(ctx):
+    # Send an error message to the user saying that they don't have permission to use this command
+    message = await ctx.send("Uh oh! You don't have permission to use this command!")
+
+    # Let the user read the message for 1.5 seconds
+    await asyncio.sleep(1.5)
+    # Delete the message
+    await message.delete()
+
+
+async def on_command_missing_user(ctx):
+    # Send an error message to the user saying that an argument is missing
+    message = await ctx.send("Uh oh! Couldn't find anyone to mention! Try again!")
+
+    # Let the user read the message for 1.5 seconds
+    await asyncio.sleep(1.5)
+    # Delete the message
+    await message.delete()
 
 
 # Run the bot, allowing it to come online

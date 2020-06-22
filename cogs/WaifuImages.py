@@ -19,6 +19,14 @@ class Waifus(commands.Cog):
     @commands.command(aliases=['Kakashi'])
     async def kakashi(self, ctx):
 
+        global msg
+
+        if ctx.message.content.startswith('~kakashi'):
+            msg = ctx.message.content.split("~", 1)
+
+        array = str(msg[-1]).lower()
+        print(array)
+
         # Surround with try/except to catch any exceptions that may occur
         try:
 
@@ -111,6 +119,51 @@ class Waifus(commands.Cog):
             else:
 
                 message = await ctx.send(error_function())
+
+                # Let the user read the message for 2.5 seconds
+                await asyncio.sleep(2.5)
+                # Delete the message
+                await message.delete()
+
+        except FileNotFoundError as e:
+            print(e)
+
+    # Bot ~Husk command for Kaiju
+    @commands.command(aliases=['Husk'])
+    async def husk(self, ctx):
+
+        # Surround with try/except to catch any exceptions that may occur
+        try:
+
+            if ctx.author.id == 552153335516495873:
+                with open('images/WaifuImages/husk.txt') as file:
+                    husk_array = file.readlines()
+
+                # If the channel that the command has been sent is in the list of accepted channels
+                if str(ctx.channel) in settings.channels:
+
+                    # Set member as the author
+                    member = ctx.message.author
+                    userAvatar = member.avatar_url
+
+                    embed = discord.Embed(title="**Husk**",
+                                          colour=discord.Colour(random.choice(settings.colour_list)))
+                    embed.set_image(url=random.choice(husk_array))
+                    embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
+                    embed.timestamp = datetime.datetime.utcnow()
+                    await ctx.send(embed=embed)
+
+                else:
+
+                    message = await ctx.send(error_function())
+
+                    # Let the user read the message for 2.5 seconds
+                    await asyncio.sleep(2.5)
+                    # Delete the message
+                    await message.delete()
+            else:
+                # Send an error message to the user saying that they don't have permission to use this command
+                message = await ctx.send("Uh oh! You don't have permission to use this command!")
 
                 # Let the user read the message for 2.5 seconds
                 await asyncio.sleep(2.5)

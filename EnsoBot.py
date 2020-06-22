@@ -253,16 +253,6 @@ async def on_message(message):
 
     # If the channel that the message is sent in is private
     if message.guild is None:
-        # if the message author id is equal to mine
-        author = message.author.name
-        discrim = message.author.discriminator
-        content = message.content
-        time = str(message.created_at)
-
-        with open('logs/dm-logs.txt', "a") as file:
-            file.write("\n")
-            file.write(time + ": " + author + "#" + discrim + ": " + content)
-
         if message.author.id == 154840866496839680:
             # Echo the message contents to the channel specified
             await channel.send(message.content)
@@ -273,32 +263,16 @@ async def on_message(message):
     await client.process_commands(message)
 
 
-# ~remindme command to allow the bot to dm you to remind you of something
-@client.command(aliases=["remindme", "rm"])
-async def remind_me(ctx, time=None, *, text):
-    # Grab the author and store it in "author"
-    author = ctx.message.author
-
-    # If a value for time as been given
-    if time:
-        # Sleep the thread for the amount of time specified by the user
-        await asyncio.sleep(float(time))
-        # Send message to user's dms
-        await author.send(text)
-
-    # else no time has been given
-    else:
-        # Instantly Send message to user's dms
-        await author.send(text)
-
-
-# Bot Event for handling missing argument error
+# Bot Event for handling all errors within discord.commands
 @client.event
 async def on_command_error(ctx, args2):
+    # if the user did not specify an user
     if isinstance(args2, commands.MissingRequiredArgument):
         await on_command_missing_user(ctx)
+    # if the user has spammed a command and invoked a cooldown
     elif isinstance(args2, commands.CommandOnCooldown):
         await on_command_cooldown(ctx, args2)
+    # if the user does not the correct permissions to call a command
     elif isinstance(args2, commands.CheckFailure):
         await on_command_permission(ctx)
 
@@ -319,8 +293,8 @@ async def on_command_permission(ctx):
     # Send an error message to the user saying that they don't have permission to use this command
     message = await ctx.send("Uh oh! You don't have permission to use this command!")
 
-    # Let the user read the message for 1.5 seconds
-    await asyncio.sleep(1.5)
+    # Let the user read the message for 2.5 seconds
+    await asyncio.sleep(2.5)
     # Delete the message
     await message.delete()
 
@@ -329,8 +303,8 @@ async def on_command_missing_user(ctx):
     # Send an error message to the user saying that an argument is missing
     message = await ctx.send("Uh oh! Couldn't find anyone to mention! Try again!")
 
-    # Let the user read the message for 1.5 seconds
-    await asyncio.sleep(1.5)
+    # Let the user read the message for 2.5 seconds
+    await asyncio.sleep(2.5)
     # Delete the message
     await message.delete()
 
@@ -350,94 +324,14 @@ async def users(ctx):
     await ctx.send(f"""Number of Members: {server_id.member_count}""") 
 '''
 
-"""
-@client.event
-async def on_message(message, target: discord.Member,):
-    player1 = message.author.mention
-    player2 = target.mention
-    channel = message.channel
+"""    
+         # if the message author id is equal to mine
+        author = message.author.name
+        discrim = message.author.discriminator
+        content = message.content
+        time = str(message.created_at)
 
-    if message.content.startswith('~punch'):
-        channel = message.channel
-        await channel.send(f"**Deathmatch started! {player1} vs {player2}**"
-                           f"\n What do you want to do {message.author}?"
-                           f"\n 1) Punch"
-                           f"\n 2) Kick")
-
-        def check(m):
-            return m.content == 'punch' and m.channel == channel
-
-        msg = await client.wait_for('f"**{player1} punched {player2} for {punch(p2)} damage!**"', check=check)
-        await channel.send(msg)
-        
-        
-@client.event
-async def on_message(message):
-    if message.content.startswith('~hello'):
-        channel = message.channel
-        await channel.send('Say hello!')
-
-        def check(m):
-            return m.content == 'hello' and m.channel == channel
-
-        msg = await client.wait_for('message', check=check)
-        await channel.send('Hello {.author}!'.format(msg))
-        
-        
-def check(author):
-def inner_check(message):
-    return message.author == author and message.content == "Hello"
-
-return inner_check
-
-msg = await client.wait_for('message', check=check(ctx.author), timeout=30)
-await ctx.send(msg)
-
-# def check(m):
-#    return m.content == 'punch' and m.channel == channel
-
-# = await client.wait_for('message', check=check)
-# await channel.send(f"**{player1} punched {player2} for {punch(p2)} damage!**")
-except Exception as e:
-print(e) 
-
-
-@client.command(aliases=["dm"])
-async def deathmatch(ctx, target: discord.Member):
-    player1 = ctx.author.mention
-    player2 = target.mention
-    channel = ctx.channel
-
-    p1 = 100
-    p2 = 100
-
-    await ctx.send(f"**Deathmatch started! {player1} vs {player2}**"
-                   f"\n What do you want to do {ctx.author}?"
-                   f"\n 1) Punch"
-                   f"\n 2) Kick")
-
-    def check(m):
-        return m.content == 'punch' and m.channel == channel
-
-    msg = await client.wait_for('message', check=check)
-    await channel.send(msg)
-    
-def punch(p2, player1, player2):
-    damage = random.randint(1, 100)
-    p2 -= damage
-    return f"**{player1} punched {player2} for {punch(p2)} damage!**"
-    
-    
-    
-
-@client.command()
-async def marry(ctx, target: discord.Member):
-    def check(message: discord.Message):
-        return message.channel == ctx.channel and message.author != ctx.me
-
-    await ctx.send('foo')
-    foo = await client.wait_for('message', check=check)
-
-    await ctx.send('bar')
-    bar = await client.wait_for('message', check=check)
+        with open('logs/dm-logs.txt', "a") as file:
+            file.write("\n")
+            file.write(time + ": " + author + "#" + discrim + ": " + content)
 """

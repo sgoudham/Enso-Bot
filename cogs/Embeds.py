@@ -293,7 +293,7 @@ class Embeds(commands.Cog):
 
 # Error handling function to make sure that the commands only work in "enso-chan-commands"
 def error_function():
-    return "Sorry! I only work in #enso-chan-commands!"
+    return "Sorry! I only work in <#721449922838134876>"
 
 
 def setup(bot):

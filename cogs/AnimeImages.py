@@ -35,6 +35,68 @@ def Abbrev(anime_msg):
     return new_msg
 
 
+# Function to return a random image of a waifu
+def randomWaifu(msg, waifu):
+    # Retrieve a random image of a waifu within the bot
+    with open(f'images/AnimeImages/Waifus/{random.choice(waifu)}.txt') as file:
+        array = file.readlines()
+
+    # Set member as the author
+    member = msg.author
+    # Get the member's avatar
+    userAvatar = member.avatar_url
+
+    # Set up the embed for a random waifu image
+    waifu_embed = discord.Embed(
+        title=f"Oh Look! A Wonderful Waifu! <a:huh:676195228872474643> <a:huh:676195228872474643> ",
+        colour=discord.Colour(random.choice(settings.colour_list)))
+    waifu_embed.set_image(url=random.choice(array))
+    waifu_embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
+    waifu_embed.timestamp = datetime.datetime.utcnow()
+
+    return waifu_embed
+
+
+# Function to return a random image of a husbando
+def randomHusbando(msg, husbando):
+    # Retrieve a random image of a husbando within the bot
+    with open(f'images/AnimeImages/Husbandos/{random.choice(husbando)}.txt') as file:
+        array = file.readlines()
+
+    # Set member as the author
+    member = msg.author
+    # Get the member's avatar
+    userAvatar = member.avatar_url
+
+    # Set up the embed for a random husbando image
+    husbando_embed = discord.Embed(
+        title=f"Oh Look! A Handsome Husbando! <a:huh:676195228872474643> <a:huh:676195228872474643> ",
+        colour=discord.Colour(random.choice(settings.colour_list)))
+    husbando_embed.set_image(url=random.choice(array))
+    husbando_embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
+    husbando_embed.timestamp = datetime.datetime.utcnow()
+
+    return husbando_embed
+
+
+# Function to allow modular code and sets up the embed for the anime images
+def displayAnimeImage(array, msg, name):
+    # Set member as the author
+    member = msg.author
+    # Get the member's avatar
+    userAvatar = member.avatar_url
+
+    # Set up embed for an image relating to a husbando or waifu
+    anime_embed = discord.Embed(
+        title=f"**{name}**",
+        colour=discord.Colour(random.choice(settings.colour_list)))
+    anime_embed.set_image(url=random.choice(array))
+    anime_embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
+    anime_embed.timestamp = datetime.datetime.utcnow()
+
+    return anime_embed
+
+
 class Waifus(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -54,8 +116,6 @@ class Waifus(commands.Cog):
 
         # Function to display all the images requested of the people
         def displayServerImage(array, ctx, name):
-            # If the channel that the command has been sent is in the list of accepted channels
-            if str(ctx.channel) in settings.channels:
                 # Set member as the author
                 member = ctx.message.author
                 # Get the member's avatar
@@ -71,47 +131,48 @@ class Waifus(commands.Cog):
 
                 return embed
 
-        # if a name is specified
-        if name:
-            # Get the lowercase
-            proper_name = name.lower()
+        # If the channel that the command has been sent is in the list of accepted channels
+        if str(ctx.channel) in settings.channels:
 
-            # if the user does ~enso list
-            if proper_name == "list":
-                # Tell the user to try the names in the array
-                await ctx.send(f"Try the names listed below!")
+            # if a name is specified
+            if name:
+                # Get the lowercase
+                proper_name = name.lower()
 
-                # Send the list of members in the bot to the channel
-                nice = string.capwords(', '.join(map(str, array)))
-                await ctx.send(nice)
-                exit()
+                # if the user does ~enso list
+                if proper_name == "list":
+                    # Tell the user to try the names in the array
+                    await ctx.send(f"Try the names listed below!")
 
-            # Surround with try/except to catch any exceptions that may occur
-            try:
+                    # Send the list of members in the bot to the channel
+                    nice = string.capwords(', '.join(map(str, array)))
+                    await ctx.send(nice)
+                    exit()
 
-                # Retrieve image of the member specified
-                with open(f'images/ServerMembers/{proper_name}.txt') as file:
-                    images_array = file.readlines()
+                # Surround with try/except to catch any exceptions that may occur
+                try:
 
-                # Embed the image into a message and send it to the channel
-                embed = displayServerImage(images_array, ctx, proper_name)
-                await ctx.send(embed=embed)
+                    # Retrieve image of the member specified
+                    with open(f'images/ServerMembers/{proper_name}.txt') as file:
+                        images_array = file.readlines()
 
-            except Exception as e:
-                print(e)
+                    # Embed the image into a message and send it to the channel
+                    embed = displayServerImage(images_array, ctx, proper_name)
+                    await ctx.send(embed=embed)
 
-                # Send error message saying that the person isn't recognised
-                await ctx.send(f"Sorry! That person doesn't exist!! Try the names listed below!")
+                except Exception as e:
+                    print(e)
 
-                # Send the list of available members to the channel
-                nice = string.capwords(', '.join(map(str, array)))
-                await ctx.send(nice)
+                    # Send error message saying that the person isn't recognised
+                    await ctx.send(f"Sorry! That person doesn't exist!! Try the names listed below!")
+
+                    # Send the list of available members to the channel
+                    nice = string.capwords(', '.join(map(str, array)))
+                    await ctx.send(nice)
 
         # Else if the name is not specified
-        else:
+            else:
 
-            # If the channel that the command has been sent is in the list of accepted channels
-            if str(ctx.channel) in settings.channels:
                 # Retrieve a random image of a member in the bot
                 with open(f'images/ServerMembers/{random.choice(array)}.txt') as file:
                     array = file.readlines()
@@ -131,9 +192,18 @@ class Waifus(commands.Cog):
 
                 await ctx.send(embed=embed)
 
+        else:
+
+            message = await ctx.send(error_function())
+
+            # Let the user read the message for 2.5 seconds
+            await asyncio.sleep(2.5)
+            # Delete the message
+            await message.delete()
+
     # Cog on_message for waifus and husbandos
     @commands.Cog.listener()
-    @commands.cooldown(1, 1, BucketType.user)
+    @cooldown(1, 1, BucketType.user)
     async def on_message(self, message):
 
         # Defining the channel and global variables
@@ -147,65 +217,6 @@ class Waifus(commands.Cog):
         # Defining array for the list of waifus/husbando's available
         waifu_array = ["toga", "yumeko"]
         husbando_array = ["husk", "kakashi", "tamaki"]
-
-        # Function to return a random image of a waifu
-        def randomWaifu(msg, waifu):
-            # Retrieve a random image of a waifu within the bot
-            with open(f'images/AnimeImages/Waifus/{random.choice(waifu)}.txt') as file:
-                array = file.readlines()
-
-            # Set member as the author
-            member = msg.author
-            # Get the member's avatar
-            userAvatar = member.avatar_url
-
-            # Set up the embed for a random waifu image
-            waifu_embed = discord.Embed(
-                title=f"Oh Look! A Wonderful Waifu! <a:huh:676195228872474643> <a:huh:676195228872474643> ",
-                colour=discord.Colour(random.choice(settings.colour_list)))
-            waifu_embed.set_image(url=random.choice(array))
-            waifu_embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
-            waifu_embed.timestamp = datetime.datetime.utcnow()
-
-            return waifu_embed
-
-        # Function to return a random image of a husbando
-        def randomHusbando(msg, husbando):
-            # Retrieve a random image of a husbando within the bot
-            with open(f'images/AnimeImages/Husbandos/{random.choice(husbando)}.txt') as file:
-                array = file.readlines()
-
-            # Set member as the author
-            member = msg.author
-            # Get the member's avatar
-            userAvatar = member.avatar_url
-
-            # Set up the embed for a random husbando image
-            husbando_embed = discord.Embed(
-                title=f"Oh Look! A Handsome Husbando! <a:huh:676195228872474643> <a:huh:676195228872474643> ",
-                colour=discord.Colour(random.choice(settings.colour_list)))
-            husbando_embed.set_image(url=random.choice(array))
-            husbando_embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
-            husbando_embed.timestamp = datetime.datetime.utcnow()
-
-            return husbando_embed
-
-        # Function to allow modular code and sets up the embed for the anime images
-        def displayAnimeImage(array, msg, name):
-            # Set member as the author
-            member = msg.author
-            # Get the member's avatar
-            userAvatar = member.avatar_url
-
-            # Set up embed for an image relating to a husbando or waifu
-            anime_embed = discord.Embed(
-                title=f"**{name}**",
-                colour=discord.Colour(random.choice(settings.colour_list)))
-            anime_embed.set_image(url=random.choice(array))
-            anime_embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
-            anime_embed.timestamp = datetime.datetime.utcnow()
-
-            return anime_embed
 
         # If the channel that the command has been sent is in the list of accepted channels
         if str(channel) in settings.channels:

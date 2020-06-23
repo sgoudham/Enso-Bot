@@ -44,6 +44,12 @@ class Waifus(commands.Cog):
 
         if name:
             proper_name = name.lower()
+            if proper_name == "list":
+                await ctx.send(f"Try the names listed below!")
+
+                nice = string.capwords(', '.join(map(str, array)))
+                await ctx.send(nice)
+
             try:
                 with open(f'images/ServerMembers/{proper_name}.txt') as file:
                     images_array = file.readlines()

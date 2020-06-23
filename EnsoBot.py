@@ -248,12 +248,15 @@ async def marry(ctx, member: discord.Member):
 # Allows the bot to echo the dm's that it receives
 @client.event
 async def on_message(message):
-    # Get the channel id of the channel it wants to push messages to
-    channel = client.get_channel(721449922838134876)
+    if commands.is_owner():
+        channel = client.get_channel(663651584399507481)
+    else:
+        # Get the channel id of the channel it wants to push messages to
+        channel = client.get_channel(721449922838134876)
 
     # If the channel that the message is sent in is private
     if message.guild is None:
-        if message.author.id == 154840866496839680:
+        if message.author.id == 578919370697342977:
             # Echo the message contents to the channel specified
             await channel.send(message.content)
         else:

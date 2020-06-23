@@ -40,67 +40,67 @@ class CustomHelp(commands.Cog):
             embed.add_field(
                 name="\u200b",
                 value="**➳ ~attack [person]**" +
-                      "\n Allows the user to throw an insult to someone in the server" +
+                      "\n Allows the user to throw an insult to a person in the server" +
                       "\n *(Perms: Co-Owner)*",
                 inline=True)
             embed.add_field(
                 name="\u200b",
                 value="**➳ ~compliment [person]**" +
-                      "\n Allows the user to compliment someone in the server" +
+                      "\n Allows the user to compliment a person in the server" +
                       "\n *(Perms: Everyone)*",
                 inline=True)
             embed.add_field(
                 name="\u200b\u200b",
-                value="**➳ ~8ball**" +
+                value="**➳ ~8ball [text]**" +
                       "\n Allows the user to ask a question and 8ball will give a custom response" +
                       "\n *(Perms: everyone)*",
                 inline=True)
             embed.add_field(
                 name="\u200b\u200b",
-                value="**➳ ~owo**" +
+                value="**➳ ~owo [text]**" +
                       "\n Converts the sentence typed into 'owo' text " +
                       "\n *(Perms: everyone)*",
                 inline=True)
             embed.add_field(
                 name="\u200b",
-                value="**➳ ~flip**" +
-                      "\n Allows the user to 'throw a coin' and get a response with a 50/50 chance" +
-                      "\n *(Perms: Everyone)*",
-                inline=True)
-            embed.add_field(
-                name="\u200b",
-                value="**➳ ~lemon [user]**" +
-                      "\n Allows the user to give a lemon to someone in the server" +
+                value="**➳ ~lemon [person]**" +
+                      "\n Allows the user to give a lemon to a person in the server" +
                       "\n *(Perms: Everyone)*",
                 inline=True)
             embed.add_field(
                 name="\u200b",
                 value="**➳ ~slap [person]**" +
-                      "\n Allows the user to slap someone in the server" +
+                      "\n Allows the user to slap a person in the server" +
                       "\n *(Perms: Everyone)*",
                 inline=True)
             embed.add_field(
                 name="\u200b",
                 value="**➳ ~kill [person]**" +
-                      "\n Allows the user to kill someone in the server" +
+                      "\n Allows the user to kill a person in the server" +
                       "\n *(Perms: Everyone)*",
                 inline=True)
             embed.add_field(
                 name="\u200b",
                 value="**➳ ~pat [person]**" +
-                      "\n Allows the user to pat someone in the server" +
+                      "\n Allows the user to pat a person in the server" +
                       "\n *(Perms: Everyone)*",
                 inline=True)
             embed.add_field(
                 name="\u200b",
                 value="**➳ ~kiss [person]**" +
-                      "\n Allows the user to kiss someone in the server" +
+                      "\n Allows the user to kiss a person in the server" +
                       "\n *(Perms: Everyone)*",
                 inline=True)
             embed.add_field(
                 name="\u200b",
                 value="**➳ ~cuddle [person]**" +
-                      "\n Allows the user to cuddle someone in the server" +
+                      "\n Allows the user to cuddle a person in the server" +
+                      "\n *(Perms: Everyone)*",
+                inline=True)
+            embed.add_field(
+                name="\u200b",
+                value="**➳ ~flip**" +
+                      "\n Allows the user to 'throw a coin' and get a response with a 50/50 chance" +
                       "\n *(Perms: Everyone)*",
                 inline=True)
             embed.add_field(
@@ -125,7 +125,7 @@ class CustomHelp(commands.Cog):
                 name="\u200b\u200b",
                 value="**➳ ~enso [person]**" +
                       "\n Allows for a randomly generated image of the member specified" +
-                      "\n (Using ~enso by itself shall generate a random image of someone within all the server)" +
+                      "\n (Using ~enso by itself shall generate a random image of a person within all the server)" +
                       "\n *(Perms: Everyone)*",
                 inline=True)
             embed.add_field(

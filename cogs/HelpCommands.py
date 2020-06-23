@@ -111,14 +111,26 @@ class CustomHelp(commands.Cog):
                 inline=False)
             embed.add_field(
                 name="\u200b\u200b",
-                value="**➳ ~w [waifu/husbando]**" +
-                      "\n Allows for a randomly generated image of Waifu/Husbando to be shown" +
+                value="**➳ ~w [waifu]**" +
+                      "\n Allows for a randomly generated image of a Waifu to be shown" +
                       "\n *(Perms: Everyone)*",
                 inline=True)
             embed.add_field(
                 name="\u200b\u200b",
-                value="**➳ ~w list**" +
-                      "\n Returns a list of Husbando's/Waifu's that in the bot " +
+                value="**➳ ~w [husbando]**" +
+                      "\n Allows for a randomly generated image of a Husbando to be shown" +
+                      "\n *(Perms: Everyone)*",
+                inline=True)
+            embed.add_field(
+                name="\u200b\u200b",
+                value="**➳ ~w**" +
+                      "\n Returns a list of Waifu's that are in the bot " +
+                      "\n *(Perms: Everyone)*",
+                inline=True)
+            embed.add_field(
+                name="\u200b\u200b",
+                value="**➳ ~h**" +
+                      "\n Returns a list of Husbando's that are in the bot " +
                       "\n *(Perms: Everyone)*",
                 inline=True)
             embed.add_field(

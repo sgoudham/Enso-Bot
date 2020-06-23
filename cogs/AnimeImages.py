@@ -133,6 +133,7 @@ class Waifus(commands.Cog):
 
     # Cog on_message for waifus and husbandos
     @commands.Cog.listener()
+    @commands.cooldown(1, 1, BucketType.user)
     async def on_message(self, message):
 
         # Defining the channel and global variables

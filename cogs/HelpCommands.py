@@ -117,7 +117,7 @@ class CustomHelp(commands.Cog):
                 inline=True)
             embed.add_field(
                 name="\u200b\u200b",
-                value="**➳ ~w [husbando]**" +
+                value="**➳ ~h [husbando]**" +
                       "\n Allows for a randomly generated image of a Husbando to be shown" +
                       "\n *(Perms: Everyone)*",
                 inline=True)

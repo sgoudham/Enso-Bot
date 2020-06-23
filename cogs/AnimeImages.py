@@ -202,7 +202,7 @@ class Waifus(commands.Cog):
                 await channel.send(nice)
 
         else:
-            if user_msg.startswith('~w') or user_msg.startswith('~h'):
+            if user_msg.endswith('~w') or user_msg.endswith('~h'):
                 message = await channel.send(error_function())
 
                 # Let the user read the message for 2.5 seconds

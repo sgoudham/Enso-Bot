@@ -46,6 +46,6 @@ channels = ["enso-chan-commands"]
 colour_list = [c for c in colors.values()]
 
 # Instantiates a list for all the cogs
-extensions = ['cogs.WaifuImages', 'cogs.FunCommands', 'cogs.Music',
+extensions = ['cogs.AnimeImages', 'cogs.FunCommands', 'cogs.Music',
               'cogs.HelpCommands', 'cogs.OwOText', 'cogs.Embeds',
               'cogs.GetInfo', 'cogs.Reminder']

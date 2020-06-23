@@ -176,17 +176,15 @@ class Fun(commands.Cog):
         # Send out one of the responses stored in the array
         await ctx.send(f"{ctx.author.mention} {random.choice(responses)}")
 
-    """    
     # ~dm only allows me to dm anyone through the bot
     @commands.command()
     @commands.is_owner()
     async def dm(self, ctx, member: discord.Member, *, text):
-    # Send the message typed the mentioned user
-    await member.send(text)
-    
-    # Delete the message sent instantly
-    await ctx.message.delete()
-    """
+        # Send the message typed the mentioned user
+        await member.send(text)
+
+        # Delete the message sent instantly
+        await ctx.message.delete()
 
     # ~remindme command to allow the bot to dm you to remind you of something
     @commands.command(aliases=["remindme", "rm"])

@@ -49,6 +49,7 @@ class Waifus(commands.Cog):
 
                 nice = string.capwords(', '.join(map(str, array)))
                 await ctx.send(nice)
+                exit()
 
             try:
                 with open(f'images/ServerMembers/{proper_name}.txt') as file:

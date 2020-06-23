@@ -245,7 +245,7 @@ async def marry(ctx, member: discord.Member):
         await ctx.send("Awww they waited too long (✖╭╮✖)")
 
 
-# Allows the bot to echo the dm's that it receives
+"""# Allows the bot to echo the dm's that it receives
 @client.event
 async def on_message(message):
     if message.author == client.user:
@@ -253,7 +253,7 @@ async def on_message(message):
     # Checking if the message is not sent in server
     if message.guild is None:
         # Checking if the owner is sending the message
-        if commands.is_owner():
+        if client.is_owner(154840866496839680):
             # Send message to #general
             channel = client.get_channel(663651584399507481)
             await channel.send(message.content)
@@ -262,7 +262,7 @@ async def on_message(message):
             channel = client.get_channel(721449922838134876)
             await channel.send(message.content)
 
-    await client.process_commands(message)
+    await client.process_commands(message)"""
 
 
 # Bot Event for handling all errors within discord.commands

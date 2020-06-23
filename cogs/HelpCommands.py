@@ -38,6 +38,18 @@ class CustomHelp(commands.Cog):
                       "```",
                 inline=False)
             embed.add_field(
+                name="\u200b",
+                value="**➳ ~attack [person]**" +
+                      "\n Allows the user to throw an insult to someone in the server" +
+                      "\n *(Perms: Co-Owner)*",
+                inline=True)
+            embed.add_field(
+                name="\u200b",
+                value="**➳ ~compliment [person]**" +
+                      "\n Allows the user to compliment someone in the server" +
+                      "\n *(Perms: Everyone)*",
+                inline=True)
+            embed.add_field(
                 name="\u200b\u200b",
                 value="**➳ ~8ball**" +
                       "\n Allows the user to ask a question and 8ball will give a custom response" +
@@ -63,12 +75,6 @@ class CustomHelp(commands.Cog):
                 inline=True)
             embed.add_field(
                 name="\u200b",
-                value="**➳ ~attack [person]**" +
-                      "\n Allows the user to throw an insult to someone in the server" +
-                      "\n *(Perms: Co-Owner)*",
-                inline=True)
-            embed.add_field(
-                name="\u200b",
                 value="**➳ ~slap [person]**" +
                       "\n Allows the user to slap someone in the server" +
                       "\n *(Perms: Everyone)*",
@@ -87,12 +93,6 @@ class CustomHelp(commands.Cog):
                 inline=True)
             embed.add_field(
                 name="\u200b",
-                value="**➳ ~compliment [person]**" +
-                      "\n Allows the user to compliment someone in the server" +
-                      "\n *(Perms: Everyone)*",
-                inline=True)
-            embed.add_field(
-                name="\u200b",
                 value="**➳ ~kiss [person]**" +
                       "\n Allows the user to kiss someone in the server" +
                       "\n *(Perms: Everyone)*",
@@ -106,38 +106,32 @@ class CustomHelp(commands.Cog):
             embed.add_field(
                 name="\u200b",
                 value="```css" +
-                      "\n ( ͡°ω ͡°) Waifu/Husbando Commands ( ͡°ω ͡°)" +
+                      "\n ( ͡°ω ͡°) Waifus/Husbando Commands ( ͡°ω ͡°)" +
                       "```",
                 inline=False)
             embed.add_field(
                 name="\u200b\u200b",
-                value="**➳ ~kakashi**" +
-                      "\n Allows for a randomly generated image of Hatake Kakashi to be shown" +
+                value="**➳ ~w [waifu/husbando]**" +
+                      "\n Allows for a randomly generated image of Waifu/Husbando to be shown" +
                       "\n *(Perms: Everyone)*",
                 inline=True)
             embed.add_field(
-                name="\u200b",
-                value="**➳ ~toga**" +
-                      "\n Allows for a randomly generated image of Himiko Toga to be shown" +
+                name="\u200b\u200b",
+                value="**➳ ~w list**" +
+                      "\n Returns a list of Husbando's/Waifu's that in the bot " +
                       "\n *(Perms: Everyone)*",
-                inline=True)
-            embed.add_field(
-                name="\u200b",
-                value="**➳ ~tamaki**" +
-                      "\n Allows for a randomly generated image of Tamaki Suoh to be shown" +
-                      "\n *(Perms: Everyone)*",
-                inline=True)
-            embed.add_field(
-                name="\u200b",
-                value="**➳ ~husk**" +
-                      "\n Allows for a randomly generated image of Husk?" +
-                      "\n *(Perms: Kaiju)*",
                 inline=True)
             embed.add_field(
                 name="\u200b\u200b",
                 value="**➳ ~enso [person]**" +
                       "\n Allows for a randomly generated image of the member specified" +
                       "\n (Using ~enso by itself shall generate a random image of someone within all the server)" +
+                      "\n *(Perms: Everyone)*",
+                inline=True)
+            embed.add_field(
+                name="\u200b\u200b",
+                value="**➳ ~enso list**" +
+                      "\n Returns a list of the people's images currently in the bot" +
                       "\n *(Perms: Everyone)*",
                 inline=True)
             embed.add_field(
@@ -153,18 +147,6 @@ class CustomHelp(commands.Cog):
                       "\n *(Perms: Co-Owner)*",
                 inline=True)
             embed.add_field(
-                name="\u200b",
-                value="**➳ ~rules**" +
-                      "\n Returns the entire ruleset for the server" +
-                      "\n *(Perms: Everyone)*",
-                inline=True)
-            embed.add_field(
-                name="\u200b",
-                value="**➳ ~roles**" +
-                      "\n Shows you how the leveling and xp system works, as well as displaying the order of leveled roles" +
-                      "\n *(Perms: Everyone)*",
-                inline=True)
-            embed.add_field(
                 name="\u200b\u200b",
                 value="**➳ ~rolemenu**"
                       "\n Allows for the users to get self ping-able roles" +
@@ -175,6 +157,18 @@ class CustomHelp(commands.Cog):
                 value="**➳ ~dm [person]**" +
                       "\n Allows Hammmy to dm anyone in the server through Enso~Chan!" +
                       "\n *(Perms: Co-Owner)*",
+                inline=True)
+            embed.add_field(
+                name="\u200b",
+                value="**➳ ~rules**" +
+                      "\n Returns the entire ruleset for the server" +
+                      "\n *(Perms: Everyone)*",
+                inline=True)
+            embed.add_field(
+                name="\u200b",
+                value="**➳ ~roles**" +
+                      "\n Shows you how the leveling and xp system works, as well as displaying the order of leveled roles" +
+                      "\n *(Perms: Everyone)*",
                 inline=True)
             embed.add_field(
                 name="\u200b\u200b",

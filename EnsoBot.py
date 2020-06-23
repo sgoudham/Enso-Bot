@@ -256,7 +256,7 @@ async def on_message(message):
             channel = client.get_channel(663651584399507481)
             await channel.send(message.content)
         else:
-            # Send message to #enso-chan~commands
+            # Send message to #enso-chan-commands
             channel = client.get_channel(721449922838134876)
             await channel.send(message.content)
 

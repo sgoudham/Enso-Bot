@@ -10,6 +10,23 @@ from discord.ext.commands import cooldown, BucketType
 import settings
 from cogs.Embeds import error_function
 
+anime = {"yumeko": "Jabami Yumeko",
+         "toga": "Himiko Toga",
+         "kakashi": "Hatake Kakashi",
+         "tamaki": "Tamaki Suoh"
+         }
+
+
+def Abbrev(anime_msg):
+    lowercase_anime = anime_msg.lower()
+    split_anime = lowercase_anime.split()
+    new_msg = ""
+    for word in split_anime:
+        if word in anime:
+            new_msg = anime[word]
+            print(new_msg)
+    return new_msg
+
 
 class Waifus(commands.Cog):
     def __init__(self, bot):
@@ -99,59 +116,63 @@ class Waifus(commands.Cog):
         waifu_array = ["toga", "yumeko"]
         husbando_array = ["husk", "kakashi", "tamaki"]
 
-        def randomWaifu(message, waifu_array):
-            with open(f'images/AnimeImages/Waifus/{random.choice(waifu_array)}.txt') as file:
+        # Function to return a random image of a waifu
+        def randomWaifu(msg, waifu):
+            # Retrieve a random image of a waifu within the bot
+            with open(f'images/AnimeImages/Waifus/{random.choice(waifu)}.txt') as file:
                 array = file.readlines()
 
                 # Set member as the author
-                member = message.author
+                member = msg.author
                 # Get the member's avatar
                 userAvatar = member.avatar_url
 
-                embed = discord.Embed(
-                    title=f"Oh Look! A Cute Waifu! <a:huh:676195228872474643> <a:huh:676195228872474643> ",
+                # Set up the embed for a random waifu image
+                waifu_embed = discord.Embed(
+                    title=f"Oh Look! A Wonderful Waifu! <a:huh:676195228872474643> <a:huh:676195228872474643> ",
                     colour=discord.Colour(random.choice(settings.colour_list)))
                 embed.set_image(url=random.choice(array))
                 embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
                 embed.timestamp = datetime.datetime.utcnow()
 
-                return embed
+                return waifu_embed
 
-        def randomHusbando(message, husbando_array):
-            with open(f'images/AnimeImages/Husbandos/{random.choice(husbando_array)}.txt') as file:
+        # Function to return a random image of a husbando
+        def randomHusbando(msg, husbando):
+            # Retrieve a random image of a husbando within the bot
+            with open(f'images/AnimeImages/Husbandos/{random.choice(husbando)}.txt') as file:
                 array = file.readlines()
 
                 # Set member as the author
-                member = message.author
+                member = msg.author
                 # Get the member's avatar
                 userAvatar = member.avatar_url
 
-                embed = discord.Embed(
+                # Set up the embed for a random husbando image
+                husbando_embed = discord.Embed(
                     title=f"Oh Look! A Handsome Husbando! <a:huh:676195228872474643> <a:huh:676195228872474643> ",
                     colour=discord.Colour(random.choice(settings.colour_list)))
                 embed.set_image(url=random.choice(array))
                 embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
                 embed.timestamp = datetime.datetime.utcnow()
 
-                return embed
+                return husbando_embed
 
         # Function to allow modular code and sets up the embed for the
-        def displayAnimeImage(array, message, name):
-            # If the channel that the command has been sent is in the list of accepted channels
-            if str(message.channel) in settings.channels:
-                # Set member as the author
-                member = message.author
-                # Get the member's avatar
-                userAvatar = member.avatar_url
+        def displayAnimeImage(array, msg, name):
+            # Set member as the author
+            member = msg.author
+            # Get the member's avatar
+            userAvatar = member.avatar_url
 
-                embed = discord.Embed(
-                    title=f"**{name.capitalize()}**",
-                    colour=discord.Colour(random.choice(settings.colour_list)))
-                embed.set_image(url=random.choice(array))
-                embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
-                embed.timestamp = datetime.datetime.utcnow()
+            anime_embed = discord.Embed(
+                title=f"**{name}**",
+                colour=discord.Colour(random.choice(settings.colour_list)))
+            embed.set_image(url=random.choice(array))
+            embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
+            embed.timestamp = datetime.datetime.utcnow()
 
-                return embed
+            return anime_embed
 
         # If the channel that the command has been sent is in the list of accepted channels
         if str(channel) in settings.channels:
@@ -170,7 +191,8 @@ class Waifus(commands.Cog):
                     with open(f'images/AnimeImages/Waifus/{w_array}.txt') as file:
                         images_array = file.readlines()
 
-                    embed = displayAnimeImage(images_array, message, w_array)
+                    full_name = Abbrev(w_array)
+                    embed = displayAnimeImage(images_array, message, full_name)
                     await channel.send(embed=embed)
 
             except FileNotFoundError as e:
@@ -196,9 +218,9 @@ class Waifus(commands.Cog):
                     with open(f'images/AnimeImages/Husbandos/{h_array}.txt') as file:
                         images_array = file.readlines()
 
-                        embed = displayAnimeImage(images_array, message, h_array)
-
-                        await channel.send(embed=embed)
+                    full_name = Abbrev(h_array)
+                    embed = displayAnimeImage(images_array, message, full_name)
+                    await channel.send(embed=embed)
 
             except FileNotFoundError as e:
                 print(e)

@@ -245,24 +245,35 @@ async def marry(ctx, member: discord.Member):
         await ctx.send("Awww they waited too long (✖╭╮✖)")
 
 
-"""# Allows the bot to echo the dm's that it receives
+# Allows the bot to echo the dm's that it receives
 @client.event
 async def on_message(message):
+    # Making sure that the bot doesn't reply to itself
     if message.author == client.user:
         return
+
+    # Setting the id of myself
+    author = message.author.id
+    hammy = 154840866496839680
+
+    # File Writing Variables
+    time = message.created_at
+    msg_time = time.strftime('%Y-%m-%dT%H:%M:%S.%f')
+    msg_author = message.author
+    msg_content = message.content
+
     # Checking if the message is not sent in server
     if message.guild is None:
         # Checking if the owner is sending the message
-        if client.is_owner(154840866496839680):
+        if author == hammy:
             # Send message to #general
-            channel = client.get_channel(663651584399507481)
-            await channel.send(message.content)
-        else:
-            # Send message to #enso-chan-commands
             channel = client.get_channel(721449922838134876)
             await channel.send(message.content)
+            write_to_file(msg_time, msg_author, msg_content)
+        else:
+            write_to_file(msg_time, msg_author, msg_content)
 
-    await client.process_commands(message)"""
+    await client.process_commands(message)
 
 
 # Bot Event for handling all errors within discord.commands
@@ -309,6 +320,11 @@ async def on_command_missing_user(ctx):
     await asyncio.sleep(2.5)
     # Delete the message
     await message.delete()
+
+
+def write_to_file(time, author, content):
+    with open('images/logs/dm-logs.txt', mode='w') as dm_logs_file:
+        dm_logs_file.write(f"{time}: {author}: {content}")
 
 
 # Run the bot, allowing it to come online

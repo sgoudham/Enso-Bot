@@ -116,20 +116,20 @@ class Waifus(commands.Cog):
 
         # Function to display all the images requested of the people
         def displayServerImage(array, ctx, name):
-                # Set member as the author
-                member = ctx.message.author
-                # Get the member's avatar
-                userAvatar = member.avatar_url
+            # Set member as the author
+            member = ctx.message.author
+            # Get the member's avatar
+            userAvatar = member.avatar_url
 
-                # Set embed up for the person requested by the user
-                embed = discord.Embed(
-                    title=f"**Look At What A Cutie {name.capitalize()} is!! <a:huh:676195228872474643> <a:huh:676195228872474643> **",
-                    colour=discord.Colour(random.choice(settings.colour_list)))
-                embed.set_image(url=random.choice(array))
-                embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
-                embed.timestamp = datetime.datetime.utcnow()
+            # Set embed up for the person requested by the user
+            embed = discord.Embed(
+                title=f"**Look At What A Cutie {name.capitalize()} is!! <a:huh:676195228872474643> <a:huh:676195228872474643> **",
+                colour=discord.Colour(random.choice(settings.colour_list)))
+            embed.set_image(url=random.choice(array))
+            embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
+            embed.timestamp = datetime.datetime.utcnow()
 
-                return embed
+            return embed
 
         # If the channel that the command has been sent is in the list of accepted channels
         if str(ctx.channel) in settings.channels:
@@ -170,7 +170,7 @@ class Waifus(commands.Cog):
                     nice = string.capwords(', '.join(map(str, array)))
                     await ctx.send(nice)
 
-        # Else if the name is not specified
+            # Else if the name is not specified
             else:
 
                 # Retrieve a random image of a member in the bot

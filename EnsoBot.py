@@ -324,7 +324,7 @@ async def on_command_missing_user(ctx):
 
 def write_to_file(time, author, content):
     with open('images/logs/dm-logs.txt', mode='w') as dm_logs_file:
-        dm_logs_file.write(f"{time}: {author}: {content}")
+        dm_logs_file.write(f"{time}: {author}: {content}\n")
 
 
 # Run the bot, allowing it to come online

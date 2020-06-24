@@ -269,9 +269,9 @@ async def on_message(message):
             # Send message to #general
             channel = client.get_channel(721449922838134876)
             await channel.send(message.content)
-            write_to_file(msg_time, msg_author, msg_content)
+            write_to_dm_file(msg_time, msg_author, msg_content)
         else:
-            write_to_file(msg_time, msg_author, msg_content)
+            write_to_dm_file(msg_time, msg_author, msg_content)
 
     await client.process_commands(message)
 
@@ -322,9 +322,9 @@ async def on_command_missing_user(ctx):
     await message.delete()
 
 
-def write_to_file(time, author, content):
-    with open('images/logs/dm-logs.txt', mode='w') as dm_logs_file:
-        dm_logs_file.write(f"{time}: {author}: {content}\n")
+def write_to_dm_file(time, author, content):
+    with open('images/logs/dm-logs.txt', mode='a') as dm_logs_file:
+        dm_logs_file.write(f"{time}: {author}: {content}")
 
 
 # Run the bot, allowing it to come online

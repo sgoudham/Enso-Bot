@@ -283,16 +283,17 @@ class Waifus(commands.Cog):
                         await ctx.send(husbando_list)
                         sys.exit(0)
 
-                    # Retrieve image of the husbando specified
-                    with open(f'images/AnimeImages/Husbandos/{proper_husbando}.txt') as file:
-                        h_array = file.readlines()
+                    else:
+                        # Retrieve image of the husbando specified
+                        with open(f'images/AnimeImages/Husbandos/{proper_husbando}.txt') as file:
+                            h_array = file.readlines()
 
-                    # Get the full name of the husbando
-                    full_name = Abbrev(proper_husbando)
+                        # Get the full name of the husbando
+                        full_name = Abbrev(proper_husbando)
 
-                    # Embed the image into a message and send it to the channel
-                    embed = displayAnimeImage(h_array, ctx, full_name)
-                    await ctx.send(embed=embed)
+                        # Embed the image into a message and send it to the channel
+                        embed = displayAnimeImage(h_array, ctx, full_name)
+                        await ctx.send(embed=embed)
 
                 except Exception as e:
                     print(e)
@@ -301,7 +302,6 @@ class Waifus(commands.Cog):
                     await ctx.send(
                         f"Sorry! That husbando doesn't exist!"
                         f"\nPlease do **~h list** to see the list of husbando's")
-
             else:
 
                 # Get embed from randomHusbando() and send it to the channel

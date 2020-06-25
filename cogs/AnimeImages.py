@@ -2,6 +2,7 @@ import asyncio
 import datetime
 import random
 import string
+import sys
 
 import discord
 from discord.ext import commands
@@ -226,6 +227,7 @@ class Waifus(commands.Cog):
                     # Send the list of waifus in the bot to the channel
                     waifu_list = string.capwords(', '.join(map(str, waifu_array)))
                     await ctx.send(waifu_list)
+                    sys.exit(0)
 
                 # Surround with try/except to catch any exceptions that may occur
                 try:
@@ -279,6 +281,7 @@ class Waifus(commands.Cog):
                         # Send the list of waifus in the bot to the channel
                         husbando_list = string.capwords(', '.join(map(str, proper_husbando)))
                         await ctx.send(husbando_list)
+                        sys.exit(0)
 
                     # Retrieve image of the husbando specified
                     with open(f'images/AnimeImages/Husbandos/{proper_husbando}.txt') as file:

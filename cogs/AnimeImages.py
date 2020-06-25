@@ -279,7 +279,6 @@ class Waifus(commands.Cog):
                         # Send the list of waifus in the bot to the channel
                         husbando_list = string.capwords(', '.join(map(str, proper_husbando)))
                         await ctx.send(husbando_list)
-                        exit()
 
                     # Retrieve image of the husbando specified
                     with open(f'images/AnimeImages/Husbandos/{proper_husbando}.txt') as file:

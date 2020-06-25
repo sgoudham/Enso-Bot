@@ -227,28 +227,28 @@ class Waifus(commands.Cog):
                     # Send the list of waifus in the bot to the channel
                     waifu_list = string.capwords(', '.join(map(str, waifu_array)))
                     await ctx.send(waifu_list)
-                    sys.exit(0)
 
-                # Surround with try/except to catch any exceptions that may occur
-                try:
+                else:
+                    # Surround with try/except to catch any exceptions that may occur
+                    try:
 
-                    # Retrieve image of the waifu specified
-                    with open(f'images/AnimeImages/Waifus/{proper_waifu}.txt') as file:
-                        w_array = file.readlines()
+                        # Retrieve image of the waifu specified
+                        with open(f'images/AnimeImages/Waifus/{proper_waifu}.txt') as file:
+                            w_array = file.readlines()
 
-                    # Get the full name of the waifu
-                    full_name = Abbrev(proper_waifu)
+                        # Get the full name of the waifu
+                        full_name = Abbrev(proper_waifu)
 
-                    # Embed the image into a message and send it to the channel
-                    embed = displayAnimeImage(w_array, ctx, full_name)
-                    await ctx.send(embed=embed)
+                        # Embed the image into a message and send it to the channel
+                        embed = displayAnimeImage(w_array, ctx, full_name)
+                        await ctx.send(embed=embed)
 
-                except Exception as e:
-                    print(e)
+                    except Exception as e:
+                        print(e)
 
-                    # Send error message saying that the person isn't recognised
-                    await ctx.send(f"Sorry! That waifu doesn't exist!"
-                                   f"\nPlease do **~w list** to see the list of waifu's")
+                        # Send error message saying that the person isn't recognised
+                        await ctx.send(f"Sorry! That waifu doesn't exist!"
+                                       f"\nPlease do **~w list** to see the list of waifu's")
             else:
 
                 # Get embed from randomWaifu() and send it to the channel

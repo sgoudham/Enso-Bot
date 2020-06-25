@@ -278,7 +278,7 @@ class Waifus(commands.Cog):
                         await ctx.send(f"Try the husbando's listed below!")
 
                         # Send the list of waifus in the bot to the channel
-                        husbando_list = string.capwords(', '.join(map(str, proper_husbando)))
+                        husbando_list = string.capwords(', '.join(map(str, husbando_array)))
                         await ctx.send(husbando_list)
 
                     else:

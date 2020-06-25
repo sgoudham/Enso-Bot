@@ -13,12 +13,16 @@ class OwOText(commands.Cog):
     @commands.command()
     @cooldown(1, 1, BucketType.user)
     async def owo(self, ctx):
+        # Making sure that the string that gets converted is excluding the ~owo
         if ctx.message.content.startswith("~owo"):
+            # Get the message to be converted
             msg = ctx.message.content.split("~owo ", 1)
 
+            # Convert the message into owo text
             uwu = OwO()
             owo = uwu.whatsthis(str(msg[-1]))
 
+            # Send the owo version of the text to the channel
             await ctx.message.channel.send(owo)
 
 

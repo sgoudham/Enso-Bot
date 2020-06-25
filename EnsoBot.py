@@ -254,24 +254,22 @@ async def on_message(message):
 
     # Setting the id of myself
     author = message.author.id
-    hammy = 154840866496839680
-
-    # File Writing Variables
-    time = message.created_at
-    msg_time = time.strftime('%Y-%m-%dT%H:%M:%S.%f')
-    msg_author = message.author
-    msg_content = message.content
 
     # Checking if the message is not sent in server
     if message.guild is None:
         # Checking if the owner is sending the message
-        if author == hammy:
+        if author == client.owner_id:
             # Send message to #general
             channel = client.get_channel(721449922838134876)
             await channel.send(message.content)
-            write_to_dm_file(msg_time, msg_author, msg_content)
         else:
-            write_to_dm_file(msg_time, msg_author, msg_content)
+            # Sends error message if
+            message = await message.channel.send("Sorry, you don't have permission to echo dms!")
+
+            # Let the user read the message for 2.5 seconds
+            await asyncio.sleep(2.5)
+            # Delete the message
+            await message.delete()
 
     await client.process_commands(message)
 
@@ -295,7 +293,7 @@ async def on_command_cooldown(ctx, error):
     # Send an error message to the user telling them that the command is on cooldown
     message = await ctx.send(f'That command is on cooldown. Try again in {error.retry_after:,.2f} seconds.')
 
-    # Let the Auser read the message for 2.5 seconds
+    # Let the User read the message for 2.5 seconds
     await asyncio.sleep(2.5)
     # Delete the message
     await message.delete()
@@ -321,12 +319,6 @@ async def on_command_missing_user(ctx):
     # Delete the message
     await message.delete()
 
-
-def write_to_dm_file(time, author, content):
-    with open('images/logs/dm-logs.txt', mode='a') as dm_logs_file:
-        dm_logs_file.write(f"{time}: {author}: {content}")
-
-
 # Run the bot, allowing it to come online
 try:
     client.run(API_TOKEN)
@@ -343,13 +335,13 @@ async def users(ctx):
 '''
 
 """    
-         # if the message author id is equal to mine
-        author = message.author.name
-        discrim = message.author.discriminator
-        content = message.content
-        time = str(message.created_at)
-
-        with open('logs/dm-logs.txt', "a") as file:
-            file.write("\n")
-            file.write(time + ": " + author + "#" + discrim + ": " + content)
+def write_to_dm_file(time, author, content):
+    with open('images/logs/dm-logs.txt', mode='a') as dm_logs_file:
+    dm_logs_file.write(f"{time}: {author}: {content}")
+    
+    # File Writing Variables
+    time = message.created_at
+    msg_time = time.strftime('%Y-%m-%dT%H:%M:%S')
+    msg_author = message.author
+    msg_content = message.content
 """

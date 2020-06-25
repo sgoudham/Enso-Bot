@@ -109,7 +109,7 @@ class Fun(commands.Cog):
     @cooldown(1, 1, BucketType.user)
     async def _8ball(self, ctx, *, question):
 
-        # Setting up the channels that the commands can be sent in
+        # Setting up the channels that the commands can be sent in enso-chan-commands and general
         channels = ["enso-chan-commands", "general"]
 
         # Surround with try/except to catch any exceptions that may occur
@@ -168,10 +168,9 @@ class Fun(commands.Cog):
         # Define 3 arrays that only have 2 strings stored in them
         pp_array = ["Smol pp", "Huge pp"]
         pewds_array = ["Floor Gang", "Ceiling Gang"]
-        chippy_array = ["Couch gang", "Chair Gang"]
 
         # Creating a 50/50 chance by choosing the array first
-        responses = random.choice([pp_array, pewds_array, chippy_array])
+        responses = random.choice([pp_array, pewds_array])
 
         # Send out one of the responses stored in the array
         await ctx.send(f"{ctx.author.mention} {random.choice(responses)}")

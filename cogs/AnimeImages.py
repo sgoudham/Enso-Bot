@@ -97,6 +97,12 @@ def displayAnimeImage(array, msg, name):
     return anime_embed
 
 
+def timeDif(self):
+    time_difference = (datetime.datetime.utcnow() - self.last_timeStamp).total_seconds()
+    if time_difference <= 1:
+        return f"Sorry! This command is still on cooldown! Try again in {time_difference} seconds!"
+
+
 class Waifus(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -208,12 +214,6 @@ class Waifus(commands.Cog):
     # Cooldown NOT WORKING
     @cooldown(1, 1, BucketType.user)
     async def on_message(self, message):
-        channel = message.channel
-
-        time_difference = (datetime.datetime.utcnow() - self.last_timeStamp).total_seconds()
-        if time_difference <= 1:
-            await channel.send(f"Sorry! This command is still on cooldown! Try again in {time_difference} seconds!")
-            return
 
         # Defining the channel and global variables
         global waifu_split_msg
@@ -235,6 +235,7 @@ class Waifus(commands.Cog):
 
                 # Makes sure that the user wants a random image of a waifu
                 if 'w random' in user_msg:
+                    timeDif(self)
 
                     # Get embed from randomWaifu() and send it to the channel
                     embed = randomWaifu(message, waifu_array)
@@ -243,6 +244,7 @@ class Waifus(commands.Cog):
 
                 # Makes sure that the user wants a specific image of a waifu
                 elif user_msg.startswith('~w'):
+                    timeDif(self)
 
                     # Define who the waifu is using string splitting
                     waifu_split_msg = user_msg.split("w ", 1)

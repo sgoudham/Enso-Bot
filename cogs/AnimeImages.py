@@ -100,9 +100,11 @@ def displayAnimeImage(array, msg, name):
 class Waifus(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.client = bot
+        self.last_timeStamp = datetime.datetime.utcfromtimestamp(0)
 
     # Bot ~ensoPerson command for the server members
-    @commands.command(aliases=['enso', 'Ensoperson'])
+    @commands.command(aliases=['enso'])
     @cooldown(1, 1, BucketType.user)
     async def ensoperson(self, ctx, name=None):
 
@@ -206,6 +208,12 @@ class Waifus(commands.Cog):
     # Cooldown NOT WORKING
     @cooldown(1, 1, BucketType.user)
     async def on_message(self, message):
+        channel = message.channel
+
+        time_difference = (datetime.datetime.utcnow() - self.last_timeStamp).total_seconds()
+        if time_difference <= 1:
+            await channel.send(f"Sorry! This command is still on cooldown! Try again in {time_difference} seconds!")
+            return
 
         # Defining the channel and global variables
         global waifu_split_msg

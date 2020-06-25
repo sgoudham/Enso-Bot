@@ -209,7 +209,7 @@ class Waifus(commands.Cog):
     async def w(self, ctx, waifu=None):
 
         # Defining array for the list of waifus available
-        waifu_array = ["toga", "yumeko"]
+        waifu_array = ["toga", "yumeko", "maki"]
 
         # If the channel that the command has been sent is in the list of accepted channels
         if str(ctx.channel) in settings.channels:

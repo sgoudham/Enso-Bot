@@ -32,21 +32,21 @@ class Embeds(commands.Cog):
                     # Store content of the file in kissing_array
                     kissing_array = file.readlines()
 
-                    # Set member as the author
-                    member = ctx.message.author
-                    # Get the member avatar
-                    userAvatar = member.avatar_url
+                # Set member as the author
+                member = ctx.message.author
+                # Get the member avatar
+                userAvatar = member.avatar_url
 
-                    # Set up the embed to display a random kissing gif
-                    embed = discord.Embed(
-                        title=f"<a:huh:676195228872474643> <a:huh:676195228872474643> | **{member.display_name}** kissed **{target.display_name}**",
-                        colour=discord.Colour(int(random.choice(settings.colour_list))))
-                    embed.set_image(url=random.choice(kissing_array))
-                    embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
-                    embed.timestamp = datetime.datetime.utcnow()
+                # Set up the embed to display a random kissing gif
+                embed = discord.Embed(
+                    title=f"<a:huh:676195228872474643> <a:huh:676195228872474643> | **{member.display_name}** kissed **{target.display_name}**",
+                    colour=discord.Colour(int(random.choice(settings.colour_list))))
+                embed.set_image(url=random.choice(kissing_array))
+                embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
+                embed.timestamp = datetime.datetime.utcnow()
 
-                    # Send the embedded message to the user
-                    await ctx.send(embed=embed)
+                # Send the embedded message to the user
+                await ctx.send(embed=embed)
 
             # else the command is sent in an invalid channel
             else:
@@ -78,21 +78,21 @@ class Embeds(commands.Cog):
                     # Store content of the file in killing_array
                     killing_array = file.readlines()
 
-                    # Set member as the author
-                    member = ctx.message.author
-                    # Get the member avatar
-                    userAvatar = member.avatar_url
+                # Set member as the author
+                member = ctx.message.author
+                # Get the member avatar
+                userAvatar = member.avatar_url
 
-                    # Set up the embed to display a random killing gif
-                    embed = discord.Embed(
-                        title=f"<:monkaW:718960264896184380> <:monkaW:718960264896184380> | **{member.display_name}** killed **{target.display_name}**",
-                        colour=discord.Colour(int(random.choice(settings.colour_list))))
-                    embed.set_image(url=random.choice(killing_array))
-                    embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
-                    embed.timestamp = datetime.datetime.utcnow()
+                # Set up the embed to display a random killing gif
+                embed = discord.Embed(
+                    title=f"<:monkaW:718960264896184380> <:monkaW:718960264896184380> | **{member.display_name}** killed **{target.display_name}**",
+                    colour=discord.Colour(int(random.choice(settings.colour_list))))
+                embed.set_image(url=random.choice(killing_array))
+                embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
+                embed.timestamp = datetime.datetime.utcnow()
 
-                    # Send the embedded message to the user
-                    await ctx.send(embed=embed)
+                # Send the embedded message to the user
+                await ctx.send(embed=embed)
 
             # else the command is sent in an invalid channel
             else:
@@ -124,21 +124,21 @@ class Embeds(commands.Cog):
                     # Store content of the file in cuddling_array
                     cuddling_array = file.readlines()
 
-                    # Set member as the author
-                    member = ctx.message.author
-                    # Get the member avatar
-                    userAvatar = member.avatar_url
+                # Set member as the author
+                member = ctx.message.author
+                # Get the member avatar
+                userAvatar = member.avatar_url
 
-                    # Set up the embed to display a random cuddling gif
-                    embed = discord.Embed(
-                        title=f"<:blushlook1:677310734123663363> <:blushlook2:679524467248201769> | **{member.display_name}** cuddled **{target.display_name}**",
-                        colour=discord.Colour(int(random.choice(settings.colour_list))))
-                    embed.set_image(url=random.choice(cuddling_array))
-                    embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
-                    embed.timestamp = datetime.datetime.utcnow()
+                # Set up the embed to display a random cuddling gif
+                embed = discord.Embed(
+                    title=f"<:blushlook1:677310734123663363> <:blushlook2:679524467248201769> | **{member.display_name}** cuddled **{target.display_name}**",
+                    colour=discord.Colour(int(random.choice(settings.colour_list))))
+                embed.set_image(url=random.choice(cuddling_array))
+                embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
+                embed.timestamp = datetime.datetime.utcnow()
 
-                    # Send the embedded message to the user
-                    await ctx.send(embed=embed)
+                # Send the embedded message to the user
+                await ctx.send(embed=embed)
 
             # else the command is sent in an invalid channel
             else:
@@ -170,21 +170,21 @@ class Embeds(commands.Cog):
                     # Store content of the file in cuddling_array
                     slapping_array = file.readlines()
 
-                    # Set member as the author
-                    member = ctx.message.author
-                    # Get the member avatar
-                    userAvatar = member.avatar_url
+                # Set member as the author
+                member = ctx.message.author
+                # Get the member avatar
+                userAvatar = member.avatar_url
 
-                    # Set up the embed to display a random slapping gif
-                    embed = discord.Embed(
-                        title=f"<:baka:718942872061083678> <:baka:718942872061083678> | **{member.display_name}** slapped **{target.display_name}**",
-                        colour=discord.Colour(int(random.choice(settings.colour_list))))
-                    embed.set_image(url=random.choice(slapping_array))
-                    embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
-                    embed.timestamp = datetime.datetime.utcnow()
+                # Set up the embed to display a random slapping gif
+                embed = discord.Embed(
+                    title=f"<:baka:718942872061083678> <:baka:718942872061083678> | **{member.display_name}** slapped **{target.display_name}**",
+                    colour=discord.Colour(int(random.choice(settings.colour_list))))
+                embed.set_image(url=random.choice(slapping_array))
+                embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
+                embed.timestamp = datetime.datetime.utcnow()
 
-                    # Send the embedded message to the user
-                    await ctx.send(embed=embed)
+                # Send the embedded message to the user
+                await ctx.send(embed=embed)
 
             # else the command is sent in an invalid channel
             else:
@@ -216,21 +216,21 @@ class Embeds(commands.Cog):
                     # Store content of the file in patting_array
                     patting_array = file.readlines()
 
-                    # Set member as the author
-                    member = ctx.message.author
-                    # Get the member avatar
-                    userAvatar = member.avatar_url
+                # Set member as the author
+                member = ctx.message.author
+                # Get the member avatar
+                userAvatar = member.avatar_url
 
-                    # Set up the embed to display a random patting gif
-                    embed = discord.Embed(
-                        title=f"<:xoxo:679893117482303564> <:xoxo:679893117482303564> | **{member.display_name}** patted **{target.display_name} on the head**",
-                        colour=discord.Colour(int(random.choice(settings.colour_list))))
-                    embed.set_image(url=random.choice(patting_array))
-                    embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
-                    embed.timestamp = datetime.datetime.utcnow()
+                # Set up the embed to display a random patting gif
+                embed = discord.Embed(
+                    title=f"<:xoxo:679893117482303564> <:xoxo:679893117482303564> | **{member.display_name}** patted **{target.display_name} on the head**",
+                    colour=discord.Colour(int(random.choice(settings.colour_list))))
+                embed.set_image(url=random.choice(patting_array))
+                embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
+                embed.timestamp = datetime.datetime.utcnow()
 
-                    # Send the embedded message to the user
-                    await ctx.send(embed=embed)
+                # Send the embedded message to the user
+                await ctx.send(embed=embed)
 
             # else the command is sent in an invalid channel
             else:

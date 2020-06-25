@@ -203,6 +203,7 @@ class Waifus(commands.Cog):
 
     # Cog on_message for waifus and husbandos
     @commands.Cog.listener()
+    # Cooldown NOT WORKING
     @cooldown(1, 1, BucketType.user)
     async def on_message(self, message):
 
@@ -271,6 +272,9 @@ class Waifus(commands.Cog):
 
                 # Makes sure that the user wants a specific image of a husbando
                 elif user_msg.startswith('~h'):
+                    # Making sure that the commands don't conflict with ~help
+                    if user_msg.endswith('~help'):
+                        return
 
                     # Define who the husbando is using string splitting
                     husbando_split_msg = user_msg.split("h ", 1)

@@ -100,11 +100,9 @@ def displayAnimeImage(array, msg, name):
 class Waifus(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.client = bot
-        self.last_timeStamp = datetime.datetime.utcfromtimestamp(0)
 
     # Bot ~ensoPerson command for the server members
-    @commands.command(aliases=['enso'])
+    @commands.command(aliases=['enso', 'Ensoperson'])
     @cooldown(1, 1, BucketType.user)
     async def ensoperson(self, ctx, name=None):
 
@@ -229,24 +227,13 @@ class Waifus(commands.Cog):
 
                 # Makes sure that the user wants a random image of a waifu
                 if 'w random' in user_msg:
-                    time_difference = (datetime.datetime.utcnow() - self.last_timeStamp).total_seconds()
-                    if time_difference <= 1:
-                        await channel.send(
-                            f"Sorry! This command is still on cooldown! Try again in {time_difference} seconds!")
-                        return
 
                     # Get embed from randomWaifu() and send it to the channel
                     embed = randomWaifu(message, waifu_array)
                     await channel.send(embed=embed)
-                    self.last_timeStamp = datetime.datetime.utcnow()
 
                 # Makes sure that the user wants a specific image of a waifu
                 elif user_msg.startswith('~w'):
-                    time_difference = (datetime.datetime.utcnow() - self.last_timeStamp).total_seconds()
-                    if time_difference <= 1:
-                        await channel.send(
-                            f"Sorry! This command is still on cooldown! Try again in {time_difference} seconds!")
-                        return
 
                     # Define who the waifu is using string splitting
                     waifu_split_msg = user_msg.split("w ", 1)
@@ -262,7 +249,6 @@ class Waifus(commands.Cog):
                     # Get the embed from a displayAnimeImage() and send it to the channel
                     embed = displayAnimeImage(images_array, message, full_name)
                     await channel.send(embed=embed)
-                    self.last_timeStamp = datetime.datetime.utcnow()
 
             except FileNotFoundError as e:
                 print(e)

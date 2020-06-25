@@ -247,7 +247,8 @@ class Waifus(commands.Cog):
                     print(e)
 
                     # Send error message saying that the person isn't recognised
-                    await ctx.send(f"Sorry! That waifu doesn't exist! Please do **~w list** to see the list of waifu's")
+                    await ctx.send(f"Sorry! That waifu doesn't exist!"
+                                   f"\nPlease do **~w list** to see the list of waifu's")
             else:
 
                 # Get embed from randomWaifu() and send it to the channel
@@ -298,7 +299,8 @@ class Waifus(commands.Cog):
 
                     # Send error message saying that the person isn't recognised
                     await ctx.send(
-                        f"Sorry! That husbando doesn't exist! Please do **~h list** to see the list of husbando's")
+                        f"Sorry! That husbando doesn't exist!"
+                        f"\nPlease do **~h list** to see the list of husbando's")
 
             else:
 

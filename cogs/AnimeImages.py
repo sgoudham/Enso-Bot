@@ -13,6 +13,7 @@ from cogs.Embeds import error_function
 # Defining the full names of the waifu's/husbando's
 anime = {"yumeko": "Jabami Yumeko",
          "toga": "Himiko Toga",
+         "maki": "Maki Oze",
          "kakashi": "Hatake Kakashi",
          "tamaki": "Tamaki Suoh",
          "husk": "Husk"

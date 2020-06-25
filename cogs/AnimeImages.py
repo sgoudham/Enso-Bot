@@ -25,6 +25,7 @@ def Abbrev(anime_msg):
     lowercase_anime = anime_msg.lower()
     split_anime = lowercase_anime.split()
     new_msg = ""
+
     # For each word in split_anime
     for word in split_anime:
         # If the word exists in the anime array
@@ -97,6 +98,24 @@ def displayAnimeImage(array, msg, name):
     return anime_embed
 
 
+# Function to display all the images requested of the people
+def displayServerImage(array, ctx, name):
+    # Set member as the author
+    member = ctx.message.author
+    # Get the member's avatar
+    userAvatar = member.avatar_url
+
+    # Set embed up for the person requested by the user
+    embed = discord.Embed(
+        title=f"**Look At What A Cutie {name.capitalize()} is!! <a:huh:676195228872474643> <a:huh:676195228872474643> **",
+        colour=discord.Colour(random.choice(settings.colour_list)))
+    embed.set_image(url=random.choice(array))
+    embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
+    embed.timestamp = datetime.datetime.utcnow()
+
+    return embed
+
+
 class Waifus(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -114,23 +133,6 @@ class Waifus(commands.Cog):
                  'izzy', 'david', 'clarity', 'angel', 'chloe',
                  'corona', 'skye']
 
-        # Function to display all the images requested of the people
-        def displayServerImage(array, ctx, name):
-            # Set member as the author
-            member = ctx.message.author
-            # Get the member's avatar
-            userAvatar = member.avatar_url
-
-            # Set embed up for the person requested by the user
-            embed = discord.Embed(
-                title=f"**Look At What A Cutie {name.capitalize()} is!! <a:huh:676195228872474643> <a:huh:676195228872474643> **",
-                colour=discord.Colour(random.choice(settings.colour_list)))
-            embed.set_image(url=random.choice(array))
-            embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
-            embed.timestamp = datetime.datetime.utcnow()
-
-            return embed
-
         # If the channel that the command has been sent is in the list of accepted channels
         if str(ctx.channel) in settings.channels:
 
@@ -145,8 +147,8 @@ class Waifus(commands.Cog):
                     await ctx.send(f"Try the names listed below!")
 
                     # Send the list of members in the bot to the channel
-                    nice = string.capwords(', '.join(map(str, array)))
-                    await ctx.send(nice)
+                    server_members = string.capwords(', '.join(map(str, array)))
+                    await ctx.send(server_members)
                     exit()
 
                 # Surround with try/except to catch any exceptions that may occur
@@ -201,117 +203,107 @@ class Waifus(commands.Cog):
             # Delete the message
             await message.delete()
 
-    # Cog on_message for waifus and husbandos
-    @commands.Cog.listener()
-    # Cooldown NOT WORKING
+    @commands.command(aliases=['W'])
     @cooldown(1, 1, BucketType.user)
-    async def on_message(self, message):
+    async def w(self, ctx, waifu=None):
 
-        # Defining the channel and global variables
-        global waifu_split_msg
-        global husbando_split_msg
-        channel = message.channel
-
-        # Defining the message content in lowercase
-        user_msg = message.content.lower()
-
-        # Defining array for the list of waifus/husbando's available
+        # Defining array for the list of waifus available
         waifu_array = ["toga", "yumeko"]
+
+        # If the channel that the command has been sent is in the list of accepted channels
+        if str(ctx.channel) in settings.channels:
+
+            # if a name is specified
+            if waifu:
+                # Get the lowercase
+                proper_waifu = waifu.lower()
+
+                # if the user does ~w list
+                if proper_waifu == "list":
+                    # Tell the user to try the waifus in the array
+                    await ctx.send(f"Try the waifu's listed below!")
+
+                    # Send the list of waifus in the bot to the channel
+                    waifu_list = string.capwords(', '.join(map(str, waifu_array)))
+                    await ctx.send(waifu_list)
+                    exit()
+
+                # Surround with try/except to catch any exceptions that may occur
+                try:
+
+                    # Retrieve image of the waifu specified
+                    with open(f'images/AnimeImages/Waifus/{proper_waifu}.txt') as file:
+                        w_array = file.readlines()
+
+                    # Get the full name of the waifu
+                    full_name = Abbrev(proper_waifu)
+
+                    # Embed the image into a message and send it to the channel
+                    embed = displayAnimeImage(w_array, ctx, full_name)
+                    await ctx.send(embed=embed)
+
+                except Exception as e:
+                    print(e)
+
+                    # Send error message saying that the person isn't recognised
+                    await ctx.send(f"Sorry! That waifu doesn't exist! Please do **~w list** to see the list of waifu's")
+            else:
+
+                # Get embed from randomWaifu() and send it to the channel
+                embed = randomWaifu(ctx, waifu_array)
+                await ctx.send(embed=embed)
+
+    @commands.command(aliases=['H'])
+    @cooldown(1, 1, BucketType.user)
+    async def h(self, ctx, husbando=None):
+
+        # Defining array for the list of husbando's available
         husbando_array = ["husk", "kakashi", "tamaki"]
 
         # If the channel that the command has been sent is in the list of accepted channels
-        if str(channel) in settings.channels:
+        if str(ctx.channel) in settings.channels:
 
-            # Surround with try/except to catch any exceptions that may occur
-            try:
+            # if a name is specified
+            if husbando:
+                # Get the lowercase
+                proper_husbando = husbando.lower()
 
-                # Makes sure that the user wants a random image of a waifu
-                if 'w random' in user_msg:
+                # Surround with try/except to catch any exceptions that may occur
+                try:
 
-                    # Get embed from randomWaifu() and send it to the channel
-                    embed = randomWaifu(message, waifu_array)
-                    await channel.send(embed=embed)
+                    # if the user does ~w list
+                    if proper_husbando == "list":
+                        # Tell the user to try the waifus in the array
+                        await ctx.send(f"Try the husbando's listed below!")
 
-                # Makes sure that the user wants a specific image of a waifu
-                elif user_msg.startswith('~w'):
+                        # Send the list of waifus in the bot to the channel
+                        husbando_list = string.capwords(', '.join(map(str, proper_husbando)))
+                        await ctx.send(husbando_list)
+                        exit()
 
-                    # Define who the waifu is using string splitting
-                    waifu_split_msg = user_msg.split("w ", 1)
-                    w_array = str(waifu_split_msg[-1]).lower()
-
-                    # Retrieve the image of the waifu that the user has specified
-                    with open(f'images/AnimeImages/Waifus/{w_array}.txt') as file:
-                        images_array = file.readlines()
-
-                    # Get the full name of the waifu
-                    full_name = Abbrev(w_array)
-
-                    # Get the embed from a displayAnimeImage() and send it to the channel
-                    embed = displayAnimeImage(images_array, message, full_name)
-                    await channel.send(embed=embed)
-
-            except FileNotFoundError as e:
-                print(e)
-
-                # Throw error message saying no waifu's could be found
-                await channel.send(f"Sorry! That Waifu doesn't exist!! Try the Waifu's listed below!")
-
-                # Send list of suitable waifu's to the channel
-                nice = string.capwords(', '.join(map(str, waifu_array)))
-                await channel.send(nice)
-
-            # Surround with try/except to catch any exceptions that may occur
-            try:
-
-                # Makes sure that the user wants a random image of a husbando
-                if 'h random' in user_msg:
-
-                    # Get embed from randomHusbando() and send it to the channel
-                    embed = randomHusbando(message, husbando_array)
-                    await channel.send(embed=embed)
-
-                # Makes sure that the user wants a specific image of a husbando
-                elif user_msg.startswith('~h'):
-                    # Making sure that the commands don't conflict with ~help
-                    if user_msg.endswith('~help'):
-                        return
-
-                    # Define who the husbando is using string splitting
-                    husbando_split_msg = user_msg.split("h ", 1)
-                    h_array = str(husbando_split_msg[-1]).lower()
-
-                    # Retrieve the image of the Husbando that the user has specified
-                    with open(f'images/AnimeImages/Husbandos/{h_array}.txt') as file:
-                        images_array = file.readlines()
+                    # Retrieve image of the husbando specified
+                    with open(f'images/AnimeImages/Husbandos/{proper_husbando}.txt') as file:
+                        h_array = file.readlines()
 
                     # Get the full name of the husbando
-                    full_name = Abbrev(h_array)
+                    full_name = Abbrev(proper_husbando)
 
-                    # Get the embed from a displayAnimeImage() and send it to the channel
-                    embed = displayAnimeImage(images_array, message, full_name)
-                    await channel.send(embed=embed)
+                    # Embed the image into a message and send it to the channel
+                    embed = displayAnimeImage(h_array, ctx, full_name)
+                    await ctx.send(embed=embed)
 
-            except FileNotFoundError as e:
-                print(e)
+                except Exception as e:
+                    print(e)
 
-                # Throw error message saying no husbando's could be found
-                await channel.send(f"Sorry! That Husbando doesn't exist!! Try the Husbando's listed below!")
+                    # Send error message saying that the person isn't recognised
+                    await ctx.send(
+                        f"Sorry! That husbando doesn't exist! Please do **~h list** to see the list of husbando's")
 
-                # Send list of suitable Husbando's to the channel
-                nice = string.capwords(', '.join(map(str, husbando_array)))
-                await channel.send(nice)
+            else:
 
-        # if the message is outwith the enso-chan-commands
-        else:
-            # Makes sure that the user only typed ~w or ~h
-            if user_msg.endswith('~w') or user_msg.endswith('~h'):
-                # Send error message
-                message = await channel.send(error_function())
-
-                # Let the user read the message for 2.5 seconds
-                await asyncio.sleep(2.5)
-                # Delete the message
-                await message.delete()
+                # Get embed from randomHusbando() and send it to the channel
+                embed = randomHusbando(ctx, husbando_array)
+                await ctx.send(embed=embed)
 
 
 def setup(bot):

@@ -259,11 +259,13 @@ async def on_message(message):
     if message.guild is None:
         # Checking if the owner is sending the message
         if author == client.owner_id:
+
             # Send message to #general
-            channel = client.get_channel(721449922838134876)
+            channel = client.get_channel(663651584399507481)
             await channel.send(message.content)
+
         else:
-            # Sends error message if
+            # Sends error message if the person is not the owner
             message = await message.channel.send("Sorry, you don't have permission to echo dms!")
 
             # Let the user read the message for 2.5 seconds

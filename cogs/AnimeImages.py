@@ -2,7 +2,6 @@ import asyncio
 import datetime
 import random
 import string
-import sys
 
 import discord
 from discord.ext import commands
@@ -281,7 +280,6 @@ class Waifus(commands.Cog):
                         # Send the list of waifus in the bot to the channel
                         husbando_list = string.capwords(', '.join(map(str, proper_husbando)))
                         await ctx.send(husbando_list)
-                        sys.exit(0)
 
                     else:
                         # Retrieve image of the husbando specified

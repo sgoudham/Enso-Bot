@@ -102,7 +102,7 @@ class Waifus(commands.Cog):
         self.bot = bot
 
     # Bot ~ensoPerson command for the server members
-    @commands.command(aliases=['enso', 'Ensoperson'])
+    @commands.command(aliases=['enso'])
     @cooldown(1, 1, BucketType.user)
     async def ensoperson(self, ctx, name=None):
 

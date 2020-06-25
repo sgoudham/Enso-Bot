@@ -150,7 +150,6 @@ class Waifus(commands.Cog):
                     # Send the list of members in the bot to the channel
                     server_members = string.capwords(', '.join(map(str, array)))
                     await ctx.send(server_members)
-                    exit()
 
                 # Surround with try/except to catch any exceptions that may occur
                 try:
@@ -227,7 +226,6 @@ class Waifus(commands.Cog):
                     # Send the list of waifus in the bot to the channel
                     waifu_list = string.capwords(', '.join(map(str, waifu_array)))
                     await ctx.send(waifu_list)
-                    exit()
 
                 # Surround with try/except to catch any exceptions that may occur
                 try:

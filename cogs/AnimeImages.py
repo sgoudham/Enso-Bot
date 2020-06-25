@@ -239,6 +239,7 @@ class Waifus(commands.Cog):
                     # Get embed from randomWaifu() and send it to the channel
                     embed = randomWaifu(message, waifu_array)
                     await channel.send(embed=embed)
+                    self.last_timeStamp = datetime.datetime.utcnow()
 
                 # Makes sure that the user wants a specific image of a waifu
                 elif user_msg.startswith('~w'):
@@ -257,6 +258,7 @@ class Waifus(commands.Cog):
                     # Get the embed from a displayAnimeImage() and send it to the channel
                     embed = displayAnimeImage(images_array, message, full_name)
                     await channel.send(embed=embed)
+                    self.last_timeStamp = datetime.datetime.utcnow()
 
             except FileNotFoundError as e:
                 print(e)

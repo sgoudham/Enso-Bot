@@ -123,13 +123,13 @@ class CustomHelp(commands.Cog):
                 inline=True)
             embed.add_field(
                 name="\u200b\u200b",
-                value="**➳ ~w**" +
+                value="**➳ ~w list**" +
                       "\n Returns a list of Waifu's that are in the bot " +
                       "\n *(Perms: Everyone)*",
                 inline=True)
             embed.add_field(
                 name="\u200b\u200b",
-                value="**➳ ~h**" +
+                value="**➳ ~h list**" +
                       "\n Returns a list of Husbando's that are in the bot " +
                       "\n *(Perms: Everyone)*",
                 inline=True)

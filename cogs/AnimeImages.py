@@ -142,25 +142,27 @@ class Waifus(commands.Cog):
                 # Get the lowercase
                 proper_name = name.lower()
 
-                # if the user does ~enso list
-                if proper_name == "list":
-                    # Tell the user to try the names in the array
-                    await ctx.send(f"Try the names listed below!")
-
-                    # Send the list of members in the bot to the channel
-                    server_members = string.capwords(', '.join(map(str, array)))
-                    await ctx.send(server_members)
-
                 # Surround with try/except to catch any exceptions that may occur
                 try:
 
-                    # Retrieve image of the member specified
-                    with open(f'images/ServerMembers/{proper_name}.txt') as file:
-                        images_array = file.readlines()
+                    # if the user does ~enso list
+                    if proper_name == "list":
+                        # Tell the user to try the names in the array
+                        await ctx.send(f"Try the names listed below!")
 
-                    # Embed the image into a message and send it to the channel
-                    embed = displayServerImage(images_array, ctx, proper_name)
-                    await ctx.send(embed=embed)
+                        # Send the list of members in the bot to the channel
+                        server_members = string.capwords(', '.join(map(str, array)))
+                        await ctx.send(server_members)
+
+                    else:
+
+                        # Retrieve image of the member specified
+                        with open(f'images/ServerMembers/{proper_name}.txt') as file:
+                            images_array = file.readlines()
+
+                        # Embed the image into a message and send it to the channel
+                        embed = displayServerImage(images_array, ctx, proper_name)
+                        await ctx.send(embed=embed)
 
                 except Exception as e:
                     print(e)

@@ -237,7 +237,7 @@ class Fun(commands.Cog):
         except FileNotFoundError as e:
             print(e)
 
-    # ~Doggo command
+    # ~Doggo command that uses an API to grab
     @commands.command(aliases=["Doggo"])
     @cooldown(1, 1, BucketType.user)
     async def doggo(self, ctx, breed=None):
@@ -250,6 +250,7 @@ class Fun(commands.Cog):
             # Get the member avatar
             userAvatar = member.avatar_url
 
+            # Initialise array to store doggo pics
             b_list = []
 
             # If a breed if specified

@@ -206,6 +206,38 @@ class Fun(commands.Cog):
             # Instantly Send message to user's dms
             await author.send(text)
 
+    # ~digby command that allows users to see a picture of digby
+    @commands.command(aliases=["Digby"])
+    async def digby(self, ctx):
+
+        # Surround with try/except to catch any exceptions that may occur
+        try:
+
+            # Open the file containing the digby images
+            with open('images/digby.txt') as file:
+                # Store content of the file in digby_array
+                digby_array = file.readlines()
+
+            # Set member as the author
+            member = ctx.message.author
+            # Get the member avatar
+            userAvatar = member.avatar_url
+
+            # Set up the embed to display a random image of digby
+            embed = discord.Embed(
+                title=f"**A cute picture of Digby!**",
+                colour=discord.Colour(int(random.choice(settings.colour_list))))
+            embed.set_image(url=random.choice(digby_array))
+            embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
+            embed.timestamp = datetime.datetime.utcnow()
+
+            # Send the embedded message to the user
+            await ctx.send(embed=embed)
+
+        except FileNotFoundError as e:
+            print(e)
+
+    # ~Doggo command
     @commands.command(aliases=["Doggo"])
     @cooldown(1, 1, BucketType.user)
     async def doggo(self, ctx, breed=None):

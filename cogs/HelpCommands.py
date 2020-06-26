@@ -105,6 +105,12 @@ class CustomHelp(commands.Cog):
                 inline=True)
             embed.add_field(
                 name="\u200b",
+                value="**➳ ~doggo**" +
+                      "\n Allows the user to look at an image of a doggo (Over 20k Images Available" +
+                      "\n *(Perms: Everyone)*",
+                inline=True)
+            embed.add_field(
+                name="\u200b",
                 value="```css" +
                       "\n ( ͡°ω ͡°) Waifus/Husbando Commands ( ͡°ω ͡°)" +
                       "```",

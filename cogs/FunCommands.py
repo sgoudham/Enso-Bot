@@ -1,10 +1,13 @@
 import asyncio
+import datetime
 import random
 
 import discord
+from aiohttp import request
 from discord.ext import commands
 from discord.ext.commands import BucketType, cooldown
 
+import settings
 from cogs.Embeds import error_function
 
 
@@ -202,6 +205,96 @@ class Fun(commands.Cog):
         else:
             # Instantly Send message to user's dms
             await author.send(text)
+
+    @commands.command(aliases=["Doggo"])
+    @cooldown(1, 1, BucketType.user)
+    async def doggo(self, ctx, breed=None):
+
+        # If the channel that the command has been sent is in the list of accepted channels
+        if str(ctx.channel) in settings.channels:
+
+            # Set member as the author
+            member = ctx.message.author
+            # Get the member avatar
+            userAvatar = member.avatar_url
+
+            b_list = []
+
+            # If a breed if specified
+            if breed:
+                # Get the lowercase string input
+                lowercase_breed = breed.lower()
+
+                # If the user wants to know what breeds there are
+                if lowercase_breed == "breeds":
+                    # Get the list of breeds
+                    breed_url = "https://dog.ceo/api/breeds/list/all"
+
+                    # Using API, retrieve the full list of breeds available
+                    async with request("GET", breed_url, headers={}) as response:
+                        if response.status == 200:
+                            data = await response.json()
+                            breed_link = data["message"]
+
+                            for doggo in breed_link:
+                                b_list.append(doggo)
+
+                            # Tell the user to try the breeds listed below
+                            await ctx.send(f"Try the Breeds listed below!" +
+                                           f"\n {b_list}")
+
+                else:
+
+                    image_url = f"https://dog.ceo/api/breed/{lowercase_breed}/images/random"
+
+                    async with request("GET", image_url, headers={}) as response:
+                        if response.status == 200:
+                            data = await response.json()
+                            image_link = data["message"]
+
+                            # Set up the embed for a random waifu image
+                            doggo_embed = discord.Embed(
+                                title=f"**It's a {lowercase_breed.capitalize()} Doggo!!** ",
+                                colour=discord.Colour(random.choice(settings.colour_list)))
+                            doggo_embed.set_image(url=image_link)
+                            doggo_embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
+                            doggo_embed.timestamp = datetime.datetime.utcnow()
+
+                            await ctx.send(embed=doggo_embed)
+
+                        else:
+
+                            await ctx.send("Response Timed Out!")
+
+            else:
+                image_url = "https://dog.ceo/api/breeds/image/random"
+
+                async with request("GET", image_url, headers={}) as response:
+                    if response.status == 200:
+                        data = await response.json()
+                        image_link = data["message"]
+
+                        # Set up the embed for a random waifu image
+                        doggo_embed = discord.Embed(
+                            title=f"**Doggo!!** ",
+                            colour=discord.Colour(random.choice(settings.colour_list)))
+                        doggo_embed.set_image(url=image_link)
+                        doggo_embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
+                        doggo_embed.timestamp = datetime.datetime.utcnow()
+
+                        await ctx.send(embed=doggo_embed)
+
+                    else:
+                        await ctx.send("Response Timed Out!")
+
+        else:
+            # Call error_function() and display it to the user
+            message = await ctx.send(error_function())
+
+            # Let the user read the message for 2.5 seconds
+            await asyncio.sleep(2.5)
+            # Delete the message
+            await message.delete()
 
 
 def setup(bot):

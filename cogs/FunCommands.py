@@ -184,9 +184,8 @@ class Fun(commands.Cog):
     async def dm(self, ctx, member: discord.Member, *, text):
         # Send the message typed the mentioned user
         await member.send(text)
-
         # Delete the message sent instantly
-        await ctx.message.delete()
+        await ctx.message_delete()
 
     # ~remindme command to allow the bot to dm you to remind you of something
     @commands.command(aliases=["remindme", "rm"])
@@ -237,7 +236,7 @@ class Fun(commands.Cog):
         except FileNotFoundError as e:
             print(e)
 
-    # ~Doggo command that uses an API to grab
+    # ~Doggo command that uses an API to grab images of dogs
     @commands.command(aliases=["Doggo"])
     @cooldown(1, 1, BucketType.user)
     async def doggo(self, ctx, breed=None):
@@ -269,6 +268,7 @@ class Fun(commands.Cog):
                             data = await response.json()
                             breed_link = data["message"]
 
+                            # Store every Doggo in an array
                             for doggo in breed_link:
                                 b_list.append(doggo)
 
@@ -276,16 +276,19 @@ class Fun(commands.Cog):
                             await ctx.send(f"Try the Breeds listed below!" +
                                            f"\n {b_list}")
 
+                # If no breed has been specified
                 else:
 
+                    # Grab a random image of a doggo with the breed specified
                     image_url = f"https://dog.ceo/api/breed/{lowercase_breed}/images/random"
 
+                    # Using API, retrieve the image of a doggo of the breed specified
                     async with request("GET", image_url, headers={}) as response:
                         if response.status == 200:
                             data = await response.json()
                             image_link = data["message"]
 
-                            # Set up the embed for a random waifu image
+                            # Set up the embed for a doggo image
                             doggo_embed = discord.Embed(
                                 title=f"**It's a {lowercase_breed.capitalize()} Doggo!!** ",
                                 colour=discord.Colour(random.choice(settings.colour_list)))
@@ -293,11 +296,14 @@ class Fun(commands.Cog):
                             doggo_embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
                             doggo_embed.timestamp = datetime.datetime.utcnow()
 
+                            # Send the doggo image
                             await ctx.send(embed=doggo_embed)
 
                         else:
 
-                            await ctx.send("Response Timed Out!")
+                            # Send error message that Doggo was not found!
+                            await ctx.send(
+                                "Doggo Not Found! Please do **~doggo breeds** to see the full list of Doggos!")
 
             else:
                 image_url = "https://dog.ceo/api/breeds/image/random"

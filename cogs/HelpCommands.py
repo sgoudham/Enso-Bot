@@ -178,6 +178,12 @@ class CustomHelp(commands.Cog):
                 inline=True)
             embed.add_field(
                 name="\u200b",
+                value="**➳ ~userinfo**" +
+                      "\n Returns information about the user (Name, Roles, Joined Date, Created Date, etc)" +
+                      "\n *(Perms: Everyone)*",
+                inline=True)
+            embed.add_field(
+                name="\u200b",
                 value="**➳ ~rules**" +
                       "\n Returns the entire ruleset for the server" +
                       "\n *(Perms: Everyone)*",

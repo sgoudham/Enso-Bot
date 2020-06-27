@@ -185,7 +185,7 @@ class Fun(commands.Cog):
         # Send the message typed the mentioned user
         await member.send(text)
         # Delete the message sent instantly
-        await ctx.message_delete()
+        await ctx.message.delete()
 
     # ~remindme command to allow the bot to dm you to remind you of something
     @commands.command(aliases=["remindme", "rm"])

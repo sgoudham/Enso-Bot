@@ -73,7 +73,7 @@ class GetInfo(commands.Cog):
 
         # Define fields to be added into the embed
         embed_fields = [("Name", str(target.mention), True),
-                        ("Tag", target.name, True),
+                        ("Tag", "#" + target.name, True),
                         ("Discrim", target.discriminator, True),
                         ("Registered", target.created_at.strftime("%d/%m/%Y %H:%M:%S"), True),
                         ("Joined", target.joined_at.strftime("%d/%m/%Y %H:%M:%S"), True),

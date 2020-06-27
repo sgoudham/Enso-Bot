@@ -34,8 +34,8 @@ class GetInfo(commands.Cog):
 
         # Store the roles in a string called "roles"
         roles = ""
-        # For each role that the user has
-        for role in mentions:
+        # For each role that the user has (Skipping the first element as it's always going to be @everyone
+        for role in mentions[1:]:
 
             # Make sure that @everyone is not included in the list of roles
             if role == "<@&663651584399507476>":

@@ -272,9 +272,14 @@ class Fun(commands.Cog):
                             for doggo in breed_link:
                                 b_list.append(doggo)
 
+                            # Define a new string to store the Doggo's nicely formatted
+                            string = " "
+                            for b in b_list:
+                                string += (b + ", ").capitalize()
+
                             # Tell the user to try the breeds listed below
                             await ctx.send(f"Try the Breeds listed below!" +
-                                           f"\n {b_list}")
+                                           f"\n {string}")
 
                 # If no breed has been specified
                 else:
@@ -304,16 +309,18 @@ class Fun(commands.Cog):
                             # Send error message that Doggo was not found!
                             await ctx.send(
                                 "Doggo Not Found! Please do **~doggo breeds** to see the full list of Doggos!")
-
             else:
+
+                # Grab a random image of a doggo of any breed
                 image_url = "https://dog.ceo/api/breeds/image/random"
 
+                # Using API, retrieve the image of a doggo of any breed
                 async with request("GET", image_url, headers={}) as response:
                     if response.status == 200:
                         data = await response.json()
                         image_link = data["message"]
 
-                        # Set up the embed for a random waifu image
+                        # Set up the embed for a random doggo image
                         doggo_embed = discord.Embed(
                             title=f"**Doggo!!** ",
                             colour=discord.Colour(random.choice(settings.colour_list)))
@@ -321,12 +328,16 @@ class Fun(commands.Cog):
                         doggo_embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
                         doggo_embed.timestamp = datetime.datetime.utcnow()
 
+                        # Send random doggo image to the channel
                         await ctx.send(embed=doggo_embed)
 
                     else:
-                        await ctx.send("Response Timed Out!")
 
+                        # Send error message that Doggo was not found!
+                        await ctx.send(
+                            "Doggo Not Found! Please do **~doggo breeds** to see the full list of Doggos!")
         else:
+
             # Call error_function() and display it to the user
             message = await ctx.send(error_function())
 

@@ -36,15 +36,8 @@ class GetInfo(commands.Cog):
         roles = ""
         # For each role that the user has (Skipping the first element as it's always going to be @everyone
         for role in mentions[1:]:
-
-            # Make sure that @everyone is not included in the list of roles
-            if role == "<@&663651584399507476>":
-                # Don't add anything to the string
-                roles = ''
-
-            else:
-                # Add the role to the string
-                roles += role + ' '
+            # Add the role to the string
+            roles += role + ' '
 
         # Store all the permissions that the user has in a string
         permission = ""

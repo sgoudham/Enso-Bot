@@ -132,7 +132,7 @@ class Waifus(commands.Cog):
                  'gria', 'lilu', 'marcus', 'eric', 'ifrah',
                  'janet', 'connor', 'taz', 'ryder', 'ange',
                  'izzy', 'david', 'clarity', 'angel', 'chloe',
-                 'corona', 'skye']
+                 'corona', 'skye', 'rin']
 
         # If the channel that the command has been sent is in the list of accepted channels
         if str(ctx.channel) in settings.channels:

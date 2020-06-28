@@ -9,3 +9,4 @@ tenorpy
 youtube-dl
 discord.py
 owotext
+aiohttp

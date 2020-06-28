@@ -3,8 +3,7 @@ import random
 import string
 from typing import Optional
 
-import discord
-from discord import Embed, Member
+from discord import Embed, Member, Colour
 from discord.ext import commands
 from discord.ext.commands import BucketType, cooldown
 
@@ -59,7 +58,7 @@ class GetInfo(commands.Cog):
         # Set up the embed to display everything about the user
         embed = Embed(
             title=f"**User Information**",
-            colour=discord.Colour(int(random.choice(settings.colour_list))),
+            colour=Colour(int(random.choice(settings.colour_list))),
             timestamp=datetime.datetime.utcnow())
         embed.set_thumbnail(url=userAvatar)
         embed.set_footer(text=f"ID: {target.id}", icon_url='{}'.format(userAvatar))
@@ -86,7 +85,50 @@ class GetInfo(commands.Cog):
     @commands.command(name="serverinfo", aliases=["guildinfo"])
     @cooldown(1, 1, BucketType.user)
     async def server_info(self, ctx):
-        pass
+
+        try:
+            # Define guild icon and id
+            guild_icon = ctx.guild.icon_url
+            guild_id = ctx.guild.id
+
+            # Define the statuses of the members within the discord
+            statuses = [len(list(filter(lambda m: str(m.status) == "online", ctx.guild.members))),
+                        len(list(filter(lambda m: str(m.status) == "idle", ctx.guild.members))),
+                        len(list(filter(lambda m: str(m.status) == "dnd", ctx.guild.members))),
+                        len(list(filter(lambda m: str(m.status) == "offline", ctx.guild.members)))]
+
+            # Set up embed to display all the server information
+            embed = Embed(title="**Server Information**",
+                          colour=Colour(int(random.choice(settings.colour_list))),
+                          timestamp=datetime.datetime.utcnow())
+            embed.set_thumbnail(url=guild_icon)
+            embed.set_footer(text=f"ID: {guild_id}", icon_url='{}'.format(guild_icon))
+
+            # Define fields to be added into the embed
+            fields = [("Owner", ctx.guild.owner, True),
+                      ("Created", ctx.guild.created_at.strftime("%d/%m/%Y %H:%M:%S"), False),
+                      ("Region", str(ctx.guild.region).upper(), False),
+                      ("Statuses", f"🟢 {statuses[0]} 🟠 {statuses[1]} 🔴 {statuses[2]} ⚪ {statuses[3]}", False),
+                      ("\u200b", "\u200b", False),
+                      ("Members", len(ctx.guild.members), True),
+                      ("Humans", len(list(filter(lambda m: not m.bot, ctx.guild.members))), True),
+                      ("Bots", len(list(filter(lambda c: c.bot, ctx.guild.members))), True),
+                      ("Banned Members", len(await ctx.guild.bans()), True),
+                      ("Text Channels", len(ctx.guild.text_channels), True),
+                      ("Voice Channels", len(ctx.guild.voice_channels), True),
+                      ("Categories", len(ctx.guild.categories), True),
+                      ("Roles", len(ctx.guild.roles), True),
+                      ("Invites", len(await ctx.guild.invites()), True)]
+
+            # Add fields to the embed
+            for name, value, inline in fields:
+                embed.add_field(name=name, value=value, inline=inline)
+
+            # Send the embed to the channel that the command was triggered in
+            await ctx.send(embed=embed)
+
+        except Exception as ex:
+            print(ex)
 
 
 def setup(bot):

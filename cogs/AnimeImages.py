@@ -3,7 +3,7 @@ import datetime
 import random
 import string
 
-import discord
+from discord import Embed, Colour
 from discord.ext import commands
 from discord.ext.commands import cooldown, BucketType
 
@@ -49,12 +49,12 @@ def randomWaifu(msg, waifu):
     userAvatar = member.avatar_url
 
     # Set up the embed for a random waifu image
-    waifu_embed = discord.Embed(
+    waifu_embed = Embed(
         title=f"Oh Look! A Wonderful Waifu! <a:huh:676195228872474643> <a:huh:676195228872474643> ",
-        colour=discord.Colour(random.choice(settings.colour_list)))
+        colour=Colour(random.choice(settings.colour_list)),
+        timestamp=datetime.datetime.utcnow())
     waifu_embed.set_image(url=random.choice(array))
     waifu_embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
-    waifu_embed.timestamp = datetime.datetime.utcnow()
 
     return waifu_embed
 
@@ -71,12 +71,12 @@ def randomHusbando(msg, husbando):
     userAvatar = member.avatar_url
 
     # Set up the embed for a random husbando image
-    husbando_embed = discord.Embed(
+    husbando_embed = Embed(
         title=f"Oh Look! A Handsome Husbando! <a:huh:676195228872474643> <a:huh:676195228872474643> ",
-        colour=discord.Colour(random.choice(settings.colour_list)))
+        colour=Colour(random.choice(settings.colour_list)),
+        timestamp=datetime.datetime.utcnow())
     husbando_embed.set_image(url=random.choice(array))
     husbando_embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
-    husbando_embed.timestamp = datetime.datetime.utcnow()
 
     return husbando_embed
 
@@ -89,12 +89,12 @@ def displayAnimeImage(array, msg, name):
     userAvatar = member.avatar_url
 
     # Set up embed for an image relating to a husbando or waifu
-    anime_embed = discord.Embed(
+    anime_embed = Embed(
         title=f"**{name}**",
-        colour=discord.Colour(random.choice(settings.colour_list)))
+        colour=Colour(random.choice(settings.colour_list)),
+        timestamp=datetime.datetime.utcnow())
     anime_embed.set_image(url=random.choice(array))
     anime_embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
-    anime_embed.timestamp = datetime.datetime.utcnow()
 
     return anime_embed
 
@@ -107,12 +107,12 @@ def displayServerImage(array, ctx, name):
     userAvatar = member.avatar_url
 
     # Set embed up for the person requested by the user
-    embed = discord.Embed(
+    embed = Embed(
         title=f"**Look At What A Cutie {name.capitalize()} is!! <a:huh:676195228872474643> <a:huh:676195228872474643> **",
-        colour=discord.Colour(random.choice(settings.colour_list)))
+        colour=Colour(random.choice(settings.colour_list)),
+        timestamp=datetime.datetime.utcnow())
     embed.set_image(url=random.choice(array))
     embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
-    embed.timestamp = datetime.datetime.utcnow()
 
     return embed
 
@@ -187,12 +187,12 @@ class Waifus(commands.Cog):
                 userAvatar = member.avatar_url
 
                 # Embed the image in a message and send it to the channel
-                embed = discord.Embed(
+                embed = Embed(
                     title=f"Oh Look! A Cute Person <a:huh:676195228872474643> <a:huh:676195228872474643> ",
-                    colour=discord.Colour(random.choice(settings.colour_list)))
+                    colour=Colour(random.choice(settings.colour_list)),
+                    timestamp=datetime.datetime.utcnow())
                 embed.set_image(url=random.choice(array))
                 embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
-                embed.timestamp = datetime.datetime.utcnow()
 
                 await ctx.send(embed=embed)
 

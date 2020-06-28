@@ -2,7 +2,7 @@ import asyncio
 import datetime
 import random
 
-import discord
+from discord import Colour, Embed, Member
 from discord.ext import commands
 from discord.ext.commands import BucketType
 from discord.ext.commands import cooldown
@@ -19,7 +19,7 @@ class Embeds(commands.Cog):
     @commands.command(aliases=["Kiss", "kiss"])
     # Added a cooldown, only 1 instance of the command can be sent every second per user
     @cooldown(1, 1, BucketType.user)
-    async def kissing(self, ctx, target: discord.Member):
+    async def kissing(self, ctx, target: Member):
 
         # Surround with try/except to catch any exceptions that may occur
         try:
@@ -38,12 +38,12 @@ class Embeds(commands.Cog):
                 userAvatar = member.avatar_url
 
                 # Set up the embed to display a random kissing gif
-                embed = discord.Embed(
+                embed = Embed(
                     title=f"<a:huh:676195228872474643> <a:huh:676195228872474643> | **{member.display_name}** kissed **{target.display_name}**",
-                    colour=discord.Colour(int(random.choice(settings.colour_list))))
+                    colour=Colour(int(random.choice(settings.colour_list))),
+                    timestamp=datetime.datetime.utcnow())
                 embed.set_image(url=random.choice(kissing_array))
                 embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
-                embed.timestamp = datetime.datetime.utcnow()
 
                 # Send the embedded message to the user
                 await ctx.send(embed=embed)
@@ -65,7 +65,7 @@ class Embeds(commands.Cog):
     @commands.command(aliases=["Kill", "k"])
     # Added a cooldown, only 1 instance of the command can be sent every second per user
     @cooldown(1, 1, BucketType.user)
-    async def kill(self, ctx, target: discord.Member):
+    async def kill(self, ctx, target: Member):
 
         # Surround with try/except to catch any exceptions that may occur
         try:
@@ -84,12 +84,12 @@ class Embeds(commands.Cog):
                 userAvatar = member.avatar_url
 
                 # Set up the embed to display a random killing gif
-                embed = discord.Embed(
+                embed = Embed(
                     title=f"<:monkaW:718960264896184380> <:monkaW:718960264896184380> | **{member.display_name}** killed **{target.display_name}**",
-                    colour=discord.Colour(int(random.choice(settings.colour_list))))
+                    colour=Colour(int(random.choice(settings.colour_list))),
+                    timestamp=datetime.datetime.utcnow())
                 embed.set_image(url=random.choice(killing_array))
                 embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
-                embed.timestamp = datetime.datetime.utcnow()
 
                 # Send the embedded message to the user
                 await ctx.send(embed=embed)
@@ -111,7 +111,7 @@ class Embeds(commands.Cog):
     @commands.command(aliases=["Cuddle"])
     # Added a cooldown, only 1 instance of the command can be sent every second per user
     @cooldown(1, 1, BucketType.user)
-    async def cuddle(self, ctx, target: discord.Member):
+    async def cuddle(self, ctx, target: Member):
 
         # Surround with try/except to catch any exceptions that may occur
         try:
@@ -130,12 +130,12 @@ class Embeds(commands.Cog):
                 userAvatar = member.avatar_url
 
                 # Set up the embed to display a random cuddling gif
-                embed = discord.Embed(
+                embed = Embed(
                     title=f"<:blushlook1:677310734123663363> <:blushlook2:679524467248201769> | **{member.display_name}** cuddled **{target.display_name}**",
-                    colour=discord.Colour(int(random.choice(settings.colour_list))))
+                    colour=Colour(int(random.choice(settings.colour_list))),
+                    timestamp=datetime.datetime.utcnow())
                 embed.set_image(url=random.choice(cuddling_array))
                 embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
-                embed.timestamp = datetime.datetime.utcnow()
 
                 # Send the embedded message to the user
                 await ctx.send(embed=embed)
@@ -157,7 +157,7 @@ class Embeds(commands.Cog):
     @commands.command(aliases=["Slap"])
     # Added a cooldown, only 1 instance of the command can be sent every second per user
     @cooldown(1, 1, BucketType.user)
-    async def slap(self, ctx, target: discord.Member):
+    async def slap(self, ctx, target: Member):
 
         # Surround with try/except to catch any exceptions that may occur
         try:
@@ -176,12 +176,12 @@ class Embeds(commands.Cog):
                 userAvatar = member.avatar_url
 
                 # Set up the embed to display a random slapping gif
-                embed = discord.Embed(
+                embed = Embed(
                     title=f"<:baka:718942872061083678> <:baka:718942872061083678> | **{member.display_name}** slapped **{target.display_name}**",
-                    colour=discord.Colour(int(random.choice(settings.colour_list))))
+                    colour=Colour(int(random.choice(settings.colour_list))),
+                    timestamp=datetime.datetime.utcnow())
                 embed.set_image(url=random.choice(slapping_array))
                 embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
-                embed.timestamp = datetime.datetime.utcnow()
 
                 # Send the embedded message to the user
                 await ctx.send(embed=embed)
@@ -203,7 +203,7 @@ class Embeds(commands.Cog):
     @commands.command(aliases=["Pat"])
     # Added a cooldown, only 1 instance of the command can be sent every second per user
     @cooldown(1, 1, BucketType.user)
-    async def pat(self, ctx, target: discord.Member):
+    async def pat(self, ctx, target: Member):
 
         # Surround with try/except to catch any exceptions that may occur
         try:
@@ -222,12 +222,12 @@ class Embeds(commands.Cog):
                 userAvatar = member.avatar_url
 
                 # Set up the embed to display a random patting gif
-                embed = discord.Embed(
+                embed = Embed(
                     title=f"<:xoxo:679893117482303564> <:xoxo:679893117482303564> | **{member.display_name}** patted **{target.display_name} on the head**",
-                    colour=discord.Colour(int(random.choice(settings.colour_list))))
+                    colour=Colour(int(random.choice(settings.colour_list))),
+                    timestamp=datetime.datetime.utcnow())
                 embed.set_image(url=random.choice(patting_array))
                 embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
-                embed.timestamp = datetime.datetime.utcnow()
 
                 # Send the embedded message to the user
                 await ctx.send(embed=embed)
@@ -249,7 +249,7 @@ class Embeds(commands.Cog):
     @commands.command(aliases=["lem", "Lemon", "Lem"])
     # Added a cooldown, only 1 instance of the command can be sent every second per user
     @cooldown(1, 1, BucketType.user)
-    async def lemon(self, ctx, target: discord.Member):
+    async def lemon(self, ctx, target: Member):
 
         lemon_array = ["https://media.discordapp.net/attachments/669812887564320769/720093589056520202/lemon.gif",
                        "https://media.discordapp.net/attachments/669812887564320769/720093575492272208/lemon2.gif",
@@ -267,12 +267,12 @@ class Embeds(commands.Cog):
                 userAvatar = member.avatar_url
 
                 # Set up the embed to display a random lemon gif
-                embed = discord.Embed(
+                embed = Embed(
                     title=f"<a:huh:676195228872474643> <a:huh:676195228872474643> | **{member.display_name}** Gives A Lemon To **{target.display_name}**",
-                    colour=discord.Colour(int(random.choice(settings.colour_list))))
+                    colour=Colour(int(random.choice(settings.colour_list))),
+                    timestamp=datetime.datetime.utcnow())
                 embed.set_image(url=random.choice(lemon_array))
                 embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
-                embed.timestamp = datetime.datetime.utcnow()
 
                 # Send the embedded message to the user
                 await ctx.send(embed=embed)

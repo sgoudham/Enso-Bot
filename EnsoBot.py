@@ -139,8 +139,8 @@ async def role_menu(ctx):
         # Send embed to #self-roles
         await channel.send(embed=embed)
 
-    except Exception as e:
-        print(e)
+    except Exception as ex:
+        print(ex)
 
 
 # Bot event for enabling roles to be added to users when they react to the embedded message
@@ -175,8 +175,8 @@ async def on_raw_reaction_add(payload):
                 # Print to me that the role has been added
                 print("done")
 
-    except Exception as e:
-        print(e)
+    except Exception as ex:
+        print(ex)
 
 
 # Bot event for enabling roles to be removed from users when they unreact to the embedded messaged
@@ -320,6 +320,7 @@ async def on_command_missing_user(ctx):
     await asyncio.sleep(2.5)
     # Delete the message
     await message.delete()
+
 
 # Run the bot, allowing it to come online
 try:

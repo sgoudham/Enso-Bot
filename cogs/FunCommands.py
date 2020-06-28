@@ -2,8 +2,8 @@ import asyncio
 import datetime
 import random
 
-import discord
 from aiohttp import request
+from discord import Member, Colour, Embed
 from discord.ext import commands
 from discord.ext.commands import BucketType, cooldown
 
@@ -19,7 +19,7 @@ class Fun(commands.Cog):
     # ~attack command for only co-owners only
     @commands.command(aliases=['Attack'])
     @commands.has_any_role('Hamothy', "izzy")
-    async def attack(self, ctx, target: discord.Member):
+    async def attack(self, ctx, target: Member):
 
         # Set up array of insults to throw at people
         responses = [
@@ -60,7 +60,7 @@ class Fun(commands.Cog):
     @commands.command(aliases=['comp', 'Compliment', 'Comp'])
     # Added a cooldown, only 1 instance of the command can be sent every second per user
     @cooldown(1, 1, BucketType.user)
-    async def compliment(self, ctx, target: discord.Member):
+    async def compliment(self, ctx, target: Member):
 
         # Set up array of compliments to throw at people
         responses = [
@@ -181,7 +181,7 @@ class Fun(commands.Cog):
     # ~dm only allows me to dm anyone through the bot
     @commands.command()
     @commands.is_owner()
-    async def dm(self, ctx, member: discord.Member, *, text):
+    async def dm(self, ctx, member: Member, *, text):
         # Send the message typed the mentioned user
         await member.send(text)
         # Delete the message sent instantly
@@ -223,12 +223,12 @@ class Fun(commands.Cog):
             userAvatar = member.avatar_url
 
             # Set up the embed to display a random image of digby
-            embed = discord.Embed(
+            embed = Embed(
                 title=f"**A cute picture of Digby!**",
-                colour=discord.Colour(int(random.choice(settings.colour_list))))
+                colour=Colour(int(random.choice(settings.colour_list))),
+                timestamp=datetime.datetime.utcnow())
             embed.set_image(url=random.choice(digby_array))
             embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
-            embed.timestamp = datetime.datetime.utcnow()
 
             # Send the embedded message to the user
             await ctx.send(embed=embed)
@@ -294,12 +294,12 @@ class Fun(commands.Cog):
                             image_link = data["message"]
 
                             # Set up the embed for a doggo image
-                            doggo_embed = discord.Embed(
+                            doggo_embed = Embed(
                                 title=f"**It's a {lowercase_breed.capitalize()} Doggo!!** ",
-                                colour=discord.Colour(random.choice(settings.colour_list)))
+                                colour=Colour(random.choice(settings.colour_list)),
+                                timestamp=datetime.datetime.utcnow())
                             doggo_embed.set_image(url=image_link)
                             doggo_embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
-                            doggo_embed.timestamp = datetime.datetime.utcnow()
 
                             # Send the doggo image
                             await ctx.send(embed=doggo_embed)
@@ -321,12 +321,12 @@ class Fun(commands.Cog):
                         image_link = data["message"]
 
                         # Set up the embed for a random doggo image
-                        doggo_embed = discord.Embed(
+                        doggo_embed = Embed(
                             title=f"**Doggo!!** ",
-                            colour=discord.Colour(random.choice(settings.colour_list)))
+                            colour=Colour(random.choice(settings.colour_list)),
+                            timestamp=datetime.datetime.utcnow())
                         doggo_embed.set_image(url=image_link)
                         doggo_embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
-                        doggo_embed.timestamp = datetime.datetime.utcnow()
 
                         # Send random doggo image to the channel
                         await ctx.send(embed=doggo_embed)

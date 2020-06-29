@@ -4,6 +4,8 @@ from discord.ext import commands
 class Reminder(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+
+
 """
     @commands.Cog.listener()
     @commands.is.owner()
@@ -18,6 +20,7 @@ class Reminder(commands.Cog):
 
     _thread.start_new_thread(ex(self=self, ctx), ())
 """
+
 
 def setup(bot):
     bot.add_cog(Reminder(bot))

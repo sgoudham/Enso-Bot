@@ -1,8 +1,9 @@
 import asyncio
 import datetime
 
-import discord
+from discord import Embed, Colour
 from discord.ext import commands
+from discord.ext.commands import command
 
 
 # Set up the Cog
@@ -11,26 +12,29 @@ class CustomHelp(commands.Cog):
         self.bot = bot
 
     # ~help command allows the user to look at the list of commands
-    @commands.command(aliases=["Help"])
+    @command(aliases=["Help"])
     async def help(self, ctx):
 
         # Allowing the bot to dm the user
-        author = ctx.message.author
+        author = ctx.author
+
+        # Define guild icon, enso bot icon and enso bot name
+        guild_icon = ctx.guild.icon_url
+        enso_icon = self.bot.user.avatar_url
+        enso_name = self.bot.user.display_name
 
         # Surround with try/except to catch any exceptions that may occur
         try:
 
             # Set up embed to list all the commands within the bot
-            embed = discord.Embed(title="```(っ◔◡◔)っ Ensō Commands```", colour=discord.Colour.orange())
+            embed = Embed(title="```(っ◔◡◔)っ Ensō Commands```",
+                          colour=Colour(0xFF69B4),
+                          timestamp=datetime.datetime.utcnow())
 
-            embed.timestamp = datetime.datetime.utcnow()
+            embed.set_thumbnail(url=guild_icon)
+            embed.set_author(name=enso_name,
+                             icon_url=enso_icon)
 
-            embed.set_thumbnail(url="https://media.discordapp.net/attachments/683490529862090814/715010931620446269"
-                                    "/image1.jpg?width=658&height=658")
-            embed.set_author(name="Hamothy", icon_url="https://cdn.discordapp.com/attachments/689525645734182916"
-                                                      "/718510466640642099/Rias_Gremory.png")
-            embed.set_footer(text=f"{ctx.message.author}",
-                             icon_url="https://media.discordapp.net/attachments/689525645734182916/718510466640642099/Rias_Gremory.png")
             embed.add_field(
                 name="\u200b",
                 value="```css" +
@@ -184,6 +188,12 @@ class CustomHelp(commands.Cog):
                 inline=True)
             embed.add_field(
                 name="\u200b",
+                value="**➳ ~serverinfo**" +
+                      "\n Returns information about the server (Owner, Members, Region, Bots etc etc)" +
+                      "\n *(Perms: Everyone)*",
+                inline=True)
+            embed.add_field(
+                name="\u200b",
                 value="**➳ ~rules**" +
                       "\n Returns the entire ruleset for the server" +
                       "\n *(Perms: Everyone)*",
@@ -216,29 +226,32 @@ class CustomHelp(commands.Cog):
             print(e)
 
     # ~rules command allows for an embed message about the leveled roles and xp system
-    @commands.command(aliases=["Rules", "rule", "Rule"])
+    @command(aliases=["Rules", "rule", "Rule"])
     async def rules(self, ctx):
 
         # Allowing the bot to dm the user
-        author = ctx.message.author
+        author = ctx.author
         # Define Izzy's roles ID
-        izzyID = '<@397944038440828928'
+        izzyID = '<@397944038440828928>'
+
+        # Define guild icon, enso bot icon and enso bot name
+        guild_icon = ctx.guild.icon_url
+        enso_icon = self.bot.user.avatar_url
+        enso_name = self.bot.user.display_name
 
         # Surround with try/except to catch any exceptions that may occur
         try:
 
             # Set up embed to list all the rules within the server
-            embed = discord.Embed(title="```(っ◔◡◔)っ Ensō Rules```", colour=discord.Colour(0xFF69B4),
-                                  description="``` ヽ(͡◕ ͜ʖ ͡◕)ﾉ Please respect the following rules that are going to be listed below ヽ(͡◕ ͜ʖ ͡◕)ﾉ ```")
+            embed = Embed(title="```(っ◔◡◔)っ Ensō Rules```",
+                          colour=Colour(0xFF69B4),
+                          description="``` ヽ(͡◕ ͜ʖ ͡◕)ﾉ Please respect the following rules that are going to be listed below ヽ(͡◕ ͜ʖ ͡◕)ﾉ ```",
+                          timestamp=datetime.datetime.utcnow())
 
-            embed.timestamp = datetime.datetime.utcnow()
+            embed.set_thumbnail(url=guild_icon)
+            embed.set_author(name=enso_name,
+                             icon_url=enso_icon)
 
-            embed.set_thumbnail(url="https://media.discordapp.net/attachments/683490529862090814/715010931620446269"
-                                    "/image1.jpg?width=658&height=658")
-            embed.set_author(name="Hamothy", icon_url="https://cdn.discordapp.com/attachments/689525645734182916"
-                                                      "/718510466640642099/Rias_Gremory.png")
-            embed.set_footer(text=f"{ctx.message.author}",
-                             icon_url="https://media.discordapp.net/attachments/689525645734182916/718510466640642099/Rias_Gremory.png")
             embed.add_field(
                 name="\u200b",
                 value="**➳ Don't be overly toxic/purposely problematic**" +
@@ -341,31 +354,33 @@ class CustomHelp(commands.Cog):
             print(e)
 
     # ~roles command allows for an embed message about roles
-    @commands.command(aliases=["Roles"])
+    @command(aliases=["Roles"])
     async def roles(self, ctx):
 
         # Allowing the bot to dm the user
-        author = ctx.message.author
+        author = ctx.author
+
+        # Define guild icon, enso bot icon and enso bot name
+        guild_icon = ctx.guild.icon_url
+        enso_icon = self.bot.user.avatar_url
+        enso_name = self.bot.user.display_name
+
+        # Get the url of the leveled roles image
+        roles_image = "https://media.discordapp.net/attachments/669812887564320769/717149671771996180/unknown.png"
 
         # Surround with try/except to catch any exceptions that may occur
         try:
 
-            # Setting up embedded message about the leveled roles systme within the server
-            embed = discord.Embed(title="```So you wanna know how the leveled roles system works huh?```",
-                                  colour=discord.Colour(0x30e419),
-                                  description="------------------------------------------------")
+            # Setting up embedded message about the leveled roles system within the server
+            embed = Embed(title="```So you wanna know how the leveled roles system works huh?```",
+                          colour=Colour(0xFF69B4),
+                          description="------------------------------------------------",
+                          timestamp=datetime.datetime.utcnow())
 
-            embed.timestamp = datetime.datetime.utcnow()
-
-            embed.set_image(
-                url="https://media.discordapp.net/attachments/669812887564320769/717149671771996180/unknown.png")
-            embed.set_thumbnail(
-                url="https://cdn.discordapp.com/attachments/683490529862090814/715010931620446269/image1.jpg")
-            embed.set_author(name="Hamothy",
-                             icon_url="https://cdn.discordapp.com/attachments/689525645734182916/717137453651066900"
-                                      "/Rias_Gremory.png")
-            embed.set_footer(
-                text="---------------------------------------------------------------------------------")
+            embed.set_image(url=roles_image)
+            embed.set_thumbnail(url=guild_icon)
+            embed.set_author(name=enso_name,
+                             icon_url=enso_icon)
 
             embed.add_field(name="Cooldown", value="**•XP is gained every time you talk with a 2 minute cooldown.**",
                             inline=False),
@@ -384,7 +399,7 @@ class CustomHelp(commands.Cog):
             # Send the helpDm() message to the channel that the user is in
             message = await ctx.send(helpDm())
 
-            # Let the user read the message for 2.5 seconds
+            # Let the user read the message for 10 seconds
             await asyncio.sleep(10)
             # Delete the message
             await message.delete()

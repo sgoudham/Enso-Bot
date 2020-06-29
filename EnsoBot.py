@@ -37,7 +37,7 @@ async def on_ready():
 
 
 # Bot ~Ping command in milliseconds
-@client.command(aliases=["Ping"])
+@client.command(name="ping", aliases=["Ping"])
 @is_owner()
 async def ping(ctx):
     # Send the latency of the bot (ms)
@@ -211,7 +211,7 @@ async def on_raw_reaction_remove(payload):
 
 
 # ~marry command allows the bot to wed two young lovers together
-@client.command()
+@client.command(name="marry", aliases=["Marry"])
 async def marry(ctx, member: Member):
     # Send a message to the channel mentioning the author and the person they want to wed.
     await ctx.send(f"{ctx.author.mention} **Proposes To** {member.mention} **Do you accept??** "

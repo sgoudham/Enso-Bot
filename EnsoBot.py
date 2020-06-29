@@ -111,10 +111,8 @@ async def role_menu(ctx):
 
         embed.set_thumbnail(url="https://media.discordapp.net/attachments/683490529862090814/715010931620446269"
                                 "/image1.jpg?width=658&height=658")
-        embed.set_author(name="Hamothy", icon_url="https://cdn.discordapp.com/attachments/689525645734182916"
-                                                  "/718510466640642099/Rias_Gremory.png")
-        embed.set_footer(text=f"{ctx.message.author}",
-                         icon_url="https://media.discordapp.net/attachments/689525645734182916/718510466640642099/Rias_Gremory.png")
+        embed.set_author(name=ctx.author, icon_url=ctx.author.avatar_url)
+        embed.set_footer(text=f"{ctx.message.author}", icon_url=ctx.author.avatar_url)
         embed.add_field(
             name="\u200b",
             value="React to give yourself roles to be pinged for these events!",

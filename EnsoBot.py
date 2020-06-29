@@ -3,11 +3,13 @@ import datetime
 
 import discord
 from decouple import config
+from discord import Embed, Colour, Member
 from discord.ext import commands
+from discord.ext.commands import is_owner
 
-# Getting the Bot token from Environment Variables
 import settings
 
+# Getting the Bot token from Environment Variables
 API_TOKEN = config('DISCORD_TOKEN')
 
 # Bot Initiation
@@ -36,7 +38,7 @@ async def on_ready():
 
 # Bot ~Ping command in milliseconds
 @client.command(aliases=["Ping"])
-@commands.is_owner()
+@is_owner()
 async def ping(ctx):
     # Send the latency of the bot (ms)
     await ctx.send(f'Pong! {round(client.latency * 1000)}ms')
@@ -58,9 +60,9 @@ async def on_member_join(member):
     try:
 
         # Set up embed for the #newpeople channel
-        embed = discord.Embed(title="\n**Welcome To Ensō!**",
-                              colour=discord.Colour(0x30e419),
-                              timestamp=datetime.datetime.utcnow())
+        embed = Embed(title="\n**Welcome To Ensō!**",
+                      colour=Colour(0x30e419),
+                      timestamp=datetime.datetime.utcnow())
 
         embed.set_thumbnail(url=server_icon)
         embed.set_image(url=welcome_gif)
@@ -97,7 +99,7 @@ async def on_member_join(member):
 
 # Allowing people to get ping-able self roles
 @client.command(name="rolemenu")
-@commands.is_owner()
+@is_owner()
 async def role_menu(ctx):
     # Surround with try/except to catch any exceptions that may occur
     try:
@@ -106,9 +108,9 @@ async def role_menu(ctx):
         channel = client.get_channel(722347423913213992)
 
         # Set up embed to let people know what ping-able roles can be chosen
-        embed = discord.Embed(title="**Role Menu: Ping-Able Roles**", colour=discord.Colour.orange())
-
-        embed.timestamp = datetime.datetime.utcnow()
+        embed = Embed(title="**Role Menu: Ping-Able Roles**",
+                      colour=Colour.orange(),
+                      timestamp=datetime.datetime.utcnow())
 
         embed.set_thumbnail(url="https://media.discordapp.net/attachments/683490529862090814/715010931620446269"
                                 "/image1.jpg?width=658&height=658")
@@ -210,7 +212,7 @@ async def on_raw_reaction_remove(payload):
 
 # ~marry command allows the bot to wed two young lovers together
 @client.command()
-async def marry(ctx, member: discord.Member):
+async def marry(ctx, member: Member):
     # Send a message to the channel mentioning the author and the person they want to wed.
     await ctx.send(f"{ctx.author.mention} **Proposes To** {member.mention} **Do you accept??** "
                    f"\nRespond with [**Y**es/**N**o]")
@@ -326,15 +328,6 @@ try:
     client.run(API_TOKEN)
 except discord.errors.LoginFailure as e:
     print("Login unsuccessful.")
-
-'''
-@client.command()
-@commands.has_any_role('Hamothy')
-async def users(ctx):
-    server_id = client.get_guild(663651584399507476)
-
-    await ctx.send(f"""Number of Members: {server_id.member_count}""") 
-'''
 
 """    
 def write_to_dm_file(time, author, content):

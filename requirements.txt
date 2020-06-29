@@ -10,3 +10,4 @@ youtube-dl
 discord.py
 owotext
 aiohttp
+discord

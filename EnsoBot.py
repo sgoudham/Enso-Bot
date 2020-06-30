@@ -56,45 +56,39 @@ async def on_member_join(member):
     server_icon = "https://media.discordapp.net/attachments/683490529862090814/715010931620446269/image1.jpg?width=658&height=658"
     welcome_gif = "https://cdn.discordapp.com/attachments/714671068941647933/717144047252275270/f4d7de6463d3ada02058a094fd6917ac.gif"
 
-    # Surround with try/except to catch any exceptions that may occur
-    try:
+    # Set up embed for the #newpeople channel
+    embed = Embed(title="\n**Welcome To Ensō!**",
+                  colour=Colour(0x30e419),
+                  timestamp=datetime.datetime.utcnow())
 
-        # Set up embed for the #newpeople channel
-        embed = Embed(title="\n**Welcome To Ensō!**",
-                      colour=Colour(0x30e419),
-                      timestamp=datetime.datetime.utcnow())
+    embed.set_thumbnail(url=server_icon)
+    embed.set_image(url=welcome_gif)
+    embed.add_field(
+        name="\u200b",
+        value=f"Hello {member.mention}! We hope you enjoy your stay in this server! ",
+        inline=False)
+    embed.add_field(
+        name="\u200b",
+        value=f"Be sure to check out our <#669815048658747392> channel to read the rules and <#683490529862090814> channel to get caught up with any changes! ",
+        inline=False)
+    embed.add_field(
+        name="\u200b",
+        value=f"Last but not least, feel free to go into <#669775971297132556> to introduce yourself!",
+        inline=False)
 
-        embed.set_thumbnail(url=server_icon)
-        embed.set_image(url=welcome_gif)
-        embed.add_field(
-            name="\u200b",
-            value=f"Hello {member.mention}! We hope you enjoy your stay in this server! ",
-            inline=False)
-        embed.add_field(
-            name="\u200b",
-            value=f"Be sure to check out our <#669815048658747392> channel to read the rules and <#683490529862090814> channel to get caught up with any changes! ",
-            inline=False)
-        embed.add_field(
-            name="\u200b",
-            value=f"Last but not least, feel free to go into <#669775971297132556> to introduce yourself!",
-            inline=False)
+    # Send embed to #newpeople
+    await new_people.send(embed=embed)
 
-        # Send embed to #newpeople
-        await new_people.send(embed=embed)
+    # Set hamothyID equal to my id in discord
+    hamothyID = '<@&715412394968350756>'
 
-        # Set hamothyID equal to my id in discord
-        hamothyID = '<@&715412394968350756>'
+    # String for welcoming people in the #general channel
+    general_welcome = f"Welcome to the server! {member.mention} I hope you enjoy your stay here <a:huh:676195228872474643> <a:huh:676195228872474643> " \
+                      f"\nPlease go into <#722347423913213992> to choose some ping-able roles for events! " \
+                      f"\nPlease ping {hamothyID} for any questions about the server and of course, the other staff members!"
 
-        # String for welcoming people in the #general channel
-        general_welcome = f"Welcome to the server! {member.mention} I hope you enjoy your stay here <a:huh:676195228872474643> <a:huh:676195228872474643> " \
-                          f"\nPlease go into <#722347423913213992> to choose some ping-able roles for events! " \
-                          f"\nPlease ping {hamothyID} for any questions about the server and of course, the other staff members!"
-
-        # Send welcome message to #general
-        await general.send(general_welcome)
-
-    except Exception as ex:
-        print(ex)
+    # Send welcome message to #general
+    await general.send(general_welcome)
 
 
 # Allowing people to get ping-able self roles

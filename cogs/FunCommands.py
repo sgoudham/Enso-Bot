@@ -5,7 +5,7 @@ import random
 from aiohttp import request
 from discord import Member, Colour, Embed
 from discord.ext import commands
-from discord.ext.commands import BucketType, cooldown
+from discord.ext.commands import BucketType, cooldown, command, has_any_role, is_owner
 
 import settings
 from cogs.Embeds import error_function
@@ -17,8 +17,9 @@ class Fun(commands.Cog):
         self.bot = bot
 
     # ~attack command for only co-owners only
-    @commands.command(aliases=['Attack'])
-    @commands.has_any_role('Hamothy', "izzy")
+    @command(name="attack", aliases=['Attack'])
+    @is_owner()
+    @has_any_role("izzy")
     async def attack(self, ctx, target: Member):
 
         # Set up array of insults to throw at people
@@ -57,7 +58,7 @@ class Fun(commands.Cog):
         await ctx.send(random.choice(responses))
 
     # ~compliment command for everyone to use to compliment someone
-    @commands.command(aliases=['comp', 'Compliment', 'Comp'])
+    @command(name="comp", aliases=['Comp', 'Compliment'])
     # Added a cooldown, only 1 instance of the command can be sent every second per user
     @cooldown(1, 1, BucketType.user)
     async def compliment(self, ctx, target: Member):
@@ -107,7 +108,7 @@ class Fun(commands.Cog):
         await ctx.send(random.choice(responses))
 
     # ~8Ball command
-    @commands.command(aliases=['8ball', '8Ball', ' 8Ball'])
+    @command(name="8ball", aliases=['8Ball'])
     # Added a cooldown, only 1 instance of the command can be sent every second per user
     @cooldown(1, 1, BucketType.user)
     async def _8ball(self, ctx, *, question):
@@ -143,10 +144,10 @@ class Fun(commands.Cog):
             print(e)
 
     # ~Lukas command that only Lukas can use
-    @commands.command(aliases=['Lukas'])
+    @command(name="Lukas", aliases=['Lukas'])
     # Added a cooldown, only 1 instance of the command can be sent every second per user
     @cooldown(1, 1, BucketType.user)
-    @commands.has_any_role('Lukas (Server Booster)')
+    @has_any_role('Lukas (Server Booster)')
     async def lukas(self, ctx):
 
         # Define the id's of Bubz and Lukas
@@ -164,7 +165,7 @@ class Fun(commands.Cog):
         await ctx.send(random.choice(responses))
 
     # ~Flip command to allow for 50/50 chance decisions
-    @commands.command(aliases=['Flip'])
+    @command(name="flip", aliases=['Flip'])
     @cooldown(1, 1, BucketType.user)
     async def flip(self, ctx):
 
@@ -179,8 +180,8 @@ class Fun(commands.Cog):
         await ctx.send(f"{ctx.author.mention} {random.choice(responses)}")
 
     # ~dm only allows me to dm anyone through the bot
-    @commands.command()
-    @commands.is_owner()
+    @command(name="dm", aliases=["dm", "DM", "dM"])
+    @is_owner()
     async def dm(self, ctx, member: Member, *, text):
         # Send the message typed the mentioned user
         await member.send(text)
@@ -188,7 +189,7 @@ class Fun(commands.Cog):
         await ctx.message.delete()
 
     # ~remindme command to allow the bot to dm you to remind you of something
-    @commands.command(aliases=["remindme", "rm"])
+    @command(name="remindme", aliases=["Remindme", "rm"])
     async def remind_me(self, ctx, time=None, *, text):
         # Grab the author and store it in "author"
         author = ctx.author
@@ -206,7 +207,7 @@ class Fun(commands.Cog):
             await author.send(text)
 
     # ~digby command that allows users to see a picture of digby
-    @commands.command(aliases=["Digby"])
+    @command(name="digby", aliases=["Digby"])
     async def digby(self, ctx):
 
         # Surround with try/except to catch any exceptions that may occur
@@ -237,7 +238,7 @@ class Fun(commands.Cog):
             print(e)
 
     # ~Doggo command that uses an API to grab images of dogs
-    @commands.command(aliases=["Doggo"])
+    @command(name="doggo", aliases=["Doggo"])
     @cooldown(1, 1, BucketType.user)
     async def doggo(self, ctx, breed=None):
 

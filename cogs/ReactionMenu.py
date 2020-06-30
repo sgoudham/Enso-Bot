@@ -207,23 +207,34 @@ class HelpMenu(menus.Menu):
         self.i = i
         self.bot = bot
 
+    # Message to be sent on the initial command ~help
     async def send_initial_message(self, ctx, channel):
+        # Set the first embed to the first element in the pages[]
         initial = embeds(self)[self.i]
+
+        # Send embed
         return await channel.send(embed=initial)
 
     @menus.button('\N{LEFTWARDS BLACK ARROW}')
     async def on_left_arrow(self, payload):
+
+        # Simple check to make sure that the reaction is performed by the user
         def check(m):
             return m.author == payload.member
 
-        if check(self.ctx):
+        # Do nothing if the check does not return true
+        if not check(self.ctx):
+            return
+        # Allow the page number to be decreased
+        else:
+
+            # Set self.i to (i - 1) remainder length of the array
             self.i = (self.i - 1) % len(embeds(self))
             prev_page = embeds(self)[self.i]
 
+            # Send the embed and remove the reaction of the user
             await self.message.edit(embed=prev_page)
             await self.message.remove_reaction("⬅", self.ctx.author)
-        else:
-            return
 
     @menus.button('\N{BLACK RIGHTWARDS ARROW}')
     async def on_right_arrow(self, payload):

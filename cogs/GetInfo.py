@@ -5,7 +5,7 @@ from typing import Optional
 
 from discord import Embed, Member, Colour
 from discord.ext import commands
-from discord.ext.commands import BucketType, cooldown
+from discord.ext.commands import BucketType, cooldown, command
 
 import settings
 
@@ -15,7 +15,7 @@ class GetInfo(commands.Cog):
         self.bot = bot
 
     # ~userinfo to allow the users to see information about them relating to the guild
-    @commands.command(name="userinfo", aliases=["ui"])
+    @command(name="userinfo", aliases=["ui"])
     @cooldown(1, 1, BucketType.user)
     async def user_info(self, ctx, target: Optional[Member]):
         # If a target has been specified, set them as the user
@@ -82,7 +82,7 @@ class GetInfo(commands.Cog):
         # Send the embed to the channel that the command was triggered in
         await ctx.send(embed=embed)
 
-    @commands.command(name="serverinfo", aliases=["guildinfo"])
+    @command(name="serverinfo", aliases=["guildinfo"])
     @cooldown(1, 1, BucketType.user)
     async def server_info(self, ctx):
 

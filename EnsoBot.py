@@ -3,7 +3,7 @@ import datetime
 
 import discord
 from decouple import config
-from discord import Embed, Colour, Member
+from discord import Embed, Colour
 from discord.ext import commands
 from discord.ext.commands import is_owner
 
@@ -89,43 +89,6 @@ async def on_member_join(member):
 
     # Send welcome message to #general
     await general.send(general_welcome)
-
-
-# ~marry command allows the bot to wed two young lovers together
-@client.command(name="marry", aliases=["Marry"])
-async def marry(ctx, member: Member):
-    # Send a message to the channel mentioning the author and the person they want to wed.
-    await ctx.send(f"{ctx.author.mention} **Proposes To** {member.mention} **Do you accept??** "
-                   f"\nRespond with [**Y**es/**N**o]")
-
-    # A check that makes sure that the reply is not from the author
-    # and that the reply is in the same channel as the proposal
-    def check(m):
-        return m.author == member and m.channel == ctx.channel
-
-    # Surround with try/except to catch any exceptions that may occur
-    try:
-        # Wait for the message from the mentioned user
-        msg = await client.wait_for('message', check=check, timeout=30)
-
-        # if the person says yes
-        if msg.content.lower() in ['y', 'yes', 'yea']:
-            # Congratulate them!
-            await ctx.send(
-                f"Congratulations! ヽ(・∀・)ﾉ {ctx.author.mention} and {member.mention} are now married to each other!")
-        # if the person says no
-        elif msg.content.lower() in ['n', 'no', 'nah']:
-            # Try to console the person and wish them the best in their life
-            await ctx.send(f"Unlucky (Ｔ▽Ｔ), maybe another time! {ctx.author.mention}")
-        else:
-            # Abort the process as the message sent did not make sense
-            await ctx.send("Senpaiiii! Speak English Please ⋋_⋌")
-
-    except asyncio.TimeoutError as ex:
-        print(ex)
-
-        # Send out an error message if the user waited too long
-        await ctx.send("Awww they waited too long (✖╭╮✖)")
 
 
 # Allows the bot to echo the dm's that it receives

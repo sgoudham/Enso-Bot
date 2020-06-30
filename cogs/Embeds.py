@@ -5,7 +5,7 @@ import random
 from discord import Colour, Embed, Member
 from discord.ext import commands
 from discord.ext.commands import BucketType
-from discord.ext.commands import cooldown
+from discord.ext.commands import cooldown, command
 
 import settings
 
@@ -16,7 +16,7 @@ class Embeds(commands.Cog):
         self.bot = bot
 
     # ~kiss command which allows users to kiss a person in the server
-    @commands.command(aliases=["Kiss", "kiss"])
+    @command(aliases=["Kiss", "kiss"])
     # Added a cooldown, only 1 instance of the command can be sent every second per user
     @cooldown(1, 1, BucketType.user)
     async def kissing(self, ctx, target: Member):
@@ -62,7 +62,7 @@ class Embeds(commands.Cog):
             print(e)
 
     # ~kill command which allows users to kill a person in the server
-    @commands.command(aliases=["Kill", "k"])
+    @command(aliases=["Kill", "k"])
     # Added a cooldown, only 1 instance of the command can be sent every second per user
     @cooldown(1, 1, BucketType.user)
     async def kill(self, ctx, target: Member):
@@ -108,7 +108,7 @@ class Embeds(commands.Cog):
             print(e)
 
     # ~cuddle command which allows users to cuddle a person in the server
-    @commands.command(aliases=["Cuddle"])
+    @command(aliases=["Cuddle"])
     # Added a cooldown, only 1 instance of the command can be sent every second per user
     @cooldown(1, 1, BucketType.user)
     async def cuddle(self, ctx, target: Member):
@@ -154,7 +154,7 @@ class Embeds(commands.Cog):
             print(e)
 
     # ~slap command which allows users to cuddle a person in the server
-    @commands.command(aliases=["Slap"])
+    @command(aliases=["Slap"])
     # Added a cooldown, only 1 instance of the command can be sent every second per user
     @cooldown(1, 1, BucketType.user)
     async def slap(self, ctx, target: Member):
@@ -200,7 +200,7 @@ class Embeds(commands.Cog):
             print(e)
 
     # ~slap command which allows users to cuddle a person in the server
-    @commands.command(aliases=["Pat"])
+    @command(aliases=["Pat"])
     # Added a cooldown, only 1 instance of the command can be sent every second per user
     @cooldown(1, 1, BucketType.user)
     async def pat(self, ctx, target: Member):
@@ -246,7 +246,7 @@ class Embeds(commands.Cog):
             print(e)
 
     # ~lemon command which allows users to hand people lemons to members in the user
-    @commands.command(aliases=["lem", "Lemon", "Lem"])
+    @command(aliases=["lem", "Lemon", "Lem"])
     # Added a cooldown, only 1 instance of the command can be sent every second per user
     @cooldown(1, 1, BucketType.user)
     async def lemon(self, ctx, target: Member):

@@ -1,8 +1,7 @@
 import datetime
 
-import discord
 from discord import Embed, Colour
-from discord.ext import commands
+from discord.ext import commands, menus
 from discord.ext.commands import command
 
 
@@ -175,7 +174,7 @@ def embeds(self):
         print(ex)
 
 
-class HelpMenu(discord.ext.menus.Menu):
+class HelpMenu(menus.Menu):
     def __init__(self, i, bot):
         super().__init__()
         self.i = i
@@ -185,7 +184,7 @@ class HelpMenu(discord.ext.menus.Menu):
         initial = embeds(self)[self.i]
         return await channel.send(embed=initial)
 
-    @discord.ext.menus.button('\N{LEFTWARDS BLACK ARROW}')
+    @menus.button('\N{LEFTWARDS BLACK ARROW}')
     async def on_left_arrow(self, payload):
         def check(m):
             return m.author == payload.member
@@ -199,7 +198,7 @@ class HelpMenu(discord.ext.menus.Menu):
         else:
             return
 
-    @discord.ext.menus.button('\N{BLACK RIGHTWARDS ARROW}')
+    @menus.button('\N{BLACK RIGHTWARDS ARROW}')
     async def on_right_arrow(self, payload):
         def check(m):
             return m.author == payload.member
@@ -213,7 +212,7 @@ class HelpMenu(discord.ext.menus.Menu):
         else:
             return
 
-    @discord.ext.menus.button('\N{BLACK SQUARE FOR STOP}\ufe0f')
+    @menus.button('\N{BLACK SQUARE FOR STOP}\ufe0f')
     async def on_stop(self, payload):
         stop = stop_embed(self)
         await self.message.edit(embed=stop)

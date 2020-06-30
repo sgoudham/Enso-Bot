@@ -121,8 +121,9 @@ async def marry(ctx, member: Member):
             # Abort the process as the message sent did not make sense
             await ctx.send("Senpaiiii! Speak English Please ⋋_⋌")
 
-    except asyncio.TimeoutError as e:
-        print(e)
+    except asyncio.TimeoutError as ex:
+        print(ex)
+
         # Send out an error message if the user waited too long
         await ctx.send("Awww they waited too long (✖╭╮✖)")
 

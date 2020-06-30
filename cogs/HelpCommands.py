@@ -3,7 +3,7 @@ import datetime
 
 from discord import Embed, Colour
 from discord.ext import commands
-from discord.ext.commands import command
+from discord.ext.commands import command, cooldown, BucketType
 
 
 # Set up the Cog
@@ -12,7 +12,8 @@ class CustomHelp(commands.Cog):
         self.bot = bot
 
     # ~rules command allows for an embed message about the leveled roles and xp system
-    @command(aliases=["Rules", "rule", "Rule"])
+    @command(name="rules", aliases=["Rules"])
+    @cooldown(1, 5, BucketType.user)
     async def rules(self, ctx):
 
         # Allowing the bot to dm the user
@@ -140,7 +141,7 @@ class CustomHelp(commands.Cog):
             print(e)
 
     # ~roles command allows for an embed message about roles
-    @command(aliases=["Roles"])
+    @command(name="roles", aliases=["Roles"])
     async def roles(self, ctx):
 
         # Allowing the bot to dm the user

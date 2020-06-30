@@ -48,4 +48,4 @@ colour_list = [c for c in colors.values()]
 # Instantiates a list for all the cogs
 extensions = ['cogs.AnimeImages', 'cogs.FunCommands', 'cogs.GetInfo',
               'cogs.HelpCommands', 'cogs.OwOText', 'cogs.Embeds',
-              'cogs.Reminder', 'cogs.ReactionMenu']
+              'cogs.Reminder', 'cogs.HelpMenu']

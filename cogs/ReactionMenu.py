@@ -140,7 +140,11 @@ def misc_function(guild_icon, enso_name, enso_icon):
     return misc_commands
 
 
-def stop_embed(enso_name, enso_icon):
+def stop_embed(self):
+    # Define enso bot icon and enso bot name
+    enso_icon = self.bot.user.avatar_url
+    enso_name = self.bot.user.display_name
+
     misc_commands = Embed(title="```Help Commands Embed Closed!```",
                           colour=Colour(0xFF69B4),
                           timestamp=datetime.datetime.utcnow())
@@ -161,10 +165,9 @@ def embeds(self):
         page1 = fun_function(guild_icon, enso_name, enso_icon)
         page2 = waifu_husbando_function(guild_icon, enso_name, enso_icon)
         page3 = misc_function(guild_icon, enso_name, enso_icon)
-        page4 = stop_embed(enso_name, enso_icon)
 
         # Store all the categories of the menu to an array called pages
-        pages = [page1, page2, page3, page4]
+        pages = [page1, page2, page3]
 
         return pages
 
@@ -173,9 +176,10 @@ def embeds(self):
 
 
 class HelpMenu(menus.Menu):
-    def __init__(self, i):
+    def __init__(self, i, bot):
         super().__init__()
         self.i = i
+        self.bot = bot
 
     async def send_initial_message(self, ctx, channel):
         initial = embeds(self)[self.i]
@@ -211,7 +215,7 @@ class HelpMenu(menus.Menu):
 
     @menus.button('\N{BLACK SQUARE FOR STOP}\ufe0f')
     async def on_stop(self, payload):
-        stop = embeds(self)[-1]
+        stop = stop_embed(self)
         await self.message.edit(embed=stop)
         self.stop()
 
@@ -224,7 +228,7 @@ class ReactionMenu(commands.Cog):
     @command(name="help", aliases=["Help"])
     async def menu_example(self, ctx):
         i = 0
-        m = HelpMenu(i)
+        m = HelpMenu(i, self)
         await m.start(ctx)
 
 

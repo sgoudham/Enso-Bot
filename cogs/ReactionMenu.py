@@ -1,8 +1,7 @@
 import datetime
 
 from discord import Embed, Colour
-from discord.ext import commands
-from discord.ext import menus
+from discord.ext import commands, menus
 from discord.ext.commands import command
 
 

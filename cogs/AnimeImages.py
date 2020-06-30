@@ -122,9 +122,9 @@ class Waifus(commands.Cog):
         self.bot = bot
 
     # Bot ~ensoPerson command for the server members
-    @command(aliases=['enso'])
+    @command(name="enso", aliases=['Enso'])
     @cooldown(1, 1, BucketType.user)
-    async def ensoperson(self, ctx, name=None):
+    async def enso_person(self, ctx, name=None):
 
         # Defining array of all the people that have images stored in the bot
         array = ['hammy', 'hussein', 'inna', 'kaiju', 'kate',
@@ -206,9 +206,9 @@ class Waifus(commands.Cog):
             await message.delete()
 
     # Bot ~w/waifu command for the waifu's stored in the bot
-    @command(aliases=['W'])
+    @command(name="w", aliases=['W'])
     @cooldown(1, 1, BucketType.user)
-    async def w(self, ctx, waifu=None):
+    async def waifu(self, ctx, waifu=None):
 
         # Defining array for the list of waifus available
         waifu_array = ["toga", "yumeko", "maki"]
@@ -258,9 +258,9 @@ class Waifus(commands.Cog):
                 await ctx.send(embed=embed)
 
     # Bot ~h/husbando command for the husbando's stored in the bot
-    @command(aliases=['H'])
+    @command(name="h", aliases=['H'])
     @cooldown(1, 1, BucketType.user)
-    async def h(self, ctx, husbando=None):
+    async def husbando(self, ctx, husbando=None):
 
         # Defining array for the list of husbando's available
         husbando_array = ["husk", "kakashi", "tamaki"]

@@ -72,6 +72,7 @@ class CustomHelp(commands.Cog):
     @command(name="rolemenu")
     @is_owner()
     async def role_menu(self, ctx):
+
         # Get the channel id of #self-roles
         channel = self.bot.get_channel(722347423913213992)
 
@@ -112,6 +113,7 @@ class CustomHelp(commands.Cog):
     @command(name="rules", aliases=["Rules"])
     @cooldown(1, 5, BucketType.user)
     async def rules(self, ctx):
+
         # Allowing the bot to dm the user
         author = ctx.author
         # Define Izzy's roles ID
@@ -234,6 +236,7 @@ class CustomHelp(commands.Cog):
     @command(name="roles", aliases=["Roles"])
     @cooldown(1, 5, BucketType.user)
     async def roles(self, ctx):
+
         # Allowing the bot to dm the user
         author = ctx.author
 

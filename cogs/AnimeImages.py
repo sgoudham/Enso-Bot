@@ -5,7 +5,7 @@ import string
 
 from discord import Embed, Colour
 from discord.ext import commands
-from discord.ext.commands import cooldown, BucketType
+from discord.ext.commands import cooldown, BucketType, command
 
 import settings
 from cogs.Embeds import error_function
@@ -122,7 +122,7 @@ class Waifus(commands.Cog):
         self.bot = bot
 
     # Bot ~ensoPerson command for the server members
-    @commands.command(aliases=['enso'])
+    @command(aliases=['enso'])
     @cooldown(1, 1, BucketType.user)
     async def ensoperson(self, ctx, name=None):
 
@@ -205,7 +205,8 @@ class Waifus(commands.Cog):
             # Delete the message
             await message.delete()
 
-    @commands.command(aliases=['W'])
+    # Bot ~w/waifu command for the waifu's stored in the bot
+    @command(aliases=['W'])
     @cooldown(1, 1, BucketType.user)
     async def w(self, ctx, waifu=None):
 
@@ -256,7 +257,8 @@ class Waifus(commands.Cog):
                 embed = randomWaifu(ctx, waifu_array)
                 await ctx.send(embed=embed)
 
-    @commands.command(aliases=['H'])
+    # Bot ~h/husbando command for the husbando's stored in the bot
+    @command(aliases=['H'])
     @cooldown(1, 1, BucketType.user)
     async def h(self, ctx, husbando=None):
 
@@ -274,9 +276,9 @@ class Waifus(commands.Cog):
                 # Surround with try/except to catch any exceptions that may occur
                 try:
 
-                    # if the user does ~w list
+                    # if the user does ~h list
                     if proper_husbando == "list":
-                        # Tell the user to try the waifus in the array
+                        # Tell the user to try the husbando's in the array
                         await ctx.send(f"Try the husbando's listed below!")
 
                         # Send the list of waifus in the bot to the channel

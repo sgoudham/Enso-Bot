@@ -232,6 +232,7 @@ class CustomHelp(commands.Cog):
 
     # ~roles command allows for an embed message about roles
     @command(name="roles", aliases=["Roles"])
+    @cooldown(1, 5, BucketType.user)
     async def roles(self, ctx):
         # Allowing the bot to dm the user
         author = ctx.author

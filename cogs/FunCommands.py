@@ -18,8 +18,7 @@ class Fun(commands.Cog):
 
     # ~attack command for only co-owners only
     @command(name="attack", aliases=['Attack'])
-    @is_owner()
-    @has_any_role("izzy")
+    @has_any_role(664585078487252993, 715412394968350756)
     async def attack(self, ctx, target: Member):
 
         # Set up array of insults to throw at people

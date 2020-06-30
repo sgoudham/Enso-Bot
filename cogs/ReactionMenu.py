@@ -5,88 +5,111 @@ from discord.ext import commands, menus
 from discord.ext.commands import command
 
 
+# Function to allow the first page of the help commands (Fun Commands)
 def fun_function(guild_icon, enso_name, enso_icon):
+    # Setting up the Embed for the Fun Commands
     fun_commands = Embed(title="```(っ◔◡◔)っ Fun Commands (っ◔◡◔)っ```",
                          colour=Colour(0xFF69B4),
                          timestamp=datetime.datetime.utcnow())
 
+    # Setting thumbnail and author
     fun_commands.set_thumbnail(url=guild_icon)
     fun_commands.set_author(name=enso_name,
                             icon_url=enso_icon)
 
-    fun_fields = [("\u200b", "`➳ ~attack [person]`" +
-                   "\n Allows the user to throw an insult to a person in the server" +
-                   "\n *(Perms: Co-Owner)*", True),
-                  ("\u200b", "`➳ ~comp [person]`" +
-                   "\n Allows the user to compliment a person in the server" +
-                   "\n *(Perms: Everyone)*", True),
-                  ("\u200b", "`➳ ~8ball [text]`" +
-                   "\n Allows the user to ask a question and 8ball will give a custom response" +
-                   "\n *(Perms: everyone)*", True),
-                  ("\u200b", "`➳ ~lemon [person]`" +
-                   "\n Allows the user to give a lemon to a person in the server" +
-                   "\n *(Perms: Everyone)*", True),
-                  ("\u200b", "`➳ ~slap [person]`" +
-                   "\n Allows the user to slap a person in the server" +
-                   "\n *(Perms: Everyone)*", True),
-                  ("\u200b", "`➳ ~kill [person]`" +
-                   "\n Allows the user to kill a person in the server" +
-                   "\n *(Perms: Everyone)*", True),
-                  ("\u200b", "`➳ ~pat [person]`" +
-                   "\n Allows the user to pat a person in the server" +
-                   "\n *(Perms: Everyone)*", True),
-                  ("\u200b", "`➳ ~kiss [person]`" +
-                   "\n Allows the user to kiss a person in the server" +
-                   "\n *(Perms: Everyone)*", True),
-                  ("\u200b", "`➳ ~cuddle [person]`" +
-                   "\n Allows the user to cuddle a person in the server" +
-                   "\n *(Perms: Everyone)*", True),
-                  ("\u200b", "`➳ ~flip`" +
-                   "\n Allows the user to 'throw a coin' and get a response with a 50/50 chance" +
-                   "\n *(Perms: Everyone)*", True),
-                  ("\u200b", "`➳ ~doggo`" +
-                   "\n Allows the user to look at an image of a doggo (Over 20k Images Available" +
-                   "\n *(Perms: Everyone)*", True)]
+    # Setting up the fields in a separate array
+    fun_fields = [
+        ("\u200b", "`➳ ~attack [person]`" +
+         "\n Allows the user to throw an insult to a person in the server" +
+         "\n *(Perms: Co-Owner)*", True),
+        ("\u200b", "`➳ ~comp [person]`" +
+         "\n Allows the user to compliment a person in the server" +
+         "\n *(Perms: Everyone)*", True),
+        ("\u200b", "`➳ ~8ball [text]`" +
+         "\n Allows the user to ask a question and 8ball will give a custom response" +
+         "\n *(Perms: everyone)*", True),
+        ("\u200b", "`➳ ~flip`" +
+         "\n Allows the user to 'throw a coin' and get a response with a 50/50 chance" +
+         "\n *(Perms: Everyone)*", True),
+        ("\u200b", "`➳ ~doggo`" +
+         "\n Allows the user to look at an image of a doggo (Over 20k Images Available" +
+         "\n *(Perms: Everyone)*", True)]
+
+    # Setting up the Embed for the Fun Commands
+    fun_commands_2 = Embed(title="```(っ◔◡◔)っ Fun Commands 2 (っ◔◡◔)っ```",
+                           colour=Colour(0xFF69B4),
+                           timestamp=datetime.datetime.utcnow())
+
+    # Setting thumbnail and author
+    fun_commands_2.set_thumbnail(url=guild_icon)
+    fun_commands_2.set_author(name=enso_name,
+                              icon_url=enso_icon)
+
+    # Setting up the fields in a separate array
+    fun_fields_2 = [
+        ("\u200b", "`➳ ~lemon [person]`" +
+         "\n Allows the user to give a lemon to a person in the server" +
+         "\n *(Perms: Everyone)*", True),
+        ("\u200b", "`➳ ~slap [person]`" +
+         "\n Allows the user to slap a person in the server" +
+         "\n *(Perms: Everyone)*", True),
+        ("\u200b", "`➳ ~kill [person]`" +
+         "\n Allows the user to kill a person in the server" +
+         "\n *(Perms: Everyone)*", True),
+        ("\u200b", "`➳ ~pat [person]`" +
+         "\n Allows the user to pat a person in the server" +
+         "\n *(Perms: Everyone)*", True),
+        ("\u200b", "`➳ ~kiss [person]`" +
+         "\n Allows the user to kiss a person in the server" +
+         "\n *(Perms: Everyone)*", True),
+        ("\u200b", "`➳ ~cuddle [person]`" +
+         "\n Allows the user to cuddle a person in the server" +
+         "\n *(Perms: Everyone)*", True)]
 
     # Add the fun_commands fields to the embed
     for name, value, inline in fun_fields:
         fun_commands.add_field(name=name, value=value, inline=inline)
 
-    return fun_commands
+    # Add the fun_commands_2 fields to the embed
+    for name, value, inline in fun_fields_2:
+        fun_commands_2.add_field(name=name, value=value, inline=inline)
+
+    return fun_commands, fun_commands_2
 
 
+# Function to allow the first page of the help commands (Waifu/Husbandos)
 def waifu_husbando_function(guild_icon, enso_name, enso_icon):
+    # Setting up the Embed for the Waifu/Husbandos
     waifu_husbando_commands = Embed(title="```(っ◔◡◔)っ Waifus/Husbando Commands (っ◔◡◔)っ```",
                                     colour=Colour(0xFF69B4),
                                     timestamp=datetime.datetime.utcnow())
 
+    # Setting thumbnail and author
     waifu_husbando_commands.set_thumbnail(url=guild_icon)
     waifu_husbando_commands.set_author(name=enso_name,
                                        icon_url=enso_icon)
 
-    waifu_husbando_fields = [("\u200b", "`➳ ~w [waifu]`" +
-                              "\n Allows for a randomly generated image of a Waifu to be shown" +
-                              "\n *(Perms: Everyone)*", True),
-                             ("\u200b", "`➳ ~h [husbando]`" +
-                              "\n Allows for a randomly generated image of a Husbando to be shown" +
-                              "\n *(Perms: Everyone)*", True),
-                             ("\u200b", "`➳ ~w list`" +
-                              "\n Returns a list of Waifu's that are in the bot " +
-                              "\n *(Perms: Everyone)*", True),
-                             ("\u200b", "`➳ ~h list`" +
-                              "\n Returns a list of Husbando's that are in the bot " +
-                              "\n *(Perms: Everyone)*", True),
-                             ("\u200b", "`➳ ~enso [person]`" +
-                              "\n Allows for a randomly generated image of the member specified" +
-                              "\n (Using ~enso by itself shall generate a random image of a person within all the server)" +
-                              "\n *(Perms: Everyone)*", True),
-                             ("\u200b", "`➳ ~enso [person]`" +
-                              "\n Allows for a randomly generated image of the member specified" +
-                              "\n (Using ~enso by itself shall generate a random image of a person within all the server)" +
-                              "\n *(Perms: Everyone)*", True),
-                             ("\u200b", "`➳ ~enso list`" +
-                              "\n Returns a list of the people's images currently in the bot" +
-                              "\n *(Perms: Everyone)*", True)]
+    # Setting up the fields in a separate array
+    waifu_husbando_fields = [
+        ("\u200b", "`➳ ~w [waifu]`" +
+         "\n Allows for a randomly generated image of a Waifu to be shown" +
+         "\n *(Perms: Everyone)*", True),
+        ("\u200b", "`➳ ~h [husbando]`" +
+         "\n Allows for a randomly generated image of a Husbando to be shown" +
+         "\n *(Perms: Everyone)*", True),
+        ("\u200b", "`➳ ~w list`" +
+         "\n Returns a list of Waifu's that are in the bot " +
+         "\n *(Perms: Everyone)*", True),
+        ("\u200b", "`➳ ~h list`" +
+         "\n Returns a list of Husbando's that are in the bot " +
+         "\n *(Perms: Everyone)*", True),
+        ("\u200b", "`➳ ~enso [person]`" +
+         "\n Allows for a randomly generated image of the member specified" +
+         "\n (Using ~enso by itself shall generate a random image of a person within all the server)" +
+         "\n *(Perms: Everyone)*", True),
+        ("\u200b", "`➳ ~enso list`" +
+         "\n Returns a list of the people's images currently in the bot" +
+         "\n *(Perms: Everyone)*", True)]
 
     # Add the waifu_husbando_commands fields to the embed
     for name, value, inline in waifu_husbando_fields:
@@ -95,42 +118,47 @@ def waifu_husbando_function(guild_icon, enso_name, enso_icon):
     return waifu_husbando_commands
 
 
+# Function to allow the first page of the help commands (Miscellaneous)
 def misc_function(guild_icon, enso_name, enso_icon):
+    # Setting up the Embed for the Miscellaneous commands
     misc_commands = Embed(title="```(っ◔◡◔)っ Misc Commands (っ◔◡◔)っ```",
                           colour=Colour(0xFF69B4),
                           timestamp=datetime.datetime.utcnow())
 
+    # Setting thumbnail and author
     misc_commands.set_thumbnail(url=guild_icon)
     misc_commands.set_author(name=enso_name,
                              icon_url=enso_icon)
 
-    misc_fields = [("\u200b", "`➳ ~ping`" +
-                    "\n Returns Pong! Along With The Latency in ms" +
-                    "\n *(Perms: Co-Owner)*", True),
-                   ("\u200b", "`➳ ~rolemenu`" +
-                    "\n Allows for the users to get self ping-able roles" +
-                    "\n *(Perms: Co-Owner)*", True),
-                   ("\u200b", "`➳ ~dm [person]`" +
-                    "\n Allows Hammmy to dm anyone in the server through Enso~Chan!" +
-                    "\n *(Perms: Co-Owner)*", True),
-                   ("\u200b", "`➳ ~userinfo`" +
-                    "\n Returns information about the user (Name, Roles, Joined Date, Created Date, etc)" +
-                    "\n *(Perms: Everyone)*", True),
-                   ("\u200b", "`➳ ~serverinfo`" +
-                    "\n Returns information about the server (Owner, Members, Region, Bots etc etc)" +
-                    "\n *(Perms: Everyone)*", True),
-                   ("\u200b", "`➳ ~rules`" +
-                    "\n Returns the entire ruleset for the server" +
-                    "\n *(Perms: Everyone)*", True),
-                   ("\u200b", "`➳ ~roles`" +
-                    "\n Shows you how the leveling and xp system works, as well as displaying the order of leveled roles" +
-                    "\n *(Perms: Everyone)*", True),
-                   ("\u200b", "`➳ ~remindme [time] [text]`" +
-                    "\n Allows the user to get Enso~Chan to remind them in dms of anything that they want" +
-                    "\n *(Perms: Everyone)*", True),
-                   ("\u200b", "`➳ ~help`" +
-                    "\n Allows you to see every command in the bot so far" +
-                    "\n *(Perms: Everyone)*", True)]
+    # Setting up the fields in a separate array
+    misc_fields = [
+        ("\u200b", "`➳ ~ping`" +
+         "\n Returns Pong! Along With The Latency in ms" +
+         "\n *(Perms: Co-Owner)*", True),
+        ("\u200b", "`➳ ~rolemenu`" +
+         "\n Allows for the users to get self ping-able roles" +
+         "\n *(Perms: Co-Owner)*", True),
+        ("\u200b", "`➳ ~dm [person]`" +
+         "\n Allows Hammy to dm anyone in the server through Enso~Chan!" +
+         "\n *(Perms: Co-Owner)*", True),
+        ("\u200b", "`➳ ~userinfo`" +
+         "\n Returns information about the user (Name, Roles, Joined Date, Created Date, etc)" +
+         "\n *(Perms: Everyone)*", True),
+        ("\u200b", "`➳ ~serverinfo`" +
+         "\n Returns information about the server (Owner, Members, Region, Bots etc etc)" +
+         "\n *(Perms: Everyone)*", True),
+        ("\u200b", "`➳ ~rules`" +
+         "\n Returns the entire ruleset for the server" +
+         "\n *(Perms: Everyone)*", True),
+        ("\u200b", "`➳ ~roles`" +
+         "\n Shows you how the leveling and xp system works, as well as displaying the order of leveled roles" +
+         "\n *(Perms: Everyone)*", True),
+        ("\u200b", "`➳ ~remindme [time] [text]`" +
+         "\n Allows the user to get Enso~Chan to remind them in dms of anything that they want" +
+         "\n *(Perms: Everyone)*", True),
+        ("\u200b", "`➳ ~help`" +
+         "\n Allows you to see every command in the bot so far" +
+         "\n *(Perms: Everyone)*", True)]
 
     # Add the misc_commands fields to the embed
     for name, value, inline in misc_fields:
@@ -144,10 +172,12 @@ def stop_embed(self):
     enso_icon = self.bot.user.avatar_url
     enso_name = self.bot.user.display_name
 
-    misc_commands = Embed(title="```Help Commands Embed Closed!```",
+    # Set up the Embed to display when the user reacts with the stop reaction
+    misc_commands = Embed(title="**Help Commands Embed Closed!**",
                           colour=Colour(0xFF69B4),
                           timestamp=datetime.datetime.utcnow())
 
+    # Set the name and the icon for Enso~Chan
     misc_commands.set_author(name=enso_name,
                              icon_url=enso_icon)
 
@@ -155,23 +185,20 @@ def stop_embed(self):
 
 
 def embeds(self):
-    try:
-        # Define guild icon, enso bot icon and enso bot name
-        guild_icon = self.ctx.guild.icon_url
-        enso_icon = self.bot.user.avatar_url
-        enso_name = self.bot.user.display_name
+    # Define guild icon, enso bot icon and enso bot name
+    guild_icon = self.ctx.guild.icon_url
+    enso_icon = self.bot.user.avatar_url
+    enso_name = self.bot.user.display_name
 
-        page1 = fun_function(guild_icon, enso_name, enso_icon)
-        page2 = waifu_husbando_function(guild_icon, enso_name, enso_icon)
-        page3 = misc_function(guild_icon, enso_name, enso_icon)
+    # Set the different pages of the embed
+    page1, page2 = fun_function(guild_icon, enso_name, enso_icon)
+    page3 = waifu_husbando_function(guild_icon, enso_name, enso_icon)
+    page4 = misc_function(guild_icon, enso_name, enso_icon)
 
-        # Store all the categories of the menu to an array called pages
-        pages = [page1, page2, page3]
+    # Store all the categories of the menu to an array called pages
+    pages = [page1, page2, page3, page4]
 
-        return pages
-
-    except Exception as ex:
-        print(ex)
+    return pages
 
 
 class HelpMenu(menus.Menu):
@@ -224,11 +251,15 @@ class ReactionMenu(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    # ~help command that returns a menu for help commands controlled by reactions
     @command(name="help", aliases=["Help"])
     async def help(self, ctx):
+        # Local Variable i to allow the index of the pages[] to be modified
         i = 0
-        m = HelpMenu(i, self)
-        await m.start(ctx)
+
+        # Send the menu to the display
+        menu = HelpMenu(i, self)
+        await menu.start(ctx)
 
 
 def setup(bot):

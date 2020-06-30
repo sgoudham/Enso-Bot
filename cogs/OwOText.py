@@ -1,6 +1,6 @@
 from discord.ext import commands
 # OwO Impowt da wibwawy ÙωÙ
-from discord.ext.commands import BucketType, cooldown
+from discord.ext.commands import BucketType, cooldown, command
 from owotext import OwO
 
 
@@ -10,7 +10,7 @@ class OwOText(commands.Cog):
         self.bot = bot
 
     # ~owo command allows for text to be 'converted to OWO'
-    @commands.command()
+    @command(name="owo", aliases=["Owo", "OwO"])
     @cooldown(1, 1, BucketType.user)
     async def owo(self, ctx):
         # Making sure that the string that gets converted is excluding the ~owo

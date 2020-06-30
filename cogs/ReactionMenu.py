@@ -225,7 +225,7 @@ class ReactionMenu(commands.Cog):
         self.bot = bot
 
     @command(name="help", aliases=["Help"])
-    async def menu_example(self, ctx):
+    async def help(self, ctx):
         i = 0
         m = HelpMenu(i, self)
         await m.start(ctx)

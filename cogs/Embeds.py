@@ -16,7 +16,7 @@ class Embeds(commands.Cog):
         self.bot = bot
 
     # ~kiss command which allows users to kiss a person in the server
-    @command(aliases=["Kiss", "kiss"])
+    @command(name="kiss", aliases=["Kiss"])
     # Added a cooldown, only 1 instance of the command can be sent every second per user
     @cooldown(1, 1, BucketType.user)
     async def kissing(self, ctx, target: Member):
@@ -62,10 +62,10 @@ class Embeds(commands.Cog):
             print(e)
 
     # ~kill command which allows users to kill a person in the server
-    @command(aliases=["Kill", "k"])
+    @command(name="kill", aliases=["Kill"])
     # Added a cooldown, only 1 instance of the command can be sent every second per user
     @cooldown(1, 1, BucketType.user)
-    async def kill(self, ctx, target: Member):
+    async def killing(self, ctx, target: Member):
 
         # Surround with try/except to catch any exceptions that may occur
         try:
@@ -108,10 +108,10 @@ class Embeds(commands.Cog):
             print(e)
 
     # ~cuddle command which allows users to cuddle a person in the server
-    @command(aliases=["Cuddle"])
+    @command(name="cuddle", aliases=["Cuddle"])
     # Added a cooldown, only 1 instance of the command can be sent every second per user
     @cooldown(1, 1, BucketType.user)
-    async def cuddle(self, ctx, target: Member):
+    async def cuddling(self, ctx, target: Member):
 
         # Surround with try/except to catch any exceptions that may occur
         try:
@@ -154,10 +154,10 @@ class Embeds(commands.Cog):
             print(e)
 
     # ~slap command which allows users to cuddle a person in the server
-    @command(aliases=["Slap"])
+    @command(name="slap", aliases=["Slap"])
     # Added a cooldown, only 1 instance of the command can be sent every second per user
     @cooldown(1, 1, BucketType.user)
-    async def slap(self, ctx, target: Member):
+    async def slapping(self, ctx, target: Member):
 
         # Surround with try/except to catch any exceptions that may occur
         try:
@@ -200,10 +200,10 @@ class Embeds(commands.Cog):
             print(e)
 
     # ~slap command which allows users to cuddle a person in the server
-    @command(aliases=["Pat"])
+    @command(name="pat", aliases=["Pat"])
     # Added a cooldown, only 1 instance of the command can be sent every second per user
     @cooldown(1, 1, BucketType.user)
-    async def pat(self, ctx, target: Member):
+    async def patting(self, ctx, target: Member):
 
         # Surround with try/except to catch any exceptions that may occur
         try:
@@ -246,10 +246,10 @@ class Embeds(commands.Cog):
             print(e)
 
     # ~lemon command which allows users to hand people lemons to members in the user
-    @command(aliases=["lem", "Lemon", "Lem"])
+    @command(name="lemon", aliases=["Lemon"])
     # Added a cooldown, only 1 instance of the command can be sent every second per user
     @cooldown(1, 1, BucketType.user)
-    async def lemon(self, ctx, target: Member):
+    async def give_lemon(self, ctx, target: Member):
 
         lemon_array = ["https://media.discordapp.net/attachments/669812887564320769/720093589056520202/lemon.gif",
                        "https://media.discordapp.net/attachments/669812887564320769/720093575492272208/lemon2.gif",

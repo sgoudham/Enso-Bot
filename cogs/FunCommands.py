@@ -113,7 +113,7 @@ class Fun(commands.Cog):
     async def _8ball(self, ctx, *, question):
 
         # Setting up the channels that the commands can be sent in enso-chan-commands and general
-        channels = ["enso-chan-commands", "general"]
+        channels = ["enso-chan-commands", "general", "picto-chat"]
 
         # Surround with try/except to catch any exceptions that may occur
         try:

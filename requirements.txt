@@ -11,3 +11,4 @@ discord.py
 owotext
 aiohttp
 discord
+menus

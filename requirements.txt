@@ -10,5 +10,3 @@ youtube-dl
 discord.py
 owotext
 aiohttp
-discord
-discord-ext-menus

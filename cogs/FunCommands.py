@@ -143,7 +143,7 @@ class Fun(commands.Cog):
             print(e)
 
     # ~Lukas command that only Lukas can use
-    @command(name="Lukas", aliases=['Lukas'])
+    @command(name="lukas", aliases=['Lukas'])
     # Added a cooldown, only 1 instance of the command can be sent every second per user
     @cooldown(1, 1, BucketType.user)
     @has_any_role('Lukas (Server Booster)')
@@ -179,7 +179,7 @@ class Fun(commands.Cog):
         await ctx.send(f"{ctx.author.mention} {random.choice(responses)}")
 
     # ~dm only allows me to dm anyone through the bot
-    @command(name="dm", aliases=["dm", "DM", "dM"])
+    @command(name="dm", aliases=["DM", "dM"])
     @is_owner()
     async def dm(self, ctx, member: Member, *, text):
         # Send the message typed the mentioned user

@@ -1,0 +1,15 @@
+Metadata-Version: 2.0
+Name: Menus
+Version: 0.2.0
+Summary: Create cli menus with ease
+Home-page: https://github.com/JMSwag/Menus
+Author: Digital Sapphire
+Author-email: menus@digitalsapphire.io
+License: MIT
+Platform: UNKNOWN
+Requires-Dist: dsdev-utils
+Requires-Dist: six
+
+UNKNOWN
+
+

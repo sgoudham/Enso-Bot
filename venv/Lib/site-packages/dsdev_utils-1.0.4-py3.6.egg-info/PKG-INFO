@@ -1,0 +1,17 @@
+Metadata-Version: 1.1
+Name: dsdev-utils
+Version: 1.0.4
+Summary: Various utility functions
+Home-page: https://github.com/JMSwag/dsdev-utils
+Author: Digital Sapphire
+Author-email: digitalsapphire@gmail.com
+License: MIT
+Download-URL: https://github.com/JMSwag/dsdev-utils/archive/master.zip
+Description: UNKNOWN
+Platform: UNKNOWN
+Classifier: Development Status :: 4 - Beta
+Classifier: Operating System :: OS Independent
+Classifier: Environment :: Console
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python

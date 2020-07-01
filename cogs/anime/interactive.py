@@ -11,7 +11,7 @@ import settings
 
 
 # Set up the Cog
-class Embeds(commands.Cog):
+class Interactive(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -297,4 +297,4 @@ def error_function():
 
 
 def setup(bot):
-    bot.add_cog(Embeds(bot))
+    bot.add_cog(Interactive(bot))

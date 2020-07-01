@@ -215,6 +215,7 @@ class HelpMenu(menus.Menu):
         # Send embed
         return await channel.send(embed=initial)
 
+    # Reaction to allow user to go to the previous page in the embed
     @menus.button('\N{LEFTWARDS BLACK ARROW}')
     async def on_left_arrow(self, payload):
 
@@ -236,24 +237,32 @@ class HelpMenu(menus.Menu):
             await self.message.edit(embed=prev_page)
             await self.message.remove_reaction("⬅", self.ctx.author)
 
+    # Reaction to allow user to go to the next page in the embed
     @menus.button('\N{BLACK RIGHTWARDS ARROW}')
     async def on_right_arrow(self, payload):
+
+        # Simple check to make sure that the reaction is performed by the user
         def check(m):
             return m.author == payload.member
 
-        if check(self.ctx):
+        # Do nothing if the check does not return true
+        if not check(self.ctx):
+            return
+        # Allow the page number to be decreased
+        else:
+
+            # Set self.i to (i + 1) remainder length of the array
             self.i = (self.i + 1) % len(embeds(self))
             next_page = embeds(self)[self.i]
 
             await self.message.edit(embed=next_page)
             await self.message.remove_reaction("➡", self.ctx.author)
-        else:
-            return
 
     @menus.button('\N{BLACK SQUARE FOR STOP}\ufe0f')
     async def on_stop(self, payload):
         stop = stop_embed(self)
         await self.message.edit(embed=stop)
+        await self.message.clear_reactions()
         self.stop()
 
 

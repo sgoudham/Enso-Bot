@@ -19,6 +19,7 @@ class Reminder(commands.Cog):
             # Sleep the thread for the amount of time specified by the user
             await asyncio.sleep(float(time))
             # Send message to user's dms
+            await ctx.send(f"I've reminded you in your dms! {ctx.author.mention}")
             await author.send(text)
 
         # else no time has been given

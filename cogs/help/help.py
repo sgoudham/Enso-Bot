@@ -173,7 +173,7 @@ def stop_embed(self):
     enso_name = self.bot.user.display_name
 
     # Set up the Embed to display when the user reacts with the stop reaction
-    misc_commands = Embed(title="**help Commands Embed Closed!**",
+    misc_commands = Embed(title="**Help Commands Embed Closed!**",
                           colour=Colour(0xFF69B4),
                           timestamp=datetime.datetime.utcnow())
 

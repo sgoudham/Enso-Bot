@@ -1,0 +1,52 @@
+import asyncio
+import random
+
+from discord.ext import commands
+from discord.ext.commands import BucketType, cooldown, command
+
+from cogs.anime.interactive import error_function
+
+
+# Set up the cog
+class _8ball(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+
+    # ~8Ball command
+    @command(name="8ball", aliases=['8Ball'])
+    # Added a cooldown, only 1 instance of the command can be sent every second per user
+    @cooldown(1, 1, BucketType.user)
+    async def _8ball(self, ctx, *, question):
+        # Setting up the channels that the commands can be sent in enso-chan-commands and general
+        channels = ["enso-chan-commands", "general", "picto-chat"]
+
+        # Surround with try/except to catch any exceptions that may occur
+        try:
+
+            # If the channel that the command has been sent is in the list of accepted channels
+            if str(ctx.channel) in channels:
+
+                # Open the file containing all the custom eightball responses
+                with open('images/FunCommands/eightball.txt') as file:
+                    # Store the eightball responses in an array
+                    _8ball_array = file.readlines()
+                    # Repeat the user question and send out a random response from _8ball_array
+                    await ctx.send(f'Question: {question}\nAnswer: {random.choice(_8ball_array)}')
+
+            # else the command is sent in an invalid channel
+            else:
+
+                # Call error_function() and display it to the user
+                message = await ctx.send(error_function())
+
+                # Let the user read the message for 2.5 seconds
+                await asyncio.sleep(2.5)
+                # Delete the message
+                await message.delete()
+
+        except FileNotFoundError as e:
+            print(e)
+
+
+def setup(bot):
+    bot.add_cog(_8ball(bot))

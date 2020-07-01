@@ -261,13 +261,21 @@ class HelpMenu(menus.Menu):
 
     @menus.button('\N{BLACK SQUARE FOR STOP}\ufe0f')
     async def on_stop(self, payload):
-        # Send the stop embed which shows that the help commands embed is no longer accessible
-        stop = stop_embed(self)
-        await self.message.edit(embed=stop)
 
-        # Clear the reactions in the message and stop the function
-        await self.message.clear_reactions()
-        self.stop()
+        # Simple check to make sure that the reaction is performed by the user
+        def check(m):
+            return m.author == payload.member
+
+        if not check(self.ctx):
+            return
+        else:
+            # Send the stop embed which shows that the help commands embed is no longer accessible
+            stop = stop_embed(self)
+            await self.message.edit(embed=stop)
+
+            # Clear the reactions in the message and stop the function
+            await self.message.clear_reactions()
+            self.stop()
 
 
 # Set up the cog

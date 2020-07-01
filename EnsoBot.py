@@ -17,8 +17,6 @@ client = commands.Bot(  # Create a new bot
     command_prefix="~",  # Set the prefix
     description='Ensō~Chan!',  # Set a description for the bot
     owner_id=154840866496839680)  # Your unique User ID
-# Removes the default help command
-client.remove_command('help')
 
 # Calls the cogs from the settings.py file and loads them
 if __name__ == '__main__':

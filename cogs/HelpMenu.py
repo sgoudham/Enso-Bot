@@ -274,6 +274,8 @@ class HelpMenu(menus.Menu):
 class ReactionMenu(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        # Remove default help command
+        self.bot.remove_command("help")
 
     # ~help command that returns a menu for help commands controlled by reactions
     @command(name="help", aliases=["Help"])

@@ -151,24 +151,6 @@ class Fun(commands.Cog):
         # Delete the message sent instantly
         await ctx.message.delete()
 
-    # ~remindme command to allow the bot to dm you to remind you of something
-    @command(name="remindme", aliases=["Remindme", "rm"])
-    async def remind_me(self, ctx, time=None, *, text):
-        # Grab the author and store it in "author"
-        author = ctx.author
-
-        # If a value for time as been given
-        if time:
-            # Sleep the thread for the amount of time specified by the user
-            await asyncio.sleep(float(time))
-            # Send message to user's dms
-            await author.send(text)
-
-        # else no time has been given
-        else:
-            # Instantly Send message to user's dms
-            await author.send(text)
-
     # ~digby command that allows users to see a picture of digby
     @command(name="digby", aliases=["Digby"])
     async def digby(self, ctx):

@@ -286,7 +286,7 @@ class ReactionMenu(commands.Cog):
         self.bot.remove_command("help")
 
     # ~help command that returns a menu for help commands controlled by reactions
-    @command(name="help", aliases=["help"])
+    @command(name="help", aliases=["Help"])
     async def help(self, ctx):
         # Local Variable i to allow the index of the pages[] to be modified
         i = 0

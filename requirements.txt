@@ -1,3 +1,4 @@
 owotext
 aiohttp
 discord
+python-decouple

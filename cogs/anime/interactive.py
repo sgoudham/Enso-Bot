@@ -290,6 +290,43 @@ class Interactive(commands.Cog):
         except FileNotFoundError as e:
             print(e)
 
+    # ~marry command allows the bot to wed two young lovers together
+    @command(name="marry", aliases=["Marry"])
+    async def marry(self, ctx, member: Member):
+
+        # Send a message to the channel mentioning the author and the person they want to wed.
+        await ctx.send(f"{ctx.author.mention} **Proposes To** {member.mention} **Do you accept??** "
+                       f"\nRespond with [**Y**es/**N**o]")
+
+        # A check that makes sure that the reply is not from the author
+        # and that the reply is in the same channel as the proposal
+        def check(m):
+            return m.author == member and m.channel == ctx.channel
+
+        # Surround with try/except to catch any exceptions that may occur
+        try:
+            # Wait for the message from the mentioned user
+            msg = await self.bot.wait_for('message', check=check, timeout=30)
+
+            # if the person says yes
+            if msg.content.lower() in ['y', 'yes', 'yea']:
+                # Congratulate them!
+                await ctx.send(
+                    f"Congratulations! ヽ(・∀・)ﾉ {ctx.author.mention} and {member.mention} are now married to each other!")
+            # if the person says no
+            elif msg.content.lower() in ['n', 'no', 'nah']:
+                # Try to console the person and wish them the best in their life
+                await ctx.send(f"Unlucky (Ｔ▽Ｔ), maybe another time! {ctx.author.mention}")
+            else:
+                # Abort the process as the message sent did not make sense
+                await ctx.send("Senpaiiii! Speak English Please ⋋_⋌")
+
+        except asyncio.TimeoutError as ex:
+            print(ex)
+
+            # Send out an error message if the user waited too long
+            await ctx.send("Awww they waited too long (✖╭╮✖)")
+
 
 # Error handling function to make sure that the commands only work in "enso-chan-commands"
 def error_function():

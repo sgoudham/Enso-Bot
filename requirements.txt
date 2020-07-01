@@ -2,3 +2,4 @@ owotext
 aiohttp
 discord
 python-decouple
+git+https://github.com/Rapptz/discord-ext-menus

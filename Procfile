@@ -1,3 +1,3 @@
-worker: python EnsoBot.py
-bot: python EnsoBot.py
-web: python EnsoBot.py
+worker: python main.py
+bot: python main.py
+web: python main.py

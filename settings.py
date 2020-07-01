@@ -45,7 +45,13 @@ channels = ["enso-chan-commands", "picto-chat", 663651584399507481]
 # Grabbing the list of colours
 colour_list = [c for c in colors.values()]
 
-# Instantiates a list for all the cogs
-extensions = ['cogs.AnimeImages', 'cogs.FunCommands', 'cogs.GetInfo',
-              'cogs.HelpCommands', 'cogs.OwOText', 'cogs.Embeds',
-              'cogs.Reminder', 'cogs.HelpMenu']
+
+def extensions():
+    # Instantiates a list for all the cogs
+    anime_ext = ['cogs.anime.interactive', 'cogs.anime.waifu_husbandos']
+
+    help_ext = ['cogs.help.admin', 'cogs.help.help', 'cogs.help.self_roles', 'cogs.help.info']
+
+    fun_ext = ['cogs.fun.8ball', 'cogs.fun.enso', 'cogs.fun.fun', 'cogs.fun.owo_text', 'cogs.fun.reminder']
+
+    return (anime_ext, help_ext, fun_ext)

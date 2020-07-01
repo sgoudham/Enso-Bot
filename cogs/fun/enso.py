@@ -29,7 +29,7 @@ def displayServerImage(array, ctx, name):
     return embed
 
 
-class Waifus(commands.Cog):
+class Enso(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -116,3 +116,7 @@ class Waifus(commands.Cog):
             await asyncio.sleep(2.5)
             # Delete the message
             await message.delete()
+
+
+def setup(bot):
+    bot.add_cog(Enso(bot))

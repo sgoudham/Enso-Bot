@@ -40,11 +40,11 @@ class Enso(commands.Cog):
 
         # Defining array of all the people that have images stored in the bot
         array = ['hammy', 'hussein', 'inna', 'kaiju', 'kate',
-                 'lukas', 'marshall', 'stitch', 'zara', 'josh',
+                 'lukas', 'marshall', 'stitch', 'josh', 'corona',
                  'gria', 'lilu', 'marcus', 'eric', 'ifrah',
                  'janet', 'connor', 'taz', 'ryder', 'ange',
                  'izzy', 'david', 'clarity', 'angel', 'chloe',
-                 'corona', 'skye', 'rin']
+                 'skye', 'rin']
 
         # If the channel that the command has been sent is in the list of accepted channels
         if str(ctx.channel) in settings.channels:

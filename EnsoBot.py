@@ -18,9 +18,12 @@ client = commands.Bot(  # Create a new bot
     description='Ensō~Chan!',  # Set a description for the bot
     owner_id=154840866496839680)  # Your unique User ID
 
+(anime, helps, fun) = settings.extensions()
+complete_list = anime + helps + fun
+
 # Calls the cogs from the settings.py file and loads them
 if __name__ == '__main__':
-    for ext in settings.extensions:
+    for ext in complete_list:
         client.load_extension(ext)
 
 

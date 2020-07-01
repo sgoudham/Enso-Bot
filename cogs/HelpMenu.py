@@ -248,20 +248,24 @@ class HelpMenu(menus.Menu):
         # Do nothing if the check does not return true
         if not check(self.ctx):
             return
-        # Allow the page number to be decreased
+        # Allow the page number to be increased
         else:
 
             # Set self.i to (i + 1) remainder length of the array
             self.i = (self.i + 1) % len(embeds(self))
             next_page = embeds(self)[self.i]
 
+            # Send the embed and remove the reaction of the user
             await self.message.edit(embed=next_page)
             await self.message.remove_reaction("➡", self.ctx.author)
 
     @menus.button('\N{BLACK SQUARE FOR STOP}\ufe0f')
     async def on_stop(self, payload):
+        # Send the stop embed which shows that the help commands embed is no longer accessible
         stop = stop_embed(self)
         await self.message.edit(embed=stop)
+
+        # Clear the reactions in the message and stop the function
         await self.message.clear_reactions()
         self.stop()
 

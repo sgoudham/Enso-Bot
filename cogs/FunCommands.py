@@ -8,7 +8,7 @@ from discord.ext import commands
 from discord.ext.commands import BucketType, cooldown, command, has_any_role, is_owner
 
 import settings
-from cogs.Embeds import error_function
+from cogs.anime.interactive import error_function
 
 
 # Set up the cog

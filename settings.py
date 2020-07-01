@@ -40,7 +40,7 @@ colors = {
 }
 
 # Allowed channel for Enso~Chan commands
-channels = ["enso-chan-commands", "picto-chat", "general"]
+channels = ["enso-chan-commands", "picto-chat", 663651584399507481]
 
 # Grabbing the list of colours
 colour_list = [c for c in colors.values()]

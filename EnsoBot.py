@@ -42,7 +42,7 @@ async def ping(ctx):
     await ctx.send(f'Pong! {round(client.latency * 1000)}ms')
 
 
-# Bot event for new member joining, sending an embed introducing them to the serve
+# Bot event for new member joining, sending an embed introducing them to the server
 @client.event
 async def on_member_join(member):
     # Set the channel id to "newpeople"

@@ -15,7 +15,7 @@ class Verification(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, message):
         # Making sure that the bot doesn't reply to itself
-        if message.author == self.bot.user:
+        if message.author == self.bot:
             return
 
         # Defining the message content in a variable
@@ -51,8 +51,6 @@ class Verification(commands.Cog):
             # Delete the message no matter what message they send
             else:
                 await message.delete()
-
-        await self.bot.process_commands(message)
 
     # Allowing people to get ping-able self roles
     @command(name="verification")

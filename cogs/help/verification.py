@@ -7,15 +7,18 @@ from discord.ext.commands import command, is_owner
 
 
 # Set up Cog
+
+
 class Verification(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.guild = None
 
     # Listens to every message sent
     @commands.Cog.listener()
     async def on_message(self, message):
         # Making sure that the bot doesn't reply to itself
-        if message.author == self.bot:
+        if message.author == message.author.bot:
             return
 
         # Defining the message content in a variable

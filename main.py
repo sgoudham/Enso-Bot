@@ -102,7 +102,7 @@ async def on_message(message):
 
             embed.set_thumbnail(url=message.author.avatar_url)
 
-            fields = [("Member", message.author.name, False),
+            fields = [("Member", message.author, False),
                       ("Message", message.content, False)]
 
             for name, value, inline in fields:

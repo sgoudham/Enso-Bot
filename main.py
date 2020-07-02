@@ -1,9 +1,10 @@
 import asyncio
 import datetime
+import random
 
 import discord
 from decouple import config
-from discord import Embed, Colour
+from discord import Embed, Colour, DMChannel
 from discord.ext import commands
 from discord.ext.commands import is_owner
 
@@ -86,20 +87,29 @@ async def on_message(message):
     if message.author == client.user:
         return
 
-    # Setting the id of myself
-    author = message.author.id
+    # Get the mod-mail channel
+    channel = client.get_channel(728083016290926623)
 
-    # Checking if the message is not sent in server
-    if message.guild is None:
-        # Checking if the owner is sending the message
-        if author == client.owner_id:
-
-            # Send message to #general
-            channel = client.get_channel(663651584399507481)
-            await channel.send(message.content)
+    if isinstance(message.channel, DMChannel):
+        if len(message.content) < 50:
+            await message.channel.send("Your message should be at least 50 characters in length.")
 
         else:
-            return
+            # member = discord.guild.get_member(message.author.id)
+            embed = Embed(title="**Modmail**",
+                          colour=Colour(random.choice(settings.colour_list)),
+                          timestamp=datetime.datetime.utcnow())
+
+            embed.set_thumbnail(url=message.author.avatar_url)
+
+            fields = [("Member", message.author.name, False),
+                      ("Message", message.content, False)]
+
+            for name, value, inline in fields:
+                embed.add_field(name=name, value=value, inline=inline)
+
+            await channel.send(embed=embed)
+            await message.channel.send("**Message relayed to Staff! Thank you for your input!**")
 
     await client.process_commands(message)
 

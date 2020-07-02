@@ -50,8 +50,6 @@ async def ping(ctx):
 async def on_member_join(member):
     # Set the channel id to "newpeople"
     new_people = client.get_channel(669771571337887765)
-    # Set the channel id to "general"
-    general = client.get_channel(663651584399507481)
 
     # Set the enso server icon and the welcoming gif
     server_icon = "https://media.discordapp.net/attachments/683490529862090814/715010931620446269/image1.jpg?width=658&height=658"
@@ -79,17 +77,6 @@ async def on_member_join(member):
 
     # Send embed to #newpeople
     await new_people.send(embed=embed)
-
-    # Set hamothyID equal to my id in discord
-    hamothyID = '<@&715412394968350756>'
-
-    # String for welcoming people in the #general channel
-    general_welcome = f"Welcome to the server! {member.mention} I hope you enjoy your stay here <a:huh:676195228872474643> <a:huh:676195228872474643> " \
-                      f"\nPlease go into <#722347423913213992> to choose some ping-able roles for events! " \
-                      f"\nPlease ping {hamothyID} for any questions about the server and of course, the other staff members!"
-
-    # Send welcome message to #general
-    await general.send(general_welcome)
 
 
 # Allows the bot to echo the dm's that it receives

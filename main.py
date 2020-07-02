@@ -35,7 +35,7 @@ async def on_ready():
     print('Bot is ready.')
 
     # Sets the bots status on discord for everyone to view
-    await client.change_presence(activity=discord.Game(name="Feeling Pretty Good :))"))
+    await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="Spider Man 3"))
 
 
 # Bot ~Ping command in milliseconds

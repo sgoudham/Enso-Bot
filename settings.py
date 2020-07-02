@@ -50,7 +50,7 @@ def extensions():
     # Instantiates a list for all the cogs
     anime_ext = ['cogs.anime.interactive', 'cogs.anime.waifu_husbandos']
 
-    help_ext = ['cogs.help.admin', 'cogs.help.help', 'cogs.help.self_roles', 'cogs.help.info']
+    help_ext = ['cogs.help.admin', 'cogs.help.help', 'cogs.help.self_roles', 'cogs.help.info', 'cogs.help.verification']
 
     fun_ext = ['cogs.fun.8ball', 'cogs.fun.enso', 'cogs.fun.fun', 'cogs.fun.owo_text', 'cogs.fun.reminder']
 

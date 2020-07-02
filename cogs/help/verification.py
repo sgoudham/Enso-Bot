@@ -32,6 +32,22 @@ class Verification(commands.Cog):
                 role = discord.utils.get(message.guild.roles, name='Lucid')
                 await message.author.add_roles(role)
 
+                # if the person has the "lucid" role
+                if role in message.author.roles:
+                    # Set hamothyID equal to my id in discord
+                    hamothyID = '<@&715412394968350756>'
+
+                    # Set the channel id to "general"
+                    general = self.bot.get_channel(663651584399507481)
+
+                    # String for welcoming people in the #general channel
+                    general_welcome = f"Welcome to the server! {message.author.mention} I hope you enjoy your stay here <a:huh:676195228872474643> <a:huh:676195228872474643> " \
+                                      f"\nPlease go into <#722347423913213992> to choose some ping-able roles for events! " \
+                                      f"\nPlease ping {hamothyID} for any questions about the server and of course, the other staff members!"
+
+                    # Send welcome message to #general
+                    await general.send(general_welcome)
+
             # Delete the message no matter what message they send
             else:
                 await message.delete()

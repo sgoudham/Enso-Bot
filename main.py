@@ -1,10 +1,9 @@
 import asyncio
 import datetime
-import random
 
 import discord
 from decouple import config
-from discord import Embed, Colour, DMChannel
+from discord import Embed, Colour
 from discord.ext import commands
 from discord.ext.commands import is_owner
 
@@ -26,6 +25,14 @@ complete_list = anime + helps + fun
 if __name__ == '__main__':
     for ext in complete_list:
         client.load_extension(ext)
+
+
+@client.event
+async def on_message(message):
+    if message.author.bot:
+        return
+
+    await client.process_commands(message)
 
 
 # Bot Status on Discord
@@ -78,40 +85,6 @@ async def on_member_join(member):
 
     # Send embed to #newpeople
     await new_people.send(embed=embed)
-
-
-# Allows the bot to echo the dm's that it receives
-@client.event
-async def on_message(message):
-    # Making sure that the bot doesn't reply to itself
-    if message.author == client.user:
-        return
-
-    # Get the mod-mail channel
-    channel = client.get_channel(728083016290926623)
-
-    if isinstance(message.channel, DMChannel):
-        if len(message.content) < 50:
-            await message.channel.send("Your message should be at least 50 characters in length.")
-
-        else:
-            # member = discord.guild.get_member(message.author.id)
-            embed = Embed(title="**Modmail**",
-                          colour=Colour(random.choice(settings.colour_list)),
-                          timestamp=datetime.datetime.utcnow())
-
-            embed.set_thumbnail(url=message.author.avatar_url)
-
-            fields = [("Member", message.author, False),
-                      ("Message", message.content, False)]
-
-            for name, value, inline in fields:
-                embed.add_field(name=name, value=value, inline=inline)
-
-            await channel.send(embed=embed)
-            await message.channel.send("**Message relayed to Staff! Thank you for your input!**")
-
-    await client.process_commands(message)
 
 
 # Bot Event for handling all errors within discord.commands

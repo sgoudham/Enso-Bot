@@ -99,13 +99,7 @@ async def on_message(message):
             await channel.send(message.content)
 
         else:
-            # Sends error message if the person is not the owner
-            message = await message.channel.send("Sorry, you don't have permission to echo dms!")
-
-            # Let the user read the message for 2.5 seconds
-            await asyncio.sleep(2.5)
-            # Delete the message
-            await message.delete()
+            return
 
     await client.process_commands(message)
 

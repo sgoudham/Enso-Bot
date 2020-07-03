@@ -68,8 +68,8 @@ class GetInfo(commands.Cog):
         embed_fields = [("Name", str(target.mention), True),
                         ("Tag", target.name, True),
                         ("Discrim", "#" + target.discriminator, True),
-                        ("Registered", target.created_at.strftime("%d/%m/%Y %H:%M:%S"), True),
-                        ("Joined", target.joined_at.strftime("%d/%m/%Y %H:%M:%S"), True),
+                        ("Registered", target.created_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"), True),
+                        ("Joined", target.joined_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"), True),
                         ("Roles", roles, False),
                         ("All Permissions", permissions, False),
                         ("Status", str(target.status).title(), True),
@@ -107,7 +107,7 @@ class GetInfo(commands.Cog):
 
         # Define fields to be added into the embed
         fields = [("Owner", ctx.guild.owner, True),
-                  ("Created", ctx.guild.created_at.strftime("%d/%m/%Y %H:%M:%S"), False),
+                  ("Created", ctx.guild.created_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"), False),
                   ("Region", str(ctx.guild.region).upper(), False),
                   ("Statuses", f"🟢 {statuses[0]} 🟠 {statuses[1]} 🔴 {statuses[2]} ⚪ {statuses[3]}", False),
                   ("\u200b", "\u200b", False),

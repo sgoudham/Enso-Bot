@@ -150,6 +150,7 @@ class Modmail(commands.Cog):
     # Allows for the modmail system
     @commands.command(name="modmail", aliases=["mm"])
     async def mod_mail(self, ctx):
+        self.anon = None
         # Get the mod-mail channel
         channel = self.bot.get_channel(728083016290926623)
         # Get the guild Enso
@@ -219,23 +220,17 @@ class Modmail(commands.Cog):
                                 # Wait for the message from the author
                                 msg = await self.bot.wait_for('message', check=check, timeout=300)
 
-                                if len(msg.content) < 50:
+                                while len(msg.content) < 50:
                                     await ctx.send("**Make sure your mail is above 50 characters!!**"
                                                    "\n**This helps us reduce spam and allows you to include more detail in your mail**")
 
                                     # Wait for the message from the author
                                     msg = await self.bot.wait_for('message', check=check, timeout=300)
 
-                                    await channel.send(embed=SendMsgToModMail(self, msg, member))
-                                    await ctx.send("**Message relayed to Staff!"
-                                                   "\nThank you for your input!**")
-                                    await instructions.delete()
-
-                                else:
-                                    await channel.send(embed=SendMsgToModMail(self, msg, member))
-                                    await ctx.send("**Message relayed to Staff!"
-                                                   "\nThank you for your input!**")
-                                    await instructions.delete()
+                                await channel.send(embed=SendMsgToModMail(self, msg, member))
+                                await ctx.send("**Message relayed to Staff!"
+                                               "\nThank you for your input!**")
+                                await instructions.delete()
 
                             if str(reaction.emoji) == "❌":
                                 self.anon = False
@@ -253,23 +248,17 @@ class Modmail(commands.Cog):
                                 # Wait for the message from the author
                                 msg = await self.bot.wait_for('message', check=check, timeout=300)
 
-                                if len(msg.content) < 50:
+                                while len(msg.content) < 50:
                                     await ctx.send("**Make sure your mail is above 50 characters!!**"
                                                    "\n**This helps us reduce spam and allows you to include more detail in your mail**")
 
                                     # Wait for the message from the author
                                     msg = await self.bot.wait_for('message', check=check, timeout=300)
 
-                                    await channel.send(embed=SendMsgToModMail(self, msg, member))
-                                    await ctx.send("**Message relayed to Staff!"
-                                                   "\nThank you for your input!**")
-                                    await instructions.delete()
-
-                                else:
-                                    await channel.send(embed=SendMsgToModMail(self, msg, member))
-                                    await ctx.send("**Message relayed to Staff!"
-                                                   "\nThank you for your input!**")
-                                    await instructions.delete()
+                                await channel.send(embed=SendMsgToModMail(self, msg, member))
+                                await ctx.send("**Message relayed to Staff!"
+                                               "\nThank you for your input!**")
+                                await instructions.delete()
 
                     if self.anon is None:
                         if str(reaction.emoji) == "❌":

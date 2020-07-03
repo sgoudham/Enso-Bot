@@ -6,9 +6,6 @@ from discord import DMChannel, Colour, Embed
 from discord.ext import commands
 
 
-# Set up the Cog
-
-
 # Method to send the prompt/embed to start sending modmail to the user
 def startModMail(author):
     # Set up embed to let the user how to start sending modmail
@@ -140,7 +137,7 @@ def SendMsgToModMail(self, msg, author):
         return embed
 
 
-# Set up Cog
+# Set up the Cog
 class Modmail(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -199,7 +196,7 @@ class Modmail(commands.Cog):
                         # Surround with try/except to catch any exceptions that may occur
                         try:
                             # Wait for the user to add a reaction
-                            reaction, user = await self.bot.wait_for('reaction_add', timeout=60.0, check=anon_check)
+                            reaction, user = await self.bot.wait_for('reaction_add', timeout=120.0, check=anon_check)
                         except Exception as ex:
                             print(ex)
                             return
@@ -267,6 +264,7 @@ class Modmail(commands.Cog):
 
                             # Send the Abort embed to the user
                             await ctx.send(embed=Abort(member))
+                            return
 
             except Exception as ex:
                 print(ex)

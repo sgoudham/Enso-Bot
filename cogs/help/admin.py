@@ -128,7 +128,7 @@ class CustomHelp(commands.Cog):
         # Send the helpDm() message to the channel that the user is in
         message = await ctx.send(helpDm())
 
-        # Let the user read the message for 2.5 seconds
+        # Let the user read the message for 10 seconds
         await asyncio.sleep(10)
         # Delete the message
         await message.delete()

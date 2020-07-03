@@ -8,7 +8,7 @@ from cogs.anime.interactive import error_function
 
 
 # Set up the cog
-class _8ball(commands.Cog):
+class eightball(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -27,11 +27,11 @@ class _8ball(commands.Cog):
             if str(ctx.channel) in channels:
 
                 # Open the file containing all the custom eightball responses
-                with open('images/FunCommands/eightball.txt') as file:
+                with open('images/FunCommands/eightball.txt', encoding="utf8") as file:
                     # Store the eightball responses in an array
-                    _8ball_array = file.readlines()
+                    eightball_array = file.readlines()
                     # Repeat the user question and send out a random response from _8ball_array
-                    await ctx.send(f'Question: {question}\nAnswer: {random.choice(_8ball_array)}')
+                    await ctx.send(f'Question: {question}\nAnswer: {random.choice(eightball_array)}')
 
             # else the command is sent in an invalid channel
             else:
@@ -44,9 +44,9 @@ class _8ball(commands.Cog):
                 # Delete the message
                 await message.delete()
 
-        except FileNotFoundError as e:
+        except Exception as e:
             print(e)
 
 
 def setup(bot):
-    bot.add_cog(_8ball(bot))
+    bot.add_cog(eightball(bot))

@@ -91,11 +91,13 @@ def waifu_husbando_function(self, guild_icon, enso_name, enso_icon):
 
     # Setting up the fields in a separate array
     waifu_husbando_fields = [
-        ("\u200b", f"`{self.ctx.prefix}[waifu]`" +
-         "\n Allows for a randomly generated image of a Waifu to be shown" +
+        ("\u200b", f"`{self.ctx.prefix}w [waifu]`" +
+         "\n Allows for a image of the Waifu specified to be shown" +
+         f"\n (Using {self.ctx.prefix}w by itself shall randomly generated image of a Waifu to be shown)" +
          "\n *(Perms: Everyone)*", True),
         ("\u200b", f"`{self.ctx.prefix}h [husbando]`" +
-         "\n Allows for a randomly generated image of a Husbando to be shown" +
+         "\n Allows for a image of a Husbando specified to be shown" +
+         f"\n (Using {self.ctx.prefix}h by itself shall randomly generated image of a Husbando to be shown)" +
          "\n *(Perms: Everyone)*", True),
         ("\u200b", f"`{self.ctx.prefix}w list`" +
          "\n Returns a list of Waifu's that are in the bot " +
@@ -105,7 +107,7 @@ def waifu_husbando_function(self, guild_icon, enso_name, enso_icon):
          "\n *(Perms: Everyone)*", True),
         ("\u200b", f"`{self.ctx.prefix}enso [person]`" +
          "\n Allows for a randomly generated image of the member specified" +
-         "\n (Using ~enso by itself shall generate a random image of a person within all the server)" +
+         f"\n (Using {self.ctx.prefix}enso by itself shall generate a random image of a person within all the server)" +
          "\n *(Perms: Everyone)*", True),
         ("\u200b", f"`{self.ctx.prefix}enso list`" +
          "\n Returns a list of the people's images currently in the bot" +

@@ -153,11 +153,10 @@ class Interactive(commands.Cog):
         except FileNotFoundError as e:
             print(e)
 
-    # ~slap command which allows users to cuddle a person in the server
     @command(name="slap", aliases=["Slap"])
-    # Added a cooldown, only 1 instance of the command can be sent every second per user
     @cooldown(1, 1, BucketType.user)
     async def slap(self, ctx, target: Member):
+        """Allows users to slap a person in the server"""
 
         # Surround with try/except to catch any exceptions that may occur
         try:
@@ -199,11 +198,10 @@ class Interactive(commands.Cog):
         except FileNotFoundError as e:
             print(e)
 
-    # ~slap command which allows users to cuddle a person in the server
     @command(name="pat", aliases=["Pat"])
-    # Added a cooldown, only 1 instance of the command can be sent every second per user
     @cooldown(1, 1, BucketType.user)
     async def pat(self, ctx, target: Member):
+        """Allows users to cuddle a person in the server"""
 
         # Surround with try/except to catch any exceptions that may occur
         try:

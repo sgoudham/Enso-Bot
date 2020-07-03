@@ -16,25 +16,22 @@ class Verification(commands.Cog):
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):
         # Get the guild
-        guild = self.bot.get_guild(payload.guild_id)
+        guild = self.bot.get_guild(663651584399507476)
         # Get the member
         member = guild.get_member(payload.user_id)
 
         # Getting the channel verification by setting it to #verification
         channel = guild.get_channel(728034083678060594)
 
-        # If the channel is not #verification, do nothing
-        if not channel:
-            return
         # If the channel is #verification
-        elif channel:
+        if payload.channel_id == channel.id:
 
             # A check that makes sure that the reaction is done by the bot
             def check(m):
-                return m == payload.member
+                return m == self.bot
 
             # If the member is not a user, do nothing
-            if not check(member):
+            if not check:
                 return
             else:
 

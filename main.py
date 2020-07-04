@@ -5,7 +5,6 @@ import discord
 from decouple import config
 from discord import Embed, Colour
 from discord.ext import commands
-from discord.ext.commands import is_owner
 
 import settings
 
@@ -49,7 +48,7 @@ async def on_ready():
 
 # Bot ~Ping command in milliseconds
 @client.command(name="ping", aliases=["Ping"])
-@is_owner()
+@commands.is_owner()
 async def ping(ctx):
     """Send the latency of the bot (ms)"""
     await ctx.send(f'Ping Pong! {round(client.latency * 1000)}ms')
@@ -59,34 +58,38 @@ async def ping(ctx):
 @client.event
 async def on_member_join(member):
     # Set the channel id to "newpeople"
-    new_people = client.get_channel(669771571337887765)
+    guild = member.guild
+    if guild.id == 663651584399507476:
+        return
+    else:
+        new_people = guild.get_channel(669771571337887765)
 
-    # Set the enso server icon and the welcoming gif
-    server_icon = "https://media.discordapp.net/attachments/683490529862090814/715010931620446269/image1.jpg?width=658&height=658"
-    welcome_gif = "https://cdn.discordapp.com/attachments/714671068941647933/717144047252275270/f4d7de6463d3ada02058a094fd6917ac.gif"
+        # Set the enso server icon and the welcoming gif
+        server_icon = "https://media.discordapp.net/attachments/683490529862090814/715010931620446269/image1.jpg?width=658&height=658"
+        welcome_gif = "https://cdn.discordapp.com/attachments/714671068941647933/717144047252275270/f4d7de6463d3ada02058a094fd6917ac.gif"
 
-    # Set up embed for the #newpeople channel
-    embed = Embed(title="\n**Welcome To Ensō!**",
-                  colour=Colour(0x30e419),
-                  timestamp=datetime.datetime.utcnow())
+        # Set up embed for the #newpeople channel
+        embed = Embed(title="\n**Welcome To Ensō!**",
+                      colour=Colour(0x30e419),
+                      timestamp=datetime.datetime.utcnow())
 
-    embed.set_thumbnail(url=server_icon)
-    embed.set_image(url=welcome_gif)
-    embed.add_field(
-        name="\u200b",
-        value=f"Hello {member.mention}! We hope you enjoy your stay in this server! ",
-        inline=False)
-    embed.add_field(
-        name="\u200b",
-        value=f"Be sure to check out our <#669815048658747392> channel to read the rules and <#683490529862090814> channel to get caught up with any changes! ",
-        inline=False)
-    embed.add_field(
-        name="\u200b",
-        value=f"Last but not least, feel free to go into <#669775971297132556> to introduce yourself!",
-        inline=False)
+        embed.set_thumbnail(url=server_icon)
+        embed.set_image(url=welcome_gif)
+        embed.add_field(
+            name="\u200b",
+            value=f"Hello {member.mention}! We hope you enjoy your stay in this server! ",
+            inline=False)
+        embed.add_field(
+            name="\u200b",
+            value=f"Be sure to check out our <#669815048658747392> channel to read the rules and <#683490529862090814> channel to get caught up with any changes! ",
+            inline=False)
+        embed.add_field(
+            name="\u200b",
+            value=f"Last but not least, feel free to go into <#669775971297132556> to introduce yourself!",
+            inline=False)
 
-    # Send embed to #newpeople
-    await new_people.send(embed=embed)
+        # Send embed to #newpeople
+        await new_people.send(embed=embed)
 
 
 # Bot Event for handling all errors within discord.commands

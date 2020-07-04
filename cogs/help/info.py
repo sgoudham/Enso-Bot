@@ -9,6 +9,36 @@ from discord.ext.commands import BucketType, cooldown, command
 
 import settings
 
+Perms = {"create instant invite": "",
+         "add reactions": "",
+         "view audit log": "",
+         "priority speaker": "",
+         "stream": "",
+         "read messages": "",
+         "send messages": "",
+         "send tts messages": "",
+         "embed links": "",
+         "attach links": "",
+         "read message history": "",
+         "external emojis": "",
+         "view guild insights": "",
+         "connect": "",
+         "speak": "",
+         "use voice activation": "",
+         "change nickname": ""}
+
+
+def DetectPermissions(message, dct):
+    message = message.split(",")
+    new_msg = ""
+    for word in message:
+        if word not in dct:
+            print(word)
+            new_msg += word + ", "
+        else:
+            pass
+    return new_msg
+
 
 class GetInfo(commands.Cog):
     def __init__(self, bot):
@@ -47,14 +77,14 @@ class GetInfo(commands.Cog):
             # If the permission is set to "True"
             if perms[1]:
                 # Make the string look nice by replacing _ with a space
-                permission += (perms[0].replace('_', ' ')) + ', '
+                permission += (perms[0].replace('_', ' ')) + ','
 
             # If the permission is set to "False", Don't do anything
             else:
                 pass
 
         # Capitalise every word in the array and get rid of the ", " at the end of the string
-        permissions = string.capwords("".join(map(str, permission[0:-2])))
+        permissions = string.capwords("".join(map(str, DetectPermissions(permission, Perms)[0:-4])))
 
         # Set up the embed to display everything about the user
         embed = Embed(
@@ -70,8 +100,9 @@ class GetInfo(commands.Cog):
                         ("Discrim", "#" + target.discriminator, True),
                         ("Registered", target.created_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"), True),
                         ("Joined", target.joined_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"), True),
+                        ("Top Role", target.top_role.mention, False),
                         ("Roles", roles, False),
-                        ("All Permissions", permissions, False),
+                        ("Key Permissions", permissions, False),
                         ("Status", str(target.status).title(), True),
                         ("Boosting Server", bool(target.premium_since), True),
                         ("Bot", target.bot, True)]

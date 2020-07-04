@@ -59,7 +59,7 @@ async def ping(ctx):
 async def on_member_join(member):
     # Set the channel id to "newpeople"
     guild = member.guild
-    if guild.id == 663651584399507476:
+    if guild.id != 663651584399507476:
         return
     else:
         new_people = guild.get_channel(669771571337887765)

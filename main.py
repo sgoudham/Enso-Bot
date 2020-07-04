@@ -29,9 +29,11 @@ if __name__ == '__main__':
 
 @client.event
 async def on_message(message):
+    # Making sure that the bot does not take in its own messages
     if message.author.bot:
         return
 
+    # Processing the message
     await client.process_commands(message)
 
 
@@ -49,7 +51,7 @@ async def on_ready():
 @client.command(name="ping", aliases=["Ping"])
 @is_owner()
 async def ping(ctx):
-    # Send the latency of the bot (ms)
+    """Send the latency of the bot (ms)"""
     await ctx.send(f'Ping Pong! {round(client.latency * 1000)}ms')
 
 

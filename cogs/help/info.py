@@ -28,15 +28,21 @@ Perms = {"create instant invite": "",
          "change nickname": ""}
 
 
+# Method to detect which permissions to filter out
 def DetectPermissions(message, dct):
+    # Split the message individual permissions
     message = message.split(",")
     new_msg = ""
+
+    # For every permission
     for word in message:
+        # Add the permission in the new string if the permission is not in the dictionary
         if word not in dct:
-            print(word)
             new_msg += word + ", "
+        # Do nothing if the permission is in the dictionary
         else:
             pass
+
     return new_msg
 
 

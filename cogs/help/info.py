@@ -9,6 +9,7 @@ from discord.ext.commands import BucketType, cooldown, command
 
 import settings
 
+# Permissions to filter through
 Perms = {"create instant invite": "",
          "add reactions": "",
          "view audit log": "",
@@ -50,10 +51,10 @@ class GetInfo(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    # ~userinfo to allow the users to see information about them relating to the guild
     @command(name="userinfo", aliases=["ui"])
     @cooldown(1, 5, BucketType.user)
     async def user_info(self, ctx, target: Optional[Member]):
+        """Allow the users to see information about them relating to the guild"""
 
         # If a target has been specified, set them as the user
         if target:
@@ -120,10 +121,10 @@ class GetInfo(commands.Cog):
         # Send the embed to the channel that the command was triggered in
         await ctx.send(embed=embed)
 
-    # ~serverinfo to allow the users to see information the guild itself
     @command(name="serverinfo", aliases=["guildinfo"])
     @cooldown(1, 5, BucketType.user)
     async def server_info(self, ctx):
+        """Allow the users to see information the guild itself"""
 
         # Define guild icon and id
         guild_icon = ctx.guild.icon_url

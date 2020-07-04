@@ -40,7 +40,8 @@ def AnonOrNot(author):
     AnonModMailEmbed.set_thumbnail(url=author.avatar_url)
     AnonModMailEmbed.set_footer(text=f"Sent by {author}")
 
-    fields = [("\u200b", "**React to this message if you want to send a message to the Staff Team!**", False),
+    fields = [("\u200b", "**We understand that for some things, you may want to remain Anonymous."
+                         "\nFeel free to use the reactions below to choose!**", False),
               ("\u200b", "**Use :white_check_mark: for** `Yes`", True),
               ("\u200b", "**Use :x: for** `No`", True),
               ("\u200b", "\u200b", True),
@@ -173,7 +174,7 @@ class Modmail(commands.Cog):
                 # Surround with try/except to catch any exceptions that may occur
                 try:
                     # Wait for the user to add a reaction
-                    reaction, user = await self.bot.wait_for('reaction_add', timeout=60.0, check=emoji_check)
+                    reaction, user = await self.bot.wait_for('reaction_add', timeout=120.0, check=emoji_check)
                 except Exception as ex:
                     print(ex)
                     return
@@ -189,14 +190,10 @@ class Modmail(commands.Cog):
                         await anonornot.add_reaction('✅')
                         await anonornot.add_reaction('❌')
 
-                        # Checking if the user reacted with ✅ with response to sending staff a message
-                        def anon_check(reaction, user):
-                            return user == ctx.author and str(reaction.emoji) in ['✅', '❌']
-
                         # Surround with try/except to catch any exceptions that may occur
                         try:
                             # Wait for the user to add a reaction
-                            reaction, user = await self.bot.wait_for('reaction_add', timeout=120.0, check=anon_check)
+                            reaction, user = await self.bot.wait_for('reaction_add', timeout=120.0, check=emoji_check)
                         except Exception as ex:
                             print(ex)
                             return

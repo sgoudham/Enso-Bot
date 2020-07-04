@@ -57,11 +57,14 @@ async def ping(ctx):
 # Bot event for new member joining, sending an embed introducing them to the server
 @client.event
 async def on_member_join(member):
-    # Set the channel id to "newpeople"
+    # Get the guild
     guild = member.guild
+
+    # Make sure the guild is Enso
     if guild.id != 663651584399507476:
         return
     else:
+        # Set the channel id to "newpeople"
         new_people = guild.get_channel(669771571337887765)
 
         # Set the enso server icon and the welcoming gif

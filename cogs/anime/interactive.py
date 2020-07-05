@@ -4,8 +4,7 @@ import random
 
 from discord import Colour, Embed, Member
 from discord.ext import commands
-from discord.ext.commands import BucketType
-from discord.ext.commands import cooldown, command
+from discord.ext.commands import cooldown, command, BucketType
 
 import settings
 

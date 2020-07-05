@@ -1,6 +1,4 @@
 owotext
 aiohttp
 discord
-mysql-connector-python
-mysql
 mariadb

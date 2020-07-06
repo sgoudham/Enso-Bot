@@ -3,3 +3,4 @@ aiohttp
 discord
 mariadb
 Pillow
+python-decouple

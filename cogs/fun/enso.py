@@ -44,7 +44,7 @@ class Enso(commands.Cog):
                  'gria', 'lilu', 'marcus', 'eric', 'ifrah',
                  'connor', 'taz', 'ryder', 'ange', 'rin',
                  'izzy', 'david', 'clarity', 'angel', 'chloe',
-                 'skye']
+                 'skye', 'ging']
 
         # If the channel that the command has been sent is in the list of accepted channels
         if str(ctx.channel) in settings.channels:

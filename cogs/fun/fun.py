@@ -16,10 +16,10 @@ class Fun(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    # ~attack command for only co-owners only
     @command(name="attack", aliases=['Attack'])
     @has_any_role(664585078487252993, 715412394968350756)
     async def attack(self, ctx, target: Member):
+        """Allows Co-Owners to throw insults at people"""
 
         # Set up array of insults to throw at people
         responses = [
@@ -56,11 +56,10 @@ class Fun(commands.Cog):
         # Sending out a random insult from the array "responses"
         await ctx.send(random.choice(responses))
 
-    # ~compliment command for everyone to use to compliment someone
     @command(name="comp", aliases=['Comp', 'Compliment'])
-    # Added a cooldown, only 1 instance of the command can be sent every second per user
     @cooldown(1, 1, BucketType.user)
     async def compliment(self, ctx, target: Member):
+        """Allows users to compliment other people"""
 
         # Set up array of compliments to throw at people
         responses = [
@@ -106,12 +105,11 @@ class Fun(commands.Cog):
         # Sending out a random compliment from the array "responses"
         await ctx.send(random.choice(responses))
 
-    # ~Lukas command that only Lukas can use
     @command(name="lukas", aliases=['Lukas'])
-    # Added a cooldown, only 1 instance of the command can be sent every second per user
     @cooldown(1, 1, BucketType.user)
     @has_any_role('Lukas (Server Booster)')
     async def lukas(self, ctx):
+        """Lukas's command for Ange"""
 
         # Define the id's of Bubz and Lukas
         lukasID = '<@395653002050011166>'
@@ -127,10 +125,10 @@ class Fun(commands.Cog):
         # Send one of the responses of the responses array to Lukas
         await ctx.send(random.choice(responses))
 
-    # ~Flip command to allow for 50/50 chance decisions
     @command(name="flip", aliases=['Flip'])
     @cooldown(1, 1, BucketType.user)
     async def flip(self, ctx):
+        """"Allows for 50 / 50 chance decisions"""
 
         # Define 3 arrays that only have 2 strings stored in them
         pp_array = ["Smol pp", "Huge pp"]
@@ -142,18 +140,19 @@ class Fun(commands.Cog):
         # Send out one of the responses stored in the array
         await ctx.send(f"{ctx.author.mention} {random.choice(responses)}")
 
-    # ~dm only allows me to dm anyone through the bot
     @command(name="dm", aliases=["DM", "dM"])
     @is_owner()
     async def dm(self, ctx, member: Member, *, text):
+        """Allows me to DM anyone through the bot"""
+
         # Send the message typed the mentioned user
         await member.send(text)
         # Delete the message sent instantly
         await ctx.message.delete()
 
-    # ~digby command that allows users to see a picture of digby
     @command(name="digby", aliases=["Digby"])
     async def digby(self, ctx):
+        """Allows users to see a picture of Digby"""
 
         # Surround with try/except to catch any exceptions that may occur
         try:
@@ -182,10 +181,10 @@ class Fun(commands.Cog):
         except FileNotFoundError as e:
             print(e)
 
-    # ~Doggo command that uses an API to grab images of dogs
     @command(name="doggo", aliases=["Doggo"])
     @cooldown(1, 1, BucketType.user)
     async def doggo(self, ctx, breed=None):
+        """Allows an API to grab images of dogs"""
 
         # If the channel that the command has been sent is in the list of accepted channels
         if str(ctx.channel) in settings.channels:

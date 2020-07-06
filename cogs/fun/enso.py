@@ -39,8 +39,8 @@ class Enso(commands.Cog):
     async def enso_person(self, ctx, name=None):
 
         # Defining array of all the people that have images stored in the bot
-        array = ['hammy', 'hussein', 'inna', 'kate', 'ging',
-                 'lukas', 'marshall', 'stitch', 'corona',
+        array = ['hammy', 'hussein', 'inna', 'kate',
+                 'lukas', 'stitch', 'corona', 'ging',
                  'gria', 'lilu', 'ifrah', 'skye', 'chloe',
                  'connor', 'taz', 'ryder', 'ange', 'rin',
                  'izzy', 'david', 'clarity', 'angel']

@@ -17,10 +17,9 @@ client = commands.Bot(  # Create a new bot
     description='Ensō~Chan!',  # Set a description for the bot
     owner_id=154840866496839680)  # Your unique User ID
 
+# Calls the cogs from the settings.py file and loads them
 (anime, helps, fun) = settings.extensions()
 complete_list = anime + helps + fun
-
-# Calls the cogs from the settings.py file and loads them
 if __name__ == '__main__':
     for ext in complete_list:
         client.load_extension(ext)
@@ -157,4 +156,57 @@ def write_to_dm_file(time, author, content):
     msg_time = time.strftime('%Y-%m-%dT%H:%M:%S')
     msg_author = message.author
     msg_content = message.content
+    
+    
+    
+    
+     # Set up the connection to the database
+    conn = db.connection()
+
+    # With the connection
+    with conn:
+
+        # Make sure that mariaDB errors are handled properly
+        try:
+            msg_name = message.author.name
+            msg_discrim = message.author.discriminator
+            time = message.created_at
+
+            # Get:
+            guild_id = message.guild.id  # Guild of the message
+            msg_time = time.strftime('%Y-%m-%d %H:%M:%S')  # Time of the Message
+            msg_author = f"{msg_name}#{msg_discrim}"  # DiscordID
+            msg_content = f"{message.content}"  # Content of the message
+
+            # Store the variables
+            val = guild_id, msg_time, msg_author, msg_content
+
+            attach = ""
+            # If an attachment (link) has been sent
+            if message.attachments:
+                # Loop through all attachments
+                for attachment in message.attachments:
+                    # Get the message content and the link that was used
+                    attach += f"Message: {message.content} Link: {attachment.url}"
+                # Define the new variables to send
+                val = guild_id, msg_time, msg_author, attach
+            else:
+                pass
+
+            # Define the Insert Into Statement inserting into the database
+            insert_query = """"""INSERT INTO USERLOGS (guildID, messageTime, discordID, messageContent) VALUES (?, ?, ?, ?)""""""
+            cursor = conn.cursor()
+            # Execute the SQL Query
+            cursor.execute(insert_query, val)
+            print(cursor.rowcount, "Record inserted successfully into Logs")
+
+        except mariadb.Error as ex:
+            print("Parameterized Query Failed: {}".format(ex))
+    
+    
+    
+    
+    
+    
+    
 """

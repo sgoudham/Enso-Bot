@@ -39,12 +39,11 @@ class Enso(commands.Cog):
     async def enso_person(self, ctx, name=None):
 
         # Defining array of all the people that have images stored in the bot
-        array = ['hammy', 'hussein', 'inna', 'kaiju', 'kate',
-                 'lukas', 'marshall', 'stitch', 'josh', 'corona',
-                 'gria', 'lilu', 'marcus', 'eric', 'ifrah',
+        array = ['hammy', 'hussein', 'inna', 'kate', 'ging',
+                 'lukas', 'marshall', 'stitch', 'corona',
+                 'gria', 'lilu', 'eric', 'ifrah', 'skye',
                  'connor', 'taz', 'ryder', 'ange', 'rin',
-                 'izzy', 'david', 'clarity', 'angel', 'chloe',
-                 'skye', 'ging']
+                 'izzy', 'david', 'clarity', 'angel', 'chloe']
 
         # If the channel that the command has been sent is in the list of accepted channels
         if str(ctx.channel) in settings.channels:

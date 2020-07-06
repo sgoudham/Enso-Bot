@@ -42,9 +42,9 @@ class Enso(commands.Cog):
         array = ['hammy', 'hussein', 'inna', 'kaiju', 'kate',
                  'lukas', 'marshall', 'stitch', 'josh', 'corona',
                  'gria', 'lilu', 'marcus', 'eric', 'ifrah',
-                 'janet', 'connor', 'taz', 'ryder', 'ange',
+                 'connor', 'taz', 'ryder', 'ange', 'rin',
                  'izzy', 'david', 'clarity', 'angel', 'chloe',
-                 'skye', 'rin']
+                 'skye']
 
         # If the channel that the command has been sent is in the list of accepted channels
         if str(ctx.channel) in settings.channels:

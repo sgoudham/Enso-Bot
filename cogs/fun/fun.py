@@ -292,15 +292,6 @@ class Fun(commands.Cog):
             # Delete the message
             await message.delete()
 
-    @command(name="homies", aliases=["Homies"])
-    async def homies(self, ctx, *, userword):
-        """Allows people to summon the homies"""
-
-        response = [f"Ayo **FUCK** {userword}. All my homies **HATE** {userword}",
-                    f"I **HATE** {userword}. All my homies **HATE** {userword}"]
-
-        await ctx.send(random.choice(response))
-
 
 def setup(bot):
     bot.add_cog(Fun(bot))

@@ -54,6 +54,6 @@ def extensions():
                 'cogs.help.info', 'cogs.help.verification', 'cogs.help.modmail']
 
     fun_ext = ['cogs.fun.eightball', 'cogs.fun.enso', 'cogs.fun.fun',
-               'cogs.fun.owo_text', 'cogs.fun.reminder', 'cogs.fun.homies']
+               'cogs.fun.owo_text', 'cogs.fun.reminder']  # 'cogs.fun.homies'
 
     return (anime_ext, help_ext, fun_ext)

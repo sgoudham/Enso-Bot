@@ -15,4 +15,4 @@ This is a chill community with awesome talented members, keep that in mind!
 
 There are a variety of roles you are introduced to the more active you are on the server, in minimal occasions we host events or moderator applications, we strive to make our ambience better for each and every individual, so feel free to join in the fun in Ensō! 
 
-Please join our server at https://discord.gg/aZxMcxr
+Please join our server at https://discord.gg/yBd8Esz

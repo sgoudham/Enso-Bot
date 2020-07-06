@@ -2,3 +2,4 @@ owotext
 aiohttp
 discord
 mariadb
+Pillow

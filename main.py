@@ -70,7 +70,7 @@ async def on_member_join(member):
 
         # Set the enso server icon and the welcoming gif
         server_icon = guild.icon_url
-        welcome_gif = "https://cdn.discordapp.com/attachments/714671068941647933/717144047252275270/f4d7de6463d3ada02058a094fd6917ac.gif"
+        welcome_gif = "https://cdn.discordapp.com/attachments/669808733337157662/730186321913446521/NewPeople.gif"
 
         # Set up embed for the #newpeople channel
         embed = Embed(title="\n**Welcome To Ensō!**",

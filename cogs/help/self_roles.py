@@ -71,6 +71,7 @@ class SelfRoles(commands.Cog):
     @command(name="rolemenu")
     @is_owner()
     async def role_menu(self, ctx):
+        # Setting the channel to "newpeople"
         channel = ctx.guild.get_channel(722347423913213992)
 
         # Set up embed to let people know what ping-able roles can be chosen

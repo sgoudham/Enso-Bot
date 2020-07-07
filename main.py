@@ -3,10 +3,11 @@ import datetime
 
 import discord
 from decouple import config
-from discord import Embed, Colour
+from discord import Embed
 from discord.ext import commands
 
 import settings
+from settings import blank_space, enso_embedmod_colours
 
 # Getting the Bot token from Environment Variables
 API_TOKEN = config('DISCORD_TOKEN')
@@ -72,21 +73,21 @@ async def on_member_join(member):
 
         # Set up embed for the #newpeople channel
         embed = Embed(title="\n**Welcome To Ensō!**",
-                      colour=Colour(0xFF69B4),
+                      colour=enso_embedmod_colours,
                       timestamp=datetime.datetime.utcnow())
 
         embed.set_thumbnail(url=server_icon)
         embed.set_image(url=welcome_gif)
         embed.add_field(
-            name="\u200b",
+            name=blank_space,
             value=f"Hello {member.mention}! We hope you enjoy your stay in this server! ",
             inline=False)
         embed.add_field(
-            name="\u200b",
+            name=blank_space,
             value=f"Be sure to check out our <#669815048658747392> channel to read the rules and <#683490529862090814> channel to get caught up with any changes! ",
             inline=False)
         embed.add_field(
-            name="\u200b",
+            name=blank_space,
             value=f"Last but not least, feel free to go into <#669775971297132556> to introduce yourself!",
             inline=False)
 

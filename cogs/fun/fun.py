@@ -1,5 +1,4 @@
 import asyncio
-import datetime
 import random
 
 from aiohttp import request
@@ -9,6 +8,7 @@ from discord.ext.commands import BucketType, cooldown, command, has_any_role, is
 
 import settings
 from cogs.anime.interactive import error_function
+from settings import time, colour_list
 
 
 # Set up the cog
@@ -170,8 +170,8 @@ class Fun(commands.Cog):
             # Set up the embed to display a random image of digby
             embed = Embed(
                 title=f"**A cute picture of Digby!**",
-                colour=Colour(int(random.choice(settings.colour_list))),
-                timestamp=datetime.datetime.utcnow())
+                colour=Colour(int(random.choice(colour_list))),
+                timestamp=time)
             embed.set_image(url=random.choice(digby_array))
             embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
 
@@ -241,8 +241,8 @@ class Fun(commands.Cog):
                             # Set up the embed for a doggo image
                             doggo_embed = Embed(
                                 title=f"**It's a {lowercase_breed.capitalize()} Doggo!!** ",
-                                colour=Colour(random.choice(settings.colour_list)),
-                                timestamp=datetime.datetime.utcnow())
+                                colour=Colour(random.choice(colour_list)),
+                                timestamp=time)
                             doggo_embed.set_image(url=image_link)
                             doggo_embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
 
@@ -268,8 +268,8 @@ class Fun(commands.Cog):
                         # Set up the embed for a random doggo image
                         doggo_embed = Embed(
                             title=f"**Doggo!!** ",
-                            colour=Colour(random.choice(settings.colour_list)),
-                            timestamp=datetime.datetime.utcnow())
+                            colour=Colour(random.choice(colour_list)),
+                            timestamp=time)
                         doggo_embed.set_image(url=image_link)
                         doggo_embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
 

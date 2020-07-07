@@ -72,7 +72,7 @@ async def on_member_join(member):
 
         # Set up embed for the #newpeople channel
         embed = Embed(title="\n**Welcome To Ensō!**",
-                      colour=Colour(0x30e419),
+                      colour=Colour(0xFF69B4),
                       timestamp=datetime.datetime.utcnow())
 
         embed.set_thumbnail(url=server_icon)

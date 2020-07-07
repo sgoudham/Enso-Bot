@@ -6,7 +6,22 @@ from discord.ext import commands
 from discord.ext.commands import cooldown, command, BucketType
 
 import settings
-from settings import time, colour_list
+from settings import time, colour_list, enso_ensochancommands_Mention
+
+
+# Gets the member and user avatar
+def getMember(ctx):
+    # Set member as the author
+    member = ctx.message.author
+    # Get the member avatar
+    userAvatar = member.avatar_url
+
+    return member, userAvatar
+
+
+# Error handling function to make sure that the commands only work in "enso-chan-commands"
+def error_function():
+    return f"Sorry! I only work in {enso_ensochancommands_Mention}"
 
 
 # Set up the Cog
@@ -30,10 +45,8 @@ class Interactive(commands.Cog):
                     # Store content of the file in kissing_array
                     kissing_array = file.readlines()
 
-                # Set member as the author
-                member = ctx.message.author
-                # Get the member avatar
-                userAvatar = member.avatar_url
+                # Get the member and the userAvatar
+                member, userAvatar = getMember(ctx)
 
                 # Set up the embed to display a random kissing gif
                 embed = Embed(
@@ -75,10 +88,8 @@ class Interactive(commands.Cog):
                     # Store content of the file in killing_array
                     killing_array = file.readlines()
 
-                # Set member as the author
-                member = ctx.message.author
-                # Get the member avatar
-                userAvatar = member.avatar_url
+                # Get the member and the userAvatar
+                member, userAvatar = getMember(ctx)
 
                 # Set up the embed to display a random killing gif
                 embed = Embed(
@@ -120,10 +131,8 @@ class Interactive(commands.Cog):
                     # Store content of the file in cuddling_array
                     cuddling_array = file.readlines()
 
-                # Set member as the author
-                member = ctx.message.author
-                # Get the member avatar
-                userAvatar = member.avatar_url
+                # Get the member and the userAvatar
+                member, userAvatar = getMember(ctx)
 
                 # Set up the embed to display a random cuddling gif
                 embed = Embed(
@@ -165,10 +174,8 @@ class Interactive(commands.Cog):
                     # Store content of the file in cuddling_array
                     slapping_array = file.readlines()
 
-                # Set member as the author
-                member = ctx.message.author
-                # Get the member avatar
-                userAvatar = member.avatar_url
+                # Get the member and the userAvatar
+                member, userAvatar = getMember(ctx)
 
                 # Set up the embed to display a random slapping gif
                 embed = Embed(
@@ -210,10 +217,8 @@ class Interactive(commands.Cog):
                     # Store content of the file in patting_array
                     patting_array = file.readlines()
 
-                # Set member as the author
-                member = ctx.message.author
-                # Get the member avatar
-                userAvatar = member.avatar_url
+                # Get the member and the userAvatar
+                member, userAvatar = getMember(ctx)
 
                 # Set up the embed to display a random patting gif
                 embed = Embed(
@@ -254,10 +259,8 @@ class Interactive(commands.Cog):
             # If the channel that the command has been sent is in the list of accepted channels
             if str(ctx.channel) in settings.channels:
 
-                # Set member as the author
-                member = ctx.message.author
-                # Get the member avatar
-                userAvatar = member.avatar_url
+                # Get the member and the userAvatar
+                member, userAvatar = getMember(ctx)
 
                 # Set up the embed to display a random lemon gif
                 embed = Embed(
@@ -320,11 +323,6 @@ class Interactive(commands.Cog):
 
             # Send out an error message if the user waited too long
             await ctx.send("Awww they waited too long (✖╭╮✖)")
-
-
-# Error handling function to make sure that the commands only work in "enso-chan-commands"
-def error_function():
-    return "Sorry! I only work in <#721449922838134876>"
 
 
 def setup(bot):

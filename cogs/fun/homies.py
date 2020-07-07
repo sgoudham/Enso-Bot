@@ -5,8 +5,6 @@ from PIL import Image, ImageDraw, ImageFont
 from discord.ext import commands
 from discord.ext.commands import command, cooldown, BucketType
 
-import db
-
 
 def generate_meme(image_path, top_text, bottom_text='', font_path='homies/impact/impacted.ttf', font_size=9):
     get_image = Image.open(image_path)
@@ -55,10 +53,6 @@ class Fun(commands.Cog):
     @cooldown(1, 25, BucketType.guild)
     async def homies(self, ctx, *, user_word):
         """Allows people to summon the homies"""
-
-        conn = db.connection()
-        if conn:
-            print("Yes server is working!")
 
         if len(user_word) >= 20:
             await ctx.send("Please make sure the prompt is below **20** characters!")

@@ -10,19 +10,22 @@ def connection():
     # Connect to MariaDB Platform
     try:
         conn = mariadb.connect(
-            user="u67_i1Lq7r8fQ2",
+            user="root",
             password=password,
-            host="216.155.135.248",
+            host="173.208.202.20",
             port=3306,
-            database="s67_Enso"
-
+            database="enso"
         )
+        if conn:
+            print("working")
     except mariadb.Error as e:
         print(f"Error connecting to MariaDB Platform: {e}")
         sys.exit(1)
 
     return conn
 
+
+connection()
 
 """if conn:
 print("Connected to MySQL Server version ")

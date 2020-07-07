@@ -54,7 +54,10 @@ colour_list = [c for c in colors.values()]
 blank_space = "\u200b"
 enso_embedmod_colours = Colour(0xFF69B4)
 time = datetime.datetime.utcnow()
+
 enso_ensochancommands_ID = 721449922838134876
+enso_ensochancommands_Mention = "<#721449922838134876>"
+
 enso_guid_ID = 663651584399507476
 enso_newpeople_ID = 669771571337887765
 
@@ -67,6 +70,6 @@ def extensions():
                 'cogs.help.info', 'cogs.help.verification', 'cogs.help.modmail']
 
     fun_ext = ['cogs.fun.eightball', 'cogs.fun.enso', 'cogs.fun.fun',
-               'cogs.fun.owo_text', 'cogs.fun.reminder']  # 'cogs.fun.homies']
+               'cogs.fun.owo_text', 'cogs.fun.reminder', 'cogs.fun.homies']
 
     return (anime_ext, help_ext, fun_ext)

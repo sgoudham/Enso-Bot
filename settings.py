@@ -1,3 +1,8 @@
+import datetime
+
+from discord import Colour
+
+# Defining a list of colours
 colors = {
     'DEFAULT': 0x000000,
     'WHITE': 0xFFFFFF,
@@ -45,6 +50,14 @@ channels = ["enso-chan-commands", "picto-chat", 663651584399507481]
 # Grabbing the list of colours
 colour_list = [c for c in colors.values()]
 
+# Define repeated variables
+blank_space = "\u200b"
+enso_embedmod_colours = Colour(0xFF69B4)
+time = datetime.datetime.utcnow()
+enso_ensochancommands_ID = 721449922838134876
+enso_guid_ID = 663651584399507476
+enso_newpeople_ID = 669771571337887765
+
 
 def extensions():
     # Instantiates a list for all the cogs
@@ -54,6 +67,6 @@ def extensions():
                 'cogs.help.info', 'cogs.help.verification', 'cogs.help.modmail']
 
     fun_ext = ['cogs.fun.eightball', 'cogs.fun.enso', 'cogs.fun.fun',
-               'cogs.fun.owo_text', 'cogs.fun.reminder']  # 'cogs.fun.homies'
+               'cogs.fun.owo_text', 'cogs.fun.reminder', 'cogs.fun.homies']
 
     return (anime_ext, help_ext, fun_ext)

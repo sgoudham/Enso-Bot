@@ -1,5 +1,4 @@
 import asyncio
-import datetime
 import random
 import string
 
@@ -9,20 +8,29 @@ from discord.ext.commands import cooldown, BucketType, command
 
 import settings
 from cogs.anime.interactive import error_function
+from settings import time, colour_list
+
+
+# Gets the member and user avatar
+def getMember(ctx):
+    # Set member as the author
+    member = ctx.message.author
+    # Get the member avatar
+    userAvatar = member.avatar_url
+
+    return member, userAvatar
 
 
 # Function to display all the images requested of the people
 def displayServerImage(array, ctx, name):
-    # Set member as the author
-    member = ctx.message.author
-    # Get the member's avatar
-    userAvatar = member.avatar_url
+    # Get the member and the userAvatar
+    member, userAvatar = getMember(ctx)
 
     # Set embed up for the person requested by the user
     embed = Embed(
         title=f"**Look At What A Cutie {name.capitalize()} is!! <a:huh:676195228872474643> <a:huh:676195228872474643> **",
-        colour=Colour(random.choice(settings.colour_list)),
-        timestamp=datetime.datetime.utcnow())
+        colour=Colour(random.choice(colour_list)),
+        timestamp=time)
     embed.set_image(url=random.choice(array))
     embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
 
@@ -92,16 +100,14 @@ class Enso(commands.Cog):
                 with open(f'images/ServerMembers/{random.choice(array)}.txt') as file:
                     array = file.readlines()
 
-                # Set member as the author
-                member = ctx.message.author
-                # Get the member's avatar
-                userAvatar = member.avatar_url
+                # Get the member and the userAvatar
+                member, userAvatar = getMember(ctx)
 
                 # Embed the image in a message and send it to the channel
                 embed = Embed(
                     title=f"Oh Look! A Cute Person <a:huh:676195228872474643> <a:huh:676195228872474643> ",
-                    colour=Colour(random.choice(settings.colour_list)),
-                    timestamp=datetime.datetime.utcnow())
+                    colour=Colour(random.choice(colour_list)),
+                    timestamp=time)
                 embed.set_image(url=random.choice(array))
                 embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
 

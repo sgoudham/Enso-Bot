@@ -65,17 +65,20 @@ class Verification(commands.Cog):
                       colour=Colour(0xFF69B4),
                       timestamp=datetime.datetime.utcnow())
 
-        embed.set_thumbnail(url="https://media.discordapp.net/attachments/683490529862090814/715010931620446269"
-                                "/image1.jpg?width=658&height=658")
+        embed.set_thumbnail(url=ctx.guild.icon_url)
         embed.set_author(name=ctx.author, icon_url=ctx.author.avatar_url)
         embed.add_field(
             name="Remember to read the rules!",
             value="React with ✅ to gain access to the rest of the server!",
             inline=False)
 
+        # Edit the Embed And Update it
+        verif = await ctx.fetch_message(728424149692842115)
+        await verif.edit(embed=embed)
+
         # Send embed to the channel it was called in and automatically add the reaction ✅
-        verif = await ctx.send(embed=embed)
-        await verif.add_reaction('✅')
+        # verif = await ctx.send(embed=embed)
+        # await verif.add_reaction('✅')
 
 
 def setup(bot):

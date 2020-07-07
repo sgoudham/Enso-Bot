@@ -1,9 +1,23 @@
 import asyncio
-import datetime
 
-from discord import Embed, Colour
+from discord import Embed
 from discord.ext import commands
 from discord.ext.commands import command, cooldown, BucketType
+
+from settings import enso_embedmod_colours, time, blank_space
+
+
+# Method to retrieve information about the user and the guild
+def get_user_info(self, ctx):
+    # Allowing the bot to dm the user
+    author = ctx.author
+
+    # Define guild icon, enso bot icon and enso bot name
+    guild_icon = ctx.guild.icon_url
+    enso_icon = self.bot.user.avatar_url
+    enso_name = self.bot.user.display_name
+
+    return author, guild_icon, enso_icon, enso_name
 
 
 # Set up the Cog
@@ -15,109 +29,105 @@ class CustomHelp(commands.Cog):
     @command(name="rules", aliases=["Rules"])
     @cooldown(1, 5, BucketType.user)
     async def rules(self, ctx):
-        # Allowing the bot to dm the user
-        author = ctx.author
         # Define Izzy's roles ID
         izzyID = '<@397944038440828928>'
 
-        # Define guild icon, enso bot icon and enso bot name
-        guild_icon = ctx.guild.icon_url
-        enso_icon = self.bot.user.avatar_url
-        enso_name = self.bot.user.display_name
+        # Get information about the user and the guild
+        author, guild_icon, enso_icon, enso_name = get_user_info(self, ctx)
 
         # Set up embed to list all the rules within the server
         embed = Embed(title="```(っ◔◡◔)っ Ensō Rules```",
-                      colour=Colour(0xFF69B4),
+                      colour=enso_embedmod_colours,
                       description="``` ヽ(͡◕ ͜ʖ ͡◕)ﾉ Please respect the following rules that are going to be listed below ヽ(͡◕ ͜ʖ ͡◕)ﾉ ```",
-                      timestamp=datetime.datetime.utcnow())
+                      timestamp=time)
 
         embed.set_thumbnail(url=guild_icon)
         embed.set_author(name=enso_name,
                          icon_url=enso_icon)
 
         embed.add_field(
-            name="\u200b",
+            name=blank_space,
             value="**➳ Don't be overly toxic/purposely problematic**" +
                   "\n This one is pretty self explanatory, just treat others the way you want to be treated and you'll get along with everyone :)",
             inline=False)
         embed.add_field(
-            name="\u200b",
+            name=blank_space,
             value="**➳ Respect all admins and staff**" +
                   "\n They are enforcing these rules to help make and keep this server a fantastic place to hang out.",
             inline=False)
         embed.add_field(
-            name="\u200b",
+            name=blank_space,
             value="**➳ Keep content organized into their respective channels**" +
                   "\n For example. When connected to a voice channel, all messages relating to the discussion in voice-chat should be sent in #vc-chat",
             inline=False)
         embed.add_field(
-            name="\u200b",
+            name=blank_space,
             value="**➳ No advertising other servers**" +
                   "\nIt's disrespectful to do that and won't be tolerated in this server",
             inline=False)
         embed.add_field(
-            name="\u200b",
+            name=blank_space,
             value="**➳ No pornographic/adult/other NSFW material**" +
                   "\n This is a community server and not meant to share this kind of material. Try to stay around PG 13 as most of our users are between 13 - 16",
             inline=False)
         embed.add_field(
-            name="\u200b",
+            name=blank_space,
             value="**➳ Don't take insults too far**" +
                   "\n Poking fun at others is okay, just don't take it too far. Any disputes can be brought up to a staff member and they will handle it." +
                   "\nIf you end up causing a problem or taking things into your in hands, you will be punished",
             inline=False)
         embed.add_field(
-            name="\u200b",
+            name=blank_space,
             value="**➳ Explicit Language**" +
                   "\n Swearing is perfectly fine as long as it's not in excess, with some exceptions of course." +
                   "These exceptions being racial, sexual, and ethnic slurs",
             inline=False)
         embed.add_field(
-            name="\u200b",
+            name=blank_space,
             value="**➳ Discord ToS**" +
                   "\n As well as following the rules we have set forth, please make sure to follow Discord's ToS https://discordapp.com/terms ",
             inline=False)
         embed.add_field(
-            name="\u200b \u200b ",
+            name=blank_space,
             value="```( ͡°ω ͡°) Disciplinary Actions ( ͡°ω ͡°)```",
             inline=False)
         embed.add_field(
-            name="\u200b",
+            name=blank_space,
             value="**➳ First Offense**" +
                   "\n Warning",
             inline=True)
         embed.add_field(
-            name="\u200b",
+            name=blank_space,
             value="**➳ Second Offense**" +
                   "\n1 hour mute",
             inline=True)
         embed.add_field(
-            name="\u200b",
+            name=blank_space,
             value="**➳ Third Offense**" +
                   "\n12 hour mute",
             inline=True)
         embed.add_field(
-            name="\u200b",
+            name=blank_space,
             value="**➳ Fourth Offense**" +
                   "\n24 hour mute",
             inline=True)
         embed.add_field(
-            name="\u200b",
+            name=blank_space,
             value="**➳Fifth Offense**" +
                   "\n Kicked from the server",
             inline=True)
         embed.add_field(
-            name="\u200b",
+            name=blank_space,
             value="**➳ Sixth Offense**" +
                   "\n Banned from the server",
             inline=True)
         embed.add_field(
-            name="\u200b",
+            name=blank_space,
             value="**➳ There are, of course, exceptions to these rules based on the severity of the offense. "
                   "Minor offenses will play out as described but major offenses will be dealt with at the discretion of the staff member involved.**",
             inline=False)
         embed.add_field(
-            name="\u200b",
+            name=blank_space,
             value=f"**➳ Any disputes about a staff members choices or actions can be brought to myself, {ctx.message.author.mention} " +
                   f", or my co-owner, {izzyID}**",
             inline=False)
@@ -137,22 +147,17 @@ class CustomHelp(commands.Cog):
     @command(name="roles", aliases=["Roles"])
     @cooldown(1, 5, BucketType.user)
     async def roles(self, ctx):
-        # Allowing the bot to dm the user
-        author = ctx.author
-
-        # Define guild icon, enso bot icon and enso bot name
-        guild_icon = ctx.guild.icon_url
-        enso_icon = self.bot.user.avatar_url
-        enso_name = self.bot.user.display_name
-
         # Get the url of the leveled roles image
         roles_image = "https://media.discordapp.net/attachments/669812887564320769/717149671771996180/unknown.png"
 
         # Setting up embedded message about the leveled roles system within the server
         embed = Embed(title="```So you wanna know how the leveled roles system works huh?```",
-                      colour=Colour(0xFF69B4),
+                      colour=enso_embedmod_colours,
                       description="------------------------------------------------",
-                      timestamp=datetime.datetime.utcnow())
+                      timestamp=time)
+
+        # Get information about the user and the guild
+        author, guild_icon, enso_icon, enso_name = get_user_info(self, ctx)
 
         embed.set_image(url=roles_image)
         embed.set_thumbnail(url=guild_icon)

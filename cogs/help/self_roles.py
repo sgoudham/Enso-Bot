@@ -71,16 +71,14 @@ class SelfRoles(commands.Cog):
     @command(name="rolemenu")
     @is_owner()
     async def role_menu(self, ctx):
-        # Get the channel id of #self-roles
-        channel = self.bot.get_channel(722347423913213992)
+        channel = ctx.guild.get_channel(722347423913213992)
 
         # Set up embed to let people know what ping-able roles can be chosen
         embed = Embed(title="**Role Menu: Ping-Able Roles**",
                       colour=Colour.orange(),
                       timestamp=datetime.datetime.utcnow())
 
-        embed.set_thumbnail(url="https://media.discordapp.net/attachments/683490529862090814/715010931620446269"
-                                "/image1.jpg?width=658&height=658")
+        embed.set_thumbnail(url=ctx.guild.icon_url)
         embed.set_author(name=ctx.author, icon_url=ctx.author.avatar_url)
         embed.set_footer(text=f"{ctx.message.author}", icon_url=ctx.author.avatar_url)
         embed.add_field(
@@ -104,8 +102,12 @@ class SelfRoles(commands.Cog):
             value="<:GameNights:722502073769525268> : `Game Nights`",
             inline=False)
 
-        # Send embed to #self-roles
-        await channel.send(embed=embed)
+        # Edit the Embed And Update it
+        message = await ctx.fetch_message(722514840559812649)
+        await message.edit(embed=embed)
+
+        # Send the embed to the channel "newpeople"
+        # await channel.send(embed=embed)
 
 
 def setup(bot):

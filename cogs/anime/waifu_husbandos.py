@@ -18,6 +18,16 @@ anime = {"yumeko": "Jabami Yumeko",
          }
 
 
+# Gets the member and user avatar
+def getMember(msg):
+    # Set member as the author
+    member = msg.author
+    # Get the member avatar
+    userAvatar = member.avatar_url
+
+    return member, userAvatar
+
+
 # Function to turn the user inputted name into the full name
 def Abbrev(anime_msg):
     # Get the lowercase
@@ -41,10 +51,8 @@ def randomWaifu(msg, waifu):
     with open(f'images/AnimeImages/Waifus/{random.choice(waifu)}.txt') as file:
         array = file.readlines()
 
-    # Set member as the author
-    member = msg.author
-    # Get the member's avatar
-    userAvatar = member.avatar_url
+    # Get the member and the userAvatar
+    member, userAvatar = getMember(msg)
 
     # Set up the embed for a random waifu image
     waifu_embed = Embed(
@@ -63,10 +71,8 @@ def randomHusbando(msg, husbando):
     with open(f'images/AnimeImages/Husbandos/{random.choice(husbando)}.txt') as file:
         array = file.readlines()
 
-    # Set member as the author
-    member = msg.author
-    # Get the member's avatar
-    userAvatar = member.avatar_url
+    # Get the member and the userAvatar
+    member, userAvatar = getMember(msg)
 
     # Set up the embed for a random husbando image
     husbando_embed = Embed(
@@ -81,10 +87,8 @@ def randomHusbando(msg, husbando):
 
 # Function to allow modular code and sets up the embed for the anime images
 def displayAnimeImage(array, msg, name):
-    # Set member as the author
-    member = msg.author
-    # Get the member's avatar
-    userAvatar = member.avatar_url
+    # Get the member and the userAvatar
+    member, userAvatar = getMember(msg)
 
     # Set up embed for an image relating to a husbando or waifu
     anime_embed = Embed(

@@ -1,5 +1,4 @@
 import asyncio
-import datetime
 
 import discord
 from decouple import config
@@ -7,7 +6,7 @@ from discord import Embed
 from discord.ext import commands
 
 import settings
-from settings import blank_space, enso_embedmod_colours
+from settings import blank_space, enso_embedmod_colours, time
 
 # Getting the Bot token from Environment Variables
 API_TOKEN = config('DISCORD_TOKEN')
@@ -74,7 +73,7 @@ async def on_member_join(member):
         # Set up embed for the #newpeople channel
         embed = Embed(title="\n**Welcome To Ensō!**",
                       colour=enso_embedmod_colours,
-                      timestamp=datetime.datetime.utcnow())
+                      timestamp=time)
 
         embed.set_thumbnail(url=server_icon)
         embed.set_image(url=welcome_gif)

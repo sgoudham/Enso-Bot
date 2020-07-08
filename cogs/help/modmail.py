@@ -1,28 +1,30 @@
 import asyncio
-import datetime
 import random
 
-from discord import DMChannel, Colour, Embed
+from discord import DMChannel, Embed
 from discord.ext import commands
+
+from settings import blank_space, enso_embedmod_colours, time, enso_guild_ID
 
 
 # Method to send the prompt/embed to start sending modmail to the user
 def startModMail(author):
     # Set up embed to let the user how to start sending modmail
     startModMailEmbed = Embed(title="**Welcome to Modmail!**",
-                              colour=Colour(0xFF69B4),
-                              timestamp=datetime.datetime.utcnow())
+                              colour=enso_embedmod_colours,
+                              timestamp=time)
 
     startModMailEmbed.set_thumbnail(url=author.avatar_url)
     startModMailEmbed.set_footer(text=f"Sent by {author}")
 
-    fields = [("\u200b", "**React to this message if you want to send a message to the Staff Team!**", False),
-              ("\u200b", "**Use :white_check_mark: for** `Yes`", True),
-              ("\u200b", "**Use :x: for** `No`", True),
-              ("\u200b", "\u200b", True),
-              ("\u200b",
-               "We encourage all suggestions/thoughts and opinions on the server! As long as it is **valid** criticism. "
-               "Purely negative feedback will not be considered.", True)]
+    fields = [
+        (blank_space, "**React to this message if you want to send a message to the Staff Team!**", False),
+        (blank_space, "**Use :white_check_mark: for** `Yes`", True),
+        (blank_space, "**Use :x: for** `No`", True),
+        (blank_space, blank_space, True),
+        (blank_space,
+         "We encourage all suggestions/thoughts and opinions on the server! As long as it is **valid** criticism. "
+         "Purely negative feedback will not be considered.", True)]
 
     for name, value, inline in fields:
         startModMailEmbed.add_field(name=name, value=value, inline=inline)
@@ -34,18 +36,18 @@ def startModMail(author):
 def AnonOrNot(author):
     # Set up embed to let the user how to start sending modmail
     AnonModMailEmbed = Embed(title="**Want to send it Anonymously?**",
-                             colour=Colour(0xFF69B4),
-                             timestamp=datetime.datetime.utcnow())
+                             colour=enso_embedmod_colours,
+                             timestamp=time)
 
     AnonModMailEmbed.set_thumbnail(url=author.avatar_url)
     AnonModMailEmbed.set_footer(text=f"Sent by {author}")
 
-    fields = [("\u200b", "**We understand that for some things, you may want to remain Anonymous."
-                         "\nFeel free to use the reactions below to choose!**", False),
-              ("\u200b", "**Use :white_check_mark: for** `Yes`", True),
-              ("\u200b", "**Use :x: for** `No`", True),
-              ("\u200b", "\u200b", True),
-              ("\u200b",
+    fields = [(blank_space, "**We understand that for some things, you may want to remain Anonymous."
+                            "\nFeel free to use the reactions below to choose!**", False),
+              (blank_space, "**Use :white_check_mark: for** `Yes`", True),
+              (blank_space, "**Use :x: for** `No`", True),
+              (blank_space, blank_space, True),
+              (blank_space,
                "This will make sure that Staff do not know who is sending the mail."
                "\nAgain, purely negative feedback will not be considered.", True)]
 
@@ -62,14 +64,15 @@ def Abort(author):
 
     # Set up embed to let the user know that they have aborted the modmail
     AbortEmbed = Embed(title="**Aborting ModMail!**",
-                       colour=Colour(0xFF69B4),
-                       timestamp=datetime.datetime.utcnow())
+                       colour=enso_embedmod_colours,
+                       timestamp=time)
 
     AbortEmbed.set_thumbnail(url=author.avatar_url)
     AbortEmbed.set_footer(text=f"Sent by {author}")
 
-    fields = [("\u200b", "**If you change your mind, you can do `~mm` or `~modmail` at anytime!**", False),
-              ("\u200b", f"If you want to speak to me personally, you can DM {hammyID} anytime!", True)]
+    fields = [
+        (blank_space, "**If you change your mind, you can do `~mm` or `~modmail` at anytime!**", False),
+        (blank_space, f"If you want to speak to me personally, you can DM {hammyID} anytime!", True)]
 
     for name, value, inline in fields:
         AbortEmbed.add_field(name=name, value=value, inline=inline)
@@ -81,13 +84,14 @@ def Abort(author):
 def SendInstructions(author):
     # Set up embed to let the user know that they have aborted the modmail
     SendModMailEmbed = Embed(title="**Please enter a message for it to be sent to the staff!**",
-                             colour=Colour(0xFF69B4),
-                             timestamp=datetime.datetime.utcnow())
+                             colour=enso_embedmod_colours,
+                             timestamp=time)
 
     SendModMailEmbed.set_thumbnail(url=author.avatar_url)
     SendModMailEmbed.set_footer(text=f"Sent by {author}")
 
-    fields = [("\u200b", "**Make sure that the message is above 50 characters! Include as much detail as possible :P**",
+    fields = [(blank_space,
+               "**Make sure that the message is above 50 characters! Include as much detail as possible :P**",
                False)]
 
     for name, value, inline in fields:
@@ -107,8 +111,8 @@ def SendMsgToModMail(self, msg, author):
                    "https://cdn.discordapp.com/embed/avatars/4.png"]
 
         embed = Embed(title="Modmail",
-                      colour=Colour(0xFF69B4),
-                      timestamp=datetime.datetime.utcnow())
+                      colour=enso_embedmod_colours,
+                      timestamp=time)
 
         embed.set_thumbnail(url=random.choice(avatars))
         embed.set_footer(text=f"Requested by Anon Member")
@@ -123,8 +127,8 @@ def SendMsgToModMail(self, msg, author):
 
     else:
         embed = Embed(title="Modmail",
-                      colour=Colour(0xFF69B4),
-                      timestamp=datetime.datetime.utcnow())
+                      colour=enso_embedmod_colours,
+                      timestamp=time)
 
         embed.set_thumbnail(url=author.avatar_url)
         embed.set_footer(text=f"Requested by {author}")
@@ -152,7 +156,7 @@ class Modmail(commands.Cog):
         # Get the mod-mail channel
         channel = self.bot.get_channel(728083016290926623)
         # Get the guild Enso
-        guild = self.bot.get_guild(663651584399507476)
+        guild = self.bot.get_guild(enso_guild_ID)
         # Get the member
         member = guild.get_member(ctx.author.id)
 
@@ -167,6 +171,7 @@ class Modmail(commands.Cog):
 
             # Surround with try/except to catch any exceptions that may occur
             try:
+
                 # Checking if the user reacted with ✅ with response to sending staff a message
                 def emoji_check(reaction, user):
                     return user == ctx.author and str(reaction.emoji) in ['✅', '❌']
@@ -178,7 +183,9 @@ class Modmail(commands.Cog):
                 except Exception as ex:
                     print(ex)
                     return
+
                 else:
+
                     if str(reaction.emoji) == "✅":
 
                         # Delete the old embed
@@ -192,11 +199,13 @@ class Modmail(commands.Cog):
 
                         # Surround with try/except to catch any exceptions that may occur
                         try:
+
                             # Wait for the user to add a reaction
                             reaction, user = await self.bot.wait_for('reaction_add', timeout=120.0, check=emoji_check)
                         except Exception as ex:
                             print(ex)
                             return
+
                         else:
                             if str(reaction.emoji) == "✅":
                                 self.anon = True

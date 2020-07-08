@@ -1,6 +1,9 @@
 owotext
-aiohttp
-discord
+discord.py
 mariadb
 Pillow
 python-decouple
+certifi
+aiohttp
+config
+git+https://github.com/Rapptz/discord-ext-menus

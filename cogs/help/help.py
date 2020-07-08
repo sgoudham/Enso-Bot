@@ -1,16 +1,16 @@
-import datetime
-
-from discord import Embed, Colour
+from discord import Embed
 from discord.ext import commands, menus
 from discord.ext.commands import command
+
+from settings import blank_space, enso_embedmod_colours, time
 
 
 # Function to allow the first page of the help commands (Fun Commands)
 def fun_function(self, guild_icon, enso_name, enso_icon):
     # Setting up the Embed for the Fun Commands
     fun_commands = Embed(title="```(っ◔◡◔)っ Fun Commands (っ◔◡◔)っ```",
-                         colour=Colour(0xFF69B4),
-                         timestamp=datetime.datetime.utcnow())
+                         colour=enso_embedmod_colours,
+                         timestamp=time)
 
     # Setting thumbnail and author
     fun_commands.set_thumbnail(url=guild_icon)
@@ -19,26 +19,26 @@ def fun_function(self, guild_icon, enso_name, enso_icon):
 
     # Setting up the fields in a separate array
     fun_fields = [
-        ("\u200b", f"`{self.ctx.prefix}attack [person]`" +
+        (blank_space, f"`{self.ctx.prefix}attack [person]`" +
          "\n Allows the user to throw an insult to a person in the server" +
          "\n *(Perms: Co-Owner)*", True),
-        ("\u200b", f"`{self.ctx.prefix}comp [person]`" +
+        (blank_space, f"`{self.ctx.prefix}comp [person]`" +
          "\n Allows the user to compliment a person in the server" +
          "\n *(Perms: Everyone)*", True),
-        ("\u200b", f"`{self.ctx.prefix}8ball [text]`" +
+        (blank_space, f"`{self.ctx.prefix}8ball [text]`" +
          "\n Allows the user to ask a question and 8ball will give a custom response" +
          "\n *(Perms: everyone)*", True),
-        ("\u200b", f"`{self.ctx.prefix}flip`" +
+        (blank_space, f"`{self.ctx.prefix}flip`" +
          "\n Allows the user to 'throw a coin' and get a response with a 50/50 chance" +
          "\n *(Perms: Everyone)*", True),
-        ("\u200b", f"`{self.ctx.prefix}doggo`" +
+        (blank_space, f"`{self.ctx.prefix}doggo`" +
          "\n Allows the user to look at an image of a doggo (Over 20k Images Available" +
          "\n *(Perms: Everyone)*", True)]
 
     # Setting up the Embed for the Fun Commands
     fun_commands_2 = Embed(title="```(っ◔◡◔)っ Fun Commands 2 (っ◔◡◔)っ```",
-                           colour=Colour(0xFF69B4),
-                           timestamp=datetime.datetime.utcnow())
+                           colour=enso_embedmod_colours,
+                           timestamp=time)
 
     # Setting thumbnail and author
     fun_commands_2.set_thumbnail(url=guild_icon)
@@ -47,22 +47,22 @@ def fun_function(self, guild_icon, enso_name, enso_icon):
 
     # Setting up the fields in a separate array
     fun_fields_2 = [
-        ("\u200b", f"`{self.ctx.prefix}lemon [person]`" +
+        (blank_space, f"`{self.ctx.prefix}lemon [person]`" +
          "\n Allows the user to give a lemon to a person in the server" +
          "\n *(Perms: Everyone)*", True),
-        ("\u200b", f"`{self.ctx.prefix}slap [person]`" +
+        (blank_space, f"`{self.ctx.prefix}slap [person]`" +
          "\n Allows the user to slap a person in the server" +
          "\n *(Perms: Everyone)*", True),
-        ("\u200b", f"`{self.ctx.prefix}kill [person]`" +
+        (blank_space, f"`{self.ctx.prefix}kill [person]`" +
          "\n Allows the user to kill a person in the server" +
          "\n *(Perms: Everyone)*", True),
-        ("\u200b", f"`{self.ctx.prefix}pat [person]`" +
+        (blank_space, f"`{self.ctx.prefix}pat [person]`" +
          "\n Allows the user to pat a person in the server" +
          "\n *(Perms: Everyone)*", True),
-        ("\u200b", f"`{self.ctx.prefix}kiss [person]`" +
+        (blank_space, f"`{self.ctx.prefix}kiss [person]`" +
          "\n Allows the user to kiss a person in the server" +
          "\n *(Perms: Everyone)*", True),
-        ("\u200b", f"`{self.ctx.prefix}cuddle [person]`" +
+        (blank_space, f"`{self.ctx.prefix}cuddle [person]`" +
          "\n Allows the user to cuddle a person in the server" +
          "\n *(Perms: Everyone)*", True)]
 
@@ -81,8 +81,8 @@ def fun_function(self, guild_icon, enso_name, enso_icon):
 def waifu_husbando_function(self, guild_icon, enso_name, enso_icon):
     # Setting up the Embed for the Waifu/Husbandos
     waifu_husbando_commands = Embed(title="```(っ◔◡◔)っ Waifus/Husbando Commands (っ◔◡◔)っ```",
-                                    colour=Colour(0xFF69B4),
-                                    timestamp=datetime.datetime.utcnow())
+                                    colour=enso_embedmod_colours,
+                                    timestamp=time)
 
     # Setting thumbnail and author
     waifu_husbando_commands.set_thumbnail(url=guild_icon)
@@ -91,25 +91,25 @@ def waifu_husbando_function(self, guild_icon, enso_name, enso_icon):
 
     # Setting up the fields in a separate array
     waifu_husbando_fields = [
-        ("\u200b", f"`{self.ctx.prefix}w [waifu]`" +
+        (blank_space, f"`{self.ctx.prefix}w [waifu]`" +
          "\n Allows for a image of the Waifu specified to be shown" +
          f"\n (Using {self.ctx.prefix}w by itself shall randomly generated image of a Waifu to be shown)" +
          "\n *(Perms: Everyone)*", True),
-        ("\u200b", f"`{self.ctx.prefix}h [husbando]`" +
+        (blank_space, f"`{self.ctx.prefix}h [husbando]`" +
          "\n Allows for a image of a Husbando specified to be shown" +
          f"\n (Using {self.ctx.prefix}h by itself shall randomly generated image of a Husbando to be shown)" +
          "\n *(Perms: Everyone)*", True),
-        ("\u200b", f"`{self.ctx.prefix}w list`" +
+        (blank_space, f"`{self.ctx.prefix}w list`" +
          "\n Returns a list of Waifu's that are in the bot " +
          "\n *(Perms: Everyone)*", True),
-        ("\u200b", f"`{self.ctx.prefix}h list`" +
+        (blank_space, f"`{self.ctx.prefix}h list`" +
          "\n Returns a list of Husbando's that are in the bot " +
          "\n *(Perms: Everyone)*", True),
-        ("\u200b", f"`{self.ctx.prefix}enso [person]`" +
+        (blank_space, f"`{self.ctx.prefix}enso [person]`" +
          "\n Allows for a randomly generated image of the member specified" +
          f"\n (Using {self.ctx.prefix}enso by itself shall generate a random image of a person within all the server)" +
          "\n *(Perms: Everyone)*", True),
-        ("\u200b", f"`{self.ctx.prefix}enso list`" +
+        (blank_space, f"`{self.ctx.prefix}enso list`" +
          "\n Returns a list of the people's images currently in the bot" +
          "\n *(Perms: Everyone)*", True)]
 
@@ -124,8 +124,8 @@ def waifu_husbando_function(self, guild_icon, enso_name, enso_icon):
 def misc_function(self, guild_icon, enso_name, enso_icon):
     # Setting up the Embed for the Miscellaneous commands
     misc_commands = Embed(title="```(っ◔◡◔)っ Misc Commands (っ◔◡◔)っ```",
-                          colour=Colour(0xFF69B4),
-                          timestamp=datetime.datetime.utcnow())
+                          colour=enso_embedmod_colours,
+                          timestamp=time)
 
     # Setting thumbnail and author
     misc_commands.set_thumbnail(url=guild_icon)
@@ -134,31 +134,31 @@ def misc_function(self, guild_icon, enso_name, enso_icon):
 
     # Setting up the fields in a separate array
     misc_fields = [
-        ("\u200b", f"`{self.ctx.prefix}ping`" +
+        (blank_space, f"`{self.ctx.prefix}ping`" +
          "\n Returns Pong! Along With The Latency in ms" +
          "\n *(Perms: Co-Owner)*", True),
-        ("\u200b", f"`{self.ctx.prefix}rolemenu`" +
+        (blank_space, f"`{self.ctx.prefix}rolemenu`" +
          "\n Allows for the users to get self ping-able roles" +
          "\n *(Perms: Co-Owner)*", True),
-        ("\u200b", f"`{self.ctx.prefix}dm [person]`" +
+        (blank_space, f"`{self.ctx.prefix}dm [person]`" +
          "\n Allows Hammy to dm anyone in the server through Enso~Chan!" +
          "\n *(Perms: Co-Owner)*", True),
-        ("\u200b", f"`{self.ctx.prefix}userinfo`" +
+        (blank_space, f"`{self.ctx.prefix}userinfo`" +
          "\n Returns information about the user (Name, Roles, Joined Date, Created Date, etc)" +
          "\n *(Perms: Everyone)*", True),
-        ("\u200b", f"`{self.ctx.prefix}serverinfo`" +
+        (blank_space, f"`{self.ctx.prefix}serverinfo`" +
          "\n Returns information about the server (Owner, Members, Region, Bots etc etc)" +
          "\n *(Perms: Everyone)*", True),
-        ("\u200b", f"`{self.ctx.prefix}rules`" +
+        (blank_space, f"`{self.ctx.prefix}rules`" +
          "\n Returns the entire ruleset for the server" +
          "\n *(Perms: Everyone)*", True),
-        ("\u200b", f"`{self.ctx.prefix}roles`" +
+        (blank_space, f"`{self.ctx.prefix}roles`" +
          "\n Shows you how the leveling and xp system works, as well as displaying the order of leveled roles" +
          "\n *(Perms: Everyone)*", True),
-        ("\u200b", f"`{self.ctx.prefix}remindme [time] [text]`" +
+        (blank_space, f"`{self.ctx.prefix}remindme [time] [text]`" +
          "\n Allows the user to get Enso~Chan to remind them in dms of anything that they want" +
          "\n *(Perms: Everyone)*", True),
-        ("\u200b", f"`{self.ctx.prefix}help`" +
+        (blank_space, f"`{self.ctx.prefix}help`" +
          "\n Allows you to see every command in the bot so far" +
          "\n *(Perms: Everyone)*", True)]
 
@@ -175,15 +175,15 @@ def stop_embed(self):
     enso_name = self.bot.user.display_name
 
     # Set up the Embed to display when the user reacts with the stop reaction
-    misc_commands = Embed(title="**Help Commands Embed Closed!**",
-                          colour=Colour(0xFF69B4),
-                          timestamp=datetime.datetime.utcnow())
+    stop = Embed(title="**Help Commands Embed Closed!**",
+                 colour=enso_embedmod_colours,
+                 timestamp=time)
 
     # Set the name and the icon for Enso~Chan
-    misc_commands.set_author(name=enso_name,
-                             icon_url=enso_icon)
+    stop.set_author(name=enso_name,
+                    icon_url=enso_icon)
 
-    return misc_commands
+    return stop
 
 
 def embeds(self):

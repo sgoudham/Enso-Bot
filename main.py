@@ -6,7 +6,7 @@ from discord import Embed
 from discord.ext import commands
 
 import settings
-from settings import blank_space, enso_embedmod_colours, time
+from settings import blank_space, enso_embedmod_colours, time, enso_guild_ID
 
 # Getting the Bot token from Environment Variables
 API_TOKEN = config('DISCORD_TOKEN')
@@ -62,7 +62,7 @@ async def on_member_join(member):
     guild = member.guild
 
     # Make sure the guild is Enso
-    if guild.id != 663651584399507476:
+    if guild.id != enso_guild_ID:
         return
     else:
         # Set the channel id to "newpeople"

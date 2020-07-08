@@ -60,6 +60,7 @@ enso_ensochancommands_Mention = "<#721449922838134876>"
 
 enso_guild_ID = 663651584399507476
 enso_newpeople_ID = 669771571337887765
+enso_modmail_ID = 728083016290926623
 
 
 def extensions():

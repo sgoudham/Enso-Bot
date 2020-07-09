@@ -5,4 +5,5 @@ python-decouple
 certifi
 aiohttp
 config
+mariadb
 git+https://github.com/Rapptz/discord-ext-menus

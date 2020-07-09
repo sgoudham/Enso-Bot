@@ -3,7 +3,7 @@ import asyncio
 import discord
 import mariadb
 from decouple import config
-from discord import Embed
+from discord import Embed, DMChannel
 from discord.ext import commands
 
 import db
@@ -33,49 +33,53 @@ async def on_message(message):
     if message.author.bot:
         return
 
-    # Set up the connection to the database
-    conn = db.connection()
+    if not isinstance(message.channel, DMChannel):
+        return
+    else:
 
-    # With the connection
-    with conn:
+        # Set up the connection to the database
+        conn = db.connection()
 
-        # Make sure that mariaDB errors are handled properly
-        try:
-            msg_name = message.author.name
-            msg_discrim = message.author.discriminator
-            time = message.created_at
+        # With the connection
+        with conn:
 
-            # Get:
-            guild_id = message.guild.id  # Guild of the message
-            msg_time = time.strftime('%Y-%m-%d %H:%M:%S')  # Time of the Message
-            msg_author = f"{msg_name}#{msg_discrim}"  # DiscordID
-            msg_content = f"{message.content}"  # Content of the message
+            # Make sure that mariaDB errors are handled properly
+            try:
+                msg_name = message.author.name
+                msg_discrim = message.author.discriminator
+                time = message.created_at
 
-            # Store the variables
-            val = guild_id, msg_time, msg_author, msg_content
+                # Get:
+                guild_id = message.guild.id  # Guild of the message
+                msg_time = time.strftime('%Y-%m-%d %H:%M:%S')  # Time of the Message
+                msg_author = f"{msg_name}#{msg_discrim}"  # DiscordID
+                msg_content = f"{message.content}"  # Content of the message
 
-            attach = ""
-            # If an attachment (link) has been sent
-            if message.attachments:
-                # Loop through all attachments
-                for attachment in message.attachments:
-                    # Get the message content and the link that was used
-                    attach += f"Message: {message.content} Link: {attachment.url}"
-                # Define the new variables to send
-                val = guild_id, msg_time, msg_author, attach
-            else:
-                pass
+                # Store the variables
+                val = guild_id, msg_time, msg_author, msg_content
 
-            # Define the Insert Into Statement inserting into the database
-            insert_query = """INSERT INTO messages (guildID, messageTime, discordID, messageContent) VALUES (?, ?, ?, ?)"""
-            cursor = conn.cursor()
-            # Execute the SQL Query
-            cursor.execute(insert_query, val)
-            conn.commit()
-            print(cursor.rowcount, "Record inserted successfully into Logs")
+                attach = ""
+                # If an attachment (link) has been sent
+                if message.attachments:
+                    # Loop through all attachments
+                    for attachment in message.attachments:
+                        # Get the message content and the link that was used
+                        attach += f"Message: {message.content} Link: {attachment.url}"
+                    # Define the new variables to send
+                    val = guild_id, msg_time, msg_author, attach
+                else:
+                    pass
 
-        except mariadb.Error as ex:
-            print("Parameterized Query Failed: {}".format(ex))
+                # Define the Insert Into Statement inserting into the database
+                insert_query = """INSERT INTO messages (guildID, messageTime, discordID, messageContent) VALUES (?, ?, ?, ?)"""
+                cursor = conn.cursor()
+                # Execute the SQL Query
+                cursor.execute(insert_query, val)
+                conn.commit()
+                print(cursor.rowcount, "Record inserted successfully into Logs")
+
+            except mariadb.Error as ex:
+                print("Parameterized Query Failed: {}".format(ex))
 
     # Processing the message
     await client.process_commands(message)

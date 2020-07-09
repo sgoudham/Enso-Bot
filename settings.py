@@ -52,6 +52,7 @@ colour_list = [c for c in colors.values()]
 
 # Define repeated variables
 hammyMention = '<@154840866496839680>'
+ensoMention = '<@716701699145728094>'
 
 blank_space = "\u200b"
 enso_embedmod_colours = Colour(0xFF69B4)

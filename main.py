@@ -33,7 +33,7 @@ async def on_message(message):
     if message.author.bot:
         return
 
-    if not isinstance(message.channel, DMChannel):
+    if isinstance(message.channel, DMChannel):
         return
     else:
 

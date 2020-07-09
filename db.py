@@ -23,18 +23,3 @@ def connection():
         sys.exit(1)
 
     return conn
-
-
-connection()
-
-"""if conn:
-print("Connected to MySQL Server version ")
-cursor = conn.cursor()
-cursor.execute("SELECT * FROM LOGS;")
-record = cursor.fetchone()
-print("You're connected to database: ", record)
-"""
-# if conn:
-"""cursor.close()
-conn.close()"""
-# print("MySQL connection is closed")

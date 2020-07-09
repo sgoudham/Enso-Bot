@@ -71,6 +71,7 @@ async def on_message(message):
             cursor = conn.cursor()
             # Execute the SQL Query
             cursor.execute(insert_query, val)
+            conn.commit()
             print(cursor.rowcount, "Record inserted successfully into Logs")
 
         except mariadb.Error as ex:

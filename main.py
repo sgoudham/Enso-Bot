@@ -67,7 +67,7 @@ async def on_message(message):
                 pass
 
             # Define the Insert Into Statement inserting into the database
-            insert_query = """INSERT INTO USERLOGS (guildID, messageTime, discordID, messageContent) VALUES (?, ?, ?, ?)"""
+            insert_query = """INSERT INTO messages (guildID, messageTime, discordID, messageContent) VALUES (?, ?, ?, ?)"""
             cursor = conn.cursor()
             # Execute the SQL Query
             cursor.execute(insert_query, val)

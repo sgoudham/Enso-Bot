@@ -142,7 +142,7 @@ def SendMsgToModMail(self, msg, author):
         return embed
 
 
-def logModMail(ctx, anon):
+def logModMail(ctx, anon, msg):
     # Set up the connection to the database
     conn = db.connection()
 
@@ -162,7 +162,7 @@ def logModMail(ctx, anon):
             # Get:
             msg_time = time.strftime('%Y-%m-%d %H:%M:%S')  # Time of the Message
             msg_author = f"{msg_name}#{msg_discrim}"  # DiscordID
-            msg_content = f"{ctx.message.content}"  # Content of the message
+            msg_content = msg  # Content of the message
 
             # Store the variables
             val = Anon, msg_time, msg_author, msg_content
@@ -290,7 +290,7 @@ class Modmail(commands.Cog):
 
                                 await channel.send(embed=SendMsgToModMail(self, msg, member))
                                 await ctx.send(embed=MessageSentConfirmation(member))
-                                logModMail(ctx, self.anon)
+                                logModMail(ctx, self.anon, msg)
                                 await instructions.delete()
 
                             if str(reaction.emoji) == "❌":
@@ -318,7 +318,7 @@ class Modmail(commands.Cog):
 
                                 await channel.send(embed=SendMsgToModMail(self, msg, member))
                                 await ctx.send(embed=MessageSentConfirmation(member))
-                                logModMail(ctx, self.anon)
+                                logModMail(ctx, self.anon, msg)
                                 await instructions.delete()
 
                     if self.anon is None:

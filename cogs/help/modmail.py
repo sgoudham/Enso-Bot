@@ -1,9 +1,11 @@
 import asyncio
 import random
 
+import mariadb
 from discord import DMChannel, Embed
 from discord.ext import commands
 
+import db
 from settings import blank_space, enso_embedmod_colours, time, enso_guild_ID, enso_modmail_ID, hammyMention, ensoMention
 
 
@@ -55,26 +57,6 @@ def AnonOrNot(author):
         AnonModMailEmbed.add_field(name=name, value=value, inline=inline)
 
     return AnonModMailEmbed
-
-
-# Method to send an embed to let the user know that they have aborted the modmail process
-def Abort(author):
-    # Set up embed to let the user know that they have aborted the modmail
-    AbortEmbed = Embed(title="**Aborting ModMail!**",
-                       colour=enso_embedmod_colours,
-                       timestamp=time)
-
-    AbortEmbed.set_thumbnail(url=author.avatar_url)
-    AbortEmbed.set_footer(text=f"Sent by {author}")
-
-    fields = [
-        (blank_space, "**If you change your mind, you can do `~mm` or `~modmail` at anytime!**", False),
-        (blank_space, f"If you want to speak to me personally, you can DM {hammyMention} anytime!", True)]
-
-    for name, value, inline in fields:
-        AbortEmbed.add_field(name=name, value=value, inline=inline)
-
-    return AbortEmbed
 
 
 # Method to send an embed to to let the user know to type into chat
@@ -158,6 +140,63 @@ def SendMsgToModMail(self, msg, author):
             embed.add_field(name=name, value=value, inline=inline)
 
         return embed
+
+
+def logModMail(ctx, anon):
+    # Set up the connection to the database
+    conn = db.connection()
+
+    # With the connection
+    with conn:
+        # Make sure that mariaDB errors are handled properly
+        try:
+            if anon:
+                Anon = "True"
+            else:
+                Anon = "False"
+
+            msg_name = ctx.message.author.name
+            msg_discrim = ctx.message.author.discriminator
+            time = ctx.message.created_at
+
+            # Get:
+            msg_time = time.strftime('%Y-%m-%d %H:%M:%S')  # Time of the Message
+            msg_author = f"{msg_name}#{msg_discrim}"  # DiscordID
+            msg_content = f"{ctx.message.content}"  # Content of the message
+
+            # Store the variables
+            val = Anon, msg_time, msg_author, msg_content
+
+            # Define the Insert Into Statement inserting into the database
+            insert_query = """INSERT INTO modmail (Anon, messageTime, discordID, messageContent) VALUES (?, ?, ?, ?)"""
+            cursor = conn.cursor()
+            # Execute the SQL Query
+            cursor.execute(insert_query, val)
+            conn.commit()
+            print(cursor.rowcount, "Record inserted successfully into Modmail")
+
+        except mariadb.Error as ex:
+            print("Parameterized Query Failed: {}".format(ex))
+
+
+# Method to send an embed to let the user know that they have aborted the modmail process
+def Abort(author):
+    # Set up embed to let the user know that they have aborted the modmail
+    AbortEmbed = Embed(title="**Aborting ModMail!**",
+                       colour=enso_embedmod_colours,
+                       timestamp=time)
+
+    AbortEmbed.set_thumbnail(url=author.avatar_url)
+    AbortEmbed.set_footer(text=f"Sent by {author}")
+
+    fields = [
+        (blank_space, "**If you change your mind, you can do `~mm` or `~modmail` at anytime!**", False),
+        (blank_space, f"If you want to speak to me personally, you can DM {hammyMention} anytime!", True)]
+
+    for name, value, inline in fields:
+        AbortEmbed.add_field(name=name, value=value, inline=inline)
+
+    return AbortEmbed
 
 
 # Set up the Cog
@@ -251,6 +290,7 @@ class Modmail(commands.Cog):
 
                                 await channel.send(embed=SendMsgToModMail(self, msg, member))
                                 await ctx.send(embed=MessageSentConfirmation(member))
+                                logModMail(ctx, self.anon)
                                 await instructions.delete()
 
                             if str(reaction.emoji) == "❌":
@@ -278,6 +318,7 @@ class Modmail(commands.Cog):
 
                                 await channel.send(embed=SendMsgToModMail(self, msg, member))
                                 await ctx.send(embed=MessageSentConfirmation(member))
+                                logModMail(ctx, self.anon)
                                 await instructions.delete()
 
                     if self.anon is None:

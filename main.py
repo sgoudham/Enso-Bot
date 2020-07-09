@@ -34,7 +34,7 @@ async def on_message(message):
         return
 
     if isinstance(message.channel, DMChannel):
-        return
+        pass
     else:
 
         # Set up the connection to the database

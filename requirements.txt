@@ -1,6 +1,5 @@
 owotext
 discord.py
-mariadb
 Pillow
 python-decouple
 certifi

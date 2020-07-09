@@ -53,7 +53,7 @@ async def on_message(message):
                 guild_id = message.guild.id  # Guild of the message
                 msg_time = time.strftime('%Y-%m-%d %H:%M:%S')  # Time of the Message
                 msg_author = f"{msg_name}#{msg_discrim}"  # DiscordID
-                msg_content = f"{message.content}"  # Content of the message
+                msg_content = message.content  # Content of the message
 
                 # Store the variables
                 val = guild_id, msg_time, msg_author, msg_content

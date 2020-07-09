@@ -51,20 +51,22 @@ channels = ["enso-chan-commands", "picto-chat", 663651584399507481]
 colour_list = [c for c in colors.values()]
 
 # Define repeated variables
+hammyMention = '<@154840866496839680>'
+
 blank_space = "\u200b"
 enso_embedmod_colours = Colour(0xFF69B4)
 time = datetime.datetime.utcnow()
 
-enso_ensochancommands_ID = 721449922838134876
 enso_ensochancommands_Mention = "<#721449922838134876>"
 
+enso_ensochancommands_ID = 721449922838134876
 enso_guild_ID = 663651584399507476
 enso_newpeople_ID = 669771571337887765
 enso_modmail_ID = 728083016290926623
 
 
+# Returns a list of all the cogs
 def extensions():
-    # Instantiates a list for all the cogs
     anime_ext = ['cogs.anime.interactive', 'cogs.anime.waifu_husbandos']
 
     help_ext = ['cogs.help.admin', 'cogs.help.help', 'cogs.help.self_roles',

@@ -4,7 +4,7 @@ import random
 from discord import DMChannel, Embed
 from discord.ext import commands
 
-from settings import blank_space, enso_embedmod_colours, time, enso_guild_ID
+from settings import blank_space, enso_embedmod_colours, time, enso_guild_ID, enso_modmail_ID, hammyMention, ensoMention
 
 
 # Method to send the prompt/embed to start sending modmail to the user
@@ -59,9 +59,6 @@ def AnonOrNot(author):
 
 # Method to send an embed to let the user know that they have aborted the modmail process
 def Abort(author):
-    # Get my user ID
-    hammyID = '<@154840866496839680>'
-
     # Set up embed to let the user know that they have aborted the modmail
     AbortEmbed = Embed(title="**Aborting ModMail!**",
                        colour=enso_embedmod_colours,
@@ -72,7 +69,7 @@ def Abort(author):
 
     fields = [
         (blank_space, "**If you change your mind, you can do `~mm` or `~modmail` at anytime!**", False),
-        (blank_space, f"If you want to speak to me personally, you can DM {hammyID} anytime!", True)]
+        (blank_space, f"If you want to speak to me personally, you can DM {hammyMention} anytime!", True)]
 
     for name, value, inline in fields:
         AbortEmbed.add_field(name=name, value=value, inline=inline)
@@ -98,6 +95,27 @@ def SendInstructions(author):
         SendModMailEmbed.add_field(name=name, value=value, inline=inline)
 
     return SendModMailEmbed
+
+
+# Method to send an embed into chat to let the user know that their mail has been sent successfully
+def MessageSentConfirmation(author):
+    # Set up embed to let the user know that they have sent the mail
+    ConfirmationEmbed = Embed(title="**Message relayed to Staff!!**",
+                              colour=enso_embedmod_colours,
+                              timestamp=time)
+
+    ConfirmationEmbed.set_thumbnail(url=author.avatar_url)
+    ConfirmationEmbed.set_footer(text=f"Sent by {author}")
+
+    fields = [(blank_space,
+               "Thank you for your input! The staff team appreciate it very much!"
+               f"\n As mentioned previously, please don't be hesistant to DM {hammyMention} for anything! :P",
+               False)]
+
+    for name, value, inline in fields:
+        ConfirmationEmbed.add_field(name=name, value=value, inline=inline)
+
+    return ConfirmationEmbed
 
 
 # Method to actually allow the message to be sent to #mod-mail
@@ -153,8 +171,9 @@ class Modmail(commands.Cog):
     @commands.command(name="modmail", aliases=["mm"])
     async def mod_mail(self, ctx):
         self.anon = None
+
         # Get the mod-mail channel
-        channel = self.bot.get_channel(728083016290926623)
+        channel = self.bot.get_channel(enso_modmail_ID)
         # Get the guild Enso
         guild = self.bot.get_guild(enso_guild_ID)
         # Get the member
@@ -231,8 +250,7 @@ class Modmail(commands.Cog):
                                     msg = await self.bot.wait_for('message', check=check, timeout=300)
 
                                 await channel.send(embed=SendMsgToModMail(self, msg, member))
-                                await ctx.send("**Message relayed to Staff!"
-                                               "\nThank you for your input!**")
+                                await ctx.send(embed=MessageSentConfirmation(member))
                                 await instructions.delete()
 
                             if str(reaction.emoji) == "❌":
@@ -252,15 +270,14 @@ class Modmail(commands.Cog):
                                 msg = await self.bot.wait_for('message', check=check, timeout=300)
 
                                 while len(msg.content) < 50:
-                                    await ctx.send("**Make sure your mail is above 50 characters!!**"
-                                                   "\n**This helps us reduce spam and allows you to include more detail in your mail**")
+                                    await ctx.send("Make sure your mail is above **50*8 characters!!"
+                                                   "\nThis helps us reduce spam and allows you to include more detail in your mail")
 
                                     # Wait for the message from the author
                                     msg = await self.bot.wait_for('message', check=check, timeout=300)
 
                                 await channel.send(embed=SendMsgToModMail(self, msg, member))
-                                await ctx.send("**Message relayed to Staff!"
-                                               "\nThank you for your input!**")
+                                await ctx.send(embed=MessageSentConfirmation(member))
                                 await instructions.delete()
 
                     if self.anon is None:
@@ -279,12 +296,10 @@ class Modmail(commands.Cog):
                 await ctx.send("ModMail Timed Out! Do `~mm` or `~modmail` if you want to use the ModMail system!")
 
         else:
-            ensoID = '<@716701699145728094>'
-
             message = await ctx.send(
                 f"{ctx.author.mention} **ModMail can only be sent through DM's!** "
                 f"\nSuggestions and Opinions on the server are always appreciated!\n"
-                f"Make sure you DM {ensoID} and then use `~modmail` or `~mm`")
+                f"Make sure you DM {ensoMention} and then use `~modmail` or `~mm`")
 
             # Let the User read the message for 10 seconds
             await asyncio.sleep(10.0)

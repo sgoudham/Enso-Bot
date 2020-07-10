@@ -162,7 +162,7 @@ def logModMail(ctx, anon, msg):
             # Get:
             msg_time = time.strftime('%Y-%m-%d %H:%M:%S')  # Time of the Message
             msg_author = f"{msg_name}#{msg_discrim}"  # DiscordID
-            msg_content = msg  # Content of the message
+            msg_content = msg.content  # Content of the message
 
             # Store the variables
             val = Anon, msg_time, msg_author, msg_content

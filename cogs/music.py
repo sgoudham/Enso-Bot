@@ -121,16 +121,6 @@ class Music(commands.Cog):
             ctx.voice_client.stop()
 
 
-bot = commands.Bot(command_prefix=commands.when_mentioned_or("~"),
-                   description='Relatively simple music bot example')
-
-
-@bot.event
-async def on_ready():
-    print('Logged in as {0} ({0.id})'.format(bot.user))
-    print('------')
-
-
 def setup(bot):
     bot.add_cog(Music(bot))
 

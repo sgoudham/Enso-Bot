@@ -6,7 +6,8 @@ from discord import DMChannel, Embed
 from discord.ext import commands
 
 import db
-from settings import blank_space, enso_embedmod_colours, time, enso_guild_ID, enso_modmail_ID, hammyMention, ensoMention
+from settings import blank_space, enso_embedmod_colours, time, enso_guild_ID, enso_modmail_ID, hammyMention, \
+    ensoMention, hammyID
 
 
 # Method to send the prompt/embed to start sending modmail to the user
@@ -79,6 +80,26 @@ def SendInstructions(author):
     return SendModMailEmbed
 
 
+# Method to let the user know that the message must be above 50 characters
+def ErrorHandling(author):
+    # Set up embed to let the user know that the message must be above 50 characters
+    ErrorHandlingEmbed = Embed(title="**Uh Oh! Please make sure the message is above 50 characters!**",
+                               colour=enso_embedmod_colours,
+                               timestamp=time)
+
+    ErrorHandlingEmbed.set_thumbnail(url=author.avatar_url)
+    ErrorHandlingEmbed.set_footer(text=f"Sent by {author}")
+
+    fields = [("Please enter in a message which is above 50 characters!",
+               "**This helps us reduce spam and allows you to include more detail in your mail!**",
+               False)]
+
+    for name, value, inline in fields:
+        ErrorHandlingEmbed.add_field(name=name, value=value, inline=inline)
+
+    return ErrorHandlingEmbed
+
+
 # Method to send an embed into chat to let the user know that their mail has been sent successfully
 def MessageSentConfirmation(author):
     # Set up embed to let the user know that they have sent the mail
@@ -142,6 +163,7 @@ def SendMsgToModMail(self, msg, author):
         return embed
 
 
+# Method to allow
 def logModMail(ctx, anon, msg):
     # Set up the connection to the database
     conn = db.connection()
@@ -215,8 +237,8 @@ class Modmail(commands.Cog):
         channel = self.bot.get_channel(enso_modmail_ID)
         # Get the guild Enso
         guild = self.bot.get_guild(enso_guild_ID)
-        # Get the member
-        member = guild.get_member(ctx.author.id)
+        # Get Hamothy
+        member = guild.get_member(hammyID)
 
         # Making sure the user is in a DM channel with the bot
         if isinstance(ctx.message.channel, DMChannel):
@@ -282,15 +304,20 @@ class Modmail(commands.Cog):
                                 msg = await self.bot.wait_for('message', check=check, timeout=300)
 
                                 while len(msg.content) < 50:
-                                    await ctx.send("**Make sure your mail is above 50 characters!!**"
-                                                   "\n**This helps us reduce spam and allows you to include more detail in your mail**")
+                                    await ctx.send(embed=ErrorHandling(member))
 
                                     # Wait for the message from the author
                                     msg = await self.bot.wait_for('message', check=check, timeout=300)
 
+                                # Delete the previous embed
                                 await instructions.delete()
+                                # Send the message to the modmail channel
                                 await channel.send(embed=SendMsgToModMail(self, msg, member))
+
+                                # Make sure the user knows that their message has been sent
                                 await ctx.send(embed=MessageSentConfirmation(member))
+
+                                # Log the message within the database
                                 logModMail(ctx, self.anon, msg)
 
                             if str(reaction.emoji) == "❌":
@@ -310,15 +337,20 @@ class Modmail(commands.Cog):
                                 msg = await self.bot.wait_for('message', check=check, timeout=300)
 
                                 while len(msg.content) < 50:
-                                    await ctx.send("Make sure your mail is above **50*8 characters!!"
-                                                   "\nThis helps us reduce spam and allows you to include more detail in your mail")
+                                    await ctx.send(embed=ErrorHandling(member))
 
                                     # Wait for the message from the author
                                     msg = await self.bot.wait_for('message', check=check, timeout=300)
 
+                                # Delete the previous embed
                                 await instructions.delete()
+                                # Send the message to the modmail channel
                                 await channel.send(embed=SendMsgToModMail(self, msg, member))
+
+                                # Make sure the user knows that their message has been sent
                                 await ctx.send(embed=MessageSentConfirmation(member))
+
+                                # Log the message within the database
                                 logModMail(ctx, self.anon, msg)
 
                     if self.anon is None:

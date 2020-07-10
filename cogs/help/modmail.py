@@ -238,6 +238,8 @@ class Modmail(commands.Cog):
         guild = self.bot.get_guild(enso_guild_ID)
         # Get Hamothy
         member = guild.get_member(hammyID)
+        # Get the member sending Modmail
+        user = guild.get_member(ctx.author.id)
 
         # Making sure the user is in a DM channel with the bot
         if isinstance(ctx.message.channel, DMChannel):
@@ -311,7 +313,7 @@ class Modmail(commands.Cog):
                                 # Delete the previous embed
                                 await instructions.delete()
                                 # Send the message to the modmail channel
-                                await channel.send(embed=SendMsgToModMail(self, msg, member))
+                                await channel.send(embed=SendMsgToModMail(self, msg, user))
 
                                 # Make sure the user knows that their message has been sent
                                 await ctx.send(embed=MessageSentConfirmation(member))
@@ -344,7 +346,7 @@ class Modmail(commands.Cog):
                                 # Delete the previous embed
                                 await instructions.delete()
                                 # Send the message to the modmail channel
-                                await channel.send(embed=SendMsgToModMail(self, msg, member))
+                                await channel.send(embed=SendMsgToModMail(self, msg, user))
 
                                 # Make sure the user knows that their message has been sent
                                 await ctx.send(embed=MessageSentConfirmation(member))

@@ -257,18 +257,18 @@ class VoiceState:
 class Music(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-        self.voice_states = {}
+        self.voice_clients = {}
 
-    def get_voice_state(self, ctx: commands.Context):
-        state = self.voice_states.get(ctx.guild.id)
+    def get_voice_client(self, ctx: commands.Context):
+        state = self.voice_clients.get(ctx.guild.id)
         if not state:
             state = VoiceState(self.bot, ctx)
-            self.voice_states[ctx.guild.id] = state
+            self.voice_clients[ctx.guild.id] = state
 
         return state
 
     def cog_unload(self):
-        for state in self.voice_states.values():
+        for state in self.voice_clients.values():
             self.bot.loop.create_task(state.stop())
 
     def cog_check(self, ctx: commands.Context):
@@ -278,7 +278,7 @@ class Music(commands.Cog):
         return True
 
     async def cog_before_invoke(self, ctx: commands.Context):
-        ctx.voice_state = self.get_voice_state(ctx)
+        ctx.voice_state = self.get_voice_client(ctx)
 
     async def cog_command_error(self, ctx: commands.Context, error: commands.CommandError):
         await ctx.send('An error occurred: {}'.format(str(error)))
@@ -288,11 +288,11 @@ class Music(commands.Cog):
         """Joins a voice channel."""
 
         destination = ctx.author.voice.channel
-        if ctx.voice_state.voice:
-            await ctx.voice_state.voice.move_to(destination)
+        if ctx.voice_client.voice:
+            await ctx.voice_client.voice.move_to(destination)
             return
 
-        ctx.voice_state.voice = await destination.connect()
+        ctx.voice_client.voice = await destination.connect()
 
     @commands.command(name='summon')
     @commands.has_permissions(manage_guild=True)
@@ -305,49 +305,49 @@ class Music(commands.Cog):
             raise VoiceError('You are neither connected to a voice channel nor specified a channel to join.')
 
         destination = channel or ctx.author.voice.channel
-        if ctx.voice_state.voice:
-            await ctx.voice_state.voice.move_to(destination)
+        if ctx.voice_client.voice:
+            await ctx.voice_client.voice.move_to(destination)
             return
 
-        ctx.voice_state.voice = await destination.connect()
+        ctx.voice_client.voice = await destination.connect()
 
     @commands.command(name='leave', aliases=['disconnect'])
     @commands.has_permissions(manage_guild=True)
     async def _leave(self, ctx: commands.Context):
         """Clears the queue and leaves the voice channel."""
 
-        if not ctx.voice_state.voice:
+        if not ctx.voice_client.voice:
             return await ctx.send('Not connected to any voice channel.')
 
-        await ctx.voice_state.stop()
-        del self.voice_states[ctx.guild.id]
+        await ctx.voice_client.stop()
+        del self.voice_clients[ctx.guild.id]
 
     @commands.command(name='volume')
     async def _volume(self, ctx: commands.Context, *, volume: int):
         """Sets the volume of the player."""
 
-        if not ctx.voice_state.is_playing:
+        if not ctx.voice_client.is_playing:
             return await ctx.send('Nothing being played at the moment.')
 
         if 0 > volume > 100:
             return await ctx.send('Volume must be between 0 and 100')
 
-        ctx.voice_state.volume = volume / 100
+        ctx.voice_client.volume = volume / 100
         await ctx.send('Volume of the player set to {}%'.format(volume))
 
     @commands.command(name='now', aliases=['current', 'playing'])
     async def _now(self, ctx: commands.Context):
         """Displays the currently playing song."""
 
-        await ctx.send(embed=ctx.voice_state.current.create_embed())
+        await ctx.send(embed=ctx.voice_client.current.create_embed())
 
     @commands.command(name='pause')
     @commands.has_permissions(manage_guild=True)
     async def _pause(self, ctx: commands.Context):
         """Pauses the currently playing song."""
 
-        if not ctx.voice_state.is_playing and ctx.voice_state.voice.is_playing():
-            ctx.voice_state.voice.pause()
+        if not ctx.voice_client.is_playing and ctx.voice_client.voice.is_playing():
+            ctx.voice_client.voice.pause()
             await ctx.message.add_reaction('⏯')
 
     @commands.command(name='resume')
@@ -355,8 +355,8 @@ class Music(commands.Cog):
     async def _resume(self, ctx: commands.Context):
         """Resumes a currently paused song."""
 
-        if not ctx.voice_state.is_playing and ctx.voice_state.voice.is_paused():
-            ctx.voice_state.voice.resume()
+        if not ctx.voice_client.is_playing and ctx.voice_client.voice.is_paused():
+            ctx.voice_client.voice.resume()
             await ctx.message.add_reaction('⏯')
 
     @commands.command(name='stop')
@@ -364,10 +364,10 @@ class Music(commands.Cog):
     async def _stop(self, ctx: commands.Context):
         """Stops playing song and clears the queue."""
 
-        ctx.voice_state.songs.clear()
+        ctx.voice_client.songs.clear()
 
-        if not ctx.voice_state.is_playing:
-            ctx.voice_state.voice.stop()
+        if not ctx.voice_client.is_playing:
+            ctx.voice_client.voice.stop()
             await ctx.message.add_reaction('⏹')
 
     @commands.command(name='skip')
@@ -376,21 +376,21 @@ class Music(commands.Cog):
         3 skip votes are needed for the song to be skipped.
         """
 
-        if not ctx.voice_state.is_playing:
+        if not ctx.voice_client.is_playing:
             return await ctx.send('Not playing any music right now...')
 
         voter = ctx.message.author
-        if voter == ctx.voice_state.current.requester:
+        if voter == ctx.voice_client.current.requester:
             await ctx.message.add_reaction('⏭')
-            ctx.voice_state.skip()
+            ctx.voice_client.skip()
 
-        elif voter.id not in ctx.voice_state.skip_votes:
-            ctx.voice_state.skip_votes.add(voter.id)
-            total_votes = len(ctx.voice_state.skip_votes)
+        elif voter.id not in ctx.voice_client.skip_votes:
+            ctx.voice_client.skip_votes.add(voter.id)
+            total_votes = len(ctx.voice_client.skip_votes)
 
             if total_votes >= 3:
                 await ctx.message.add_reaction('⏭')
-                ctx.voice_state.skip()
+                ctx.voice_client.skip()
             else:
                 await ctx.send('Skip vote added, currently at **{}/3**'.format(total_votes))
 
@@ -403,20 +403,20 @@ class Music(commands.Cog):
         You can optionally specify the page to show. Each page contains 10 elements.
         """
 
-        if len(ctx.voice_state.songs) == 0:
+        if len(ctx.voice_client.songs) == 0:
             return await ctx.send('Empty queue.')
 
         items_per_page = 10
-        pages = math.ceil(len(ctx.voice_state.songs) / items_per_page)
+        pages = math.ceil(len(ctx.voice_client.songs) / items_per_page)
 
         start = (page - 1) * items_per_page
         end = start + items_per_page
 
         queue = ''
-        for i, song in enumerate(ctx.voice_state.songs[start:end], start=start):
+        for i, song in enumerate(ctx.voice_client.songs[start:end], start=start):
             queue += '`{0}.` [**{1.source.title}**]({1.source.url})\n'.format(i + 1, song)
 
-        embed = (discord.Embed(description='**{} tracks:**\n\n{}'.format(len(ctx.voice_state.songs), queue))
+        embed = (discord.Embed(description='**{} tracks:**\n\n{}'.format(len(ctx.voice_client.songs), queue))
                  .set_footer(text='Viewing page {}/{}'.format(page, pages)))
         await ctx.send(embed=embed)
 
@@ -424,20 +424,20 @@ class Music(commands.Cog):
     async def _shuffle(self, ctx: commands.Context):
         """Shuffles the queue."""
 
-        if len(ctx.voice_state.songs) == 0:
+        if len(ctx.voice_client.songs) == 0:
             return await ctx.send('Empty queue.')
 
-        ctx.voice_state.songs.shuffle()
+        ctx.voice_client.songs.shuffle()
         await ctx.message.add_reaction('✅')
 
     @commands.command(name='remove')
     async def _remove(self, ctx: commands.Context, index: int):
         """Removes a song from the queue at a given index."""
 
-        if len(ctx.voice_state.songs) == 0:
+        if len(ctx.voice_client.songs) == 0:
             return await ctx.send('Empty queue.')
 
-        ctx.voice_state.songs.remove(index - 1)
+        ctx.voice_client.songs.remove(index - 1)
         await ctx.message.add_reaction('✅')
 
     @commands.command(name='loop')
@@ -446,11 +446,11 @@ class Music(commands.Cog):
         Invoke this command again to unloop the song.
         """
 
-        if not ctx.voice_state.is_playing:
+        if not ctx.voice_client.is_playing:
             return await ctx.send('Nothing being played at the moment.')
 
         # Inverse boolean value to loop and unloop.
-        ctx.voice_state.loop = not ctx.voice_state.loop
+        ctx.voice_client.loop = not ctx.voice_client.loop
         await ctx.message.add_reaction('✅')
 
     @commands.command(name='play')
@@ -462,7 +462,7 @@ class Music(commands.Cog):
         A list of these sites can be found here: https://rg3.github.io/youtube-dl/supportedsites.html
         """
 
-        if not ctx.voice_state.voice:
+        if not ctx.voice_client.voice:
             await ctx.invoke(self._join)
 
         async with ctx.typing():
@@ -473,12 +473,12 @@ class Music(commands.Cog):
             else:
                 song = Song(source)
 
-                await ctx.voice_state.songs.put(song)
+                await ctx.voice_client.songs.put(song)
                 await ctx.send('Enqueued {}'.format(str(source)))
 
     @_join.before_invoke
     @_play.before_invoke
-    async def ensure_voice_state(self, ctx: commands.Context):
+    async def ensure_voice_client(self, ctx: commands.Context):
         if not ctx.author.voice or not ctx.author.voice.channel:
             raise commands.CommandError('You are not connected to any voice channel.')
 

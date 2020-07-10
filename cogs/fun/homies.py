@@ -1,5 +1,6 @@
 import textwrap
 
+import discord
 from PIL import Image, ImageDraw, ImageFont
 from discord.ext import commands
 from discord.ext.commands import command, cooldown, BucketType
@@ -53,10 +54,7 @@ class Fun(commands.Cog):
     async def homies(self, ctx, *, user_word):
         """Allows people to summon the homies"""
 
-        await ctx.send("This command is under construction."
-                       "\nPlease wait till I say it's ready before using it lmao")
-
-        """if len(user_word) >= 20:
+        if len(user_word) >= 20:
             await ctx.send("Please make sure the prompt is below **20** characters!")
             return
         else:
@@ -66,7 +64,7 @@ class Fun(commands.Cog):
 
             generate_meme('homies/AllMyHomies.jpg', top_text=top_text, bottom_text=bottom_text)
 
-            await ctx.send(file=discord.File('meme-AllMyHomies.jpg'))"""
+            await ctx.send(file=discord.File('meme-AllMyHomies.jpg'))
 
 
 def setup(bot):

@@ -2,7 +2,7 @@ from discord import Embed
 from discord.ext import commands, menus
 from discord.ext.commands import command
 
-from settings import blank_space, enso_embedmod_colours, time
+from settings import blank_space, enso_embedmod_colours, time, ensoMention
 
 
 # Function to allow the first page of the help commands (Fun Commands)
@@ -77,7 +77,7 @@ def fun_function(self, guild_icon, enso_name, enso_icon):
     return fun_commands, fun_commands_2
 
 
-# Function to allow the first page of the help commands (Waifu/Husbandos)
+# Function to allow the second page of the help commands (Waifu/Husbandos)
 def waifu_husbando_function(self, guild_icon, enso_name, enso_icon):
     # Setting up the Embed for the Waifu/Husbandos
     waifu_husbando_commands = Embed(title="```(っ◔◡◔)っ Waifus/Husbando Commands (っ◔◡◔)っ```",
@@ -120,7 +120,7 @@ def waifu_husbando_function(self, guild_icon, enso_name, enso_icon):
     return waifu_husbando_commands
 
 
-# Function to allow the first page of the help commands (Miscellaneous)
+# Function to allow the third page of the help commands (Miscellaneous)
 def misc_function(self, guild_icon, enso_name, enso_icon):
     # Setting up the Embed for the Miscellaneous commands
     misc_commands = Embed(title="```(っ◔◡◔)っ Misc Commands (っ◔◡◔)っ```",
@@ -143,6 +143,31 @@ def misc_function(self, guild_icon, enso_name, enso_icon):
         (blank_space, f"`{self.ctx.prefix}dm [person]`" +
          "\n Allows Hammy to dm anyone in the server through Enso~Chan!" +
          "\n *(Perms: Co-Owner)*", True),
+        (blank_space, f"`{self.ctx.prefix}remindme [time] [text]`" +
+         "\n Allows the user to get Enso~Chan to remind them in dms of anything that they want" +
+         "\n *(Perms: Everyone)*", True)]
+
+    # Add the misc_commands fields to the embed
+    for name, value, inline in misc_fields:
+        misc_commands.add_field(name=name, value=value, inline=inline)
+
+    return misc_commands
+
+
+# Function to allow the fourth page of the help commands (Important)
+def important_function(self, guild_icon, enso_name, enso_icon):
+    # Setting up the Embed for the Important Commands
+    important_commands = Embed(title="```(っ◔◡◔)っ Important Commands (っ◔◡◔)っ```",
+                               colour=enso_embedmod_colours,
+                               timestamp=time)
+
+    # Setting thumbnail and author
+    important_commands.set_thumbnail(url=guild_icon)
+    important_commands.set_author(name=enso_name,
+                                  icon_url=enso_icon)
+
+    # Setting up the fields in a separate array
+    important_fields = [
         (blank_space, f"`{self.ctx.prefix}userinfo`" +
          "\n Returns information about the user (Name, Roles, Joined Date, Created Date, etc)" +
          "\n *(Perms: Everyone)*", True),
@@ -155,18 +180,19 @@ def misc_function(self, guild_icon, enso_name, enso_icon):
         (blank_space, f"`{self.ctx.prefix}roles`" +
          "\n Shows you how the leveling and xp system works, as well as displaying the order of leveled roles" +
          "\n *(Perms: Everyone)*", True),
-        (blank_space, f"`{self.ctx.prefix}remindme [time] [text]`" +
-         "\n Allows the user to get Enso~Chan to remind them in dms of anything that they want" +
-         "\n *(Perms: Everyone)*", True),
         (blank_space, f"`{self.ctx.prefix}help`" +
          "\n Allows you to see every command in the bot so far" +
+         "\n *(Perms: Everyone)*", True),
+        (blank_space, f"`{self.ctx.prefix}mm/modmail`" +
+         "\n Allows you to send mail to the staff team!" +
+         f"(Done through the dms with {ensoMention}!)" +
          "\n *(Perms: Everyone)*", True)]
 
-    # Add the misc_commands fields to the embed
-    for name, value, inline in misc_fields:
-        misc_commands.add_field(name=name, value=value, inline=inline)
+    # Add the important_fields to the embed
+    for name, value, inline in important_fields:
+        important_commands.add_field(name=name, value=value, inline=inline)
 
-    return misc_commands
+    return important_commands
 
 
 def stop_embed(self):
@@ -196,9 +222,10 @@ def embeds(self):
     page1, page2 = fun_function(self, guild_icon, enso_name, enso_icon)
     page3 = waifu_husbando_function(self, guild_icon, enso_name, enso_icon)
     page4 = misc_function(self, guild_icon, enso_name, enso_icon)
+    page5 = important_function(self, guild_icon, enso_name, enso_icon)
 
     # Store all the categories of the menu to an array called pages
-    pages = [page1, page2, page3, page4]
+    pages = [page1, page2, page3, page4, page5]
 
     return pages
 

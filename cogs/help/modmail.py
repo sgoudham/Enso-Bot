@@ -135,7 +135,7 @@ def SendMsgToModMail(self, msg, author):
                       timestamp=time)
 
         embed.set_thumbnail(url=random.choice(avatars))
-        embed.set_footer(text=f"Requested by Anon Member")
+        embed.set_footer(text=f"Sent By Anon Member")
 
         fields = [("Member", "Anon Member", False),
                   ("Message", msg.content, False)]
@@ -151,7 +151,7 @@ def SendMsgToModMail(self, msg, author):
                       timestamp=time)
 
         embed.set_thumbnail(url=author.avatar_url)
-        embed.set_footer(text=f"Requested by {author}")
+        embed.set_footer(text=f"Sent By {author}")
 
         fields = [("Member", author, False),
                   ("Message", msg.content, False)]

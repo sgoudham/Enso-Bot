@@ -350,7 +350,7 @@ class Interactive(commands.Cog):
 
                 # Set up the embed to display a random hugging gif
                 embed = Embed(
-                    title=f" | **{member.display_name}** hugged **{target.display_name}**",
+                    title=f"<a:huh:676195228872474643> <a:huh:676195228872474643> | **{member.display_name}** hugged **{target.display_name}**",
                     colour=Colour(int(random.choice(colour_list))),
                     timestamp=time)
                 embed.set_image(url=random.choice(hugging_array))

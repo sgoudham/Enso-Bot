@@ -70,8 +70,8 @@ def SendInstructions(author):
     SendModMailEmbed.set_thumbnail(url=author.avatar_url)
     SendModMailEmbed.set_footer(text=f"Sent by {author}")
 
-    fields = [(blank_space,
-               "**Make sure that the message is above 50 characters! Include as much detail as possible :P**",
+    fields = [("**Make sure that the message is above 50 characters!**",
+               "**Include as much detail as possible :P**",
                False)]
 
     for name, value, inline in fields:
@@ -110,8 +110,7 @@ def MessageSentConfirmation(author):
     ConfirmationEmbed.set_thumbnail(url=author.avatar_url)
     ConfirmationEmbed.set_footer(text=f"Sent by {author}")
 
-    fields = [(blank_space,
-               "Thank you for your input! The staff team appreciate it very much!"
+    fields = [("Thank you for your input! The staff team appreciate it very much!",
                f"\n As mentioned previously, please don't be hesistant to DM {hammyMention} for anything! :P",
                False)]
 
@@ -212,8 +211,8 @@ def Abort(author):
     AbortEmbed.set_footer(text=f"Sent by {author}")
 
     fields = [
-        (blank_space, "**If you change your mind, you can do `~mm` or `~modmail` at anytime!**", False),
-        (blank_space, f"If you want to speak to me personally, you can DM {hammyMention} anytime!", True)]
+        ("**If you change your mind, you can do `~mm` or `~modmail` at anytime!**",
+         f"If you want to speak to me personally, you can DM {hammyMention} anytime!", False)]
 
     for name, value, inline in fields:
         AbortEmbed.add_field(name=name, value=value, inline=inline)

@@ -37,11 +37,8 @@ async def on_message(message):
         pass
     else:
 
-        # Set up the connection to the database
-        conn = db.connection()
-
-        # With the connection
-        with conn:
+        # Using connection to the database
+        with db.connection() as conn:
 
             # Make sure that mariaDB errors are handled properly
             try:

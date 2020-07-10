@@ -162,13 +162,10 @@ def SendMsgToModMail(self, msg, author):
         return embed
 
 
-# Method to allow
+# Method to allow modmail to be logged into the database
 def logModMail(ctx, anon, msg):
-    # Set up the connection to the database
-    conn = db.connection()
-
-    # With the connection
-    with conn:
+    # With the database connection
+    with db.connection() as conn:
         # Make sure that mariaDB errors are handled properly
         try:
             if anon:

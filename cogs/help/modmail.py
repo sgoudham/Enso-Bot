@@ -335,7 +335,7 @@ class Modmail(commands.Cog):
                                 # Wait for the message from the author
                                 msg = await self.bot.wait_for('message', check=check, timeout=300)
 
-                                while len(msg.content) < 50:
+                                while len(msg.content) < 50 and isinstance(msg.channel, DMChannel):
                                     await ctx.send(embed=ErrorHandling(member))
 
                                     # Wait for the message from the author

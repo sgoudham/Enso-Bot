@@ -288,10 +288,10 @@ class Modmail(commands.Cog):
                                     # Wait for the message from the author
                                     msg = await self.bot.wait_for('message', check=check, timeout=300)
 
+                                await instructions.delete()
                                 await channel.send(embed=SendMsgToModMail(self, msg, member))
                                 await ctx.send(embed=MessageSentConfirmation(member))
                                 logModMail(ctx, self.anon, msg)
-                                await instructions.delete()
 
                             if str(reaction.emoji) == "❌":
                                 self.anon = False
@@ -316,10 +316,10 @@ class Modmail(commands.Cog):
                                     # Wait for the message from the author
                                     msg = await self.bot.wait_for('message', check=check, timeout=300)
 
+                                await instructions.delete()
                                 await channel.send(embed=SendMsgToModMail(self, msg, member))
                                 await ctx.send(embed=MessageSentConfirmation(member))
                                 logModMail(ctx, self.anon, msg)
-                                await instructions.delete()
 
                     if self.anon is None:
                         if str(reaction.emoji) == "❌":

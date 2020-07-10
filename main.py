@@ -8,7 +8,7 @@ from discord.ext import commands
 
 import db
 import settings
-from settings import blank_space, enso_embedmod_colours, time, enso_guild_ID
+from settings import blank_space, enso_embedmod_colours, time, enso_guild_ID, enso_newpeople_ID
 
 # Getting the Bot token from Environment Variables
 API_TOKEN = config('DISCORD_TOKEN')
@@ -73,6 +73,7 @@ async def on_message(message):
                 # Define the Insert Into Statement inserting into the database
                 insert_query = """INSERT INTO messages (guildID, messageTime, discordID, messageContent) VALUES (?, ?, ?, ?)"""
                 cursor = conn.cursor()
+
                 # Execute the SQL Query
                 cursor.execute(insert_query, val)
                 conn.commit()
@@ -116,7 +117,7 @@ async def on_member_join(member):
         return
     else:
         # Set the channel id to "newpeople"
-        new_people = guild.get_channel(669771571337887765)
+        new_people = guild.get_channel(enso_newpeople_ID)
 
         # Set the enso server icon and the welcoming gif
         server_icon = guild.icon_url

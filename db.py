@@ -10,9 +10,9 @@ def connection():
     # Connect to MariaDB Platform
     try:
         conn = mariadb.connect(
-            user="root",
+            user="hamothy",
             password=password,
-            host="localhost",
+            host="173.208.202.20",
             port=3306,
             database="enso"
         )

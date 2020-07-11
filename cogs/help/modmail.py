@@ -235,8 +235,6 @@ class Modmail(commands.Cog):
         guild = self.bot.get_guild(enso_guild_ID)
         # Get Hamothy
         member = guild.get_member(hammyID)
-        # Get the member sending Modmail
-        user = guild.get_member(ctx.author.id)
 
         # Making sure the user is in a DM channel with the bot
         if isinstance(ctx.message.channel, DMChannel):
@@ -301,7 +299,8 @@ class Modmail(commands.Cog):
                                 # Wait for the message from the author
                                 msg = await self.bot.wait_for('message', check=check, timeout=300)
 
-                                while len(msg.content) < 50:
+                                # Making sure that the message is below 50 characters and the message was sent in the channel
+                                while len(msg.content) < 50 and isinstance(msg.channel, DMChannel):
                                     await ctx.send(embed=ErrorHandling(member))
 
                                     # Wait for the message from the author
@@ -310,7 +309,7 @@ class Modmail(commands.Cog):
                                 # Delete the previous embed
                                 await instructions.delete()
                                 # Send the message to the modmail channel
-                                await channel.send(embed=SendMsgToModMail(self, msg, user))
+                                await channel.send(embed=SendMsgToModMail(self, msg, ctx.author.id))
 
                                 # Make sure the user knows that their message has been sent
                                 await ctx.send(embed=MessageSentConfirmation(member))
@@ -334,16 +333,17 @@ class Modmail(commands.Cog):
                                 # Wait for the message from the author
                                 msg = await self.bot.wait_for('message', check=check, timeout=300)
 
+                                # Making sure that the message is below 50 characters and the message was sent in the channel
                                 while len(msg.content) < 50 and isinstance(msg.channel, DMChannel):
                                     await ctx.send(embed=ErrorHandling(member))
 
-                                    # Wait for the message from the author
+                                    # Wait for the message from the author again
                                     msg = await self.bot.wait_for('message', check=check, timeout=300)
 
                                 # Delete the previous embed
                                 await instructions.delete()
                                 # Send the message to the modmail channel
-                                await channel.send(embed=SendMsgToModMail(self, msg, user))
+                                await channel.send(embed=SendMsgToModMail(self, msg, ctx.author.id))
 
                                 # Make sure the user knows that their message has been sent
                                 await ctx.send(embed=MessageSentConfirmation(member))

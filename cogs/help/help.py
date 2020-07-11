@@ -64,6 +64,12 @@ def fun_function(self, guild_icon, enso_name, enso_icon):
          "\n *(Perms: Everyone)*", True),
         (blank_space, f"`{self.ctx.prefix}cuddle [person]`" +
          "\n Allows the user to cuddle a person in the server" +
+         "\n *(Perms: Everyone)*", True),
+        (blank_space, f"`{self.ctx.prefix}choke [person]`" +
+         "\n Allows the user to choke a person in the server" +
+         "\n *(Perms: Everyone)*", True),
+        (blank_space, f"`{self.ctx.prefix}hug [person]`" +
+         "\n Allows the user to hug a person in the server" +
          "\n *(Perms: Everyone)*", True)]
 
     # Add the fun_commands fields to the embed

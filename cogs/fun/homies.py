@@ -54,17 +54,20 @@ class Fun(commands.Cog):
     async def homies(self, ctx, *, user_word):
         """Allows people to summon the homies"""
 
-        if len(user_word) >= 20:
-            await ctx.send("Please make sure the prompt is below **20** characters!")
-            return
-        else:
+        try:
+            if len(user_word) >= 20:
+                await ctx.send("Please make sure the prompt is below **20** characters!")
+                return
+            else:
 
-            top_text = f"Ayo fuck {user_word}"
-            bottom_text = f"All my homies hate {user_word}"
+                top_text = f"Ayo fuck {user_word}"
+                bottom_text = f"All my homies hate {user_word}"
 
-            generate_meme('homies/AllMyHomies.jpg', top_text=top_text, bottom_text=bottom_text)
+                generate_meme('homies/AllMyHomies.jpg', top_text=top_text, bottom_text=bottom_text)
 
-            await ctx.send(file=discord.File('meme-AllMyHomies.jpg'))
+                await ctx.send(file=discord.File('meme-AllMyHomies.jpg'))
+        except Exception as e:
+            print(e)
 
 
 def setup(bot):

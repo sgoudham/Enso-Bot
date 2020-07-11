@@ -6,7 +6,7 @@ from discord.ext import commands
 from discord.ext.commands import command, cooldown, BucketType
 
 
-def generate_meme(image_path, top_text, bottom_text='', font_path='homies/impact/impacted.ttf', font_size=9):
+def generate_meme(image_path, top_text, bottom_text='', font_path='/homies/impact/impacted.ttf', font_size=9):
     get_image = Image.open(image_path)
     draw = ImageDraw.Draw(get_image)
     image_width, image_height = get_image.size
@@ -62,7 +62,7 @@ class Fun(commands.Cog):
             top_text = f"Ayo fuck {user_word}"
             bottom_text = f"All my homies hate {user_word}"
 
-            generate_meme('homies/AllMyHomies.jpg', top_text=top_text, bottom_text=bottom_text)
+            generate_meme('/homies/AllMyHomies.jpg', top_text=top_text, bottom_text=bottom_text)
 
             await ctx.send(file=discord.File('meme-AllMyHomies.jpg'))
 

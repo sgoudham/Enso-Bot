@@ -20,19 +20,19 @@ def fun_function(self, guild_icon, enso_name, enso_icon):
     # Setting up the fields in a separate array
     fun_fields = [
         (blank_space, f"`{self.ctx.prefix}attack [person]`" +
-         "\n Allows the user to throw an insult to a person in the server" +
+         "\nThrow an insult to a person in the server" +
          "\n *(Perms: Co-Owner)*", True),
         (blank_space, f"`{self.ctx.prefix}comp [person]`" +
-         "\n Allows the user to compliment a person in the server" +
+         "\nCompliment a person in the server" +
          "\n *(Perms: Everyone)*", True),
         (blank_space, f"`{self.ctx.prefix}8ball [text]`" +
-         "\n Allows the user to ask a question and 8ball will give a custom response" +
+         "\nAsk a question and 8ball will give a custom response" +
          "\n *(Perms: everyone)*", True),
         (blank_space, f"`{self.ctx.prefix}flip`" +
-         "\n Allows the user to 'throw a coin' and get a response with a 50/50 chance" +
+         "\nDoes A coinflip with Big PP Or Smol PP" +
          "\n *(Perms: Everyone)*", True),
         (blank_space, f"`{self.ctx.prefix}doggo`" +
-         "\n Allows the user to look at an image of a doggo (Over 20k Images Available" +
+         "\nLook at images of Doggos" +
          "\n *(Perms: Everyone)*", True)]
 
     # Setting up the Embed for the Fun Commands
@@ -48,28 +48,28 @@ def fun_function(self, guild_icon, enso_name, enso_icon):
     # Setting up the fields in a separate array
     fun_fields_2 = [
         (blank_space, f"`{self.ctx.prefix}hug [person]`" +
-         "\n Allows the user to hug a person in the server" +
+         "\nHug A User Within The Server" +
          "\n *(Perms: Everyone)*", True),
         (blank_space, f"`{self.ctx.prefix}cuddle [person]`" +
-         "\n Allows the user to cuddle a person in the server" +
+         "\nCuddle A User Within The Server" +
          "\n *(Perms: Everyone)*", True),
         (blank_space, f"`{self.ctx.prefix}pat [person]`" +
-         "\n Allows the user to pat a person in the server" +
+         "\nPat A User Within The Server" +
          "\n *(Perms: Everyone)*", True),
         (blank_space, f"`{self.ctx.prefix}kiss [person]`" +
-         "\n Allows the user to kiss a person in the server" +
+         "\nKiss A User Within The Serverr" +
          "\n *(Perms: Everyone)*", True),
         (blank_space, f"`{self.ctx.prefix}slap [person]`" +
-         "\n Allows the user to slap a person in the server" +
+         "\nSlap A User Within The Server" +
          "\n *(Perms: Everyone)*", True),
         (blank_space, f"`{self.ctx.prefix}kill [person]`" +
-         "\n Allows the user to kill a person in the server" +
+         "\nKill A User Within The Server" +
          "\n *(Perms: Everyone)*", True),
         (blank_space, f"`{self.ctx.prefix}choke [person]`" +
-         "\n Allows the user to choke a person in the server" +
+         "\nChoke A User Within The Server" +
          "\n *(Perms: Everyone)*", True),
         (blank_space, f"`{self.ctx.prefix}lemon [person]`" +
-         "\n Allows the user to give a lemon to a person in the server" +
+         "\nGive lemon to A User Within The Server" +
          "\n *(Perms: Everyone)*", True)]
 
     # Add the fun_commands fields to the embed
@@ -141,7 +141,7 @@ def misc_function(self, guild_icon, enso_name, enso_icon):
     # Setting up the fields in a separate array
     misc_fields = [
         (blank_space, f"`{self.ctx.prefix}ping`" +
-         "\n Returns Pong! Along With The Latency in ms" +
+         "\n Returns latency in ms" +
          "\n *(Perms: Co-Owner)*", True),
         (blank_space, f"`{self.ctx.prefix}rolemenu`" +
          "\n Allows for the users to get self ping-able roles" +
@@ -150,7 +150,7 @@ def misc_function(self, guild_icon, enso_name, enso_icon):
          "\n Allows Hammy to dm anyone in the server through Enso~Chan!" +
          "\n *(Perms: Co-Owner)*", True),
         (blank_space, f"`{self.ctx.prefix}remindme [time] [text]`" +
-         "\n Allows the user to get Enso~Chan to remind them in dms of anything that they want" +
+         "\n Allows the user to get Enso~Chan to remind them in dms" +
          "\n *(Perms: Everyone)*", True)]
 
     # Add the misc_commands fields to the embed
@@ -175,23 +175,23 @@ def important_function(self, guild_icon, enso_name, enso_icon):
     # Setting up the fields in a separate array
     important_fields = [
         (blank_space, f"`{self.ctx.prefix}userinfo`" +
-         "\n Returns information about the user (Name, Roles, Joined Date, Created Date, etc)" +
+         "\n Returns information about the user" +
          "\n *(Perms: Everyone)*", True),
         (blank_space, f"`{self.ctx.prefix}serverinfo`" +
-         "\n Returns information about the server (Owner, Members, Region, Bots etc etc)" +
+         "\n Returns information about the server" +
          "\n *(Perms: Everyone)*", True),
         (blank_space, f"`{self.ctx.prefix}rules`" +
          "\n Returns the entire ruleset for the server" +
          "\n *(Perms: Everyone)*", True),
         (blank_space, f"`{self.ctx.prefix}roles`" +
-         "\n Shows you how the leveling and xp system works, as well as displaying the order of leveled roles" +
+         "\n Shows you how the leveling and xp system works" +
          "\n *(Perms: Everyone)*", True),
         (blank_space, f"`{self.ctx.prefix}help`" +
-         "\n Allows you to see every command in the bot so far" +
+         "\n Allows you to see every command in the bot" +
          "\n *(Perms: Everyone)*", True),
         (blank_space, f"`{self.ctx.prefix}mm/modmail`" +
-         "\n Allows you to send mail to the staff team!" +
-         f"(Done through the dms with {ensoMention}!)" +
+         "\nAllows you to send mail to the staff team!" +
+         f"\n(Done through the dms with {ensoMention})" +
          "\n *(Perms: Everyone)*", True)]
 
     # Add the important_fields to the embed

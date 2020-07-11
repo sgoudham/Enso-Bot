@@ -50,7 +50,7 @@ class Fun(commands.Cog):
         self.bot = bot
 
     @command(name="homies", aliases=["Homies", "homie", "Homie"])
-    @cooldown(1, 25, BucketType.guild)
+    @cooldown(1, 10, BucketType.user)
     async def homies(self, ctx, *, user_word):
         """Allows people to summon the homies"""
 

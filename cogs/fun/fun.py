@@ -95,10 +95,10 @@ class Fun(commands.Cog):
             f"You're... You're SHREKTACULAR :heart_eyes: :flushed: :heart_eyes: {target.mention}",
             f"{target.mention} Your beauty renders me speechless... :heart_eyes: :heart_eyes:",
             f"Your taste in music is impeccable {target.mention}",
-            f"{target.mention}I can't stop thinking about you :see_no_evil: :see_no_evil:",
+            f"{target.mention} I can't stop thinking about you :see_no_evil: :see_no_evil:",
             f"{target.mention} Your wedding will be wonderful, but the y is silent <a:huh:676195228872474643> <a:huh:676195228872474643>",
             f"{target.mention} I would give up my lifelong goals just to have a chance with you <a:huh:676195228872474643> <a:huh:676195228872474643>",
-            f"Will you be the **yee** to my **haw**? :pleading_face: :pleading_face:",
+            f"{target.mention} Will you be the **yee** to my **haw**? :pleading_face: :pleading_face:",
         ]
 
         # Sending out a random compliment from the array "responses"

@@ -309,7 +309,7 @@ class Modmail(commands.Cog):
                                 # Delete the previous embed
                                 await instructions.delete()
                                 # Send the message to the modmail channel
-                                await channel.send(embed=SendMsgToModMail(self, msg, ctx.author.id))
+                                await channel.send(embed=SendMsgToModMail(self, msg, ctx.author))
 
                                 # Make sure the user knows that their message has been sent
                                 await ctx.send(embed=MessageSentConfirmation(member))
@@ -343,7 +343,7 @@ class Modmail(commands.Cog):
                                 # Delete the previous embed
                                 await instructions.delete()
                                 # Send the message to the modmail channel
-                                await channel.send(embed=SendMsgToModMail(self, msg, ctx.author.id))
+                                await channel.send(embed=SendMsgToModMail(self, msg, ctx.author))
 
                                 # Make sure the user knows that their message has been sent
                                 await ctx.send(embed=MessageSentConfirmation(member))

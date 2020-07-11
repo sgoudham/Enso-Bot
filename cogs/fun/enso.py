@@ -28,7 +28,7 @@ def displayServerImage(array, ctx, name):
 
     # Set embed up for the person requested by the user
     embed = Embed(
-        title=f"**Look At What A Cutie {name.capitalize()} is!! <a:huh:676195228872474643> <a:huh:676195228872474643> **",
+        title=f"**Look At What A Cutie {name.capitalize()} is! <a:huh:676195228872474643> <a:huh:676195228872474643> **",
         colour=Colour(random.choice(colour_list)),
         timestamp=time)
     embed.set_image(url=random.choice(array))
@@ -87,7 +87,7 @@ class Enso(commands.Cog):
                     print(e)
 
                     # Send error message saying that the person isn't recognised
-                    await ctx.send(f"Sorry! That person doesn't exist!! Try the names listed below!")
+                    await ctx.send(f"Sorry! That person doesn't exist! Try the names listed below!")
 
                     # Send the list of available members to the channel
                     nice = string.capwords(', '.join(map(str, array)))

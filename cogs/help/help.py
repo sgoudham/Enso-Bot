@@ -2,7 +2,7 @@ from discord import Embed
 from discord.ext import commands, menus
 from discord.ext.commands import command
 
-from settings import blank_space, enso_embedmod_colours, time, ensoMention
+from settings import blank_space, enso_embedmod_colours, time, ensoMention, hammyMention
 
 
 # Function to allow the first page of the help commands (Fun Commands)
@@ -19,19 +19,15 @@ def fun_function(self, guild_icon):
     fun_fields = [
         (blank_space, f"`{self.ctx.prefix}attack [person]`" +
          "\nThrow an insult to a person in the server" +
-         "\n *(Perms: Co-Owner)*", True),
+         "\n **(Perms: Co-Owner)**", True),
         (blank_space, f"`{self.ctx.prefix}comp [person]`" +
-         "\nCompliment a person in the server" +
-         "\n *(Perms: Everyone)*", True),
+         "\nCompliment a person in the server", True),
         (blank_space, f"`{self.ctx.prefix}8ball [text]`" +
-         "\nAsk a question and 8ball will give a custom response" +
-         "\n *(Perms: everyone)*", True),
+         "\nAsk a question and 8ball will give a custom response", True),
         (blank_space, f"`{self.ctx.prefix}flip`" +
-         "\nDoes A coinflip with Big PP Or Smol PP" +
-         "\n *(Perms: Everyone)*", True),
+         "\nDoes A coinflip with Big PP Or Smol PP", True),
         (blank_space, f"`{self.ctx.prefix}doggo`" +
-         "\nLook at images of Doggos" +
-         "\n *(Perms: Everyone)*", True)]
+         "\nLook at images of Doggos", True)]
 
     # Setting up the Embed for the Fun Commands
     fun_commands_2 = Embed(title="```(っ◔◡◔)っ Fun Commands 2 (っ◔◡◔)っ```",
@@ -44,29 +40,21 @@ def fun_function(self, guild_icon):
     # Setting up the fields in a separate array
     fun_fields_2 = [
         (blank_space, f"`{self.ctx.prefix}hug [person]`" +
-         "\nHug A User Within The Server" +
-         "\n *(Perms: Everyone)*", True),
+         "\nHug A User Within The Server", True),
         (blank_space, f"`{self.ctx.prefix}cuddle [person]`" +
-         "\nCuddle A User Within The Server" +
-         "\n *(Perms: Everyone)*", True),
+         "\nCuddle A User Within The Server", True),
         (blank_space, f"`{self.ctx.prefix}pat [person]`" +
-         "\nPat A User Within The Server" +
-         "\n *(Perms: Everyone)*", True),
+         "\nPat A User Within The Server", True),
         (blank_space, f"`{self.ctx.prefix}kiss [person]`" +
-         "\nKiss A User Within The Serverr" +
-         "\n *(Perms: Everyone)*", True),
+         "\nKiss A User Within The Serverr", True),
         (blank_space, f"`{self.ctx.prefix}slap [person]`" +
-         "\nSlap A User Within The Server" +
-         "\n *(Perms: Everyone)*", True),
+         "\nSlap A User Within The Server", True),
         (blank_space, f"`{self.ctx.prefix}kill [person]`" +
-         "\nKill A User Within The Server" +
-         "\n *(Perms: Everyone)*", True),
+         "\nKill A User Within The Server", True),
         (blank_space, f"`{self.ctx.prefix}choke [person]`" +
-         "\nChoke A User Within The Server" +
-         "\n *(Perms: Everyone)*", True),
+         "\nChoke A User Within The Server", True),
         (blank_space, f"`{self.ctx.prefix}lemon [person]`" +
-         "\nGive lemon to A User Within The Server" +
-         "\n *(Perms: Everyone)*", True)]
+         "\nGive lemon to A User Within The Server", True)]
 
     # Add the fun_commands fields to the embed
     for name, value, inline in fun_fields:
@@ -93,25 +81,20 @@ def waifu_husbando_function(self, guild_icon):
     waifu_husbando_fields = [
         (blank_space, f"`{self.ctx.prefix}w [waifu]`" +
          "\n Allows for a image of the Waifu specified to be shown" +
-         f"\n (Using {self.ctx.prefix}w by itself shall randomly generated image of a Waifu to be shown)" +
-         "\n *(Perms: Everyone)*", True),
+         f"\n (Using {self.ctx.prefix}w by itself shall randomly generated image of a Waifu to be shown)", True),
         (blank_space, f"`{self.ctx.prefix}h [husbando]`" +
          "\n Allows for a image of a Husbando specified to be shown" +
-         f"\n (Using {self.ctx.prefix}h by itself shall randomly generated image of a Husbando to be shown)" +
-         "\n *(Perms: Everyone)*", True),
+         f"\n (Using {self.ctx.prefix}h by itself shall randomly generated image of a Husbando to be shown)", True),
         (blank_space, f"`{self.ctx.prefix}w list`" +
-         "\n Returns a list of Waifu's that are in the bot " +
-         "\n *(Perms: Everyone)*", True),
+         "\n Returns a list of Waifu's that are in the bot ", True),
         (blank_space, f"`{self.ctx.prefix}h list`" +
-         "\n Returns a list of Husbando's that are in the bot " +
-         "\n *(Perms: Everyone)*", True),
+         "\n Returns a list of Husbando's that are in the bot ", True),
         (blank_space, f"`{self.ctx.prefix}enso [person]`" +
          "\n Allows for a randomly generated image of the member specified" +
-         f"\n (Using {self.ctx.prefix}enso by itself shall generate a random image of a person within all the server)" +
-         "\n *(Perms: Everyone)*", True),
+         f"\n (Using {self.ctx.prefix}enso by itself shall generate a random image of a person within all the server)",
+         True),
         (blank_space, f"`{self.ctx.prefix}enso list`" +
-         "\n Returns a list of the people's images currently in the bot" +
-         "\n *(Perms: Everyone)*", True)]
+         "\n Returns a list of the people's images currently in the bot", True)]
 
     # Add the waifu_husbando_commands fields to the embed
     for name, value, inline in waifu_husbando_fields:
@@ -133,17 +116,16 @@ def misc_function(self, guild_icon):
     # Setting up the fields in a separate array
     misc_fields = [
         (blank_space, f"`{self.ctx.prefix}ping`" +
-         "\n Returns latency in ms" +
-         "\n *(Perms: Co-Owner)*", True),
+         "\nReturns latency in ms" +
+         "\n**(Perms: Co-Owner)**", True),
         (blank_space, f"`{self.ctx.prefix}rolemenu`" +
-         "\n Allows for the users to get self ping-able roles" +
-         "\n *(Perms: Co-Owner)*", True),
+         "\nShowing Users Self Roles" +
+         "\n**(Perms: Co-Owner)**", True),
         (blank_space, f"`{self.ctx.prefix}dm [person]`" +
-         "\n Allows Hammy to dm anyone in the server through Enso~Chan!" +
-         "\n *(Perms: Co-Owner)*", True),
+         f"\nFor {hammyMention} to DM Users" +
+         "\n**(Perms: Co-Owner)**", True),
         (blank_space, f"`{self.ctx.prefix}remindme [time] [text]`" +
-         "\n Allows the user to get Enso~Chan to remind them in dms" +
-         "\n *(Perms: Everyone)*", True)]
+         "\nGet Enso~Chan to remind you in DMs", True)]
 
     # Add the misc_commands fields to the embed
     for name, value, inline in misc_fields:
@@ -165,24 +147,18 @@ def important_function(self, guild_icon):
     # Setting up the fields in a separate array
     important_fields = [
         (blank_space, f"`{self.ctx.prefix}userinfo`" +
-         "\n Returns information about the user" +
-         "\n *(Perms: Everyone)*", True),
+         "\n Returns information about the user", True),
         (blank_space, f"`{self.ctx.prefix}serverinfo`" +
-         "\n Returns information about the server" +
-         "\n *(Perms: Everyone)*", True),
+         "\n Returns information about the server", True),
         (blank_space, f"`{self.ctx.prefix}rules`" +
-         "\n Returns the entire ruleset for the server" +
-         "\n *(Perms: Everyone)*", True),
+         "\nFull Ruleset for Enso", True),
         (blank_space, f"`{self.ctx.prefix}roles`" +
-         "\n Shows you how the leveling and xp system works" +
-         "\n *(Perms: Everyone)*", True),
+         "\nLeveling and xp system in Enso", True),
         (blank_space, f"`{self.ctx.prefix}help`" +
-         "\n Allows you to see every command in the bot" +
-         "\n *(Perms: Everyone)*", True),
+         "\nSee every command in the bot", True),
         (blank_space, f"`{self.ctx.prefix}mm/modmail`" +
-         "\nAllows you to send mail to the staff team!" +
-         f"\n(Done through the dms with {ensoMention})" +
-         "\n *(Perms: Everyone)*", True)]
+         "\nSend mail to the staff team!" +
+         f"\n(Done through the dms with {ensoMention})", True)]
 
     # Add the important_fields to the embed
     for name, value, inline in important_fields:

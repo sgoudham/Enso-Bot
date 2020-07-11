@@ -90,8 +90,6 @@ class Fun(commands.Cog):
             f"Your existence makes me feel so much better {target.mention}",
             f"You're so hot, even hotter than hell :heart_eyes: {target.mention}",
             f"{target.mention} You’re so cute that Taz will simp for you anytime :flushed: :heart_eyes: :flushed:",
-            f"Josh would kill Toga for you anyday {target.mention}",
-            f"Zara would pick you over Kakashi :heart_eyes: :heart_eyes: {target.mention}",
             f"{target.mention} The thought of you leaving me is too much to bear. Stay with me forever :pleading_face: :pleading_face:",
             f"{target.mention}From a scale of 1-10, you’re 9 I’m the 1 you need <:Kawaii:676203363922214953> <:Kawaii:676203363922214953> <:Kawaii:676203363922214953> ",
             f"You're... You're SHREKTACULAR :heart_eyes: :flushed: :heart_eyes: {target.mention}",
@@ -99,7 +97,8 @@ class Fun(commands.Cog):
             f"Your taste in music is impeccable {target.mention}",
             f"{target.mention}I can't stop thinking about you :see_no_evil: :see_no_evil:",
             f"{target.mention} Your wedding will be wonderful, but the y is silent <a:huh:676195228872474643> <a:huh:676195228872474643>",
-            f"{target.mention} Hammy would give up his lifelong goals just to have a chance with you <a:huh:676195228872474643> <a:huh:676195228872474643>",
+            f"{target.mention} I would give up my lifelong goals just to have a chance with you <a:huh:676195228872474643> <a:huh:676195228872474643>",
+            f"Will you be the **yee** to my **haw**? :pleading_face: :pleading_face:",
         ]
 
         # Sending out a random compliment from the array "responses"

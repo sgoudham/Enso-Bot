@@ -80,21 +80,21 @@ def waifu_husbando_function(self, guild_icon):
     # Setting up the fields in a separate array
     waifu_husbando_fields = [
         (blank_space, f"`{self.ctx.prefix}w [waifu]`" +
-         "\n Allows for a image of the Waifu specified to be shown" +
+         "\nShows Specified Image of Waifu" +
          f"\n (Using {self.ctx.prefix}w by itself shall randomly generated image of a Waifu to be shown)", True),
         (blank_space, f"`{self.ctx.prefix}h [husbando]`" +
-         "\n Allows for a image of a Husbando specified to be shown" +
+         "\nShows Specified Image of Husbando" +
          f"\n (Using {self.ctx.prefix}h by itself shall randomly generated image of a Husbando to be shown)", True),
         (blank_space, f"`{self.ctx.prefix}w list`" +
-         "\n Returns a list of Waifu's that are in the bot ", True),
+         "\nReturns all Waifus", True),
         (blank_space, f"`{self.ctx.prefix}h list`" +
-         "\n Returns a list of Husbando's that are in the bot ", True),
+         "\nReturns all Husbandos", True),
         (blank_space, f"`{self.ctx.prefix}enso [person]`" +
-         "\n Allows for a randomly generated image of the member specified" +
+         "\nShows Specified Image of User" +
          f"\n (Using {self.ctx.prefix}enso by itself shall generate a random image of a person within all the server)",
          True),
         (blank_space, f"`{self.ctx.prefix}enso list`" +
-         "\n Returns a list of the people's images currently in the bot", True)]
+         "\nReturns all Users", True)]
 
     # Add the waifu_husbando_commands fields to the embed
     for name, value, inline in waifu_husbando_fields:

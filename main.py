@@ -100,7 +100,7 @@ async def on_ready():
 @commands.is_owner()
 async def ping(ctx):
     """Send the latency of the bot (ms)"""
-    await ctx.send(f'Ping Pong! {round(client.latency * 1000)}ms')
+    await ctx.send(f'Pong! `{round(client.latency * 1000)}ms`')
 
 
 # Bot event for new member joining, sending an embed introducing them to the server

@@ -6,7 +6,7 @@ from settings import blank_space, enso_embedmod_colours, time, ensoMention
 
 
 # Function to allow the first page of the help commands (Fun Commands)
-def fun_function(self, guild_icon, enso_name, enso_icon):
+def fun_function(self, guild_icon):
     # Setting up the Embed for the Fun Commands
     fun_commands = Embed(title="```(っ◔◡◔)っ Fun Commands (っ◔◡◔)っ```",
                          colour=enso_embedmod_colours,
@@ -14,8 +14,6 @@ def fun_function(self, guild_icon, enso_name, enso_icon):
 
     # Setting thumbnail and author
     fun_commands.set_thumbnail(url=guild_icon)
-    fun_commands.set_author(name=enso_name,
-                            icon_url=enso_icon)
 
     # Setting up the fields in a separate array
     fun_fields = [
@@ -42,8 +40,6 @@ def fun_function(self, guild_icon, enso_name, enso_icon):
 
     # Setting thumbnail and author
     fun_commands_2.set_thumbnail(url=guild_icon)
-    fun_commands_2.set_author(name=enso_name,
-                              icon_url=enso_icon)
 
     # Setting up the fields in a separate array
     fun_fields_2 = [
@@ -84,7 +80,7 @@ def fun_function(self, guild_icon, enso_name, enso_icon):
 
 
 # Function to allow the second page of the help commands (Waifu/Husbandos)
-def waifu_husbando_function(self, guild_icon, enso_name, enso_icon):
+def waifu_husbando_function(self, guild_icon):
     # Setting up the Embed for the Waifu/Husbandos
     waifu_husbando_commands = Embed(title="```(っ◔◡◔)っ Waifus/Husbando Commands (っ◔◡◔)っ```",
                                     colour=enso_embedmod_colours,
@@ -92,8 +88,6 @@ def waifu_husbando_function(self, guild_icon, enso_name, enso_icon):
 
     # Setting thumbnail and author
     waifu_husbando_commands.set_thumbnail(url=guild_icon)
-    waifu_husbando_commands.set_author(name=enso_name,
-                                       icon_url=enso_icon)
 
     # Setting up the fields in a separate array
     waifu_husbando_fields = [
@@ -127,7 +121,7 @@ def waifu_husbando_function(self, guild_icon, enso_name, enso_icon):
 
 
 # Function to allow the third page of the help commands (Miscellaneous)
-def misc_function(self, guild_icon, enso_name, enso_icon):
+def misc_function(self, guild_icon):
     # Setting up the Embed for the Miscellaneous commands
     misc_commands = Embed(title="```(っ◔◡◔)っ Misc Commands (っ◔◡◔)っ```",
                           colour=enso_embedmod_colours,
@@ -135,8 +129,6 @@ def misc_function(self, guild_icon, enso_name, enso_icon):
 
     # Setting thumbnail and author
     misc_commands.set_thumbnail(url=guild_icon)
-    misc_commands.set_author(name=enso_name,
-                             icon_url=enso_icon)
 
     # Setting up the fields in a separate array
     misc_fields = [
@@ -161,7 +153,7 @@ def misc_function(self, guild_icon, enso_name, enso_icon):
 
 
 # Function to allow the fourth page of the help commands (Important)
-def important_function(self, guild_icon, enso_name, enso_icon):
+def important_function(self, guild_icon):
     # Setting up the Embed for the Important Commands
     important_commands = Embed(title="```(っ◔◡◔)っ Important Commands (っ◔◡◔)っ```",
                                colour=enso_embedmod_colours,
@@ -169,8 +161,6 @@ def important_function(self, guild_icon, enso_name, enso_icon):
 
     # Setting thumbnail and author
     important_commands.set_thumbnail(url=guild_icon)
-    important_commands.set_author(name=enso_name,
-                                  icon_url=enso_icon)
 
     # Setting up the fields in a separate array
     important_fields = [
@@ -225,10 +215,10 @@ def embeds(self):
     enso_name = self.bot.user.display_name
 
     # Set the different pages of the embed
-    page1, page2 = fun_function(self, guild_icon, enso_name, enso_icon)
-    page3 = waifu_husbando_function(self, guild_icon, enso_name, enso_icon)
-    page4 = misc_function(self, guild_icon, enso_name, enso_icon)
-    page5 = important_function(self, guild_icon, enso_name, enso_icon)
+    page1, page2 = fun_function(self, guild_icon)
+    page3 = waifu_husbando_function(self, guild_icon)
+    page4 = misc_function(self, guild_icon)
+    page5 = important_function(self, guild_icon)
 
     # Store all the categories of the menu to an array called pages
     pages = [page1, page2, page3, page4, page5]

@@ -41,7 +41,7 @@ def generate_meme(image_path, top_text, bottom_text='', font_path='homies/impact
         y += line_height
 
     # Save meme
-    get_image.save('meme-' + get_image.filename.split('/')[-1])
+    get_image.save("AllMyHomiesHateMeme.jpg")
 
 
 # Set up the cog
@@ -65,7 +65,7 @@ class Fun(commands.Cog):
 
                 generate_meme('homies/AllMyHomies.jpg', top_text=top_text, bottom_text=bottom_text)
 
-                await ctx.send(file=discord.File('meme-AllMyHomies.jpg'))
+                await ctx.send(file=discord.File('AllMyHomiesHateMeme.jpg'))
         except Exception as e:
             print(e)
 

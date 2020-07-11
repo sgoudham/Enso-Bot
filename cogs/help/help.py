@@ -47,14 +47,11 @@ def fun_function(self, guild_icon, enso_name, enso_icon):
 
     # Setting up the fields in a separate array
     fun_fields_2 = [
-        (blank_space, f"`{self.ctx.prefix}lemon [person]`" +
-         "\n Allows the user to give a lemon to a person in the server" +
+        (blank_space, f"`{self.ctx.prefix}hug [person]`" +
+         "\n Allows the user to hug a person in the server" +
          "\n *(Perms: Everyone)*", True),
-        (blank_space, f"`{self.ctx.prefix}slap [person]`" +
-         "\n Allows the user to slap a person in the server" +
-         "\n *(Perms: Everyone)*", True),
-        (blank_space, f"`{self.ctx.prefix}kill [person]`" +
-         "\n Allows the user to kill a person in the server" +
+        (blank_space, f"`{self.ctx.prefix}cuddle [person]`" +
+         "\n Allows the user to cuddle a person in the server" +
          "\n *(Perms: Everyone)*", True),
         (blank_space, f"`{self.ctx.prefix}pat [person]`" +
          "\n Allows the user to pat a person in the server" +
@@ -62,14 +59,17 @@ def fun_function(self, guild_icon, enso_name, enso_icon):
         (blank_space, f"`{self.ctx.prefix}kiss [person]`" +
          "\n Allows the user to kiss a person in the server" +
          "\n *(Perms: Everyone)*", True),
-        (blank_space, f"`{self.ctx.prefix}cuddle [person]`" +
-         "\n Allows the user to cuddle a person in the server" +
+        (blank_space, f"`{self.ctx.prefix}slap [person]`" +
+         "\n Allows the user to slap a person in the server" +
+         "\n *(Perms: Everyone)*", True),
+        (blank_space, f"`{self.ctx.prefix}kill [person]`" +
+         "\n Allows the user to kill a person in the server" +
          "\n *(Perms: Everyone)*", True),
         (blank_space, f"`{self.ctx.prefix}choke [person]`" +
          "\n Allows the user to choke a person in the server" +
          "\n *(Perms: Everyone)*", True),
-        (blank_space, f"`{self.ctx.prefix}hug [person]`" +
-         "\n Allows the user to hug a person in the server" +
+        (blank_space, f"`{self.ctx.prefix}lemon [person]`" +
+         "\n Allows the user to give a lemon to a person in the server" +
          "\n *(Perms: Everyone)*", True)]
 
     # Add the fun_commands fields to the embed

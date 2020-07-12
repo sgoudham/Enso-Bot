@@ -81,10 +81,10 @@ def waifu_husbando_function(self, guild_icon):
     waifu_husbando_fields = [
         (blank_space, f"`{self.ctx.prefix}w [waifu]`" +
          "\nShows Specified Image of Waifu" +
-         f"\n (Using {self.ctx.prefix}w by itself shall randomly generated image of a Waifu to be shown)", True),
+         f"\n (Using {self.ctx.prefix}w shows random image of Waifu)", True),
         (blank_space, f"`{self.ctx.prefix}h [husbando]`" +
          "\nShows Specified Image of Husbando" +
-         f"\n (Using {self.ctx.prefix}h by itself shall randomly generated image of a Husbando to be shown)", True),
+         f"\n (Using {self.ctx.prefix}h shows random image of Husbando", True),
         (blank_space, f"`{self.ctx.prefix}w list`" +
          "\nReturns all Waifus", True),
         (blank_space, f"`{self.ctx.prefix}h list`" +
@@ -187,8 +187,6 @@ def stop_embed(self):
 def embeds(self):
     # Define guild icon, enso bot icon and enso bot name
     guild_icon = self.ctx.guild.icon_url
-    enso_icon = self.bot.user.avatar_url
-    enso_name = self.bot.user.display_name
 
     # Set the different pages of the embed
     page1, page2 = fun_function(self, guild_icon)
@@ -267,15 +265,14 @@ class HelpMenu(menus.Menu):
         def check(m):
             return m.author == payload.member
 
+        # Do nothing if the check does not return true
         if not check(self.ctx):
             return
+        # Allow the embed to be deleted
         else:
-            # Send the stop embed which shows that the help commands embed is no longer accessible
-            stop = stop_embed(self)
-            await self.message.edit(embed=stop)
 
-            # Clear the reactions in the message and stop the function
-            await self.message.clear_reactions()
+            # Delete the embed and stop the function from running
+            await self.message.delete()
             self.stop()
 
 

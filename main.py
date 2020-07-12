@@ -161,7 +161,7 @@ async def on_command_error(ctx, args2):
 # Async def for handling cooldown error/permission errors
 async def on_command_cooldown(ctx, error):
     # Send an error message to the user telling them that the command is on cooldown
-    message = await ctx.send(f'That command is on cooldown. Try again in {error.retry_after:,.2f} seconds.')
+    message = await ctx.send(f'That command is on cooldown. Try again in **{error.retry_after:,.2f}** seconds.')
 
     # Let the User read the message for 2.5 seconds
     await asyncio.sleep(2.5)
@@ -172,7 +172,7 @@ async def on_command_cooldown(ctx, error):
 # Async def for handling permission errors
 async def on_command_permission(ctx):
     # Send an error message to the user saying that they don't have permission to use this command
-    message = await ctx.send("Uh oh! You don't have permission to use this command!")
+    message = await ctx.send("**Uh oh! You don't have permission to use this command!**")
 
     # Let the user read the message for 2.5 seconds
     await asyncio.sleep(2.5)
@@ -182,7 +182,7 @@ async def on_command_permission(ctx):
 
 async def on_command_missing_user(ctx):
     # Send an error message to the user saying that an argument is missing
-    message = await ctx.send("Uh oh! Couldn't find anyone to mention! Try again!")
+    message = await ctx.send("**Uh oh! Couldn't find anyone to mention! Try again!**")
 
     # Let the user read the message for 2.5 seconds
     await asyncio.sleep(2.5)

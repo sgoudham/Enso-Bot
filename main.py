@@ -114,6 +114,23 @@ async def on_member_join(member):
     if guild.id != enso_guild_ID:
         return
     else:
+
+        try:
+            with db.connection() as conn:
+                name = f"{member.name}#{member.discriminator}"
+                # Define the Insert Into Statement inserting into the database
+                insert_query = """INSERT INTO members (discordID, discordUser) VALUES (?, ?)"""
+                vals = member.id, name
+                cursor = conn.cursor()
+
+                # Execute the SQL Query
+                cursor.execute(insert_query, vals)
+                conn.commit()
+                print(cursor.rowcount, "Record inserted successfully into Members")
+
+        except mariadb.Error as ex:
+            print("Parameterized Query Failed: {}".format(ex))
+
         # Set the channel id to "newpeople"
         new_people = guild.get_channel(enso_newpeople_ID)
 
@@ -143,6 +160,32 @@ async def on_member_join(member):
 
         # Send embed to #newpeople
         await new_people.send(embed=embed)
+
+
+# Bot event for new member joining, sending an embed introducing them to the server
+@client.event
+async def on_member_remove(member):
+    # Get the guild
+    guild = member.guild
+
+    try:
+        # Make sure the guild is Enso
+        if guild.id != enso_guild_ID:
+            return
+        else:
+            with db.connection() as conn:
+                # Define the Insert Into Statement inserting into the database
+                insert_query = """DELETE FROM members WHERE discordID = (?)"""
+                val = member.id,
+                cursor = conn.cursor()
+
+                # Execute the SQL Query
+                cursor.execute(insert_query, val)
+                conn.commit()
+                print(cursor.rowcount, "Record Deleted successfully from Members")
+
+    except mariadb.Error as ex:
+        print("Parameterized Query Failed: {}".format(ex))
 
 
 # Bot Event for handling all errors within discord.commands

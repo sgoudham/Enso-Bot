@@ -21,7 +21,7 @@ def getMember(ctx):
 
 # Error handling function to make sure that the commands only work in "enso-chan-commands"
 def error_function():
-    return f"Sorry! I only work in {enso_ensochancommands_Mention}"
+    return f"**Sorry! I only work in {enso_ensochancommands_Mention}**"
 
 
 # Set up the Cog

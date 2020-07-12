@@ -5,6 +5,7 @@ from discord import Colour, Embed, Member
 from discord.ext import commands
 from discord.ext.commands import cooldown, command, BucketType
 
+import db
 import settings
 from settings import time, colour_list, enso_ensochancommands_Mention
 
@@ -393,6 +394,19 @@ class Interactive(commands.Cog):
 
             # if the person says yes
             if msg.content.lower() in ['y', 'yes', 'yea']:
+
+                # Using connection to the database
+                with db.connection() as conn:
+                    # Define the Insert Into Statement inserting into the database
+                    insert_query = """INSERT INTO marriages (proposerID, proposeeID) VALUES (?, ?)"""
+                    val = ctx.author.id, member.id
+                    cursor = conn.cursor()
+
+                    # Execute the SQL Query
+                    cursor.execute(insert_query, val)
+                    conn.commit()
+                    print(cursor.rowcount, "Record inserted successfully into Marriage Logs")
+
                 # Congratulate them!
                 await ctx.send(
                     f"Congratulations! ヽ(・∀・)ﾉ {ctx.author.mention} and {member.mention} are now married to each other!")

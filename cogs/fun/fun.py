@@ -91,7 +91,6 @@ class Fun(commands.Cog):
             f"You're so hot, even hotter than hell :heart_eyes: {target.mention}",
             f"{target.mention} You’re so cute that Taz will simp for you anytime :flushed: :heart_eyes: :flushed:",
             f"{target.mention} The thought of you leaving me is too much to bear. Stay with me forever :pleading_face: :pleading_face:",
-            f"{target.mention}From a scale of 1-10, you’re 9 I’m the 1 you need <:Kawaii:676203363922214953> <:Kawaii:676203363922214953> <:Kawaii:676203363922214953> ",
             f"You're... You're SHREKTACULAR :heart_eyes: :flushed: :heart_eyes: {target.mention}",
             f"{target.mention} Your beauty renders me speechless... :heart_eyes: :heart_eyes:",
             f"Your taste in music is impeccable {target.mention}",
@@ -99,6 +98,8 @@ class Fun(commands.Cog):
             f"{target.mention} Your wedding will be wonderful, but the y is silent <a:huh:676195228872474643> <a:huh:676195228872474643>",
             f"{target.mention} I would give up my lifelong goals just to have a chance with you <a:huh:676195228872474643> <a:huh:676195228872474643>",
             f"{target.mention} Will you be the **yee** to my **haw**? :pleading_face: :pleading_face:",
+            f"{target.mention} is the definition of perfection :heart_eyes: :heart_eyes:"
+            f"{target.mention} My love for you is bigger than the amount of code Hammy has written <:Kawaii:676203363922214953> <:Kawaii:676203363922214953> <:Kawaii:676203363922214953>"
         ]
 
         # Sending out a random compliment from the array "responses"

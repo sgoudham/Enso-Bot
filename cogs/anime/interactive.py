@@ -3,7 +3,7 @@ import random
 
 from discord import Colour, Embed, Member
 from discord.ext import commands
-from discord.ext.commands import cooldown, command, BucketType
+from discord.ext.commands import cooldown, command, BucketType, is_owner
 
 import db
 import settings
@@ -374,6 +374,7 @@ class Interactive(commands.Cog):
             print(e)
 
     @command(name="marry", aliases=["Marry"])
+    @is_owner()
     @cooldown(1, 1, BucketType.user)
     async def marry(self, ctx, member: Member):
         """Allows the bot to wed two young lovers together"""
@@ -397,6 +398,15 @@ class Interactive(commands.Cog):
 
                 # Using connection to the database
                 with db.connection() as conn:
+                    select_query = """SELECT * FROM marriages"""
+                    cursor = conn.cursor()
+
+                    cursor.execute(select_query)
+                    result = cursor.fetchall()
+                    for row in result:
+                        print(row[1], row[2])
+                    conn.commit()
+
                     # Define the Insert Into Statement inserting into the database
                     insert_query = """INSERT INTO marriages (proposerID, proposeeID) VALUES (?, ?)"""
                     val = ctx.author.id, member.id

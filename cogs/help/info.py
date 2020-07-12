@@ -1,4 +1,3 @@
-import datetime
 import random
 import string
 from typing import Optional
@@ -7,7 +6,7 @@ from discord import Embed, Member, Colour
 from discord.ext import commands
 from discord.ext.commands import BucketType, cooldown, command
 
-import settings
+from settings import colour_list, time
 
 # Permissions to filter through
 Perms = frozenset(
@@ -81,8 +80,8 @@ class GetInfo(commands.Cog):
         # Set up the embed to display everything about the user
         embed = Embed(
             title=f"**User Information**",
-            colour=Colour(int(random.choice(settings.colour_list))),
-            timestamp=datetime.datetime.utcnow()
+            colour=Colour(int(random.choice(colour_list))),
+            timestamp=time
         )
         embed.set_thumbnail(url=userAvatar)
         embed.set_footer(text=f"ID: {target.id}", icon_url='{}'.format(userAvatar))
@@ -124,8 +123,8 @@ class GetInfo(commands.Cog):
 
         # Set up embed to display all the server information
         embed = Embed(title="**Server Information**",
-                      colour=Colour(int(random.choice(settings.colour_list))),
-                      timestamp=datetime.datetime.utcnow())
+                      colour=Colour(int(random.choice(colour_list))),
+                      timestamp=time)
         embed.set_thumbnail(url=guild_icon)
         embed.set_footer(text=f"ID: {guild_id}", icon_url='{}'.format(guild_icon))
 

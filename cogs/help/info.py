@@ -25,8 +25,8 @@ Perms = frozenset(
                   "read message history",
                   "external emojis",
                   "view guild insights",
-                  "connect": "",
-                  "speak": "",
+                  "connect",
+                  "speak",
                   "use voice activation",
                   "change nickname"
          }

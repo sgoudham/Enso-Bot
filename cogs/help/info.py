@@ -74,7 +74,7 @@ class GetInfo(commands.Cog):
         filtered = filter(lambda x: x[1], target.guild_permissions)
         # now replace all "_" with " " in each item and join them together
         permission = ",".join(map(lambda x: x[0].replace("_", " "), filtered))
-        
+
         # Capitalise every word in the array and get rid of the ", " at the end of the string
         permissions = string.capwords("".join(map(str, DetectPermissions(permission, Perms))))
 

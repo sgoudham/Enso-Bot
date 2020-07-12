@@ -39,7 +39,7 @@ def DetectPermissions(message, fset):
 
     # Filter the permission out if it's in the frozenset
     filtered = filter(lambda perm: perm not in fset, message)
-    return ",".join(filtered)
+    return ", ".join(filtered)
 
 class GetInfo(commands.Cog):
     def __init__(self, bot):

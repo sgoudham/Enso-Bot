@@ -73,7 +73,7 @@ class Fun(commands.Cog):
             f"{target.mention}'s smile is brighter than sunlight, so smile more often ( ◠‿◠ )",
             f"{target.mention} Your smile is so beautiful it blinds me :heart_eyes: :heart_eyes:",
             f"Being on a journey all my life, I will never meet a person as amazing as you are {target.mention}",
-            f"Such a pleasure to be on the same sever with {target.mention} <:boneappleteeth:676202300573876252> <:boneappleteeth:676202300573876252>",
+            f"Such a pleasure to be on the same server with {target.mention} <:boneappleteeth:676202300573876252> <:boneappleteeth:676202300573876252>",
             f"With {target.mention}, even the worst day will be filled with joy <:hug:718248629034549299> <:hug:718248629034549299>",
             f"There's no better antidepressant than {target.mention}",
             f"{target.mention} You're great, keep going Σd(˘ꇴ˘๑)",

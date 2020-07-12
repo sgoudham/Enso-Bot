@@ -3,11 +3,11 @@ import random
 
 from discord import Colour, Embed, Member
 from discord.ext import commands
-from discord.ext.commands import cooldown, command, BucketType, is_owner
+from discord.ext.commands import cooldown, command, BucketType
 
 import db
 import settings
-from settings import time, colour_list, enso_ensochancommands_Mention
+from settings import time, colour_list, enso_ensochancommands_Mention, enso_guild_ID
 
 
 # Gets the member and user avatar
@@ -374,10 +374,44 @@ class Interactive(commands.Cog):
             print(e)
 
     @command(name="marry", aliases=["Marry"])
-    @is_owner()
     @cooldown(1, 1, BucketType.user)
     async def marry(self, ctx, member: Member):
         """Allows the bot to wed two young lovers together"""
+
+        # Get the guild Enso
+        guild = self.bot.get_guild(enso_guild_ID)
+
+        # Using connection to the database
+        with db.connection() as conn:
+            select_query = """SELECT * FROM marriages"""
+            cursor = conn.cursor()
+
+            cursor.execute(select_query)
+            result = cursor.fetchall()
+
+            for row in result:
+                if str(ctx.author.id) != row[1] or str(member.id) == row[2]:
+                    member = guild.get_member(int(row[2]))
+                    author = guild.get_member(int(row[1]))
+                    await ctx.send(f"Sorry! {member.mention} is already married to {author.mention}!")
+
+                if str(ctx.author.id) == row[1]:
+                    member = guild.get_member(int(row[2]))
+                    await ctx.send(f"Sorry! You're currently married to {member.mention}")
+                    return
+                elif str(ctx.author.id) == row[2]:
+                    member = guild.get_member(int(row[1]))
+                    await ctx.send(f"Sorry! You're currently married to {member.mention}")
+                    return
+                elif str(member.id) == row[1]:
+                    member = guild.get_member(int(row[2]))
+                    await ctx.send(f"Sorry! You're currently married to {ctx.author.mention}")
+                    return
+                elif str(member.id) == row[2]:
+                    member = guild.get_member(int(row[1]))
+                    await ctx.send(f"Sorry! You're currently married to {ctx.author.mention}")
+                    return
+            conn.commit()
 
         # Send a message to the channel mentioning the author and the person they want to wed.
         await ctx.send(f"{ctx.author.mention} **Proposes To** {member.mention} **Do you accept??** "
@@ -395,17 +429,8 @@ class Interactive(commands.Cog):
 
             # if the person says yes
             if msg.content.lower() in ['y', 'yes', 'yea']:
-
                 # Using connection to the database
                 with db.connection() as conn:
-                    select_query = """SELECT * FROM marriages"""
-                    cursor = conn.cursor()
-
-                    cursor.execute(select_query)
-                    result = cursor.fetchall()
-                    for row in result:
-                        print(row[1], row[2])
-                    conn.commit()
 
                     # Define the Insert Into Statement inserting into the database
                     insert_query = """INSERT INTO marriages (proposerID, proposeeID) VALUES (?, ?)"""

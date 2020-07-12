@@ -10,42 +10,36 @@ from discord.ext.commands import BucketType, cooldown, command
 import settings
 
 # Permissions to filter through
-Perms = {"create instant invite": "",
-         "add reactions": "",
-         "view audit log": "",
-         "priority speaker": "",
-         "stream": "",
-         "read messages": "",
-         "send messages": "",
-         "send tts messages": "",
-         "embed links": "",
-         "attach links": "",
-         "read message history": "",
-         "external emojis": "",
-         "view guild insights": "",
-         "connect": "",
-         "speak": "",
-         "use voice activation": "",
-         "change nickname": ""}
-
+Perms = frozenset(
+         {
+                  "create instant invite",
+                  "add reactions",
+                  "view audit log",
+                  "priority speaker",
+                  "stream",
+                  "read messages",
+                  "send messages",
+                  "send tts messages",
+                  "embed links",
+                  "attach links",
+                  "read message history",
+                  "external emojis",
+                  "view guild insights",
+                  "connect": "",
+                  "speak": "",
+                  "use voice activation",
+                  "change nickname"
+         }
+)
 
 # Method to detect which permissions to filter out
-def DetectPermissions(message, dct):
+def DetectPermissions(message, fset):
     # Split the message individual permissions
     message = message.split(",")
-    new_msg = ""
 
-    # For every permission
-    for word in message:
-        # Add the permission in the new string if the permission is not in the dictionary
-        if word not in dct:
-            new_msg += word + ", "
-        # Do nothing if the permission is in the dictionary
-        else:
-            pass
-
-    return new_msg
-
+    # Filter the permission out if it's in the frozenset
+    filtered = filter(lambda perm: perm not in fset, message)
+    return ",".join(filtered)
 
 class GetInfo(commands.Cog):
     def __init__(self, bot):
@@ -70,26 +64,15 @@ class GetInfo(commands.Cog):
         mentions = [role.mention for role in target.roles]
 
         # Store the roles in a string called "roles"
-        roles = ""
         # For each role that the user has (Skipping the first element as it's always going to be @everyone
-        for role in mentions[1:]:
-            # Add the role to the string
-            roles += role + ' '
-
         # Store all the permissions that the user has in a string
-        permission = ""
-        # For each permission that the user has
-        for perms in target.guild_permissions:
-
-            # If the permission is set to "True"
-            if perms[1]:
-                # Make the string look nice by replacing _ with a space
-                permission += (perms[0].replace('_', ' ')) + ','
-
-            # If the permission is set to "False", Don't do anything
-            else:
-                pass
-
+        roles = " ".join(mentions[1:])
+        
+        # filter out the ones with permission set to False
+        filtered = filter(lambda x: x[1], target.guild_permissions)
+        # now replace all "_" with " " in each item and join them together
+        permission = ",".join(map(lambda x: x[0].replace("_", " "), filtered))
+         
         # Capitalise every word in the array and get rid of the ", " at the end of the string
         permissions = string.capwords("".join(map(str, DetectPermissions(permission, Perms)[0:-4])))
 
@@ -97,7 +80,8 @@ class GetInfo(commands.Cog):
         embed = Embed(
             title=f"**User Information**",
             colour=Colour(int(random.choice(settings.colour_list))),
-            timestamp=datetime.datetime.utcnow())
+            timestamp=datetime.datetime.utcnow()
+        )
         embed.set_thumbnail(url=userAvatar)
         embed.set_footer(text=f"ID: {target.id}", icon_url='{}'.format(userAvatar))
 

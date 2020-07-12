@@ -33,6 +33,7 @@ async def on_message(message):
     if message.author.bot:
         return
 
+    # Don't count messages that are taken in the dms
     if isinstance(message.channel, DMChannel):
         pass
     else:

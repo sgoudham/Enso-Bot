@@ -1,11 +1,5 @@
 owotext
-discord.py
 Pillow
-python-decouple
-certifi
 aiohttp
-config
 mariadb
-ffmpeg
-youtube-dl
-git+https://github.com/Rapptz/discord-ext-menus
+discord

@@ -56,17 +56,16 @@ async def on_message(message):
                 # Store the variables
                 val = guild_id, msg_time, msg_author, msg_content
 
-                attach = ""
                 # If an attachment (link) has been sent
                 if message.attachments:
+
                     # Loop through all attachments
                     for attachment in message.attachments:
                         # Get the message content and the link that was used
-                        attach += f"Message: {message.content} Link: {attachment.url}"
+                        attach = "".join(f"Message: {message.content} Link: {attachment.url}")
+
                     # Define the new variables to send
                     val = guild_id, msg_time, msg_author, attach
-                else:
-                    pass
 
                 # Define the Insert Into Statement inserting into the database
                 insert_query = """INSERT INTO messages (guildID, messageTime, discordID, messageContent) VALUES (?, ?, ?, ?)"""
@@ -92,7 +91,7 @@ async def on_ready():
 
     # Sets the bots status on discord for everyone to view
     await client.change_presence(
-        activity=discord.Game(name="with yo Feelings 😍 😳 🙈"))
+        activity=discord.Game(name="with yo feelings 😍 😳 🙈"))
     # await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="Spider Man 3"))
 
 

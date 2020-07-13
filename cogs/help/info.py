@@ -8,6 +8,7 @@ from discord.ext.commands import BucketType, cooldown, command
 
 from settings import colour_list, time
 
+# Using forzenset
 # Permissions to filter through
 Perms = frozenset(
     {

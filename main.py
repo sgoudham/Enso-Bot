@@ -113,53 +113,53 @@ async def on_member_join(member):
     # Make sure the guild is Enso
     if guild.id != enso_guild_ID:
         return
-    else:
 
-        try:
-            with db.connection() as conn:
-                name = f"{member.name}#{member.discriminator}"
-                # Define the Insert Into Statement inserting into the database
-                insert_query = """INSERT INTO members (discordID, discordUser) VALUES (?, ?)"""
-                vals = member.id, name
-                cursor = conn.cursor()
+    try:
+        # Set up connection to database
+        with db.connection() as conn:
+            name = f"{member.name}#{member.discriminator}"
+            # Define the Insert Into Statement inserting into the database
+            insert_query = """INSERT INTO members (discordUser, discordID) VALUES (?, ?)"""
+            vals = name, member.id
+            cursor = conn.cursor()
 
-                # Execute the SQL Query
-                cursor.execute(insert_query, vals)
-                conn.commit()
-                print(cursor.rowcount, "Record inserted successfully into Members")
+            # Execute the SQL Query
+            cursor.execute(insert_query, vals)
+            conn.commit()
+            print(cursor.rowcount, "Record inserted successfully into Members")
 
-        except mariadb.Error as ex:
-            print("Parameterized Query Failed: {}".format(ex))
+    except mariadb.Error as ex:
+        print("Parameterized Query Failed: {}".format(ex))
 
-        # Set the channel id to "newpeople"
-        new_people = guild.get_channel(enso_newpeople_ID)
+    # Set the channel id to "newpeople"
+    new_people = guild.get_channel(enso_newpeople_ID)
 
-        # Set the enso server icon and the welcoming gif
-        server_icon = guild.icon_url
-        welcome_gif = "https://cdn.discordapp.com/attachments/669808733337157662/730186321913446521/NewPeople.gif"
+    # Set the enso server icon and the welcoming gif
+    server_icon = guild.icon_url
+    welcome_gif = "https://cdn.discordapp.com/attachments/669808733337157662/730186321913446521/NewPeople.gif"
 
-        # Set up embed for the #newpeople channel
-        embed = Embed(title="\n**Welcome To Ensō!**",
-                      colour=enso_embedmod_colours,
-                      timestamp=time)
+    # Set up embed for the #newpeople channel
+    embed = Embed(title="\n**Welcome To Ensō!**",
+                  colour=enso_embedmod_colours,
+                  timestamp=time)
 
-        embed.set_thumbnail(url=server_icon)
-        embed.set_image(url=welcome_gif)
-        embed.add_field(
-            name=blank_space,
-            value=f"Hello {member.mention}! We hope you enjoy your stay in this server! ",
-            inline=False)
-        embed.add_field(
-            name=blank_space,
-            value=f"Be sure to check out our <#669815048658747392> channel to read the rules and <#683490529862090814> channel to get caught up with any changes! ",
-            inline=False)
-        embed.add_field(
-            name=blank_space,
-            value=f"Last but not least, feel free to go into <#669775971297132556> to introduce yourself!",
-            inline=False)
+    embed.set_thumbnail(url=server_icon)
+    embed.set_image(url=welcome_gif)
+    embed.add_field(
+        name=blank_space,
+        value=f"Hello {member.mention}! We hope you enjoy your stay in this server! ",
+        inline=False)
+    embed.add_field(
+        name=blank_space,
+        value=f"Be sure to check out our <#669815048658747392> channel to read the rules and <#683490529862090814> channel to get caught up with any changes! ",
+        inline=False)
+    embed.add_field(
+        name=blank_space,
+        value=f"Last but not least, feel free to go into <#669775971297132556> to introduce yourself!",
+        inline=False)
 
-        # Send embed to #newpeople
-        await new_people.send(embed=embed)
+    # Send embed to #newpeople
+    await new_people.send(embed=embed)
 
 
 # Bot event for new member joining, sending an embed introducing them to the server
@@ -168,21 +168,23 @@ async def on_member_remove(member):
     # Get the guild
     guild = member.guild
 
-    try:
-        # Make sure the guild is Enso
-        if guild.id != enso_guild_ID:
-            return
-        else:
-            with db.connection() as conn:
-                # Define the Insert Into Statement inserting into the database
-                insert_query = """DELETE FROM members WHERE discordID = (?)"""
-                val = member.id,
-                cursor = conn.cursor()
+    # Make sure the guild is Enso
+    if guild.id != enso_guild_ID:
+        return
 
-                # Execute the SQL Query
-                cursor.execute(insert_query, val)
-                conn.commit()
-                print(cursor.rowcount, "Record Deleted successfully from Members")
+    try:
+        # With the database connection
+        with db.connection() as conn:
+
+            # Delete the record of the member as they leave the server
+            insert_query = """DELETE FROM members WHERE discordID = (?)"""
+            val = member.id,
+            cursor = conn.cursor()
+
+            # Execute the SQL Query
+            cursor.execute(insert_query, val)
+            conn.commit()
+            print(cursor.rowcount, "Record Deleted successfully from Members")
 
     except mariadb.Error as ex:
         print("Parameterized Query Failed: {}".format(ex))
@@ -250,16 +252,4 @@ def write_to_dm_file(time, author, content):
     msg_time = time.strftime('%Y-%m-%dT%H:%M:%S')
     msg_author = message.author
     msg_content = message.content
-    
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
 """

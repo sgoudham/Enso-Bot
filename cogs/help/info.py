@@ -69,12 +69,12 @@ class GetInfo(commands.Cog):
         # Store all the permissions that the user has in a string
         roles = " ".join(mentions[1:])
 
-        # filter out the ones with permission set to False
+        # Returns the permissions that the user has within the guild
         filtered = filter(lambda x: x[1], target.guild_permissions)
-        # now replace all "_" with " " in each item and join them together
+        # Replace all "_" with " " in each item and join them together
         permission = ",".join(map(lambda x: x[0].replace("_", " "), filtered))
 
-        # Capitalise every word in the array and get rid of the ", " at the end of the string
+        # Capitalise every word in the array and filter out the permissions that are defined within the frozenset
         permissions = string.capwords("".join(map(str, DetectPermissions(permission, Perms))))
 
         # Set up the embed to display everything about the user

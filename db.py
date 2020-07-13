@@ -8,7 +8,7 @@ password = config('DB_PASS')
 host = config('DB_HOST')
 
 
-# Connect to MariaDB Platform
+# Connect to MariaDB Platform and database Enso
 def connection():
     try:
         conn = mariadb.connect(

@@ -2,13 +2,13 @@ from discord import Embed
 from discord.ext import commands, menus
 from discord.ext.commands import command
 
-from settings import blank_space, enso_embedmod_colours, time, ensoMention, hammyMention
+from settings import enso_embedmod_colours, time, ensoMention, hammyMention
 
 
 # Function to allow the first page of the help commands (Fun Commands)
 def fun_function(self, guild_icon):
     # Setting up the Embed for the Fun Commands
-    fun_commands = Embed(title="```(っ◔◡◔)っ Fun Commands (っ◔◡◔)っ```",
+    fun_commands = Embed(title="(っ◔◡◔)っ Fun Commands (っ◔◡◔)っ",
                          colour=enso_embedmod_colours,
                          timestamp=time)
 
@@ -17,20 +17,20 @@ def fun_function(self, guild_icon):
 
     # Setting up the fields in a separate array
     fun_fields = [
-        (blank_space, f"`{self.ctx.prefix}attack [person]`" +
+        (f"**{self.ctx.prefix}attack `<person>`**",
          "\nThrow an insult to a person in the server" +
          "\n **(Perms: Co-Owner)**", True),
-        (blank_space, f"`{self.ctx.prefix}comp [person]`" +
+        (f"**{self.ctx.prefix}comp `<person>`**",
          "\nCompliment a person in the server", True),
-        (blank_space, f"`{self.ctx.prefix}8ball [text]`" +
+        (f"**{self.ctx.prefix}8ball `<text>`**",
          "\nAsk a question and 8ball will give a custom response", True),
-        (blank_space, f"`{self.ctx.prefix}flip`" +
+        (f"**{self.ctx.prefix}flip**",
          "\nDoes A coinflip with Big PP Or Smol PP", True),
-        (blank_space, f"`{self.ctx.prefix}doggo`" +
+        (f"**{self.ctx.prefix}doggo**",
          "\nLook at images of Doggos", True)]
 
     # Setting up the Embed for the Fun Commands
-    fun_commands_2 = Embed(title="```(っ◔◡◔)っ Fun Commands 2 (っ◔◡◔)っ```",
+    fun_commands_2 = Embed(title="(っ◔◡◔)っ Fun Commands 2 (っ◔◡◔)っ",
                            colour=enso_embedmod_colours,
                            timestamp=time)
 
@@ -39,21 +39,25 @@ def fun_function(self, guild_icon):
 
     # Setting up the fields in a separate array
     fun_fields_2 = [
-        (blank_space, f"`{self.ctx.prefix}hug [person]`" +
+        (f"**{self.ctx.prefix}marry `<person>`**",
+         "\nMarry a User Within The Server", True),
+        (f"**{self.ctx.prefix}divorce `<person>`**",
+         "\nDivorce The Person You Are Married To", True),
+        (f"**{self.ctx.prefix}hug `<person>`**",
          "\nHug A User Within The Server", True),
-        (blank_space, f"`{self.ctx.prefix}cuddle [person]`" +
+        (f"**{self.ctx.prefix}cuddle `<person>`**",
          "\nCuddle A User Within The Server", True),
-        (blank_space, f"`{self.ctx.prefix}pat [person]`" +
+        (f"**{self.ctx.prefix}pat `<person>`**",
          "\nPat A User Within The Server", True),
-        (blank_space, f"`{self.ctx.prefix}kiss [person]`" +
+        (f"**{self.ctx.prefix}kiss `<person>`**",
          "\nKiss A User Within The Serverr", True),
-        (blank_space, f"`{self.ctx.prefix}slap [person]`" +
+        (f"**{self.ctx.prefix}slap `<person>`**",
          "\nSlap A User Within The Server", True),
-        (blank_space, f"`{self.ctx.prefix}kill [person]`" +
+        (f"**{self.ctx.prefix}kill `<person>`**",
          "\nKill A User Within The Server", True),
-        (blank_space, f"`{self.ctx.prefix}choke [person]`" +
+        (f"**{self.ctx.prefix}choke `<person>`**",
          "\nChoke A User Within The Server", True),
-        (blank_space, f"`{self.ctx.prefix}lemon [person]`" +
+        (f"**{self.ctx.prefix}lemon `<person>`**",
          "\nGive lemon to A User Within The Server", True)]
 
     # Add the fun_commands fields to the embed
@@ -70,7 +74,7 @@ def fun_function(self, guild_icon):
 # Function to allow the second page of the help commands (Waifu/Husbandos)
 def waifu_husbando_function(self, guild_icon):
     # Setting up the Embed for the Waifu/Husbandos
-    waifu_husbando_commands = Embed(title="```(っ◔◡◔)っ Waifus/Husbando Commands (っ◔◡◔)っ```",
+    waifu_husbando_commands = Embed(title="(っ◔◡◔)っ Waifus/Husbando Commands (っ◔◡◔)っ",
                                     colour=enso_embedmod_colours,
                                     timestamp=time)
 
@@ -79,21 +83,21 @@ def waifu_husbando_function(self, guild_icon):
 
     # Setting up the fields in a separate array
     waifu_husbando_fields = [
-        (blank_space, f"`{self.ctx.prefix}w [waifu]`" +
+        (f"**{self.ctx.prefix}w `<waifu>`**",
          "\nShows Specified Image of Waifu" +
-         f"\n (Using {self.ctx.prefix}w shows random image of Waifu)", True),
-        (blank_space, f"`{self.ctx.prefix}h [husbando]`" +
+         f"\n (Using **{self.ctx.prefix}w shows random image of Waifu)", True),
+        (f"**{self.ctx.prefix}h `<husbando>`**",
          "\nShows Specified Image of Husbando" +
-         f"\n (Using {self.ctx.prefix}h shows random image of Husbando", True),
-        (blank_space, f"`{self.ctx.prefix}w list`" +
+         f"\n (Using **{self.ctx.prefix}h shows random image of Husbando", True),
+        (f"**{self.ctx.prefix}w `list`**",
          "\nReturns all Waifus", True),
-        (blank_space, f"`{self.ctx.prefix}h list`" +
+        (f"**{self.ctx.prefix}h `list`**",
          "\nReturns all Husbandos", True),
-        (blank_space, f"`{self.ctx.prefix}enso [person]`" +
+        (f"**{self.ctx.prefix}enso `<person>`**",
          "\nShows Specified Image of User" +
          f"\n (Using {self.ctx.prefix}enso by itself shall generate a random image of a person within all the server)",
          True),
-        (blank_space, f"`{self.ctx.prefix}enso list`" +
+        (f"**{self.ctx.prefix}enso `list`**",
          "\nReturns all Users", True)]
 
     # Add the waifu_husbando_commands fields to the embed
@@ -106,7 +110,7 @@ def waifu_husbando_function(self, guild_icon):
 # Function to allow the third page of the help commands (Miscellaneous)
 def misc_function(self, guild_icon):
     # Setting up the Embed for the Miscellaneous commands
-    misc_commands = Embed(title="```(っ◔◡◔)っ Misc Commands (っ◔◡◔)っ```",
+    misc_commands = Embed(title="(っ◔◡◔)っ Misc Commands (っ◔◡◔)っ",
                           colour=enso_embedmod_colours,
                           timestamp=time)
 
@@ -115,16 +119,16 @@ def misc_function(self, guild_icon):
 
     # Setting up the fields in a separate array
     misc_fields = [
-        (blank_space, f"`{self.ctx.prefix}ping`" +
+        (f"**{self.ctx.prefix}ping**",
          "\nReturns latency in ms" +
          "\n**(Perms: Co-Owner)**", True),
-        (blank_space, f"`{self.ctx.prefix}rolemenu`" +
+        (f"**{self.ctx.prefix}rolemenu**",
          "\nShowing Users Self Roles" +
          "\n**(Perms: Co-Owner)**", True),
-        (blank_space, f"`{self.ctx.prefix}dm [person]`" +
+        (f"**{self.ctx.prefix}dm `<person>`**",
          f"\nFor {hammyMention} to DM Users" +
          "\n**(Perms: Co-Owner)**", True),
-        (blank_space, f"`{self.ctx.prefix}remindme [time] [text]`" +
+        (f"**{self.ctx.prefix}remindme `<time>` `<text>`**",
          "\nGet Enso~Chan to remind you in DMs", True)]
 
     # Add the misc_commands fields to the embed
@@ -137,7 +141,7 @@ def misc_function(self, guild_icon):
 # Function to allow the fourth page of the help commands (Important)
 def important_function(self, guild_icon):
     # Setting up the Embed for the Important Commands
-    important_commands = Embed(title="```(っ◔◡◔)っ Important Commands (っ◔◡◔)っ```",
+    important_commands = Embed(title="(っ◔◡◔)っ Important Commands (っ◔◡◔)っ",
                                colour=enso_embedmod_colours,
                                timestamp=time)
 
@@ -146,17 +150,17 @@ def important_function(self, guild_icon):
 
     # Setting up the fields in a separate array
     important_fields = [
-        (blank_space, f"`{self.ctx.prefix}userinfo`" +
-         "\n Returns information about the user", True),
-        (blank_space, f"`{self.ctx.prefix}serverinfo`" +
-         "\n Returns information about the server", True),
-        (blank_space, f"`{self.ctx.prefix}rules`" +
+        (f"**{self.ctx.prefix}userinfo**",
+         "\nReturns information about the user", True),
+        (f"**{self.ctx.prefix}serverinfo**",
+         "\nReturns information about the server", True),
+        (f"**{self.ctx.prefix}rules**",
          "\nFull Ruleset for Enso", True),
-        (blank_space, f"`{self.ctx.prefix}roles`" +
+        (f"**{self.ctx.prefix}roles**",
          "\nLeveling and xp system in Enso", True),
-        (blank_space, f"`{self.ctx.prefix}help`" +
+        (f"**{self.ctx.prefix}help**",
          "\nSee every command in the bot", True),
-        (blank_space, f"`{self.ctx.prefix}mm/modmail`" +
+        (f"**{self.ctx.prefix}mm/modmail**",
          "\nSend mail to the staff team!" +
          f"\n(Done through the dms with {ensoMention})", True)]
 

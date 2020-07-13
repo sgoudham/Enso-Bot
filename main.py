@@ -34,10 +34,7 @@ async def on_message(message):
         return
 
     # Don't count messages that are taken in the dms
-    if isinstance(message.channel, DMChannel):
-        pass
-    else:
-
+    if not isinstance(message.channel, DMChannel):
         # Using connection to the database
         with db.connection() as conn:
 

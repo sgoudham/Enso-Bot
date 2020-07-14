@@ -100,6 +100,24 @@ async def ping(ctx):
     await ctx.send(f'Pong! `{round(client.latency * 1000)}ms`')
 
 
+# Bot event for the bot joining a new guild, storing all users in the database
+@client.event
+async def on_guild_join(guild):
+    try:
+        with db.connection() as conn:
+            for member in guild.members:
+                name = f"{member.name}#{member.discriminator}"
+                insert_query = """INSERT INTO members (guildID, discordUser, discordID) VALUES (?, ?, ?)"""
+                vals = guild.id, name, member.id,
+                cursor = conn.cursor()
+
+                cursor.execute(insert_query, vals)
+                conn.commit()
+                print(cursor.rowcount, f"Record inserted successfully into Members from {guild.name}")
+    except mariadb.Error as ex:
+        print("Parameterized Query Failed: {}".format(ex))
+
+
 # Bot event for new member joining, sending an embed introducing them to the server
 @client.event
 async def on_member_join(member):

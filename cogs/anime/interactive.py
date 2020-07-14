@@ -436,36 +436,3 @@ class Interactive(commands.Cog):
 
 def setup(bot):
     bot.add_cog(Interactive(bot))
-
-
-"""
-                if str(ctx.author.id) == row[1] and str(member.id) == row[2]:
-                    member = guild.get_member(int(row[2]))
-                    await ctx.send(f"You and {member.mention} are married!")
-                    return
-                elif str(ctx.author.id) != row[1] and str(member.id) == row[2]:
-                    member = guild.get_member(int(row[2]))
-                    author = guild.get_member(int(row[1]))
-                    await ctx.send(f"Sorry! {member.mention} is already married to {author.mention}!")
-                elif str(ctx.author.id) != row[1] and str(member.id) == row[1]:
-                    member = guild.get_member(int(row[2]))
-                    author = guild.get_member(int(row[1]))
-                    await ctx.send(f"Sorry! {author.mention} is already married to {member.mention}!")
-                    return
-                elif str(ctx.author.id) == row[1]:
-                    member = guild.get_member(int(row[2]))
-                    await ctx.send(f"Sorry! You're currently married to {member.mention}")
-                    return
-                elif str(ctx.author.id) == row[2]:
-                    member = guild.get_member(int(row[1]))
-                    await ctx.send(f"Sorry! You're currently married to {member.mention}")
-                    return
-                elif str(member.id) == row[1]:
-                    member = guild.get_member(int(row[2]))
-                    await ctx.send(f"Sorry! You're currently married to {ctx.author.mention}")
-                    return
-                elif str(member.id) == row[2]:
-                    member = guild.get_member(int(row[1]))
-                    await ctx.send(f"Sorry! You're currently married to {ctx.author.mention}")
-                    return
-"""

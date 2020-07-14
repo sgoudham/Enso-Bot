@@ -158,7 +158,7 @@ class Fun(commands.Cog):
         try:
 
             # Open the file containing the digby images
-            with open('images/digby.txt') as file:
+            with open('images/FunCommands/digby.txt') as file:
                 # Store content of the file in digby_array
                 digby_array = file.readlines()
 

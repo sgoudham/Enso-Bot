@@ -180,7 +180,7 @@ async def on_member_remove(member):
             # Execute the SQL Query
             cursor.execute(insert_query, val)
             conn.commit()
-            print(cursor.rowcount, "Record Deleted successfully from Members")
+            print(cursor.rowcount, "Record deleted successfully from Members")
 
     except mariadb.Error as ex:
         print("Parameterized Query Failed: {}".format(ex))

@@ -55,16 +55,20 @@ class Fun(commands.Cog):
         """Allows people to summon the homies"""
 
         try:
+            # Make sure the text entered is less than 20 characters
             if len(user_word) >= 20:
                 await ctx.send("Please make sure the prompt is below **20** characters!")
                 return
             else:
 
+                # Define the text to be drawn on the top and the bottom
                 top_text = f"Ayo fuck {user_word}"
                 bottom_text = f"All my homies hate {user_word}"
 
+                # Call the method to generate the image
                 generate_meme('homies/AllMyHomies.jpg', top_text=top_text, bottom_text=bottom_text)
 
+                # Send the image file stored in the directory
                 await ctx.send(file=discord.File('AllMyHomiesHateMeme.jpg'))
         except Exception as e:
             print(e)

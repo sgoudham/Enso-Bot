@@ -62,6 +62,8 @@ time = datetime.datetime.utcnow()
 enso_ensochancommands_Mention = "<#721449922838134876>"
 
 enso_ensochancommands_ID = 721449922838134876
+enso_verification_ID = 728034083678060594
+enso_selfroles_ID = 722347423913213992
 enso_guild_ID = 663651584399507476
 enso_newpeople_ID = 669771571337887765
 enso_modmail_ID = 728083016290926623

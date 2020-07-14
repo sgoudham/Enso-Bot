@@ -115,7 +115,7 @@ async def on_guild_remove(guild):
                 # Execute the SQL Query
                 cursor.execute(delete_query, vals)
                 conn.commit()
-                print(cursor.rowcount, "Record deleted successfully from Members")
+                print(cursor.rowcount, f"Record deleted successfully from Members from {guild.name}")
 
     except mariadb.Error as ex:
         print("Parameterized Query Failed: {}".format(ex))

@@ -222,7 +222,7 @@ def important_function(self, guild_icon):
 
 
 def embeds(self):
-    # Define guild icon, enso bot icon and enso bot name
+    # Define guild icon
     guild_icon = self.ctx.guild.icon_url
 
     # Set the different pages of the embed

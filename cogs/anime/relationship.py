@@ -23,23 +23,39 @@ class Relationship(commands.Cog):
         # Use database connection
         with db.connection() as conn:
 
-            # Get the author's row from the Members Table
+            # Get the author's/members row from the Members Table
             select_query = """SELECT * FROM members WHERE discordID = (?) and guildID = (?)"""
-            val = ctx.author.id, guild.id,
-            cursor = conn.cursor()
+            author_val = ctx.author.id, guild.id,
+            member_val = member.id, guild.id,
 
-            # Execute the SQL Query
-            cursor.execute(select_query, val)
-            result = cursor.fetchone()
+            # Define two cursors
+            author_cursor = conn.cursor()
+
+            # Execute the Author SQL Query
+            author_cursor.execute(select_query, author_val)
+            author_result = author_cursor.fetchone()
 
             # Make sure that the user cannot marry themselves
             if member.id == ctx.author.id:
                 await ctx.send("Senpaii! ˭̡̞(◞⁎˃ᆺ˂)◞*✰ You can't possibly marry yourself!")
                 return
             # Make sure that the person is not already married to someone else within the server
-            elif result[2] is not None:
-                member = guild.get_member(int(result[2]))
+            elif author_result[2] is not None:
+                member = guild.get_member(int(author_result[2]))
                 await ctx.send(f"((╬◣﹏◢)) You're already married to {member.mention}!")
+                return
+            # Close the previous cursor
+            author_cursor.close()
+
+            # Set up new cursor for member row
+            member_cursor = conn.cursor()
+            # Execute the Member SQL Query
+            member_cursor.execute(select_query, member_val)
+            member_result = member_cursor.fetchone()
+
+            if member_result[2] is not None:
+                member = guild.get_member(int(member_result[2]))
+                await ctx.send(f"Sorry! That user is already married to {member.mention}")
                 return
 
         # Send a message to the channel mentioning the author and the person they want to wed.

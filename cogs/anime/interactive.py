@@ -53,13 +53,17 @@ class Interactive(commands.Cog):
             else:
                 kiss = True
 
+        try:
             # Make sure the user isn't trying to kiss someone else besides their partner
-            if not target.id == int(result[2]) and kiss:
-                await ctx.send("Σ(‘◉⌓◉’) You can only kiss your partner! Baka!")
-                return
-            elif int(result[2]) is None and kiss:
+            if result[2] is None and kiss:
                 await ctx.send("Σ(‘◉⌓◉’) You need to be married in order to use this command! Baka!")
                 return
+            # Make sure that the married people can only kiss their partner
+            elif not str(target.id) == result[2] and kiss:
+                await ctx.send("Σ(‘◉⌓◉’) You can only kiss your partner! Baka!")
+                return
+        except Exception as ex:
+            print(ex)
 
         # Surround with try/except to catch any exceptions that may occur
         try:
@@ -165,10 +169,17 @@ class Interactive(commands.Cog):
             else:
                 cuddle = True
 
+        try:
             # Make sure the user isn't trying to cuddle someone else besides their partner
-            if not target.id == int(result[2]) and cuddle:
-                await ctx.send("Σ(‘◉⌓◉’) You can only cuddle your partner! Baka!")
+            if result[2] is None and cuddle:
+                await ctx.send("Σ(‘◉⌓◉’) You need to be married in order to use this command! Baka!")
                 return
+            # Make sure that the married people can only cuddle their partner
+            elif not str(target.id) == result[2] and cuddle:
+                await ctx.send("Σ(‘◉⌓◉’) You can only kiss your partner! Baka!")
+                return
+        except Exception as ex:
+            print(ex)
 
         # Surround with try/except to catch any exceptions that may occur
         try:

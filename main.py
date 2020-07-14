@@ -106,17 +106,13 @@ async def on_member_join(member):
     # Get the guild
     guild = member.guild
 
-    # Make sure the guild is Enso
-    if guild.id != enso_guild_ID:
-        return
-
     try:
         # Set up connection to database
         with db.connection() as conn:
             name = f"{member.name}#{member.discriminator}"
             # Define the Insert Into Statement inserting into the database
-            insert_query = """INSERT INTO members (discordUser, discordID) VALUES (?, ?)"""
-            vals = name, member.id
+            insert_query = """INSERT INTO members (guildID, discordUser, discordID) VALUES (?, ?)"""
+            vals = member.guild.id, name, member.id,
             cursor = conn.cursor()
 
             # Execute the SQL Query
@@ -126,6 +122,10 @@ async def on_member_join(member):
 
     except mariadb.Error as ex:
         print("Parameterized Query Failed: {}".format(ex))
+
+    # Make sure the guild is Enso
+    if guild.id != enso_guild_ID:
+        return
 
     # Set the channel id to "newpeople"
     new_people = guild.get_channel(enso_newpeople_ID)
@@ -164,21 +164,17 @@ async def on_member_remove(member):
     # Get the guild
     guild = member.guild
 
-    # Make sure the guild is Enso
-    if guild.id != enso_guild_ID:
-        return
-
     try:
         # With the database connection
         with db.connection() as conn:
 
             # Delete the record of the member as they leave the server
-            insert_query = """DELETE FROM members WHERE discordID = (?)"""
-            val = member.id,
+            delete_query = """DELETE FROM members WHERE discordID = (?) AND guildID = (?)"""
+            vals = member.id, guild.id
             cursor = conn.cursor()
 
             # Execute the SQL Query
-            cursor.execute(insert_query, val)
+            cursor.execute(delete_query, vals)
             conn.commit()
             print(cursor.rowcount, "Record deleted successfully from Members")
 

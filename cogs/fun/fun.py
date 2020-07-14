@@ -1,5 +1,6 @@
 import asyncio
 import random
+import string
 
 from aiohttp import request
 from discord import Member, Colour, Embed
@@ -217,14 +218,11 @@ class Fun(commands.Cog):
                             for doggo in breed_link:
                                 b_list.append(doggo)
 
-                            # Define a new string to store the Doggo's nicely formatted
-                            string = " "
-                            for b in b_list:
-                                string += (b + ", ").capitalize()
+                            # Join together all the breeds into a string
+                            doggo_string = string.capwords(", ".join(b_list))
 
                             # Tell the user to try the breeds listed below
-                            await ctx.send(f"Try the Breeds listed below!" +
-                                           f"\n {string}")
+                            await ctx.send(f"Try the Breeds listed below!\n{doggo_string}")
 
                 # If no breed has been specified
                 else:
@@ -253,7 +251,7 @@ class Fun(commands.Cog):
 
                             # Send error message that Doggo was not found!
                             await ctx.send(
-                                "Doggo Not Found! Please do **~doggo breeds** to see the full list of Doggos!")
+                                "Doggo Not Found! Please do **~doggo `breeds`** to see the full list of Doggos!")
             else:
 
                 # Grab a random image of a doggo of any breed
@@ -267,7 +265,7 @@ class Fun(commands.Cog):
 
                         # Set up the embed for a random doggo image
                         doggo_embed = Embed(
-                            title=f"**Doggo!!** ",
+                            title=f"**Doggo!** ",
                             colour=Colour(random.choice(colour_list)),
                             timestamp=time)
                         doggo_embed.set_image(url=image_link)
@@ -280,7 +278,7 @@ class Fun(commands.Cog):
 
                         # Send error message that Doggo was not found!
                         await ctx.send(
-                            "Doggo Not Found! Please do **~doggo breeds** to see the full list of Doggos!")
+                            "Doggo Not Found! Please do **~doggo `breeds`** to see the full list of Doggos!")
         else:
 
             # Call error_function() and display it to the user

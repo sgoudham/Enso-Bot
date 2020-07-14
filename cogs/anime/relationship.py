@@ -29,8 +29,8 @@ class Relationship(commands.Cog):
         with db.connection() as conn:
 
             # Get the author's row from the Members Table
-            select_query = """SELECT * FROM members WHERE discordID = (?)"""
-            val = ctx.author.id,
+            select_query = """SELECT * FROM members WHERE discordID = (?) and guildID = (?)"""
+            val = ctx.author.id, guild.id,
             cursor = conn.cursor()
 
             # Execute the SQL Query
@@ -114,8 +114,8 @@ class Relationship(commands.Cog):
         with db.connection() as conn:
 
             # Get the author's row from the Members Table
-            select_query = """SELECT * FROM members WHERE discordID = (?)"""
-            val = ctx.author.id,
+            select_query = """SELECT * FROM members WHERE discordID = (?) and guildID = (?)"""
+            val = ctx.author.id, guild.id,
             cursor = conn.cursor()
 
             # Execute the SQL Query

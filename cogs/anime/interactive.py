@@ -5,6 +5,7 @@ from discord import Colour, Embed, Member
 from discord.ext import commands
 from discord.ext.commands import cooldown, command, BucketType
 
+import db
 import settings
 from settings import time, colour_list, enso_ensochancommands_Mention
 
@@ -33,6 +34,29 @@ class Interactive(commands.Cog):
     @cooldown(1, 1, BucketType.user)
     async def kiss(self, ctx, target: Member):
         """Allows users to kiss a person in the server"""
+
+        # Use database connection
+        with db.connection() as conn:
+
+            # Get the author's row from the Members Table
+            select_query = """SELECT * FROM members WHERE discordID = (?)"""
+            val = ctx.author.id,
+            cursor = conn.cursor()
+
+            # Execute the SQL Query
+            cursor.execute(select_query, val)
+            result = cursor.fetchone()
+
+            # Error handling to make sure that the user can kiss themselves
+            if target.id == ctx.author.id:
+                cuddle = False
+            else:
+                cuddle = True
+
+            # Make sure the user isn't trying to kiss someone else besides their partner
+            if not target.id == int(result[2]) and cuddle:
+                await ctx.send("Σ(‘◉⌓◉’) You can only cuddle your partner! Baka!")
+                return
 
         # Surround with try/except to catch any exceptions that may occur
         try:
@@ -119,6 +143,29 @@ class Interactive(commands.Cog):
     @cooldown(1, 1, BucketType.user)
     async def cuddle(self, ctx, target: Member):
         """Allows users to cuddle a person in the server"""
+
+        # Use database connection
+        with db.connection() as conn:
+
+            # Get the author's row from the Members Table
+            select_query = """SELECT * FROM members WHERE discordID = (?)"""
+            val = ctx.author.id,
+            cursor = conn.cursor()
+
+            # Execute the SQL Query
+            cursor.execute(select_query, val)
+            result = cursor.fetchone()
+
+            # Error handling to make sure that the user can cuddle themselves
+            if target.id == ctx.author.id:
+                cuddle = False
+            else:
+                cuddle = True
+
+            # Make sure the user isn't trying to cuddle someone else besides their partner
+            if not target.id == int(result[2]) and cuddle:
+                await ctx.send("Σ(‘◉⌓◉’) You can only cuddle your partner! Baka!")
+                return
 
         # Surround with try/except to catch any exceptions that may occur
         try:

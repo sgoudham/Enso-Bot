@@ -48,8 +48,8 @@ class Enso(commands.Cog):
 
         # Defining array of all the people that have images stored in the bot
         array = ['hammy', 'hussein', 'inna', 'kate', 'calvin',
-                 'lukas', 'stitch', 'corona', 'ging',
-                 'gria', 'lilu', 'ifrah', 'skye', 'chloe',
+                 'lukas', 'stitch', 'corona', 'ging', 'ash'
+                                                      'gria', 'lilu', 'ifrah', 'skye', 'chloe',
                  'connor', 'taz', 'ryder', 'ange', 'rin',
                  'izzy', 'david', 'clarity', 'angel', "studentjon"]
 

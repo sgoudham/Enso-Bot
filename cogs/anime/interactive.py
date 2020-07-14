@@ -49,13 +49,13 @@ class Interactive(commands.Cog):
 
             # Error handling to make sure that the user can kiss themselves
             if target.id == ctx.author.id:
-                cuddle = False
+                kiss = False
             else:
-                cuddle = True
+                kiss = True
 
             # Make sure the user isn't trying to kiss someone else besides their partner
-            if not target.id == int(result[2]) and cuddle:
-                await ctx.send("Σ(‘◉⌓◉’) You can only cuddle your partner! Baka!")
+            if not target.id == int(result[2]) and kiss:
+                await ctx.send("Σ(‘◉⌓◉’) You can only kiss your partner! Baka!")
                 return
 
         # Surround with try/except to catch any exceptions that may occur

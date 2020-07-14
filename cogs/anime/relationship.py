@@ -6,7 +6,6 @@ from discord.ext.commands import BucketType, command, cooldown
 
 # Set up the Cog
 import db
-from settings import enso_guild_ID
 
 
 class Relationship(commands.Cog):
@@ -20,10 +19,6 @@ class Relationship(commands.Cog):
 
         # Getting the guild of the user
         guild = ctx.author.guild
-
-        # Make sure the guild is Enso
-        if guild.id != enso_guild_ID:
-            return
 
         # Use database connection
         with db.connection() as conn:
@@ -42,7 +37,7 @@ class Relationship(commands.Cog):
                 await ctx.send("Senpaii! ˭̡̞(◞⁎˃ᆺ˂)◞*✰ You can't possibly marry yourself!")
                 return
             # Make sure that the person is not already married to someone else within the server
-            elif result[2] is not None:
+            elif result[3] is not None:
                 member = guild.get_member(int(result[2]))
                 await ctx.send(f"((╬◣﹏◢)) You're already married to {member.mention}!")
                 return
@@ -68,9 +63,9 @@ class Relationship(commands.Cog):
                     message_time = msg.created_at.strftime("%a, %b %d, %Y")
 
                     # Update the existing records in the database with the user that they are marrying along with the time of the accepted proposal
-                    update_query = """UPDATE members SET married = (?), marriedDate = (?) WHERE discordID = (?)"""
-                    proposer = member.id, message_time, ctx.author.id,
-                    proposee = ctx.author.id, message_time, member.id,
+                    update_query = """UPDATE members SET married = (?), marriedDate = (?) WHERE discordID = (?) AND guildID = (?)"""
+                    proposer = member.id, message_time, ctx.author.id, guild.id,
+                    proposee = ctx.author.id, message_time, member.id, guild.id,
                     cursor = conn.cursor()
 
                     # Execute the SQL Query's
@@ -106,10 +101,6 @@ class Relationship(commands.Cog):
         # Getting the guild of the user
         guild = ctx.author.guild
 
-        # Make sure the guild is Enso
-        if guild.id != enso_guild_ID:
-            return
-
         # Use database connection
         with db.connection() as conn:
 
@@ -127,12 +118,12 @@ class Relationship(commands.Cog):
                 await ctx.send("Senpaii! ˭̡̞(◞⁎˃ᆺ˂)◞*✰ You can't possibly divorce yourself!")
                 return
             # Make sure that the person trying to divorce is actually married to the user
-            elif result[2] is None:
+            elif result[3] is None:
                 await ctx.send(f"((╬◣﹏◢)) You must be married in order to divorce someone! Baka!")
                 return
             # Make sure the person is married to the person that they're trying to divorce
-            elif result[2] != str(member.id):
-                member = guild.get_member(int(result[2]))
+            elif result[3] != str(member.id):
+                member = guild.get_member(int(result[3]))
                 await ctx.send(f"(ノ ゜口゜)ノ You can only divorce the person that you're married!"
                                f"\n That person is {member.mention}")
                 return
@@ -158,9 +149,9 @@ class Relationship(commands.Cog):
                 with db.connection() as conn:
 
                     # Update the existing records in the database with the user that they are marrying along with the time of the accepted proposal
-                    update_query = """UPDATE members SET married = null, marriedDate = null WHERE discordID = (?)"""
-                    divorcer = ctx.author.id,
-                    divorcee = member.id,
+                    update_query = """UPDATE members SET married = null, marriedDate = null WHERE discordID = (?) and guildID = (?)"""
+                    divorcer = ctx.author.id, guild.id,
+                    divorcee = member.id, guild.id,
                     cursor = conn.cursor()
 
                     # Execute the SQL Query's

@@ -111,7 +111,7 @@ async def on_member_join(member):
         with db.connection() as conn:
             name = f"{member.name}#{member.discriminator}"
             # Define the Insert Into Statement inserting into the database
-            insert_query = """INSERT INTO members (guildID, discordUser, discordID) VALUES (?, ?)"""
+            insert_query = """INSERT INTO members (guildID, discordUser, discordID) VALUES (?, ?, ?)"""
             vals = member.guild.id, name, member.id,
             cursor = conn.cursor()
 

@@ -122,13 +122,7 @@ def waifu_husbando_function(self, guild_icon):
         (f"**{self.ctx.prefix}w `list`**",
          "\nReturns all Waifus", True),
         (f"**{self.ctx.prefix}h `list`**",
-         "\nReturns all Husbandos", True),
-        (f"**{self.ctx.prefix}enso `<person>`**",
-         "\nShows Specified Image of User" +
-         f"\n(Using {self.ctx.prefix}enso by itself shall generate a random image of a person within all the server)",
-         True),
-        (f"**{self.ctx.prefix}enso `list`**",
-         "\nReturns all Users", True)]
+         "\nReturns all Husbandos", True)]
 
     # Add the waifu_husbando_commands fields to the embed
     for name, value, inline in waifu_husbando_fields:

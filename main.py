@@ -100,6 +100,25 @@ async def ping(ctx):
     await ctx.send(f'Pong! `{round(client.latency * 1000)}ms`')
 
 
+# Bot event for the bot leaving a guild, deleted all users stored in the database
+@client.event
+async def on_guild_remove(guild):
+    try:
+        with db.connection() as conn:
+            for member in guild.members:
+                # Delete the record of the member as they leave the server
+                delete_query = """DELETE FROM members WHERE discordID = (?) AND guildID = (?)"""
+                vals = member.id, guild.id,
+                cursor = conn.cursor()
+
+                # Execute the SQL Query
+                cursor.execute(delete_query, vals)
+                conn.commit()
+                print(cursor.rowcount, "Record deleted successfully from Members")
+    except mariadb.Error as ex:
+        print("Parameterized Query Failed: {}".format(ex))
+
+
 # Bot event for the bot joining a new guild, storing all users in the database
 @client.event
 async def on_guild_join(guild):
@@ -188,7 +207,7 @@ async def on_member_remove(member):
 
             # Delete the record of the member as they leave the server
             delete_query = """DELETE FROM members WHERE discordID = (?) AND guildID = (?)"""
-            vals = member.id, guild.id
+            vals = member.id, guild.id,
             cursor = conn.cursor()
 
             # Execute the SQL Query

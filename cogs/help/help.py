@@ -5,7 +5,7 @@ from discord.ext.commands import command
 from settings import enso_embedmod_colours, time, ensoMention, hammyMention
 
 
-# Function to allow the first page of the help commands (Fun Commands)
+# Function to allow pages 1-4 of the help commands (Fun Commands)
 def fun_function(self, guild_icon):
     # Setting up the Embed for the Fun Commands
     fun_commands = Embed(title="(っ◔◡◔)っ Fun Commands (っ◔◡◔)っ",
@@ -25,7 +25,7 @@ def fun_function(self, guild_icon):
         (f"**{self.ctx.prefix}8ball `<text>`**",
          "\nAsk a question and 8ball will give a custom response", True),
         (f"**{self.ctx.prefix}flip**",
-         "\nDoes A coinflip with Big PP Or Smol PP", True),
+         "\nDoes a coinflip with Big PP Or Smol PP", True),
         (f"**{self.ctx.prefix}doggo**",
          "\nLook at images of Doggos", True)]
 
@@ -40,15 +40,15 @@ def fun_function(self, guild_icon):
     # Setting up the fields in a separate array
     fun_fields_2 = [
         (f"**{self.ctx.prefix}hug `<person>`**",
-         "\nHug A User Within The Server", True),
+         "\nHug a User Within The Server", True),
         (f"**{self.ctx.prefix}cuddle `<person>`**",
-         "\nCuddle A User Within The Server", True),
+         "\nCuddle a User Within The Server", True),
         (f"**{self.ctx.prefix}pat `<person>`**",
-         "\nPat A User Within The Server", True),
+         "\nPat a User Within The Server", True),
         (f"**{self.ctx.prefix}kiss `<person>`**",
-         "\nKiss A User Within The Server", True),
+         "\nKiss a User Within The Server", True),
         (f"**{self.ctx.prefix}lemon `<person>`**",
-         "\nGive lemon to A User Within The Server", True)]
+         "\nGive lemon to a User Within The Server", True)]
 
     # Setting up the Embed for the Fun Commands
     fun_commands_3 = Embed(title="(っ◔◡◔)っ Fun Commands 3 (っ◔◡◔)っ",
@@ -61,11 +61,11 @@ def fun_function(self, guild_icon):
     # Setting up the fields in a separate array
     fun_fields_3 = [
         (f"**{self.ctx.prefix}slap `<person>`**",
-         "\nSlap A User Within The Server", True),
+         "\nSlap a User Within The Server", True),
         (f"**{self.ctx.prefix}kill `<person>`**",
-         "\nKill A User Within The Server", True),
+         "\nKill a User Within The Server", True),
         (f"**{self.ctx.prefix}choke `<person>`**",
-         "\nChoke A User Within The Server", True)]
+         "\nChoke a User Within The Server", True)]
 
     # Setting up the Embed for the Fun Commands
     fun_commands_4 = Embed(title="(っ◔◡◔)っ Marriage/Divorce (っ◔◡◔)っ",
@@ -94,7 +94,7 @@ def fun_function(self, guild_icon):
     for name, value, inline in fun_fields_3:
         fun_commands_3.add_field(name=name, value=value, inline=inline)
 
-    # Add the fun_commands_3 fields to the embed
+    # Add the fun_commands_4 fields to the embed
     for name, value, inline in fun_fields_4:
         fun_commands_4.add_field(name=name, value=value, inline=inline)
 
@@ -135,6 +135,32 @@ def waifu_husbando_function(self, guild_icon):
         waifu_husbando_commands.add_field(name=name, value=value, inline=inline)
 
     return waifu_husbando_commands
+
+
+# Function to allow the fifth page of the help commands (~enso commands)
+def _enso(self, guild_icon):
+    # Setting up the Embed for the ~Enso command
+    _enso_commands = Embed(title="(っ◔◡◔)っ Enso Command (っ◔◡◔)っ",
+                           colour=enso_embedmod_colours,
+                           timestamp=time)
+
+    # Setting thumbnail and author
+    _enso_commands.set_thumbnail(url=guild_icon)
+
+    # Setting up the fields in a separate array
+    _enso_fields = [
+        (f"**{self.ctx.prefix}enso `<person>`**",
+         "\nShows Specified Image of User" +
+         f"\n(Using {self.ctx.prefix}enso by itself shall generate a random image of a person within all the server)",
+         True),
+        (f"**{self.ctx.prefix}enso `list`**",
+         "\nReturns all Users", True)]
+
+    # Add the _enso_commands fields to the embed
+    for name, value, inline in _enso_fields:
+        _enso_commands.add_field(name=name, value=value, inline=inline)
+
+    return _enso_commands
 
 
 # Function to allow the third page of the help commands (Miscellaneous)
@@ -201,35 +227,19 @@ def important_function(self, guild_icon):
     return important_commands
 
 
-def stop_embed(self):
-    # Define enso bot icon and enso bot name
-    enso_icon = self.bot.user.avatar_url
-    enso_name = self.bot.user.display_name
-
-    # Set up the Embed to display when the user reacts with the stop reaction
-    stop = Embed(title="**Help Commands Embed Closed!**",
-                 colour=enso_embedmod_colours,
-                 timestamp=time)
-
-    # Set the name and the icon for Enso~Chan
-    stop.set_author(name=enso_name,
-                    icon_url=enso_icon)
-
-    return stop
-
-
 def embeds(self):
     # Define guild icon, enso bot icon and enso bot name
     guild_icon = self.ctx.guild.icon_url
 
     # Set the different pages of the embed
     page1, page2, page3, page4 = fun_function(self, guild_icon)
-    page5 = waifu_husbando_function(self, guild_icon)
-    page6 = misc_function(self, guild_icon)
-    page7 = important_function(self, guild_icon)
+    page5 = _enso(self, guild_icon)
+    page6 = waifu_husbando_function(self, guild_icon)
+    page7 = misc_function(self, guild_icon)
+    page8 = important_function(self, guild_icon)
 
     # Store all the categories of the menu to an array called pages
-    pages = [page1, page2, page3, page4, page5, page6, page7]
+    pages = [page1, page2, page3, page4, page5, page6, page7, page8]
 
     return pages
 
@@ -314,12 +324,12 @@ class HelpMenu(menus.Menu):
 class ReactionMenu(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        # Remove default help command
         self.bot.remove_command("help")
 
-    # ~help command that returns a menu for help commands controlled by reactions
     @command(name="help", aliases=["Help"])
     async def help(self, ctx):
+        """Returns a menu for help commands controlled by reactions"""
+
         # Local Variable i to allow the index of the pages[] to be modified
         i = 0
 

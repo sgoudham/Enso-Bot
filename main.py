@@ -127,12 +127,16 @@ async def on_guild_join(guild):
     try:
         # Set up connection to database
         with db.connection() as conn:
+            # Iterate through every member within the guild
             for member in guild.members:
                 name = f"{member.name}#{member.discriminator}"
+
+                # Define the insert statement that will insert the user's information
                 insert_query = """INSERT INTO members (guildID, discordUser, discordID) VALUES (?, ?, ?)"""
                 vals = guild.id, name, member.id,
                 cursor = conn.cursor()
 
+                # Execute the query
                 cursor.execute(insert_query, vals)
                 conn.commit()
                 print(cursor.rowcount, f"Record inserted successfully into Members from {guild.name}")
@@ -152,7 +156,7 @@ async def on_member_join(member):
         with db.connection() as conn:
             name = f"{member.name}#{member.discriminator}"
 
-            # Define the Insert Into Statement inserting into the database
+            # Define the insert statement that will insert the user's information
             insert_query = """INSERT INTO members (guildID, discordUser, discordID) VALUES (?, ?, ?)"""
             vals = member.guild.id, name, member.id,
             cursor = conn.cursor()

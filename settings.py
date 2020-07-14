@@ -71,7 +71,7 @@ enso_modmail_ID = 728083016290926623
 
 # Returns a list of all the cogs
 def extensions():
-    anime_ext = ['cogs.anime.interactive', 'cogs.anime.waifu_husbandos']
+    anime_ext = ['cogs.anime.interactive', 'cogs.anime.waifu_husbandos', 'cogs.anime.relationship']
 
     help_ext = ['cogs.help.admin', 'cogs.help.help', 'cogs.help.self_roles',
                 'cogs.help.info', 'cogs.help.verification', 'cogs.help.modmail']

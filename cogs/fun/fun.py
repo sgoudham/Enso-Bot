@@ -101,26 +101,6 @@ class Fun(commands.Cog):
         # Sending out a random compliment from the array "responses"
         await ctx.send(random.choice(responses))
 
-    @command(name="lukas", aliases=['Lukas'])
-    @cooldown(1, 1, BucketType.user)
-    @has_any_role('Lukas (Server Booster)')
-    async def lukas(self, ctx):
-        """Lukas's command for Ange"""
-
-        # Define the id's of Bubz and Lukas
-        lukasID = '<@395653002050011166>'
-        bubzID = '<@422588717744652289>'
-
-        # Set up array of responses that Lukas wants the bot to display
-        responses = [
-            f"{lukasID} loves {bubzID} with all his heart <:awie:676201100793085952> <:awie:676201100793085952>",
-            f"{lukasID} and {bubzID} are raising their rabbits <:blushlook1:677310734123663363> <:blushlook2:679524467248201769>",
-            f"{lukasID} is having a cult meeting",
-            f"{bubzID} is {lukasID}’s Ehefrau"]
-
-        # Send one of the responses of the responses array to Lukas
-        await ctx.send(random.choice(responses))
-
     @command(name="flip", aliases=['Flip'])
     @cooldown(1, 1, BucketType.user)
     async def flip(self, ctx):

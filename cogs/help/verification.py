@@ -5,6 +5,8 @@ from discord import Colour, Embed
 from discord.ext import commands
 from discord.ext.commands import command, is_owner
 
+from settings import enso_guild_ID, enso_verification_ID
+
 
 # Set up Cog
 class Verification(commands.Cog):
@@ -16,12 +18,11 @@ class Verification(commands.Cog):
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):
         # Get the guild
-        guild = self.bot.get_guild(663651584399507476)
+        guild = self.bot.get_guild(enso_guild_ID)
         # Get the member
         member = guild.get_member(payload.user_id)
-
         # Getting the channel verification by setting it to #verification
-        channel = guild.get_channel(728034083678060594)
+        channel = guild.get_channel(enso_verification_ID)
 
         # If the channel is #verification
         if payload.channel_id == channel.id:

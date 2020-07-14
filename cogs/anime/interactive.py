@@ -154,12 +154,15 @@ class Interactive(commands.Cog):
     async def cuddle(self, ctx, target: Member):
         """Allows users to cuddle a person in the server"""
 
+        # Get the guild
+        guild = ctx.author.guild
+
         # Use database connection
         with db.connection() as conn:
 
             # Get the author's row from the Members Table
-            select_query = """SELECT * FROM members WHERE discordID = (?)"""
-            val = ctx.author.id,
+            select_query = """SELECT * FROM members WHERE discordID = (?) and guildID = (?)"""
+            val = ctx.author.id, guild.id
             cursor = conn.cursor()
 
             # Execute the SQL Query

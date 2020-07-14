@@ -77,7 +77,7 @@ class Relationship(commands.Cog):
                     cursor.execute(update_query, proposer)
                     cursor.execute(update_query, proposee)
                     conn.commit()
-                    print(cursor.rowcount, "Records Updated in Members!")
+                    print(cursor.rowcount, "2 people have been marred!")
 
                 # Congratulate them!
                 await ctx.send(
@@ -167,7 +167,7 @@ class Relationship(commands.Cog):
                     cursor.execute(update_query, divorcer)
                     cursor.execute(update_query, divorcee)
                     conn.commit()
-                    print(cursor.rowcount, "Records Updated in Members!")
+                    print(cursor.rowcount, "2 Members have been divorced :(!")
 
                 # Congratulate them!
                 await ctx.send(

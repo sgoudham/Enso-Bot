@@ -39,10 +39,6 @@ def fun_function(self, guild_icon):
 
     # Setting up the fields in a separate array
     fun_fields_2 = [
-        (f"**{self.ctx.prefix}marry `<person>`**",
-         "\nMarry a User Within The Server", True),
-        (f"**{self.ctx.prefix}divorce `<person>`**",
-         "\nDivorce The Person You Are Married To", True),
         (f"**{self.ctx.prefix}hug `<person>`**",
          "\nHug A User Within The Server", True),
         (f"**{self.ctx.prefix}cuddle `<person>`**",
@@ -50,15 +46,41 @@ def fun_function(self, guild_icon):
         (f"**{self.ctx.prefix}pat `<person>`**",
          "\nPat A User Within The Server", True),
         (f"**{self.ctx.prefix}kiss `<person>`**",
-         "\nKiss A User Within The Serverr", True),
+         "\nKiss A User Within The Server", True),
+        (f"**{self.ctx.prefix}lemon `<person>`**",
+         "\nGive lemon to A User Within The Server", True)]
+
+    # Setting up the Embed for the Fun Commands
+    fun_commands_3 = Embed(title="(っ◔◡◔)っ Fun Commands 3 (っ◔◡◔)っ",
+                           colour=enso_embedmod_colours,
+                           timestamp=time)
+
+    # Setting thumbnail and author
+    fun_commands_3.set_thumbnail(url=guild_icon)
+
+    # Setting up the fields in a separate array
+    fun_fields_3 = [
         (f"**{self.ctx.prefix}slap `<person>`**",
          "\nSlap A User Within The Server", True),
         (f"**{self.ctx.prefix}kill `<person>`**",
          "\nKill A User Within The Server", True),
         (f"**{self.ctx.prefix}choke `<person>`**",
-         "\nChoke A User Within The Server", True),
-        (f"**{self.ctx.prefix}lemon `<person>`**",
-         "\nGive lemon to A User Within The Server", True)]
+         "\nChoke A User Within The Server", True)]
+
+    # Setting up the Embed for the Fun Commands
+    fun_commands_4 = Embed(title="(っ◔◡◔)っ Marriage/Divorce (っ◔◡◔)っ",
+                           colour=enso_embedmod_colours,
+                           timestamp=time)
+
+    # Setting thumbnail and author
+    fun_commands_4.set_thumbnail(url=guild_icon)
+
+    # Setting up the fields in a separate array
+    fun_fields_4 = [
+        (f"**{self.ctx.prefix}marry `<person>`**",
+         "\nMarry a User Within The Server", True),
+        (f"**{self.ctx.prefix}divorce `<person>`**",
+         "\nDivorce The Person You Are Married To", True)]
 
     # Add the fun_commands fields to the embed
     for name, value, inline in fun_fields:
@@ -68,7 +90,15 @@ def fun_function(self, guild_icon):
     for name, value, inline in fun_fields_2:
         fun_commands_2.add_field(name=name, value=value, inline=inline)
 
-    return fun_commands, fun_commands_2
+    # Add the fun_commands_3 fields to the embed
+    for name, value, inline in fun_fields_3:
+        fun_commands_3.add_field(name=name, value=value, inline=inline)
+
+    # Add the fun_commands_3 fields to the embed
+    for name, value, inline in fun_fields_4:
+        fun_commands_4.add_field(name=name, value=value, inline=inline)
+
+    return fun_commands, fun_commands_2, fun_commands_3, fun_commands_4
 
 
 # Function to allow the second page of the help commands (Waifu/Husbandos)
@@ -193,13 +223,13 @@ def embeds(self):
     guild_icon = self.ctx.guild.icon_url
 
     # Set the different pages of the embed
-    page1, page2 = fun_function(self, guild_icon)
-    page3 = waifu_husbando_function(self, guild_icon)
-    page4 = misc_function(self, guild_icon)
-    page5 = important_function(self, guild_icon)
+    page1, page2, page3, page4 = fun_function(self, guild_icon)
+    page5 = waifu_husbando_function(self, guild_icon)
+    page6 = misc_function(self, guild_icon)
+    page7 = important_function(self, guild_icon)
 
     # Store all the categories of the menu to an array called pages
-    pages = [page1, page2, page3, page4, page5]
+    pages = [page1, page2, page3, page4, page5, page6, page7]
 
     return pages
 

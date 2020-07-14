@@ -57,6 +57,9 @@ class Interactive(commands.Cog):
             if not target.id == int(result[2]) and kiss:
                 await ctx.send("Σ(‘◉⌓◉’) You can only kiss your partner! Baka!")
                 return
+            elif int(result[2]) is None and kiss:
+                await ctx.send("Σ(‘◉⌓◉’) You need to be married in order to use this command! Baka!")
+                return
 
         # Surround with try/except to catch any exceptions that may occur
         try:

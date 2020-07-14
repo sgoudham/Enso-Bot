@@ -37,7 +37,7 @@ class Relationship(commands.Cog):
                 await ctx.send("Senpaii! ˭̡̞(◞⁎˃ᆺ˂)◞*✰ You can't possibly marry yourself!")
                 return
             # Make sure that the person is not already married to someone else within the server
-            elif result[3] is not None:
+            elif result[2] is not None:
                 member = guild.get_member(int(result[2]))
                 await ctx.send(f"((╬◣﹏◢)) You're already married to {member.mention}!")
                 return
@@ -118,12 +118,12 @@ class Relationship(commands.Cog):
                 await ctx.send("Senpaii! ˭̡̞(◞⁎˃ᆺ˂)◞*✰ You can't possibly divorce yourself!")
                 return
             # Make sure that the person trying to divorce is actually married to the user
-            elif result[3] is None:
+            elif result[2] is None:
                 await ctx.send(f"((╬◣﹏◢)) You must be married in order to divorce someone! Baka!")
                 return
             # Make sure the person is married to the person that they're trying to divorce
-            elif result[3] != str(member.id):
-                member = guild.get_member(int(result[3]))
+            elif result[2] != str(member.id):
+                member = guild.get_member(int(result[2]))
                 await ctx.send(f"(ノ ゜口゜)ノ You can only divorce the person that you're married!"
                                f"\n That person is {member.mention}")
                 return

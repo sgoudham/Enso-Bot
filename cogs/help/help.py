@@ -115,17 +115,17 @@ def waifu_husbando_function(self, guild_icon):
     waifu_husbando_fields = [
         (f"**{self.ctx.prefix}w `<waifu>`**",
          "\nShows Specified Image of Waifu" +
-         f"\n (Using **{self.ctx.prefix}w shows random image of Waifu)", True),
+         f"\n(Using **{self.ctx.prefix}w shows random image of Waifu)", True),
         (f"**{self.ctx.prefix}h `<husbando>`**",
          "\nShows Specified Image of Husbando" +
-         f"\n (Using **{self.ctx.prefix}h shows random image of Husbando", True),
+         f"\n(Using **{self.ctx.prefix}h shows random image of Husbando", True),
         (f"**{self.ctx.prefix}w `list`**",
          "\nReturns all Waifus", True),
         (f"**{self.ctx.prefix}h `list`**",
          "\nReturns all Husbandos", True),
         (f"**{self.ctx.prefix}enso `<person>`**",
          "\nShows Specified Image of User" +
-         f"\n (Using {self.ctx.prefix}enso by itself shall generate a random image of a person within all the server)",
+         f"\n(Using {self.ctx.prefix}enso by itself shall generate a random image of a person within all the server)",
          True),
         (f"**{self.ctx.prefix}enso `list`**",
          "\nReturns all Users", True)]

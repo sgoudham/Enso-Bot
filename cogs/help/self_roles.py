@@ -3,10 +3,10 @@ import datetime
 import discord
 from discord import Colour, Embed
 from discord.ext import commands
-# Set up the Cog
 from discord.ext.commands import command, is_owner
 
 
+# Set up the Cog
 class SelfRoles(commands.Cog):
     def __init__(self, bot):
         self.bot = bot

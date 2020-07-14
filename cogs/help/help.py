@@ -238,6 +238,7 @@ def embeds(self):
     return pages
 
 
+# Set up the Cog
 class HelpMenu(menus.Menu):
     def __init__(self, i, bot):
         super().__init__()

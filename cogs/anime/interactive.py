@@ -106,49 +106,6 @@ class Interactive(commands.Cog):
         except FileNotFoundError as e:
             print(e)
 
-    @command(name="kill", aliases=["Kill"])
-    @cooldown(1, 1, BucketType.user)
-    async def kill(self, ctx, target: Member):
-        """Allows users to kill a person in the server"""
-
-        # Surround with try/except to catch any exceptions that may occur
-        try:
-
-            # If the channel that the command has been sent is in the list of accepted channels
-            if str(ctx.channel) in settings.channels:
-
-                # Open the file containing the killing gifs
-                with open('images/FunCommands/killing.txt') as file:
-                    # Store content of the file in killing_array
-                    killing_array = file.readlines()
-
-                # Get the member and the userAvatar
-                member, userAvatar = getMember(ctx)
-
-                # Set up the embed to display a random killing gif
-                embed = Embed(
-                    title=f"<:monkaW:718960264896184380> <:monkaW:718960264896184380> | **{member.display_name}** killed **{target.display_name}**",
-                    colour=Colour(int(random.choice(colour_list))),
-                    timestamp=time)
-                embed.set_image(url=random.choice(killing_array))
-                embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
-
-                # Send the embedded message to the user
-                await ctx.send(embed=embed)
-
-            # else the command is sent in an invalid channel
-            else:
-                # Call error_function() and display it to the user
-                message = await ctx.send(error_function())
-
-                # Let the user read the message for 2.5 seconds
-                await asyncio.sleep(2.5)
-                # Delete the message
-                await message.delete()
-
-        except FileNotFoundError as e:
-            print(e)
-
     @command(name="cuddle", aliases=["Cuddle"])
     @cooldown(1, 1, BucketType.user)
     async def cuddle(self, ctx, target: Member):
@@ -207,6 +164,49 @@ class Interactive(commands.Cog):
                     colour=Colour(int(random.choice(colour_list))),
                     timestamp=time)
                 embed.set_image(url=random.choice(cuddling_array))
+                embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
+
+                # Send the embedded message to the user
+                await ctx.send(embed=embed)
+
+            # else the command is sent in an invalid channel
+            else:
+                # Call error_function() and display it to the user
+                message = await ctx.send(error_function())
+
+                # Let the user read the message for 2.5 seconds
+                await asyncio.sleep(2.5)
+                # Delete the message
+                await message.delete()
+
+        except FileNotFoundError as e:
+            print(e)
+
+    @command(name="kill", aliases=["Kill"])
+    @cooldown(1, 1, BucketType.user)
+    async def kill(self, ctx, target: Member):
+        """Allows users to kill a person in the server"""
+
+        # Surround with try/except to catch any exceptions that may occur
+        try:
+
+            # If the channel that the command has been sent is in the list of accepted channels
+            if str(ctx.channel) in settings.channels:
+
+                # Open the file containing the killing gifs
+                with open('images/FunCommands/killing.txt') as file:
+                    # Store content of the file in killing_array
+                    killing_array = file.readlines()
+
+                # Get the member and the userAvatar
+                member, userAvatar = getMember(ctx)
+
+                # Set up the embed to display a random killing gif
+                embed = Embed(
+                    title=f"<:monkaW:718960264896184380> <:monkaW:718960264896184380> | **{member.display_name}** killed **{target.display_name}**",
+                    colour=Colour(int(random.choice(colour_list))),
+                    timestamp=time)
+                embed.set_image(url=random.choice(killing_array))
                 embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
 
                 # Send the embedded message to the user

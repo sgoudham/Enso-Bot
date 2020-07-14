@@ -104,6 +104,7 @@ async def ping(ctx):
 @client.event
 async def on_guild_remove(guild):
     try:
+        # Set up connection to database
         with db.connection() as conn:
             for member in guild.members:
                 # Delete the record of the member as they leave the server
@@ -115,6 +116,7 @@ async def on_guild_remove(guild):
                 cursor.execute(delete_query, vals)
                 conn.commit()
                 print(cursor.rowcount, "Record deleted successfully from Members")
+
     except mariadb.Error as ex:
         print("Parameterized Query Failed: {}".format(ex))
 
@@ -123,6 +125,7 @@ async def on_guild_remove(guild):
 @client.event
 async def on_guild_join(guild):
     try:
+        # Set up connection to database
         with db.connection() as conn:
             for member in guild.members:
                 name = f"{member.name}#{member.discriminator}"
@@ -133,6 +136,7 @@ async def on_guild_join(guild):
                 cursor.execute(insert_query, vals)
                 conn.commit()
                 print(cursor.rowcount, f"Record inserted successfully into Members from {guild.name}")
+
     except mariadb.Error as ex:
         print("Parameterized Query Failed: {}".format(ex))
 
@@ -147,6 +151,7 @@ async def on_member_join(member):
         # Set up connection to database
         with db.connection() as conn:
             name = f"{member.name}#{member.discriminator}"
+
             # Define the Insert Into Statement inserting into the database
             insert_query = """INSERT INTO members (guildID, discordUser, discordID) VALUES (?, ?, ?)"""
             vals = member.guild.id, name, member.id,

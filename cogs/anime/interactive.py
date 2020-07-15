@@ -1,4 +1,5 @@
 import asyncio
+import datetime
 import random
 
 from discord import Colour, Embed, Member
@@ -7,7 +8,7 @@ from discord.ext.commands import cooldown, command, BucketType
 
 import db
 import settings
-from settings import time, colour_list, enso_ensochancommands_Mention
+from settings import colour_list, enso_ensochancommands_Mention
 
 
 # Gets the member and user avatar
@@ -86,7 +87,7 @@ class Interactive(commands.Cog):
                 embed = Embed(
                     title=f"<a:huh:676195228872474643> <a:huh:676195228872474643> | **{member.display_name}** kissed **{target.display_name}**",
                     colour=Colour(int(random.choice(colour_list))),
-                    timestamp=time)
+                    timestamp=datetime.datetime.utcnow())
                 embed.set_image(url=random.choice(kissing_array))
                 embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
 
@@ -162,7 +163,7 @@ class Interactive(commands.Cog):
                 embed = Embed(
                     title=f"<:blushlook1:677310734123663363> <:blushlook2:679524467248201769> | **{member.display_name}** cuddled **{target.display_name}**",
                     colour=Colour(int(random.choice(colour_list))),
-                    timestamp=time)
+                    timestamp=datetime.datetime.utcnow())
                 embed.set_image(url=random.choice(cuddling_array))
                 embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
 
@@ -205,7 +206,7 @@ class Interactive(commands.Cog):
                 embed = Embed(
                     title=f"<:monkaW:718960264896184380> <:monkaW:718960264896184380> | **{member.display_name}** killed **{target.display_name}**",
                     colour=Colour(int(random.choice(colour_list))),
-                    timestamp=time)
+                    timestamp=datetime.datetime.utcnow())
                 embed.set_image(url=random.choice(killing_array))
                 embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
 
@@ -248,7 +249,7 @@ class Interactive(commands.Cog):
                 embed = Embed(
                     title=f"<:baka:718942872061083678> <:baka:718942872061083678> | **{member.display_name}** slapped **{target.display_name}**",
                     colour=Colour(int(random.choice(colour_list))),
-                    timestamp=time)
+                    timestamp=datetime.datetime.utcnow())
                 embed.set_image(url=random.choice(slapping_array))
                 embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
 
@@ -291,7 +292,7 @@ class Interactive(commands.Cog):
                 embed = Embed(
                     title=f"<:xoxo:679893117482303564> <:xoxo:679893117482303564> | **{member.display_name}** patted **{target.display_name} on the head**",
                     colour=Colour(int(random.choice(colour_list))),
-                    timestamp=time)
+                    timestamp=datetime.datetime.utcnow())
                 embed.set_image(url=random.choice(patting_array))
                 embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
 
@@ -333,7 +334,7 @@ class Interactive(commands.Cog):
                 embed = Embed(
                     title=f"<a:huh:676195228872474643> <a:huh:676195228872474643> | **{member.display_name}** Gives A Lemon To **{target.display_name}**",
                     colour=Colour(int(random.choice(colour_list))),
-                    timestamp=time)
+                    timestamp=datetime.datetime.utcnow())
                 embed.set_image(url=random.choice(lemon_array))
                 embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
 
@@ -376,7 +377,7 @@ class Interactive(commands.Cog):
                 embed = Embed(
                     title=f"<:qmq:676203031506976768> <:qmq:676203031506976768> | **{member.display_name}** choked **{target.display_name}**",
                     colour=Colour(int(random.choice(colour_list))),
-                    timestamp=time)
+                    timestamp=datetime.datetime.utcnow())
                 embed.set_image(url=random.choice(choking_array))
                 embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
 
@@ -419,7 +420,7 @@ class Interactive(commands.Cog):
                 embed = Embed(
                     title=f"<a:huh:676195228872474643> <a:huh:676195228872474643> | **{member.display_name}** hugged **{target.display_name}**",
                     colour=Colour(int(random.choice(colour_list))),
-                    timestamp=time)
+                    timestamp=datetime.datetime.utcnow())
                 embed.set_image(url=random.choice(hugging_array))
                 embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
 

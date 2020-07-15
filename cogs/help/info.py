@@ -141,7 +141,6 @@ class GetInfo(commands.Cog):
                   ("Created", ctx.guild.created_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"), False),
                   ("Region", str(ctx.guild.region).upper(), False),
                   ("Statuses", f"🟢 {statuses[0]} 🟠 {statuses[1]} 🔴 {statuses[2]} ⚪ {statuses[3]}", False),
-                  ("\u200b", "\u200b", False),
                   ("Members", len(ctx.guild.members), True),
                   ("Humans", len(list(filter(lambda m: not m.bot, ctx.guild.members))), True),
                   ("Bots", len(list(filter(lambda m: m.bot, ctx.guild.members))), True),

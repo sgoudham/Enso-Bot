@@ -1,10 +1,11 @@
+import datetime
 import random
 
 from discord import Member, Colour, Embed
 from discord.ext import commands
 from discord.ext.commands import BucketType, cooldown, command, has_any_role, is_owner
 
-from settings import time, colour_list
+from settings import colour_list
 
 
 # Set up the cog
@@ -147,7 +148,7 @@ class Fun(commands.Cog):
             embed = Embed(
                 title=f"**A cute picture of Digby!**",
                 colour=Colour(int(random.choice(colour_list))),
-                timestamp=time)
+                timestamp=datetime.datetime.utcnow())
             embed.set_image(url=random.choice(digby_array))
             embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
 

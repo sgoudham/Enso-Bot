@@ -1,4 +1,5 @@
 import asyncio
+import datetime
 import random
 import string
 
@@ -9,7 +10,7 @@ from discord.ext.commands import BucketType, cooldown, command
 
 import settings
 from cogs.anime.interactive import error_function
-from settings import colour_list, time
+from settings import colour_list
 
 
 # Set up the cog
@@ -75,7 +76,7 @@ class Doggo(commands.Cog):
                             doggo_embed = Embed(
                                 title=f"**It's a {lowercase_breed.capitalize()} Doggo!!** ",
                                 colour=Colour(random.choice(colour_list)),
-                                timestamp=time)
+                                timestamp=datetime.datetime.utcnow())
                             doggo_embed.set_image(url=image_link)
                             doggo_embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
 
@@ -102,7 +103,7 @@ class Doggo(commands.Cog):
                         doggo_embed = Embed(
                             title=f"**Doggo!** ",
                             colour=Colour(random.choice(colour_list)),
-                            timestamp=time)
+                            timestamp=datetime.datetime.utcnow())
                         doggo_embed.set_image(url=image_link)
                         doggo_embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
 

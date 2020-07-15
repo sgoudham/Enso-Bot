@@ -1,8 +1,10 @@
+import datetime
+
 from discord import Embed
 from discord.ext import commands, menus
 from discord.ext.commands import command
 
-from settings import enso_embedmod_colours, time, ensoMention, hammyMention
+from settings import enso_embedmod_colours, ensoMention, hammyMention
 
 
 # Function to allow pages 1-4 of the help commands (Fun Commands)
@@ -10,7 +12,7 @@ def fun_function(self, guild_icon):
     # Setting up the Embed for the Fun Commands
     fun_commands = Embed(title="(っ◔◡◔)っ Fun Commands (っ◔◡◔)っ",
                          colour=enso_embedmod_colours,
-                         timestamp=time)
+                         timestamp=datetime.datetime.utcnow())
 
     # Setting thumbnail and author
     fun_commands.set_thumbnail(url=guild_icon)
@@ -32,7 +34,7 @@ def fun_function(self, guild_icon):
     # Setting up the Embed for the Fun Commands
     fun_commands_2 = Embed(title="(っ◔◡◔)っ Fun Commands 2 (っ◔◡◔)っ",
                            colour=enso_embedmod_colours,
-                           timestamp=time)
+                           timestamp=datetime.datetime.utcnow())
 
     # Setting thumbnail and author
     fun_commands_2.set_thumbnail(url=guild_icon)
@@ -53,7 +55,7 @@ def fun_function(self, guild_icon):
     # Setting up the Embed for the Fun Commands
     fun_commands_3 = Embed(title="(っ◔◡◔)っ Fun Commands 3 (っ◔◡◔)っ",
                            colour=enso_embedmod_colours,
-                           timestamp=time)
+                           timestamp=datetime.datetime.utcnow())
 
     # Setting thumbnail and author
     fun_commands_3.set_thumbnail(url=guild_icon)
@@ -70,7 +72,7 @@ def fun_function(self, guild_icon):
     # Setting up the Embed for the Fun Commands
     fun_commands_4 = Embed(title="(っ◔◡◔)っ Marriage/Divorce (っ◔◡◔)っ",
                            colour=enso_embedmod_colours,
-                           timestamp=time)
+                           timestamp=datetime.datetime.utcnow())
 
     # Setting thumbnail and author
     fun_commands_4.set_thumbnail(url=guild_icon)
@@ -106,7 +108,7 @@ def waifu_husbando_function(self, guild_icon):
     # Setting up the Embed for the Waifu/Husbandos
     waifu_husbando_commands = Embed(title="(っ◔◡◔)っ Waifus/Husbando Commands (っ◔◡◔)っ",
                                     colour=enso_embedmod_colours,
-                                    timestamp=time)
+                                    timestamp=datetime.datetime.utcnow())
 
     # Setting thumbnail and author
     waifu_husbando_commands.set_thumbnail(url=guild_icon)
@@ -136,7 +138,7 @@ def _enso(self, guild_icon):
     # Setting up the Embed for the ~Enso command
     _enso_commands = Embed(title="(っ◔◡◔)っ Enso Command (っ◔◡◔)っ",
                            colour=enso_embedmod_colours,
-                           timestamp=time)
+                           timestamp=datetime.datetime.utcnow())
 
     # Setting thumbnail and author
     _enso_commands.set_thumbnail(url=guild_icon)
@@ -162,7 +164,7 @@ def misc_function(self, guild_icon):
     # Setting up the Embed for the Miscellaneous commands
     misc_commands = Embed(title="(っ◔◡◔)っ Misc Commands (っ◔◡◔)っ",
                           colour=enso_embedmod_colours,
-                          timestamp=time)
+                          timestamp=datetime.datetime.utcnow())
 
     # Setting thumbnail and author
     misc_commands.set_thumbnail(url=guild_icon)
@@ -193,7 +195,7 @@ def important_function(self, guild_icon):
     # Setting up the Embed for the Important Commands
     important_commands = Embed(title="(っ◔◡◔)っ Important Commands (っ◔◡◔)っ",
                                colour=enso_embedmod_colours,
-                               timestamp=time)
+                               timestamp=datetime.datetime.utcnow())
 
     # Setting thumbnail and author
     important_commands.set_thumbnail(url=guild_icon)

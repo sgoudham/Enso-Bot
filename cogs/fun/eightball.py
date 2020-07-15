@@ -12,11 +12,11 @@ class eightball(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    # ~8Ball command
     @command(name="8ball", aliases=['8Ball'])
-    # Added a cooldown, only 1 instance of the command can be sent every second per user
     @cooldown(1, 1, BucketType.user)
     async def _8ball(self, ctx, *, question):
+        """Allows for the user to get a custom response to a question"""
+
         # Setting up the channels that the commands can be sent in enso-chan-commands and general
         channels = ["enso-chan-commands", "picto-chat"]
 

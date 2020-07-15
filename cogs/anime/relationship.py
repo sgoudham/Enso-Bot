@@ -1,13 +1,44 @@
 import asyncio
+import datetime
+import random
+from typing import Optional
 
-from discord import Member
+from discord import Member, Embed, Colour
 from discord.ext import commands
 from discord.ext.commands import BucketType, command, cooldown
 
-# Set up the Cog
 import db
+from settings import colour_list, time
 
 
+def marriageInfo(target, marriedUser, marriedDate, currentDate, married):
+    if not married:
+        fields = [("Married To", "No One", False),
+                  ("Marriage Date", "N/A", False),
+                  ("Days Married", "N/A", False)]
+    else:
+        marriedTime = datetime.datetime.strptime(marriedDate, "%a, %b %d, %Y")
+        currentTime = datetime.datetime.strptime(currentDate, "%a, %b %d, %Y")
+        delta = currentTime - marriedTime
+
+        fields = [("Married To", marriedUser.mention, False),
+                  ("Marriage Date", marriedDate, False),
+                  ("Days Married", delta.days, False)]
+
+    embed = Embed(title=f"{target.name}'s Marriage Information",
+                  colour=Colour(int(random.choice(colour_list))),
+                  timestamp=time)
+
+    embed.set_thumbnail(url=target.avatar_url)
+
+    # Add fields to the embed
+    for name, value, inline in fields:
+        embed.add_field(name=name, value=value, inline=inline)
+
+    return embed
+
+
+# Set up the Cog
 class Relationship(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -195,6 +226,47 @@ class Relationship(commands.Cog):
 
             # Send out an error message if the user waited too long
             await ctx.send("(｡T ω T｡) They waited too long")
+
+    @command(name="minfo", aliases=["Minfo", "mInfo"])
+    @cooldown(1, 1, BucketType.user)
+    async def m_info(self, ctx, target: Optional[Member]):
+        """Allows the users status of their marriage"""
+
+        # If a target has been specified, set them as the user
+        if target:
+            target = target
+        # If no target has been specified, choose the author
+        else:
+            target = ctx.author
+
+        # Getting the guild of the user
+        guild = target.guild
+
+        # Use database connection
+        with db.connection() as conn:
+
+            # Get the author's row from the Members Table
+            select_query = """SELECT * FROM members WHERE discordID = (?) and guildID = (?)"""
+            val = target.id, guild.id,
+            cursor = conn.cursor()
+
+            # Execute the SQL Query
+            cursor.execute(select_query, val)
+            result = cursor.fetchone()
+
+            if result[2] is None:
+                married = False
+                marriedUser = ""
+                marriedDate = ""
+            else:
+                marriedUser = guild.get_member(int(result[2]))
+                marriedDate = result[3]
+                married = True
+
+            currentDate = ctx.message.created_at.strftime("%a, %b %d, %Y")
+
+            embed = marriageInfo(target, marriedUser, marriedDate, currentDate, married)
+            await ctx.send(embed=embed)
 
 
 def setup(bot):

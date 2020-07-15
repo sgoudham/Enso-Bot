@@ -62,12 +62,9 @@ class GetInfo(commands.Cog):
         # Get the member avatar
         userAvatar = target.avatar_url
 
-        # Get all the roles of the user
-        mentions = [role.mention for role in target.roles]
-
-        # Store the roles in a string called "roles"
-        # For each role that the user has (Skipping the first element as it's always going to be @everyone)
-        roles = " ".join(mentions[1:])
+        # Store all the roles that the user has
+        # (Skipping the first element as it's always going to be @everyone)
+        roles = f"{' '.join(map(str, (role.mention for role in target.roles[1:])))}"
 
         # Returns the permissions that the user has within the guild
         filtered = filter(lambda x: x[1], target.guild_permissions)

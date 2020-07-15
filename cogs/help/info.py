@@ -67,7 +67,6 @@ class GetInfo(commands.Cog):
 
         # Store the roles in a string called "roles"
         # For each role that the user has (Skipping the first element as it's always going to be @everyone)
-        # Store all the permissions that the user has in a string
         roles = " ".join(mentions[1:])
 
         # Returns the permissions that the user has within the guild
@@ -116,6 +115,13 @@ class GetInfo(commands.Cog):
         guild_icon = ctx.guild.icon_url
         guild_id = ctx.guild.id
 
+        # Get all the roles of the user
+        mentions = [role.mention for role in ctx.guild.roles]
+
+        # Store the roles in a string called "roles"
+        # For each role that the user has (Skipping the first element as it's always going to be @everyone)
+        roles = " ".join(mentions[1:])
+
         # Define the statuses of the members within the discord
         statuses = [len(list(filter(lambda m: str(m.status) == "online", ctx.guild.members))),
                     len(list(filter(lambda m: str(m.status) == "idle", ctx.guild.members))),
@@ -124,6 +130,7 @@ class GetInfo(commands.Cog):
 
         # Set up embed to display all the server information
         embed = Embed(title="**Server Information**",
+                      description=f"**All Roles**\n\n{roles}\n",
                       colour=Colour(int(random.choice(colour_list))),
                       timestamp=time)
         embed.set_thumbnail(url=guild_icon)

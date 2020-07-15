@@ -132,7 +132,7 @@ class GetInfo(commands.Cog):
         if len(ctx.guild.emojis) > 20:
             # Display the first 20 emojis with a length specified after telling the user how many emojis were not shown
             length = len(ctx.guild.emojis) - 20
-            emojis = f"{' '.join(map(str, ctx.guild.emojis[:15]))} and {length} more..."
+            emojis = f"{' '.join(map(str, ctx.guild.emojis[:20]))} and {length} more..."
         else:
             # Display all the emojis in the server as it is less than 20
             emojis = " ".join(map(str, ctx.guild.emojis))

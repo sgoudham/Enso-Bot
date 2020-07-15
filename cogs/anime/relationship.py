@@ -8,7 +8,7 @@ from discord.ext import commands
 from discord.ext.commands import BucketType, command, cooldown
 
 import db
-from settings import colour_list, time
+from settings import colour_list
 
 
 def marriageInfo(target, marriedUser, marriedDate, currentDate, married):
@@ -27,7 +27,7 @@ def marriageInfo(target, marriedUser, marriedDate, currentDate, married):
 
     embed = Embed(title=f"{target.name}'s Marriage Information",
                   colour=Colour(int(random.choice(colour_list))),
-                  timestamp=time)
+                  timestamp=datetime.datetime.utcnow())
 
     embed.set_thumbnail(url=target.avatar_url)
 

@@ -1,4 +1,5 @@
 import asyncio
+import datetime
 import random
 import string
 
@@ -8,7 +9,7 @@ from discord.ext.commands import cooldown, BucketType, command
 
 import settings
 from cogs.anime.interactive import error_function
-from settings import time, colour_list
+from settings import colour_list
 
 
 # Gets the member and user avatar
@@ -30,7 +31,7 @@ def displayServerImage(array, ctx, name):
     embed = Embed(
         title=f"**Look At What A Cutie {name.capitalize()} is! <a:huh:676195228872474643> <a:huh:676195228872474643> **",
         colour=Colour(random.choice(colour_list)),
-        timestamp=time)
+        timestamp=datetime.datetime.utcnow())
     embed.set_image(url=random.choice(array))
     embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
 
@@ -107,7 +108,7 @@ class Enso(commands.Cog):
                 embed = Embed(
                     title=f"Oh Look! A Cute Person <a:huh:676195228872474643> <a:huh:676195228872474643> ",
                     colour=Colour(random.choice(colour_list)),
-                    timestamp=time)
+                    timestamp=datetime.datetime.utcnow())
                 embed.set_image(url=random.choice(array))
                 embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
 

@@ -115,12 +115,28 @@ class GetInfo(commands.Cog):
         guild_icon = ctx.guild.icon_url
         guild_id = ctx.guild.id
 
-        # Get all the roles of the user
-        mentions = [role.mention for role in ctx.guild.roles]
+        # Check if the amount of roles is above 20
+        if len(ctx.guild.roles) > 20:
+            # Display the first 20 roles with a length specified telling the user how many roles were not shown
+            length = len(ctx.guild.roles) - 20
 
-        # Store the roles in a string called "roles"
-        # For each role that the user has (Skipping the first element as it's always going to be @everyone)
-        roles = " ".join(mentions[1:])
+            # Store the first 20 roles in a string called "roles"
+            # (Skipping the first element as it's always going to be @everyone)
+            role_string = f"{' **>>** '.join(map(str, (role.mention for role in ctx.guild.roles[1:20])))} and **{length}** more"
+
+        else:
+            # Display all the roles in the server as it is less than 20
+            role_string = f"{' **>>** '.join(map(str, (role.mention for role in ctx.guild.roles[1:])))}"
+
+        # Check if the list of emojis returned are greater than 20
+        if len(ctx.guild.emojis) > 20:
+            # Display the first 20 emojis with a length specified telling the user how many emojis were not shown
+            length = len(ctx.guild.emojis) - 20
+            # Store the first 20 emojis in a string
+            emojis = f"{' '.join(map(str, ctx.guild.emojis[:20]))} and **{length}** more..."
+        else:
+            # Display all the emojis in the server as it is less than 20
+            emojis = " ".join(map(str, ctx.guild.emojis))
 
         # Define the statuses of the members within the discord
         statuses = [len(list(filter(lambda m: str(m.status) == "online", ctx.guild.members))),
@@ -128,38 +144,38 @@ class GetInfo(commands.Cog):
                     len(list(filter(lambda m: str(m.status) == "dnd", ctx.guild.members))),
                     len(list(filter(lambda m: str(m.status) == "offline", ctx.guild.members)))]
 
-        # Check if the list of emojis returned are greater than 20
-        if len(ctx.guild.emojis) > 20:
-            # Display the first 20 emojis with a length specified after telling the user how many emojis were not shown
-            length = len(ctx.guild.emojis) - 20
-            emojis = f"{' '.join(map(str, ctx.guild.emojis[:20]))} and {length} more..."
-        else:
-            # Display all the emojis in the server as it is less than 20
-            emojis = " ".join(map(str, ctx.guild.emojis))
-
         # Set up embed to display all the server information
         embed = Embed(title="**Server Information**",
-                      description=f"**All Roles**\n\n{roles}\n",
                       colour=Colour(int(random.choice(colour_list))),
                       timestamp=time)
         embed.set_thumbnail(url=guild_icon)
         embed.set_footer(text=f"ID: {guild_id}", icon_url='{}'.format(guild_icon))
 
+        # Get the list of banned users from the server
+        bans = len(await ctx.guild.bans())
+        # Get the list of invites created for the server
+        invites = len(await ctx.guild.invites())
+
         # Define fields to be added into the embed
         fields = [("Owner", ctx.guild.owner, True),
                   ("Created", ctx.guild.created_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"), False),
-                  ("Region", str(ctx.guild.region).upper(), False),
-                  ("Statuses", f"🟢 {statuses[0]} 🟠 {statuses[1]} 🔴 {statuses[2]} ⚪ {statuses[3]}", False),
-                  ("Members", len(ctx.guild.members), True),
-                  ("Humans", len(list(filter(lambda m: not m.bot, ctx.guild.members))), True),
-                  ("Bots", len(list(filter(lambda m: m.bot, ctx.guild.members))), True),
-                  ("Banned Members", len(await ctx.guild.bans()), True),
-                  ("Text Channels", len(ctx.guild.text_channels), True),
-                  ("Voice Channels", len(ctx.guild.voice_channels), True),
-                  ("Categories", len(ctx.guild.categories), True),
-                  ("Roles", len(ctx.guild.roles), True),
-                  ("Invites", len(await ctx.guild.invites()), True),
-                  ("Emojis", emojis, False)]
+                  ("Region", str(ctx.guild.region).capitalize(), False),
+                  ("Statuses", f"🟢 {statuses[0]} \n🟠 {statuses[1]} \n🔴 {statuses[2]} \n⚪ {statuses[3]}", False),
+
+                  (f"Members ({len(ctx.guild.members)})",
+                   f"\nHumans: {len(list(filter(lambda m: not m.bot, ctx.guild.members)))}" +
+                   f"\nBots: {len(list(filter(lambda m: m.bot, ctx.guild.members)))}" +
+                   f"\nBanned: {bans}", True),
+
+                  (f"Channels ({len(ctx.guild.channels)})",
+                   f"\nText: {len(ctx.guild.text_channels)}" +
+                   f"\nVoice: {len(ctx.guild.voice_channels)}", True),
+
+                  ("Misc", f"Categories: {len(ctx.guild.categories)}" +
+                   f"\nInvites: {invites}", True),
+
+                  (f"Roles ({len(ctx.guild.roles)})", role_string, True),
+                  (f"Emojis ({len(ctx.guild.emojis)})", emojis, False)]
 
         # Add fields to the embed
         for name, value, inline in fields:

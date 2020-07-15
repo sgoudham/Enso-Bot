@@ -128,7 +128,14 @@ class GetInfo(commands.Cog):
                     len(list(filter(lambda m: str(m.status) == "dnd", ctx.guild.members))),
                     len(list(filter(lambda m: str(m.status) == "offline", ctx.guild.members)))]
 
-        emojis = " ".join(map(str, ctx.guild.emojis[:30]))
+        # Check if the list of emojis returned are greater than 20
+        if len(ctx.guild.emojis) > 20:
+            # Display the first 20 emojis with a length specified after telling the user how many emojis were not shown
+            length = len(ctx.guild.emojis) - 20
+            emojis = f"{' '.join(map(str, ctx.guild.emojis[:15]))} and {length} more..."
+        else:
+            # Display all the emojis in the server as it is less than 20
+            emojis = " ".join(map(str, ctx.guild.emojis))
 
         # Set up embed to display all the server information
         embed = Embed(title="**Server Information**",

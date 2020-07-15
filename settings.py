@@ -1,5 +1,3 @@
-import datetime
-
 from discord import Colour
 
 # Defining a list of colours
@@ -57,7 +55,6 @@ ensoMention = '<@716701699145728094>'
 
 blank_space = "\u200b"
 enso_embedmod_colours = Colour(0xFF69B4)
-time = datetime.datetime.utcnow()
 
 enso_ensochancommands_Mention = "<#721449922838134876>"
 

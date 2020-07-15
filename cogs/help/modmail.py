@@ -1,4 +1,5 @@
 import asyncio
+import datetime
 import random
 
 import mariadb
@@ -6,7 +7,7 @@ from discord import DMChannel, Embed
 from discord.ext import commands
 
 import db
-from settings import blank_space, enso_embedmod_colours, time, enso_guild_ID, enso_modmail_ID, hammyMention, \
+from settings import blank_space, enso_embedmod_colours, enso_guild_ID, enso_modmail_ID, hammyMention, \
     ensoMention, hammyID
 
 
@@ -15,7 +16,7 @@ def startModMail(author):
     # Set up embed to let the user how to start sending modmail
     startModMailEmbed = Embed(title="**Welcome to Modmail!**",
                               colour=enso_embedmod_colours,
-                              timestamp=time)
+                              timestamp=datetime.datetime.utcnow())
 
     startModMailEmbed.set_thumbnail(url=author.avatar_url)
     startModMailEmbed.set_footer(text=f"Sent by {author}")
@@ -40,7 +41,7 @@ def AnonOrNot(author):
     # Set up embed to let the user how to start sending modmail
     AnonModMailEmbed = Embed(title="**Want to send it Anonymously?**",
                              colour=enso_embedmod_colours,
-                             timestamp=time)
+                             timestamp=datetime.datetime.utcnow())
 
     AnonModMailEmbed.set_thumbnail(url=author.avatar_url)
     AnonModMailEmbed.set_footer(text=f"Sent by {author}")
@@ -65,7 +66,7 @@ def SendInstructions(author):
     # Set up embed to let the user know that they have aborted the modmail
     SendModMailEmbed = Embed(title="**Please enter a message for it to be sent to the staff!**",
                              colour=enso_embedmod_colours,
-                             timestamp=time)
+                             timestamp=datetime.datetime.utcnow())
 
     SendModMailEmbed.set_thumbnail(url=author.avatar_url)
     SendModMailEmbed.set_footer(text=f"Sent by {author}")
@@ -85,7 +86,7 @@ def ErrorHandling(author):
     # Set up embed to let the user know that the message must be above 50 characters
     ErrorHandlingEmbed = Embed(title="**Uh Oh! Please make sure the message is above 50 characters!**",
                                colour=enso_embedmod_colours,
-                               timestamp=time)
+                               timestamp=datetime.datetime.utcnow())
 
     ErrorHandlingEmbed.set_thumbnail(url=author.avatar_url)
     ErrorHandlingEmbed.set_footer(text=f"Sent by {author}")
@@ -105,7 +106,7 @@ def MessageSentConfirmation(author):
     # Set up embed to let the user know that they have sent the mail
     ConfirmationEmbed = Embed(title="**Message relayed to Staff!!**",
                               colour=enso_embedmod_colours,
-                              timestamp=time)
+                              timestamp=datetime.datetime.utcnow())
 
     ConfirmationEmbed.set_thumbnail(url=author.avatar_url)
     ConfirmationEmbed.set_footer(text=f"Sent by {author}")
@@ -132,7 +133,7 @@ def SendMsgToModMail(self, msg, author):
 
         embed = Embed(title="Modmail",
                       colour=enso_embedmod_colours,
-                      timestamp=time)
+                      timestamp=datetime.datetime.utcnow())
 
         embed.set_thumbnail(url=random.choice(avatars))
         embed.set_footer(text=f"Sent By Anon Member")
@@ -148,7 +149,7 @@ def SendMsgToModMail(self, msg, author):
     else:
         embed = Embed(title="Modmail",
                       colour=enso_embedmod_colours,
-                      timestamp=time)
+                      timestamp=datetime.datetime.utcnow())
 
         embed.set_thumbnail(url=author.avatar_url)
         embed.set_footer(text=f"Sent By {author}")
@@ -202,7 +203,7 @@ def Abort(author):
     # Set up embed to let the user know that they have aborted the modmail
     AbortEmbed = Embed(title="**Aborting ModMail!**",
                        colour=enso_embedmod_colours,
-                       timestamp=time)
+                       timestamp=datetime.datetime.utcnow())
 
     AbortEmbed.set_thumbnail(url=author.avatar_url)
     AbortEmbed.set_footer(text=f"Sent by {author}")

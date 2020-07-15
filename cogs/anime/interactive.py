@@ -140,7 +140,7 @@ class Interactive(commands.Cog):
                 return
             # Make sure that the married people can only cuddle their partner
             elif not str(target.id) == result[2] and cuddle:
-                await ctx.send("Σ(‘◉⌓◉’) You can only kiss your partner! Baka!")
+                await ctx.send("Σ(‘◉⌓◉’) You can only cuddle your partner! Baka!")
                 return
         except Exception as ex:
             print(ex)

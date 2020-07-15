@@ -1,3 +1,4 @@
+import datetime
 import random
 import string
 
@@ -6,7 +7,7 @@ from discord.ext import commands
 from discord.ext.commands import cooldown, BucketType, command
 
 import settings
-from settings import time, colour_list
+from settings import colour_list
 
 # Defining the full names of the waifu's/husbando's
 anime = {"yumeko": "Jabami Yumeko",
@@ -58,7 +59,7 @@ def randomWaifu(msg, waifu):
     waifu_embed = Embed(
         title=f"Oh Look! A Wonderful Waifu! <a:huh:676195228872474643> <a:huh:676195228872474643> ",
         colour=Colour(random.choice(colour_list)),
-        timestamp=time)
+        timestamp=datetime.datetime.utcnow())
     waifu_embed.set_image(url=random.choice(array))
     waifu_embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
 
@@ -78,7 +79,7 @@ def randomHusbando(msg, husbando):
     husbando_embed = Embed(
         title=f"Oh Look! A Handsome Husbando! <a:huh:676195228872474643> <a:huh:676195228872474643> ",
         colour=Colour(random.choice(colour_list)),
-        timestamp=time)
+        timestamp=datetime.datetime.utcnow())
     husbando_embed.set_image(url=random.choice(array))
     husbando_embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
 
@@ -94,7 +95,7 @@ def displayAnimeImage(array, msg, name):
     anime_embed = Embed(
         title=f"**{name}**",
         colour=Colour(random.choice(colour_list)),
-        timestamp=time)
+        timestamp=datetime.datetime.utcnow())
     anime_embed.set_image(url=random.choice(array))
     anime_embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
 

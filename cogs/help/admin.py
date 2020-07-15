@@ -1,10 +1,11 @@
 import asyncio
+import datetime
 
 from discord import Embed
 from discord.ext import commands
 from discord.ext.commands import command, cooldown, BucketType
 
-from settings import enso_embedmod_colours, time, blank_space
+from settings import enso_embedmod_colours, blank_space
 
 
 # Method to retrieve information about the user and the guild
@@ -39,7 +40,7 @@ class CustomHelp(commands.Cog):
         embed = Embed(title="```(っ◔◡◔)っ Ensō Rules```",
                       colour=enso_embedmod_colours,
                       description="``` ヽ(͡◕ ͜ʖ ͡◕)ﾉ Please respect the following rules that are going to be listed below ヽ(͡◕ ͜ʖ ͡◕)ﾉ ```",
-                      timestamp=time)
+                      timestamp=datetime.datetime.utcnow())
 
         embed.set_thumbnail(url=guild_icon)
         embed.set_author(name=enso_name,
@@ -154,7 +155,7 @@ class CustomHelp(commands.Cog):
         embed = Embed(title="```So you wanna know how the leveled roles system works huh?```",
                       colour=enso_embedmod_colours,
                       description="------------------------------------------------",
-                      timestamp=time)
+                      timestamp=datetime.datetime.utcnow())
 
         # Get information about the user and the guild
         author, guild_icon, enso_icon, enso_name = get_user_info(self, ctx)

@@ -128,6 +128,8 @@ class GetInfo(commands.Cog):
                     len(list(filter(lambda m: str(m.status) == "dnd", ctx.guild.members))),
                     len(list(filter(lambda m: str(m.status) == "offline", ctx.guild.members)))]
 
+        emojis = " ".join(map(str, ctx.guild.emojis[:30]))
+
         # Set up embed to display all the server information
         embed = Embed(title="**Server Information**",
                       description=f"**All Roles**\n\n{roles}\n",
@@ -149,7 +151,8 @@ class GetInfo(commands.Cog):
                   ("Voice Channels", len(ctx.guild.voice_channels), True),
                   ("Categories", len(ctx.guild.categories), True),
                   ("Roles", len(ctx.guild.roles), True),
-                  ("Invites", len(await ctx.guild.invites()), True)]
+                  ("Invites", len(await ctx.guild.invites()), True),
+                  ("Emojis", emojis, False)]
 
         # Add fields to the embed
         for name, value, inline in fields:

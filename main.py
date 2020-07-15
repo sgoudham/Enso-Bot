@@ -1,4 +1,5 @@
 import asyncio
+import datetime
 
 import discord
 import mariadb
@@ -8,7 +9,7 @@ from discord.ext import commands
 
 import db
 import settings
-from settings import blank_space, enso_embedmod_colours, time, enso_guild_ID, enso_newpeople_ID
+from settings import blank_space, enso_embedmod_colours, enso_guild_ID, enso_newpeople_ID
 
 # Getting the Bot token from Environment Variables
 API_TOKEN = config('DISCORD_TOKEN')
@@ -183,7 +184,7 @@ async def on_member_join(member):
     # Set up embed for the #newpeople channel
     embed = Embed(title="\n**Welcome To Ensō!**",
                   colour=enso_embedmod_colours,
-                  timestamp=time)
+                  timestamp=datetime.datetime.utcnow())
 
     embed.set_thumbnail(url=server_icon)
     embed.set_image(url=welcome_gif)

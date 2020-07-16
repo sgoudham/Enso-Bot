@@ -180,6 +180,7 @@ class Modmail(commands.Cog):
                 if payload.channel_id == channel_id:
                     if payload.message_id == message_id:
                         if payload.emoji.name == "✅":
+
                             # Get the guild
                             guild = self.bot.get_guild(payload.guild_id)
                             # Get the member
@@ -224,8 +225,7 @@ class Modmail(commands.Cog):
                             # Surround with try/except to catch any exceptions that may occur
                             try:
                                 # Wait for the user to add a reaction
-                                reaction, user = await self.bot.wait_for('reaction_add', timeout=120.0,
-                                                                         check=emoji_check)
+                                reaction, user = await self.bot.wait_for('reaction_add', check=emoji_check)
                             except Exception as ex:
                                 print(ex)
                                 return
@@ -244,14 +244,14 @@ class Modmail(commands.Cog):
                                         return m.author == payload.member and user_channel.id == instructions.channel.id
 
                                     # Wait for the message from the author
-                                    msg = await self.bot.wait_for('message', check=check, timeout=300)
+                                    msg = await self.bot.wait_for('message', check=check)
 
                                     # Making sure that the message is below 50 characters and the message was sent in the channel
                                     while len(msg.content) < 50 and msg.channel == user_channel:
                                         await user_channel.send(embed=ErrorHandling(member))
 
                                         # Wait for the message from the author
-                                        msg = await self.bot.wait_for('message', check=check, timeout=300)
+                                        msg = await self.bot.wait_for('message', check=check)
 
                                     if len(msg.content) > 50 and msg.channel == user_channel:
                                         # Delete the previous embed
@@ -264,7 +264,7 @@ class Modmail(commands.Cog):
 
                                         # Let the user read the message for 5 seconds
                                         await asyncio.sleep(5)
-                                
+
                                         await user_channel.delete()
                                         # Log the message within the database
                                         # logModMail(ctx, self.anon, msg)

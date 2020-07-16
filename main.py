@@ -21,8 +21,8 @@ client = commands.Bot(  # Create a new bot
     owner_id=154840866496839680)  # Your unique User ID
 
 # Calls the cogs from the settings.py file and loads them
-(anime, helps, fun) = settings.extensions()
-complete_list = anime + helps + fun
+(anime, helps, fun, modmail) = settings.extensions()
+complete_list = anime + helps + fun + modmail
 if __name__ == '__main__':
     for ext in complete_list:
         client.load_extension(ext)

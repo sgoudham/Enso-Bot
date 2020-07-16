@@ -47,7 +47,7 @@ def SendInstructions(author):
     SendModMailEmbed.set_thumbnail(url=author.avatar_url)
     SendModMailEmbed.set_footer(text=f"Sent by {author}")
 
-    fields = [("**Make sure that the message is above 50 characters!**",
+    fields = [("**Make sure that the message is above **50** and below **1024** characters!**",
                "**Include as much detail as possible :P**",
                False)]
 
@@ -60,14 +60,15 @@ def SendInstructions(author):
 # Method to let the user know that the message must be above 50 characters
 def ErrorHandling(author):
     # Set up embed to let the user know that the message must be above 50 characters
-    ErrorHandlingEmbed = Embed(title="**Uh Oh! Please make sure the message is above 50 characters!**",
-                               colour=enso_embedmod_colours,
-                               timestamp=datetime.datetime.utcnow())
+    ErrorHandlingEmbed = Embed(
+        title="Uh Oh! Please make sure the message is above **50** and below **1024** characters!",
+        colour=enso_embedmod_colours,
+        timestamp=datetime.datetime.utcnow())
 
     ErrorHandlingEmbed.set_thumbnail(url=author.avatar_url)
     ErrorHandlingEmbed.set_footer(text=f"Sent by {author}")
 
-    fields = [("Please enter in a message which is above 50 characters!",
+    fields = [("Please enter in a message which is above **50** and below **1024** characters!",
                "**This helps us reduce spam and allows you to include more detail in your mail!**",
                False)]
 
@@ -214,137 +215,156 @@ class Modmail(commands.Cog):
                             mention = await user_channel.send(member.mention)
                             await mention.delete()
 
-                            # Send the embed if they want to remain anonymous or not
-                            Anon_or_Not = await user_channel.send(embed=AnonOrNot(member))
-                            # Add reactions to the message
-                            await Anon_or_Not.add_reaction('✅')
-                            await Anon_or_Not.add_reaction('❌')
-
-                            # Checking if the user reacted with ✅ with response to sending staff a message
-                            def emoji_check(reaction, user):
-                                return user == member and str(reaction.emoji) in ['✅', '❌']
-
-                            # Surround with try/except to catch any exceptions that may occur
                             try:
-                                # Wait for the user to add a reaction
-                                reaction, user = await self.bot.wait_for('reaction_add', check=emoji_check)
-                            except Exception as ex:
-                                print(ex)
-                                return
-                            else:
-                                if str(reaction.emoji) == "✅":
-                                    self.anon = True
 
-                                    # Delete the old embed
-                                    await Anon_or_Not.delete()
+                                # Send the embed if they want to remain anonymous or not
+                                Anon_or_Not = await user_channel.send(embed=AnonOrNot(member))
+                                # Add reactions to the message
+                                await Anon_or_Not.add_reaction('✅')
+                                await Anon_or_Not.add_reaction('❌')
 
-                                    # Tell the user to type their mail into the chat
-                                    instructions = await user_channel.send(embed=SendInstructions(member))
+                                # Checking if the user reacted with ✅ with response to sending staff a message
+                                def emoji_check(reaction, user):
+                                    return user == member and str(reaction.emoji) in ['✅', '❌']
 
-                                    # Making sure that the reply is from the author
-                                    def check(m):
-                                        return m.author == payload.member and user_channel.id == instructions.channel.id
+                                # Surround with try/except to catch any exceptions that may occur
+                                try:
+                                    # Wait for the user to add a reaction
+                                    reaction, user = await self.bot.wait_for('reaction_add', check=emoji_check)
+                                except Exception as ex:
+                                    print(ex)
+                                    return
+                                else:
+                                    if str(reaction.emoji) == "✅":
+                                        self.anon = True
 
-                                    # Wait for the message from the author
-                                    msg = await self.bot.wait_for('message', check=check)
+                                        # Delete the old embed
+                                        await Anon_or_Not.delete()
 
-                                    # Making sure that the message is below 50 characters and the message was sent in the channel
-                                    while len(msg.content) < 50 and msg.channel == user_channel:
-                                        await user_channel.send(embed=ErrorHandling(member))
+                                        # Tell the user to type their mail into the chat
+                                        instructions = await user_channel.send(embed=SendInstructions(member))
+
+                                        # Making sure that the reply is from the author
+                                        def check(m):
+                                            return m.author == payload.member and user_channel.id == instructions.channel.id
 
                                         # Wait for the message from the author
                                         msg = await self.bot.wait_for('message', check=check)
 
-                                    if len(msg.content) > 50 and msg.channel == user_channel:
-                                        # Delete the previous embed
-                                        await instructions.delete()
+                                        # Making sure that the message is below 50 characters and the message was sent in the channel
+                                        while len(msg.content) < 50 and msg.channel == user_channel:
+                                            await user_channel.send(embed=ErrorHandling(member))
 
-                                        # Determine a path for the message logs to be stored
-                                        path = "cogs/modmail/{}.txt".format(payload.member.name)
-                                        with open(path, 'a+') as f:
-                                            # Store the date and content of every message in the text file
-                                            async for message in user_channel.history(limit=300):
-                                                print(f"{message.created_at} : {message.content}", file=f)
+                                            # Wait for the message from the author
+                                            msg = await self.bot.wait_for('message', check=check)
 
-                                        # Send the message to the modmail channel
-                                        await modmail_channel.send(embed=SendMsgToModMail(self, msg, member),
-                                                                   file=File(fp=path))
+                                        if len(msg.content) > 50 and msg.channel == user_channel:
+                                            # Delete the previous embed
+                                            await instructions.delete()
 
-                                        # Removing file from the directory after it has been sent
-                                        if os.path.exists(path):
-                                            os.remove(path)
+                                            # Determine a path for the message logs to be stored
+                                            path = "cogs/modmail/{}.txt".format(payload.member.name)
+                                            with open(path, 'a+') as f:
+                                                # Store the date and content of every message in the text file
+                                                async for message in user_channel.history(limit=300):
+                                                    print(f"{message.created_at} : {message.content}", file=f)
+
+                                            # Send the message to the modmail channel
+                                            await modmail_channel.send(embed=SendMsgToModMail(self, msg, member),
+                                                                       file=File(fp=path))
+
+                                            # Removing file from the directory after it has been sent
+                                            if os.path.exists(path):
+                                                os.remove(path)
+                                            else:
+                                                print("The file does not exist")
+
+                                            # Make sure the user knows that their message has been sent
+                                            await user_channel.send(embed=MessageSentConfirmation(member))
+
+                                            # Let the user read the message for 5 seconds
+                                            await asyncio.sleep(5)
+
+                                            await user_channel.delete()
+                                            return
+
+                                        # If the user types anywhere else, delete the channel
                                         else:
-                                            print("The file does not exist")
+                                            await user_channel.delete()
 
-                                        # Make sure the user knows that their message has been sent
-                                        await user_channel.send(embed=MessageSentConfirmation(member))
+                                    if str(reaction.emoji) == "❌":
+                                        self.anon = False
 
-                                        # Let the user read the message for 5 seconds
-                                        await asyncio.sleep(5)
+                                        # Delete the old embed
+                                        await Anon_or_Not.delete()
 
-                                        await user_channel.delete()
-                                        return
+                                        # Tell the user to type their mail into the chat
+                                        instructions = await user_channel.send(embed=SendInstructions(member))
 
-                                    # If the user types anywhere else, delete the channel
-                                    else:
-                                        await user_channel.delete()
+                                        # Making sure that the reply is from the author
+                                        def check(m):
+                                            return m.author == payload.member and user_channel.id == instructions.channel.id
 
-                                if str(reaction.emoji) == "❌":
-                                    self.anon = False
-
-                                    # Delete the old embed
-                                    await Anon_or_Not.delete()
-
-                                    # Tell the user to type their mail into the chat
-                                    instructions = await user_channel.send(embed=SendInstructions(member))
-
-                                    # Making sure that the reply is from the author
-                                    def check(m):
-                                        return m.author == payload.member and user_channel.id == instructions.channel.id
-
-                                    # Wait for the message from the author
-                                    msg = await self.bot.wait_for('message', check=check, timeout=300)
-
-                                    # Making sure that the message is below 50 characters and the message was sent in the channel
-                                    while len(msg.content) < 50 and msg.channel == user_channel:
-                                        await user_channel.send(embed=ErrorHandling(member))
-
-                                        # Wait for the message from the author again
+                                        # Wait for the message from the author
                                         msg = await self.bot.wait_for('message', check=check, timeout=300)
 
-                                    if len(msg.content) > 50 and msg.channel == user_channel:
-                                        # Delete the previous embed
-                                        await instructions.delete()
+                                        # Making sure that the message is below 50 characters and the message was sent in the channel
+                                        while len(msg.content) < 50 and msg.channel == user_channel:
+                                            await user_channel.send(embed=ErrorHandling(member))
 
-                                        # Determine a path for the message logs to be stored
-                                        path = "cogs/modmail/{}.txt".format(payload.member.name)
-                                        with open(path, 'a+') as f:
-                                            # Store the date and content of every message in the text file
-                                            async for message in user_channel.history(limit=300):
-                                                print(f"{message.created_at} : {message.content}", file=f)
+                                            # Wait for the message from the author again
+                                            msg = await self.bot.wait_for('message', check=check, timeout=300)
 
-                                        # Send the message to the modmail channel
-                                        await modmail_channel.send(embed=SendMsgToModMail(self, msg, member),
-                                                                   file=File(fp=path))
+                                        if len(msg.content) > 50 and msg.channel == user_channel:
+                                            # Delete the previous embed
+                                            await instructions.delete()
 
-                                        # Removing file from the directory after it has been sent
-                                        if os.path.exists(path):
-                                            os.remove(path)
+                                            # Determine a path for the message logs to be stored
+                                            path = "cogs/modmail/{}.txt".format(payload.member.name)
+                                            with open(path, 'a+') as f:
+                                                # Store the date and content of every message in the text file
+                                                async for message in user_channel.history(limit=300):
+                                                    print(f"{message.created_at} : {message.content}", file=f)
+
+                                            # Send the message to the modmail channel
+                                            await modmail_channel.send(embed=SendMsgToModMail(self, msg, member),
+                                                                       file=File(fp=path))
+
+                                            # Removing file from the directory after it has been sent
+                                            if os.path.exists(path):
+                                                os.remove(path)
+                                            else:
+                                                print("The file does not exist")
+
+                                            # Make sure the user knows that their message has been sent
+                                            await user_channel.send(embed=MessageSentConfirmation(member))
+
+                                            # Let the user read the message for 5 seconds
+                                            await asyncio.sleep(5)
+
+                                            await user_channel.delete()
+                                            return
+
+                                        # If the user types anywhere else, delete the channel
                                         else:
-                                            print("The file does not exist")
+                                            await user_channel.delete()
 
-                                        # Make sure the user knows that their message has been sent
-                                        await user_channel.send(embed=MessageSentConfirmation(member))
+                            except Exception as ex:
+                                print(ex)
 
-                                        # Let the user read the message for 5 seconds
-                                        await asyncio.sleep(5)
+                                # Removing file from the directory after it has been sent
+                                if os.path.exists(path):
+                                    os.remove(path)
+                                else:
+                                    print("The file does not exist")
 
-                                        await user_channel.delete()
-                                        return
+                                # Send out an error message if the user waited too long
+                                await user_channel.send(
+                                    "Sorry! Something seems to have gone wrong and the modmail will be aborting."
+                                    "\nRemember to make sure it's under **1024** characters!!")
 
-                                    # If the user types anywhere else, delete the channel
-                                    else:
-                                        await user_channel.delete()
+                                await asyncio.sleep(5)
+                                await user_channel.delete()
 
 
 def setup(bot):

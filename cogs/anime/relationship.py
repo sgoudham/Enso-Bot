@@ -11,24 +11,29 @@ import db
 from settings import colour_list
 
 
+# Sets up the embed for the marriage info
 def marriageInfo(target, marriedUser, marriedDate, currentDate, married):
+    # Make sure that non-users can still use the marriage
     if not married:
+        # Set up the fields for the embed
         fields = [("Married To", "No One", False),
                   ("Marriage Date", "N/A", False),
                   ("Days Married", "N/A", False)]
     else:
+        # Calculate the days married
         marriedTime = datetime.datetime.strptime(marriedDate, "%a, %b %d, %Y")
         currentTime = datetime.datetime.strptime(currentDate, "%a, %b %d, %Y")
         delta = currentTime - marriedTime
 
+        # Set up the fields for the embed
         fields = [("Married To", marriedUser.mention, False),
                   ("Marriage Date", marriedDate, False),
                   ("Days Married", delta.days, False)]
 
+    # Set the title, colour, timestamp and thumbnail
     embed = Embed(title=f"{target.name}'s Marriage Information",
                   colour=Colour(int(random.choice(colour_list))),
                   timestamp=datetime.datetime.utcnow())
-
     embed.set_thumbnail(url=target.avatar_url)
 
     # Add fields to the embed
@@ -254,15 +259,18 @@ class Relationship(commands.Cog):
             cursor.execute(select_query, val)
             result = cursor.fetchone()
 
+            # Set empty values for non-married users
             if result[2] is None:
                 married = False
                 marriedUser = ""
                 marriedDate = ""
+            # Set the member, date married and setting married status
             else:
                 marriedUser = guild.get_member(int(result[2]))
                 marriedDate = result[3]
                 married = True
 
+            # Get the current date of the message sent by the user
             currentDate = ctx.message.created_at.strftime("%a, %b %d, %Y")
 
             embed = marriageInfo(target, marriedUser, marriedDate, currentDate, married)

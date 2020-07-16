@@ -136,11 +136,23 @@ class GetInfo(commands.Cog):
             # Display all the emojis in the server as it is less than 20
             emojis = " ".join(map(str, ctx.guild.emojis))
 
-        # Define the statuses of the members within the discord
-        statuses = [len(list(filter(lambda m: str(m.status) == "online", ctx.guild.members))),
-                    len(list(filter(lambda m: str(m.status) == "idle", ctx.guild.members))),
-                    len(list(filter(lambda m: str(m.status) == "dnd", ctx.guild.members))),
-                    len(list(filter(lambda m: str(m.status) == "offline", ctx.guild.members)))]
+        # Defining a dictionary of the statuses
+        member_status = {
+            "online": 0,
+            "idle": 0,
+            "dnd": 0,
+            "offline": 0
+        }
+
+        # Iterating over the members and then storing the numbers in the dictionary
+        for m in ctx.guild.members:
+            member_status[str(m.status)] += 1
+
+        # Storing the statuses in an array
+        statuses = [member_status["online"],
+                    member_status["idle"],
+                    member_status["dnd"],
+                    member_status["offline"]]
 
         # Set up embed to display all the server information
         embed = Embed(title="**Server Information**",

@@ -257,6 +257,7 @@ class Modmail(commands.Cog):
                                 # Wait for the message from the author
                                 msg = await self.bot.wait_for('message', check=check)
 
+                            # As long as the message is above 50 characters and in the correct channel
                             if len(msg.content) > 50 and msg.channel == user_channel:
                                 # Delete the previous embed
                                 await instructions.delete()
@@ -284,12 +285,14 @@ class Modmail(commands.Cog):
                                 # Let the user read the message for 5 seconds
                                 await asyncio.sleep(5)
 
+                                # Delete the channel and then stop the function
                                 await user_channel.delete()
                                 return
 
                             # If the user types anywhere else, delete the channel
                             else:
                                 await user_channel.delete()
+                                return
 
                         if str(reaction.emoji) == "❌":
                             self.anon = False
@@ -341,12 +344,14 @@ class Modmail(commands.Cog):
                                 # Let the user read the message for 5 seconds
                                 await asyncio.sleep(5)
 
+                                # Delete the channel and then stop the function
                                 await user_channel.delete()
                                 return
 
                             # If the user types anywhere else, delete the channel
                             else:
                                 await user_channel.delete()
+                                return
 
                 except Exception as ex:
                     print(ex)

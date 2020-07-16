@@ -151,13 +151,14 @@ class Modmail(commands.Cog):
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):
         self.anon = None
+        m = payload.member
 
         # A check that makes sure that the reaction is done by the bot
         def check(m):
             return m == self.bot.user
 
         # If the member is not a user, do nothing
-        if not check:
+        if check(m):
             return
         else:
             # Find a role corresponding to the Emoji name.

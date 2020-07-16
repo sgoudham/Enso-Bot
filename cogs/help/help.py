@@ -29,7 +29,9 @@ def fun_function(self, guild_icon):
         (f"**{self.ctx.prefix}flip**",
          "\nDoes a coinflip with Big PP Or Smol PP", True),
         (f"**{self.ctx.prefix}doggo**",
-         "\nLook at images of Doggos", True)]
+         "\nLook at images of Doggos", True),
+        (f"**{self.ctx.prefix}homies `<text>`**",
+         "\nGenerates Homies Meme with given text", True)]
 
     # Setting up the Embed for the Fun Commands
     fun_commands_2 = Embed(title="(っ◔◡◔)っ Fun Commands 2 (っ◔◡◔)っ",

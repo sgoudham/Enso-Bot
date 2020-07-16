@@ -283,7 +283,9 @@ class Modmail(commands.Cog):
                                         await asyncio.sleep(5)
 
                                         await user_channel.delete()
+                                        return
 
+                                    # If the user types anywhere else, delete the channel
                                     else:
                                         await user_channel.delete()
 
@@ -313,8 +315,23 @@ class Modmail(commands.Cog):
                                     if len(msg.content) > 50 and msg.channel == user_channel:
                                         # Delete the previous embed
                                         await instructions.delete()
+
+                                        # Determine a path for the message logs to be stored
+                                        path = "cogs/modmail/{}.txt".format(payload.member.name)
+                                        with open(path, 'a+') as f:
+                                            # Store the date and content of every message in the text file
+                                            async for message in user_channel.history(limit=300):
+                                                print(f"{message.created_at} : {message.content}", file=f)
+
                                         # Send the message to the modmail channel
-                                        await modmail_channel.send(embed=SendMsgToModMail(self, msg, member))
+                                        await modmail_channel.send(embed=SendMsgToModMail(self, msg, member),
+                                                                   file=File(fp=path))
+
+                                        # Removing file from the directory after it has been sent
+                                        if os.path.exists(path):
+                                            os.remove(path)
+                                        else:
+                                            print("The file does not exist")
 
                                         # Make sure the user knows that their message has been sent
                                         await user_channel.send(embed=MessageSentConfirmation(member))
@@ -323,12 +340,11 @@ class Modmail(commands.Cog):
                                         await asyncio.sleep(5)
 
                                         await user_channel.delete()
+                                        return
 
+                                    # If the user types anywhere else, delete the channel
                                     else:
                                         await user_channel.delete()
-
-                                    # Log the message within the database
-                                    # logModMail(ctx, self.anon, msg)
 
 
 def setup(bot):

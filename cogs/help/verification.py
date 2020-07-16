@@ -32,7 +32,7 @@ class Verification(commands.Cog):
                 return m == self.bot
 
             # If the member is not a user, do nothing
-            if not check:
+            if check:
                 return
             else:
 

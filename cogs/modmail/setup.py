@@ -40,8 +40,8 @@ class SetupModmail(commands.Cog):
 
                     # Throw error if the guild already exists and then stop the function
                     if result is not None:
-                        await ctx.send("**Looks like this guild already has a modmail system set up!"
-                                       "\nPlease check `~help` for information on how to update/delete existing information**")
+                        await ctx.send("**Looks like this guild already has a modmail system set up!" +
+                                       f"\nPlease check `{ctx.prefix}help` for information on how to update/delete existing information**")
                         return
 
                 # As long as the channel exists within the guild
@@ -96,14 +96,14 @@ class SetupModmail(commands.Cog):
                                 # Execute the SQL Query
                                 cursor.execute(insert_query, vals)
 
-                            await ctx.send("**Your Modmail system is now successfully set up!"
-                                           "\nPlease refer to `~help` for any information**")
+                            await ctx.send("**Your Modmail system is now successfully set up!" +
+                                           f"\nPlease refer to `{ctx.prefix}help` for any information**")
                             return
 
                         except mariadb.IntegrityError as err:
                             print(err)
-                            await ctx.send("Looks like this guild already has a modmail system set up!"
-                                           "\nPlease check `~help` for information on how to update/delete existing information")
+                            await ctx.send("Looks like this guild already has a modmail system set up!" +
+                                           f"\nPlease check `{ctx.prefix}help` for information on how to update/delete existing information")
                     else:
                         # Send error message if the channel ID is not recognised
                         await ctx.send("`Invalid Channel ID. Aborting Process...`")
@@ -130,8 +130,8 @@ class SetupModmail(commands.Cog):
 
                     # Throw error if the guild already exists and then stop the function
                     if result is None:
-                        await ctx.send("**Looks like this guild does not have a modmail system setup!"
-                                       "\nPlease check `~help` for information on how to update/delete existing information**")
+                        await ctx.send("**Looks like this guild does not have a modmail system setup!" +
+                                       f"\nPlease check `{ctx.prefix}help` for information on how to update/delete existing information**")
                         return
 
                 # As long as the channel exists within the guild
@@ -180,8 +180,8 @@ class SetupModmail(commands.Cog):
 
                     # Throw error if the guild already exists and then stop the function
                     if result is None:
-                        await ctx.send("**Looks like this guild does not have a modmail system setup!"
-                                       "\nPlease check `~help` for information on how to update/delete existing information**")
+                        await ctx.send("**Looks like this guild does not have a modmail system setup!" +
+                                       f"\nPlease check `{ctx.prefix}help` for information on how to update/delete existing information**")
                         return
 
                 try:
@@ -198,12 +198,12 @@ class SetupModmail(commands.Cog):
 
                 except mariadb.Error as err:
                     print(err)
-                    await ctx.send("**Looks like this guild has not set up the modmail system yet!"
-                                   "\nPlease do `~help` to find out how to set it up!**")
+                    await ctx.send("**Looks like this guild has not set up the modmail system yet!" +
+                                   f"\nPlease do `{ctx.prefix}help` to find out how to set it up!**")
 
                 # Sending confirmation message that the modmail system has been deleted
-                await ctx.send("**Modmail system successfully deleted!"
-                               "\nPlease do `~help` to find out how to set Modmail again!**")
+                await ctx.send("**Modmail system successfully deleted!" +
+                               f"\nPlease do `{ctx.prefix}help` to find out how to set Modmail again!**")
 
 
 def setup(bot):

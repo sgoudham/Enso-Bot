@@ -273,6 +273,7 @@ class Relationship(commands.Cog):
             # Get the current date of the message sent by the user
             currentDate = ctx.message.created_at.strftime("%a, %b %d, %Y")
 
+            # Get the marriage info embed and then send it to the display
             embed = marriageInfo(target, marriedUser, marriedDate, currentDate, married)
             await ctx.send(embed=embed)
 

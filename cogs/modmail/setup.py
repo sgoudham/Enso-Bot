@@ -23,26 +23,26 @@ class SetupModmail(commands.Cog):
         # Retrieve a list of channel id's in the guild
         channels = [channel.id for channel in ctx.guild.channels]
 
-        # Checking if the guild already exists within the database
-        with db.connection() as conn:
-            # Get the author's row from the Members Table
-            select_query = """SELECT * FROM moderatormail WHERE guildID = (?)"""
-            val = ctx.author.guild.id,
-            cursor = conn.cursor()
-
-            # Execute the SQL Query
-            cursor.execute(select_query, val)
-            result = cursor.fetchone()
-
-            # Throw error if the guild already exists and then stop the function
-            if result[0] is not None:
-                await ctx.send("Looks like this guild already has a modmail system set up!"
-                               "\nPlease check `~help` for information on how to update/delete existing information")
-                return
-
         # Allows the user to setup modmail for the first time
         if args[0] == "set":
             if args[1] == "modmail":
+
+                # Checking if the guild already exists within the database
+                with db.connection() as conn:
+                    # Get the author's row from the Members Table
+                    select_query = """SELECT * FROM moderatormail WHERE guildID = (?)"""
+                    val = ctx.author.guild.id,
+                    cursor = conn.cursor()
+
+                    # Execute the SQL Query
+                    cursor.execute(select_query, val)
+                    result = cursor.fetchone()
+
+                    # Throw error if the guild already exists and then stop the function
+                    if result is not None:
+                        await ctx.send("**Looks like this guild already has a modmail system set up!"
+                                       "\nPlease check `~help` for information on how to update/delete existing information**")
+                        return
 
                 # As long as the channel exists within the guild
                 if int(args[2]) in channels:
@@ -96,6 +96,10 @@ class SetupModmail(commands.Cog):
                                 # Execute the SQL Query
                                 cursor.execute(insert_query, vals)
 
+                            await ctx.send("**Your Modmail system is now successfully set up!"
+                                           "\nPlease refer to `~help` for any information**")
+                            return
+
                         except mariadb.IntegrityError as err:
                             print(err)
                             await ctx.send("Looks like this guild already has a modmail system set up!"
@@ -112,6 +116,23 @@ class SetupModmail(commands.Cog):
         # Allows the user to update the channel that the modmail can be sent to
         if args[0] == "update":
             if args[1] == "modmail":
+
+                # Checking if the guild already exists within the database
+                with db.connection() as conn:
+                    # Get the author's row from the Members Table
+                    select_query = """SELECT * FROM moderatormail WHERE guildID = (?)"""
+                    vals = ctx.author.guild.id,
+                    cursor = conn.cursor()
+
+                    # Execute the SQL Query
+                    cursor.execute(select_query, vals)
+                    result = cursor.fetchone()
+
+                    # Throw error if the guild already exists and then stop the function
+                    if result is None:
+                        await ctx.send("**Looks like this guild does not have a modmail system setup!"
+                                       "\nPlease check `~help` for information on how to update/delete existing information**")
+                        return
 
                 # As long as the channel exists within the guild
                 if int(args[2]) in channels:
@@ -130,8 +151,8 @@ class SetupModmail(commands.Cog):
 
                     except mariadb.Error as err:
                         print(err)
-                        await ctx.send("Looks like something went wrong during the update!"
-                                       "\nMake sure that the Channel ID is correct!")
+                        await ctx.send("**Looks like something went wrong during the update!"
+                                       "\nMake sure that the Channel ID is correct!**")
 
                     channel = ctx.author.guild.get_channel(int(args[2]))
                     await ctx.send(
@@ -145,7 +166,44 @@ class SetupModmail(commands.Cog):
         # Allows the user to completely erase the modmail system currently set up
         if args[0] == "delete":
             if args[1] == "modmail":
-                pass
+
+                # Checking if the guild already exists within the database
+                with db.connection() as conn:
+                    # Get the author's row from the Members Table
+                    select_query = """SELECT * FROM moderatormail WHERE guildID = (?)"""
+                    vals = ctx.author.guild.id,
+                    cursor = conn.cursor()
+
+                    # Execute the SQL Query
+                    cursor.execute(select_query, vals)
+                    result = cursor.fetchone()
+
+                    # Throw error if the guild already exists and then stop the function
+                    if result is None:
+                        await ctx.send("**Looks like this guild does not have a modmail system setup!"
+                                       "\nPlease check `~help` for information on how to update/delete existing information**")
+                        return
+
+                try:
+                    # Store the information within the database
+                    with db.connection() as conn:
+                        # Define the delete statement to remove all information about the guild
+                        delete_query = """DELETE FROM moderatormail WHERE guildID = (?)"""
+                        vals = ctx.author.guild.id,
+                        cursor = conn.cursor()
+
+                        # Execute the SQL Query
+                        cursor.execute(delete_query, vals)
+                        conn.commit()
+
+                except mariadb.Error as err:
+                    print(err)
+                    await ctx.send("**Looks like this guild has not set up the modmail system yet!"
+                                   "\nPlease do `~help` to find out how to set it up!**")
+
+                # Sending confirmation message that the modmail system has been deleted
+                await ctx.send("**Modmail system successfully deleted!"
+                               "\nPlease do `~help` to find out how to set Modmail again!**")
 
 
 def setup(bot):

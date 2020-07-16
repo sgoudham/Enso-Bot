@@ -71,10 +71,12 @@ def extensions():
     anime_ext = ['cogs.anime.interactive', 'cogs.anime.waifu_husbandos', 'cogs.anime.relationship']
 
     help_ext = ['cogs.help.admin', 'cogs.help.help', 'cogs.help.self_roles',
-                'cogs.help.info', 'cogs.help.verification', 'cogs.help.modmail']
+                'cogs.help.info', 'cogs.help.verification', 'cogs.help.oldmodmail']
 
     fun_ext = ['cogs.fun.eightball', 'cogs.fun.enso', 'cogs.fun.fun',
                'cogs.fun.owo_text', 'cogs.fun.reminder', 'cogs.fun.homies',
                'cogs.fun.doggo']
 
-    return (anime_ext, help_ext, fun_ext)
+    modmail_ext = ['cogs.modmail.setup', 'cogs.modmail.modmail']
+
+    return (anime_ext, help_ext, fun_ext, modmail_ext)

@@ -68,7 +68,7 @@ class SelfRoles(commands.Cog):
                 await member.remove_roles(role)
 
     # Allowing people to get ping-able self roles
-    @command(name="rolemenu")
+    @command(name="rolemenu", hidden=True)
     @is_owner()
     async def role_menu(self, ctx):
         # Setting the channel to "newpeople"

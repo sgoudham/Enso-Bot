@@ -27,7 +27,7 @@ def error_function():
 
 
 # Set up the Cog
-class Interactive(commands.Cog):
+class interactive(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -442,4 +442,4 @@ class Interactive(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(Interactive(bot))
+    bot.add_cog(interactive(bot))

@@ -264,7 +264,7 @@ class Modmail(commands.Cog):
                                 await instructions.delete()
 
                                 # Determine a path for the message logs to be stored
-                                path = "cogs/modmail/{}.txt".format(payload.member.name)
+                                path = "cogs/modmail/Anon.txt"
                                 with open(path, 'a+') as f:
                                     # Store the date and content of every message in the text file
                                     async for message in user_channel.history(limit=300):

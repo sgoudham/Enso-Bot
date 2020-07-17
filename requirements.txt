@@ -3,4 +3,3 @@ Pillow
 aiohttp
 mariadb
 discord
-Paginator

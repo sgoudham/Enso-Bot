@@ -106,7 +106,7 @@ class Relationship(commands.Cog):
         # Surround with try/except to catch any exceptions that may occur
         try:
             # Wait for the message from the mentioned user
-            msg = await self.bot.wait_for('message', check=check, timeout=30)
+            msg = await self.bot.wait_for('message', check=check, timeout=90)
 
             # if the person says yes
             if msg.content.lower() in ['y', 'yes', 'yea']:
@@ -193,7 +193,7 @@ class Relationship(commands.Cog):
         # Surround with try/except to catch any exceptions that may occur
         try:
             # Wait for the message from the mentioned user
-            msg = await self.bot.wait_for('message', check=check, timeout=30)
+            msg = await self.bot.wait_for('message', check=check, timeout=90)
 
             # if the person says yes
             if msg.content.lower() in ['y', 'yes', 'yea']:

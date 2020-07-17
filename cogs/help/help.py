@@ -4,13 +4,13 @@ from discord import Embed
 from discord.ext import commands, menus
 from discord.ext.commands import command
 
-from settings import enso_embedmod_colours, ensoMention, hammyMention
+from settings import enso_embedmod_colours, hammyMention
 
 
 # Function to allow pages 1-4 of the help commands (Fun Commands)
 def fun_function(self, guild_icon):
     # Setting up the Embed for the Fun Commands
-    fun_commands = Embed(title="(っ◔◡◔)っ Fun Commands (っ◔◡◔)っ",
+    fun_commands = Embed(title="(っ◔◡◔)っ Fun (っ◔◡◔)っ",
                          colour=enso_embedmod_colours,
                          timestamp=datetime.datetime.utcnow())
 
@@ -19,9 +19,6 @@ def fun_function(self, guild_icon):
 
     # Setting up the fields in a separate array
     fun_fields = [
-        (f"**{self.ctx.prefix}attack `<person>`**",
-         "\nThrow an insult to a person in the server" +
-         "\n **(Perms: Co-Owner)**", True),
         (f"**{self.ctx.prefix}comp `<person>`**",
          "\nCompliment a person in the server", True),
         (f"**{self.ctx.prefix}8ball `<text>`**",
@@ -31,10 +28,12 @@ def fun_function(self, guild_icon):
         (f"**{self.ctx.prefix}doggo**",
          "\nLook at images of Doggos", True),
         (f"**{self.ctx.prefix}homies `<text>`**",
-         "\nGenerates Homies Meme with given text", True)]
+         "\nGenerates Homies Meme with given text", True),
+        (f"**{self.ctx.prefix}owo `<text>`**",
+         "\nTranslates given text to 'owo' format", True)]
 
     # Setting up the Embed for the Fun Commands
-    fun_commands_2 = Embed(title="(っ◔◡◔)っ Fun Commands 2 (っ◔◡◔)っ",
+    fun_commands_2 = Embed(title="(っ◔◡◔)っ Interactive (っ◔◡◔)っ",
                            colour=enso_embedmod_colours,
                            timestamp=datetime.datetime.utcnow())
 
@@ -55,7 +54,7 @@ def fun_function(self, guild_icon):
          "\nGive lemon to a User Within The Server", True)]
 
     # Setting up the Embed for the Fun Commands
-    fun_commands_3 = Embed(title="(っ◔◡◔)っ Fun Commands 3 (っ◔◡◔)っ",
+    fun_commands_3 = Embed(title="(っ◔◡◔)っ Interactive 2 (っ◔◡◔)っ",
                            colour=enso_embedmod_colours,
                            timestamp=datetime.datetime.utcnow())
 
@@ -72,7 +71,7 @@ def fun_function(self, guild_icon):
          "\nChoke a User Within The Server", True)]
 
     # Setting up the Embed for the Fun Commands
-    fun_commands_4 = Embed(title="(っ◔◡◔)っ Marriage/Divorce (っ◔◡◔)っ",
+    fun_commands_4 = Embed(title="(っ◔◡◔)っ Relationship (っ◔◡◔)っ",
                            colour=enso_embedmod_colours,
                            timestamp=datetime.datetime.utcnow())
 
@@ -84,7 +83,10 @@ def fun_function(self, guild_icon):
         (f"**{self.ctx.prefix}marry `<person>`**",
          "\nMarry a User Within The Server", True),
         (f"**{self.ctx.prefix}divorce `<person>`**",
-         "\nDivorce The Person You Are Married To", True)]
+         "\nDivorce The Person You Are Married To", True),
+        (f"**{self.ctx.prefix}minfo `<person>`**",
+         "\nDisplays information about the user's current marriage" +
+         f"\nUsing {self.ctx.prefix}minfo by itself will retrieve your marriage information", True)]
 
     # Add the fun_commands fields to the embed
     for name, value, inline in fun_fields:
@@ -138,7 +140,7 @@ def waifu_husbando_function(self, guild_icon):
 # Function to allow the fifth page of the help commands (~enso commands)
 def _enso(self, guild_icon):
     # Setting up the Embed for the ~Enso command
-    _enso_commands = Embed(title="(っ◔◡◔)っ Enso Command (っ◔◡◔)っ",
+    _enso_commands = Embed(title="(っ◔◡◔)っ Enso (っ◔◡◔)っ",
                            colour=enso_embedmod_colours,
                            timestamp=datetime.datetime.utcnow())
 
@@ -152,7 +154,11 @@ def _enso(self, guild_icon):
          f"\n(Using {self.ctx.prefix}enso by itself shall generate a random image of a person within all the server)",
          True),
         (f"**{self.ctx.prefix}enso `list`**",
-         "\nReturns all Users", True)]
+         "\nReturns all Users", True),
+        (f"**{self.ctx.prefix}rules**",
+         "\nFull ruleset for Enso", True),
+        (f"**{self.ctx.prefix}roles**",
+         "\nLeveling and xp system in Enso", True)]
 
     # Add the _enso_commands fields to the embed
     for name, value, inline in _enso_fields:
@@ -164,7 +170,7 @@ def _enso(self, guild_icon):
 # Function to allow the third page of the help commands (Miscellaneous)
 def misc_function(self, guild_icon):
     # Setting up the Embed for the Miscellaneous commands
-    misc_commands = Embed(title="(っ◔◡◔)っ Misc Commands (っ◔◡◔)っ",
+    misc_commands = Embed(title="(っ◔◡◔)っ Misc (っ◔◡◔)っ",
                           colour=enso_embedmod_colours,
                           timestamp=datetime.datetime.utcnow())
 
@@ -174,11 +180,7 @@ def misc_function(self, guild_icon):
     # Setting up the fields in a separate array
     misc_fields = [
         (f"**{self.ctx.prefix}ping**",
-         "\nReturns latency in ms" +
-         "\n**(Perms: Co-Owner)**", True),
-        (f"**{self.ctx.prefix}rolemenu**",
-         "\nShowing Users Self Roles" +
-         "\n**(Perms: Co-Owner)**", True),
+         "\nReturns latency in ms", True),
         (f"**{self.ctx.prefix}dm `<person>`**",
          f"\nFor {hammyMention} to DM Users" +
          "\n**(Perms: Co-Owner)**", True),
@@ -192,10 +194,29 @@ def misc_function(self, guild_icon):
     return misc_commands
 
 
+def modmailEmbed(self, guild_icon):
+    # Setting up the Embed for the Miscellaneous commands
+    modmailPage = Embed(title="(っ◔◡◔)っ ModMail (っ◔◡◔)っ",
+                        colour=enso_embedmod_colours,
+                        timestamp=datetime.datetime.utcnow())
+
+    # Setting thumbnail and author
+    modmailPage.set_thumbnail(url=guild_icon)
+
+    # Setting up the fields in a separate array
+    misc_fields = [(f"**{self.ctx.prefix}", "", True)]
+
+    # Add the misc_commands fields to the embed
+    for name, value, inline in misc_fields:
+        modmailPage.add_field(name=name, value=value, inline=inline)
+
+    return modmailPage
+
+
 # Function to allow the fourth page of the help commands (Important)
 def important_function(self, guild_icon):
     # Setting up the Embed for the Important Commands
-    important_commands = Embed(title="(っ◔◡◔)っ Important Commands (っ◔◡◔)っ",
+    important_commands = Embed(title="(っ◔◡◔)っ Important (っ◔◡◔)っ",
                                colour=enso_embedmod_colours,
                                timestamp=datetime.datetime.utcnow())
 
@@ -208,15 +229,8 @@ def important_function(self, guild_icon):
          "\nReturns information about the user", True),
         (f"**{self.ctx.prefix}serverinfo**",
          "\nReturns information about the server", True),
-        (f"**{self.ctx.prefix}rules**",
-         "\nFull Ruleset for Enso", True),
-        (f"**{self.ctx.prefix}roles**",
-         "\nLeveling and xp system in Enso", True),
         (f"**{self.ctx.prefix}help**",
-         "\nSee every command in the bot", True),
-        (f"**{self.ctx.prefix}mm/modmail**",
-         "\nSend mail to the staff team!" +
-         f"\n(Done through the dms with {ensoMention})", True)]
+         "\nSee every command in the bot", True)]
 
     # Add the important_fields to the embed
     for name, value, inline in important_fields:
@@ -325,7 +339,7 @@ class ReactionMenu(commands.Cog):
         self.bot = bot
         self.bot.remove_command("help")
 
-    @command(name="help", aliases=["Help"])
+    @command(name="help2", aliases=["Help"])
     async def help(self, ctx):
         """Returns a menu for help commands controlled by reactions"""
 

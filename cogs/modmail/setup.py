@@ -69,11 +69,11 @@ class SetupModmail(commands.Cog):
 
                         # Define fields to be inserted into the embed
                         fields = [
-                            ("**React to this message if you want to send a message to the Staff Team!**",
+                            ("React to this message if you want to send a message to the Staff Team!",
                              "**React with ✅**", False),
                             ("We encourage all suggestions/thoughts and opinions on the server!" +
                              "As long as it is **valid** criticism.",
-                             "Purely negative feedback will not be considered.", False)]
+                             "**Purely negative feedback will not be considered**", False)]
 
                         # Add the fields to the embed
                         for name, value, inline in fields:

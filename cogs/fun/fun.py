@@ -13,7 +13,7 @@ class Fun(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @command(name="attack", aliases=['Attack'])
+    @command(name="attack", aliases=['Attack'], hidden=True)
     @has_any_role(664585078487252993, 715412394968350756)
     async def attack(self, ctx, target: Member):
         """Allows Co-Owners to throw insults at people"""

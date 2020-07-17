@@ -17,7 +17,7 @@ API_TOKEN = config('DISCORD_TOKEN')
 # Bot Initiation
 client = commands.Bot(  # Create a new bot
     command_prefix="~",  # Set the prefix
-    description='Ensō~Chan!',  # Set a description for the bot
+    description='All current available commands within Ensō~Chan',  # Set a description for the bot
     owner_id=154840866496839680)  # Your unique User ID
 
 # Calls the cogs from the settings.py file and loads them
@@ -52,7 +52,7 @@ async def on_message(message):
                 msg_content = message.content  # Content of the message
 
                 # Store the variables
-                val = guild_id, msg_time, msg_author, msg_content
+                val = guild_id, msg_time, msg_author, msg_content,
 
                 # If an attachment (link) has been sent
                 if message.attachments:
@@ -63,7 +63,7 @@ async def on_message(message):
                         attach = "".join(f"Message: {message.content} Link: {attachment.url}")
 
                     # Define the new variables to send
-                    val = guild_id, msg_time, msg_author, attach
+                    val = guild_id, msg_time, msg_author, attach,
 
                 # Define the Insert Into Statement inserting into the database
                 insert_query = """INSERT INTO messages (guildID, messageTime, discordID, messageContent) VALUES (?, ?, ?, ?)"""
@@ -95,7 +95,6 @@ async def on_ready():
 
 # Bot ~Ping command in milliseconds
 @client.command(name="ping", aliases=["Ping"])
-@commands.is_owner()
 async def ping(ctx):
     """Send the latency of the bot (ms)"""
     await ctx.send(f'Pong! `{round(client.latency * 1000)}ms`')

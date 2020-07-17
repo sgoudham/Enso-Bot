@@ -34,7 +34,7 @@ class interactive(commands.Cog):
     @command(name="kiss", aliases=["Kiss"])
     @cooldown(1, 1, BucketType.user)
     async def kiss(self, ctx, target: Member):
-        """Allows users to kiss a person in the server"""
+        """Kiss your partner"""
 
         # Get the guild
         guild = ctx.author.guild
@@ -110,7 +110,7 @@ class interactive(commands.Cog):
     @command(name="cuddle", aliases=["Cuddle"])
     @cooldown(1, 1, BucketType.user)
     async def cuddle(self, ctx, target: Member):
-        """Allows users to cuddle a person in the server"""
+        """Cuddle your partner"""
 
         # Get the guild
         guild = ctx.author.guild
@@ -186,7 +186,7 @@ class interactive(commands.Cog):
     @command(name="kill", aliases=["Kill"])
     @cooldown(1, 1, BucketType.user)
     async def kill(self, ctx, target: Member):
-        """Allows users to kill a person in the server"""
+        """Kill a person in the server"""
 
         # Surround with try/except to catch any exceptions that may occur
         try:
@@ -229,7 +229,7 @@ class interactive(commands.Cog):
     @command(name="slap", aliases=["Slap"])
     @cooldown(1, 1, BucketType.user)
     async def slap(self, ctx, target: Member):
-        """Allows users to slap a person in the server"""
+        """Slap a person in the server"""
 
         # Surround with try/except to catch any exceptions that may occur
         try:
@@ -272,7 +272,7 @@ class interactive(commands.Cog):
     @command(name="pat", aliases=["Pat"])
     @cooldown(1, 1, BucketType.user)
     async def pat(self, ctx, target: Member):
-        """Allows users to cuddle a person in the server"""
+        """Pat a person in the server"""
 
         # Surround with try/except to catch any exceptions that may occur
         try:
@@ -315,7 +315,7 @@ class interactive(commands.Cog):
     @command(name="lemon", aliases=["Lemon"])
     @cooldown(1, 1, BucketType.user)
     async def lemon(self, ctx, target: Member):
-        """Allows users to hand people lemons to members in the user"""
+        """Give lemons to members in the user"""
 
         lemon_array = ["https://media.discordapp.net/attachments/669812887564320769/720093589056520202/lemon.gif",
                        "https://media.discordapp.net/attachments/669812887564320769/720093575492272208/lemon2.gif",
@@ -357,7 +357,7 @@ class interactive(commands.Cog):
     @command(name="choke", aliases=["Choke"])
     @cooldown(1, 1, BucketType.user)
     async def choke(self, ctx, target: Member):
-        """Allows users to choke a person in the server"""
+        """Choke a person in the server"""
 
         # Surround with try/except to catch any exceptions that may occur
         try:
@@ -400,7 +400,7 @@ class interactive(commands.Cog):
     @command(name="hug", aliases=["Hug"])
     @cooldown(1, 1, BucketType.user)
     async def hug(self, ctx, target: Member):
-        """Allows users to hug a person in the server"""
+        """Hug a person in the server"""
 
         # Surround with try/except to catch any exceptions that may occur
         try:

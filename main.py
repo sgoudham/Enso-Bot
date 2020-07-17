@@ -95,8 +95,8 @@ async def on_ready():
 
 # Bot ~Ping command in milliseconds
 @client.command(name="ping", aliases=["Ping"])
-async def ping(ctx):
-    """Send the latency of the bot (ms)"""
+async def _ping(ctx):
+    """Sends the latency of the bot (ms)"""
     await ctx.send(f'Pong! `{round(client.latency * 1000)}ms`')
 
 

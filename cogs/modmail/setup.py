@@ -6,7 +6,7 @@ from discord.ext import commands
 from discord.ext.commands import command, cooldown, BucketType, has_permissions
 
 import db
-from settings import enso_embedmod_colours, blank_space
+from settings import enso_embedmod_colours
 
 
 # Set up the Cog
@@ -69,10 +69,10 @@ class SetupModmail(commands.Cog):
 
                         # Define fields to be inserted into the embed
                         fields = [
-                            (blank_space, "**React to this message if you want to send a message to the Staff Team!**",
-                             False),
-                            ("**React with ✅**",
-                             "We encourage all suggestions/thoughts and opinions on the server! As long as it is **valid** criticism."
+                            ("**React to this message if you want to send a message to the Staff Team!**",
+                             "**React with ✅**", False),
+                            ("We encourage all suggestions/thoughts and opinions on the server!" +
+                             "As long as it is **valid** criticism.",
                              "Purely negative feedback will not be considered.", False)]
 
                         # Add the fields to the embed

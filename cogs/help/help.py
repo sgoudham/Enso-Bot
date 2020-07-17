@@ -339,7 +339,7 @@ class ReactionMenu(commands.Cog):
         self.bot = bot
         self.bot.remove_command("help")
 
-    @command(name="help2", aliases=["Help"])
+    @command(name="help", aliases=["Help"])
     async def help(self, ctx):
         """Returns a menu for help commands controlled by reactions"""
 

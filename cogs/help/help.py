@@ -83,10 +83,10 @@ def fun_function(self, guild_icon):
         (f"**{self.ctx.prefix}marry `<person>`**",
          "\nMarry a User Within The Server", True),
         (f"**{self.ctx.prefix}divorce `<person>`**",
-         "\nDivorce The Person You Are Married To", True),
+         "\nDivorce The Person You Are Married To", False),
         (f"**{self.ctx.prefix}minfo `<person>`**",
          "\nDisplays information about the user's current marriage" +
-         f"\nUsing {self.ctx.prefix}minfo by itself will retrieve your marriage information", True)]
+         f"Using {self.ctx.prefix}minfo by itself will retrieve your marriage information", True)]
 
     # Add the fun_commands fields to the embed
     for name, value, inline in fun_fields:
@@ -119,16 +119,16 @@ def waifu_husbando_function(self, guild_icon):
 
     # Setting up the fields in a separate array
     waifu_husbando_fields = [
+        (f"**{self.ctx.prefix}w `list`**",
+         "\nReturns all Waifus", True),
+        (f"**{self.ctx.prefix}h `list`**",
+         "\nReturns all Husbandos", True),
         (f"**{self.ctx.prefix}w `<waifu>`**",
          "\nShows Specified Image of Waifu" +
          f"\n(Using **{self.ctx.prefix}w shows random image of Waifu)", True),
         (f"**{self.ctx.prefix}h `<husbando>`**",
          "\nShows Specified Image of Husbando" +
-         f"\n(Using **{self.ctx.prefix}h shows random image of Husbando", True),
-        (f"**{self.ctx.prefix}w `list`**",
-         "\nReturns all Waifus", True),
-        (f"**{self.ctx.prefix}h `list`**",
-         "\nReturns all Husbandos", True)]
+         f"\n(Using **{self.ctx.prefix}h shows random image of Husbando", True)]
 
     # Add the waifu_husbando_commands fields to the embed
     for name, value, inline in waifu_husbando_fields:
@@ -149,16 +149,16 @@ def _enso(self, guild_icon):
 
     # Setting up the fields in a separate array
     _enso_fields = [
+        (f"**{self.ctx.prefix}rules**",
+         "\nFull ruleset for Enso", True),
+        (f"**{self.ctx.prefix}roles**",
+         "\nLeveling and xp system in Enso", True),
         (f"**{self.ctx.prefix}enso `<person>`**",
          "\nShows Specified Image of User" +
          f"\n(Using {self.ctx.prefix}enso by itself shall generate a random image of a person within all the server)",
          True),
         (f"**{self.ctx.prefix}enso `list`**",
-         "\nReturns all Users", True),
-        (f"**{self.ctx.prefix}rules**",
-         "\nFull ruleset for Enso", True),
-        (f"**{self.ctx.prefix}roles**",
-         "\nLeveling and xp system in Enso", True)]
+         "\nReturns all Users", True)]
 
     # Add the _enso_commands fields to the embed
     for name, value, inline in _enso_fields:

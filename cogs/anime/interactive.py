@@ -54,8 +54,10 @@ class interactive(commands.Cog):
             # Error handling to make sure that the user can kiss themselves
             if target.id == ctx.author.id:
                 kiss = False
+                title = f":kissing_heart: :kissing_heart: | **{ctx.author.name}** kissed **themselves**"
             else:
                 kiss = True
+                title = f":kissing_heart: :kissing_heart: | **{ctx.display_name}** kissed **{target.display_name}**"
 
         try:
             # Make sure the user isn't trying to kiss someone else besides their partner
@@ -85,7 +87,7 @@ class interactive(commands.Cog):
 
                 # Set up the embed to display a random kissing gif
                 embed = Embed(
-                    title=f"<a:huh:676195228872474643> <a:huh:676195228872474643> | **{member.display_name}** kissed **{target.display_name}**",
+                    title=title,
                     colour=Colour(int(random.choice(colour_list))),
                     timestamp=datetime.datetime.utcnow())
                 embed.set_image(url=random.choice(kissing_array))
@@ -130,8 +132,10 @@ class interactive(commands.Cog):
             # Error handling to make sure that the user can cuddle themselves
             if target.id == ctx.author.id:
                 cuddle = False
+                title = f":blush: :blush: | **{ctx.author.name}** cuddled **themselves**"
             else:
                 cuddle = True
+                title = f":blush: :blush: | **{ctx.display_name}** cuddled **{target.display_name}**"
 
         try:
             # Make sure the user isn't trying to cuddle someone else besides their partner
@@ -161,7 +165,7 @@ class interactive(commands.Cog):
 
                 # Set up the embed to display a random cuddling gif
                 embed = Embed(
-                    title=f"<:blushlook1:677310734123663363> <:blushlook2:679524467248201769> | **{member.display_name}** cuddled **{target.display_name}**",
+                    title=title,
                     colour=Colour(int(random.choice(colour_list))),
                     timestamp=datetime.datetime.utcnow())
                 embed.set_image(url=random.choice(cuddling_array))
@@ -188,6 +192,11 @@ class interactive(commands.Cog):
     async def kill(self, ctx, target: Member):
         """Kill a person in the server"""
 
+        if target is ctx.author:
+            title = f":scream: :scream: | **{ctx.author.name}** killed **themselves**"
+        else:
+            title = f":scream: :scream: | **{ctx.display_name}** killed **{target.display_name}**"
+
         # Surround with try/except to catch any exceptions that may occur
         try:
 
@@ -204,7 +213,7 @@ class interactive(commands.Cog):
 
                 # Set up the embed to display a random killing gif
                 embed = Embed(
-                    title=f"<:monkaW:718960264896184380> <:monkaW:718960264896184380> | **{member.display_name}** killed **{target.display_name}**",
+                    title=title,
                     colour=Colour(int(random.choice(colour_list))),
                     timestamp=datetime.datetime.utcnow())
                 embed.set_image(url=random.choice(killing_array))
@@ -231,6 +240,11 @@ class interactive(commands.Cog):
     async def slap(self, ctx, target: Member):
         """Slap a person in the server"""
 
+        if target is ctx.author:
+            title = f":cold_sweat: :cold_sweat: | **{ctx.author.name}** slapped **themselves**"
+        else:
+            title = f":cold_sweat: :cold_sweat: | **{ctx.display_name}** slapped **{target.display_name}**"
+
         # Surround with try/except to catch any exceptions that may occur
         try:
 
@@ -247,7 +261,7 @@ class interactive(commands.Cog):
 
                 # Set up the embed to display a random slapping gif
                 embed = Embed(
-                    title=f"<:baka:718942872061083678> <:baka:718942872061083678> | **{member.display_name}** slapped **{target.display_name}**",
+                    title=title,
                     colour=Colour(int(random.choice(colour_list))),
                     timestamp=datetime.datetime.utcnow())
                 embed.set_image(url=random.choice(slapping_array))
@@ -274,6 +288,11 @@ class interactive(commands.Cog):
     async def pat(self, ctx, target: Member):
         """Pat a person in the server"""
 
+        if target is ctx.author:
+            title = f":scream: :scream: | **{ctx.author.name}** patted **themselves**"
+        else:
+            title = f":scream: :scream: | **{ctx.display_name}** patted **{target.display_name}**"
+
         # Surround with try/except to catch any exceptions that may occur
         try:
 
@@ -290,7 +309,7 @@ class interactive(commands.Cog):
 
                 # Set up the embed to display a random patting gif
                 embed = Embed(
-                    title=f"<:xoxo:679893117482303564> <:xoxo:679893117482303564> | **{member.display_name}** patted **{target.display_name} on the head**",
+                    title=title,
                     colour=Colour(int(random.choice(colour_list))),
                     timestamp=datetime.datetime.utcnow())
                 embed.set_image(url=random.choice(patting_array))
@@ -317,6 +336,11 @@ class interactive(commands.Cog):
     async def lemon(self, ctx, target: Member):
         """Give lemons to members in the user"""
 
+        if target is ctx.author:
+            title = f":relaxed: :relaxed: | **{ctx.author.name}** gave a lemon to **themselves**"
+        else:
+            title = f":relaxed: :relaxed: | **{ctx.display_name}** gave a lemon to **{target.display_name}**"
+
         lemon_array = ["https://media.discordapp.net/attachments/669812887564320769/720093589056520202/lemon.gif",
                        "https://media.discordapp.net/attachments/669812887564320769/720093575492272208/lemon2.gif",
                        "https://media.discordapp.net/attachments/718484280925224981/719629805263257630/lemon.gif"]
@@ -332,7 +356,7 @@ class interactive(commands.Cog):
 
                 # Set up the embed to display a random lemon gif
                 embed = Embed(
-                    title=f"<a:huh:676195228872474643> <a:huh:676195228872474643> | **{member.display_name}** Gives A Lemon To **{target.display_name}**",
+                    title=title,
                     colour=Colour(int(random.choice(colour_list))),
                     timestamp=datetime.datetime.utcnow())
                 embed.set_image(url=random.choice(lemon_array))
@@ -359,6 +383,11 @@ class interactive(commands.Cog):
     async def choke(self, ctx, target: Member):
         """Choke a person in the server"""
 
+        if target is ctx.author:
+            title = f":confounded: :confounded: | **{ctx.author.name}** choked **themselves**"
+        else:
+            title = f":confounded: :confounded: | **{ctx.display_name}** choked **{target.display_name}**"
+
         # Surround with try/except to catch any exceptions that may occur
         try:
 
@@ -375,7 +404,7 @@ class interactive(commands.Cog):
 
                 # Set up the embed to display a random choking gif
                 embed = Embed(
-                    title=f"<:qmq:676203031506976768> <:qmq:676203031506976768> | **{member.display_name}** choked **{target.display_name}**",
+                    title=title,
                     colour=Colour(int(random.choice(colour_list))),
                     timestamp=datetime.datetime.utcnow())
                 embed.set_image(url=random.choice(choking_array))
@@ -402,6 +431,11 @@ class interactive(commands.Cog):
     async def hug(self, ctx, target: Member):
         """Hug a person in the server"""
 
+        if target is ctx.author:
+            title = f":smiling_face_with_3_hearts: :smiling_face_with_3_hearts: | **{ctx.author.name}** hugged **themselves**"
+        else:
+            title = f":smiling_face_with_3_hearts: :smiling_face_with_3_hearts: | **{ctx.display_name}** hugged **{target.display_name}**"
+
         # Surround with try/except to catch any exceptions that may occur
         try:
 
@@ -418,7 +452,7 @@ class interactive(commands.Cog):
 
                 # Set up the embed to display a random hugging gif
                 embed = Embed(
-                    title=f"<a:huh:676195228872474643> <a:huh:676195228872474643> | **{member.display_name}** hugged **{target.display_name}**",
+                    title=title,
                     colour=Colour(int(random.choice(colour_list))),
                     timestamp=datetime.datetime.utcnow())
                 embed.set_image(url=random.choice(hugging_array))

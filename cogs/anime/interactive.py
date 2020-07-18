@@ -57,7 +57,7 @@ class interactive(commands.Cog):
                 title = f":kissing_heart: :kissing_heart: | **{ctx.author.name}** kissed **themselves**"
             else:
                 kiss = True
-                title = f":kissing_heart: :kissing_heart: | **{ctx.display_name}** kissed **{target.display_name}**"
+                title = f":kissing_heart: :kissing_heart: | **{ctx.author.name}** kissed **{target.display_name}**"
 
         try:
             # Make sure the user isn't trying to kiss someone else besides their partner
@@ -135,7 +135,7 @@ class interactive(commands.Cog):
                 title = f":blush: :blush: | **{ctx.author.name}** cuddled **themselves**"
             else:
                 cuddle = True
-                title = f":blush: :blush: | **{ctx.display_name}** cuddled **{target.display_name}**"
+                title = f":blush: :blush: | **{ctx.author.name}** cuddled **{target.display_name}**"
 
         try:
             # Make sure the user isn't trying to cuddle someone else besides their partner
@@ -195,7 +195,7 @@ class interactive(commands.Cog):
         if target is ctx.author:
             title = f":scream: :scream: | **{ctx.author.name}** killed **themselves**"
         else:
-            title = f":scream: :scream: | **{ctx.display_name}** killed **{target.display_name}**"
+            title = f":scream: :scream: | **{ctx.author.name}** killed **{target.display_name}**"
 
         # Surround with try/except to catch any exceptions that may occur
         try:
@@ -243,7 +243,7 @@ class interactive(commands.Cog):
         if target is ctx.author:
             title = f":cold_sweat: :cold_sweat: | **{ctx.author.name}** slapped **themselves**"
         else:
-            title = f":cold_sweat: :cold_sweat: | **{ctx.display_name}** slapped **{target.display_name}**"
+            title = f":cold_sweat: :cold_sweat: | **{ctx.author.name}** slapped **{target.display_name}**"
 
         # Surround with try/except to catch any exceptions that may occur
         try:
@@ -291,7 +291,7 @@ class interactive(commands.Cog):
         if target is ctx.author:
             title = f":scream: :scream: | **{ctx.author.name}** patted **themselves**"
         else:
-            title = f":scream: :scream: | **{ctx.display_name}** patted **{target.display_name}**"
+            title = f":scream: :scream: | **{ctx.author.name}** patted **{target.display_name}**"
 
         # Surround with try/except to catch any exceptions that may occur
         try:
@@ -339,7 +339,7 @@ class interactive(commands.Cog):
         if target is ctx.author:
             title = f":relaxed: :relaxed: | **{ctx.author.name}** gave a lemon to **themselves**"
         else:
-            title = f":relaxed: :relaxed: | **{ctx.display_name}** gave a lemon to **{target.display_name}**"
+            title = f":relaxed: :relaxed: | **{ctx.author.name}** gave a lemon to **{target.display_name}**"
 
         lemon_array = ["https://media.discordapp.net/attachments/669812887564320769/720093589056520202/lemon.gif",
                        "https://media.discordapp.net/attachments/669812887564320769/720093575492272208/lemon2.gif",
@@ -386,7 +386,7 @@ class interactive(commands.Cog):
         if target is ctx.author:
             title = f":confounded: :confounded: | **{ctx.author.name}** choked **themselves**"
         else:
-            title = f":confounded: :confounded: | **{ctx.display_name}** choked **{target.display_name}**"
+            title = f":confounded: :confounded: | **{ctx.author.name}** choked **{target.display_name}**"
 
         # Surround with try/except to catch any exceptions that may occur
         try:
@@ -434,7 +434,7 @@ class interactive(commands.Cog):
         if target is ctx.author:
             title = f":smiling_face_with_3_hearts: :smiling_face_with_3_hearts: | **{ctx.author.name}** hugged **themselves**"
         else:
-            title = f":smiling_face_with_3_hearts: :smiling_face_with_3_hearts: | **{ctx.display_name}** hugged **{target.display_name}**"
+            title = f":smiling_face_with_3_hearts: :smiling_face_with_3_hearts: | **{ctx.author.name}** hugged **{target.display_name}**"
 
         # Surround with try/except to catch any exceptions that may occur
         try:

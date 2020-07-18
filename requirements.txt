@@ -1,6 +1,7 @@
 owotext
 Pillow
 aiohttp
+config
 python-decouple
 discord
 git+https://github.com/Rapptz/discord-ext-menus

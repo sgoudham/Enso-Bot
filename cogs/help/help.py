@@ -1,10 +1,16 @@
 import datetime
+from typing import List, Tuple, Any
 
 from discord import Embed
 from discord.ext import commands, menus
 from discord.ext.commands import command
 
 from settings import enso_embedmod_colours
+
+
+async def make_embed(embed, seq: List[Tuple[Any, Any, bool]]) -> Embed:
+    embed.add_field(seq)
+    return embed
 
 
 # Pages of the help embed
@@ -165,51 +171,24 @@ def help_menu(self, guild_icon):
                       (f"**{self.ctx.prefix}mmsetup delete modmail**",
                        "Existing modmail system will be deleted", False)]
 
-    """    fields = [fun_fields, interactive_fields, interactive_fields_2,
-              relationship_fields, enso_fields, waifu_and_husbando_fields,
-              important_fields, modmail_fields]
-    embeds = [fun, interactive, interactive_2,
-              relationship, enso, waifu_and_husbando,
-              important, modmail]
+    # Defining dictionary of embeds as keys, list of fields as values
+    help_dict = {
+        fun: fun_fields,
+        interactive: interactive_fields,
+        interactive_2: interactive_fields_2,
+        relationship: relationship_fields,
+        enso: enso_fields,
+        waifu_and_husbando: waifu_and_husbando_fields,
+        important: important_fields,
+        modmail: modmail_fields
+    }
 
-    for embed in embeds:
-        for field in fields:
-            # Add fields to the embed
-            for name, value, inline in field:
-                embed.add_field(name=name, value=value, inline=inline)"""
+    # Iterating through the dictionary and adding fields to the embeds
+    for embed, field in help_dict.items():
+        for name, value, inline in field:
+            embed.add_field(name=name, value=value, inline=inline)
 
-    # Add fields to the embed
-    for name, value, inline in fun_fields:
-        fun.add_field(name=name, value=value, inline=inline)
-
-    # Add fields to the embed
-    for name, value, inline in interactive_fields:
-        interactive.add_field(name=name, value=value, inline=inline)
-
-    # Add fields to the embed
-    for name, value, inline in interactive_fields_2:
-        interactive_2.add_field(name=name, value=value, inline=inline)
-
-    # Add fields to the embed
-    for name, value, inline in relationship_fields:
-        relationship.add_field(name=name, value=value, inline=inline)
-
-    # Add fields to the embed
-    for name, value, inline in enso_fields:
-        enso.add_field(name=name, value=value, inline=inline)
-
-    # Add fields to the embed
-    for name, value, inline in waifu_and_husbando_fields:
-        waifu_and_husbando.add_field(name=name, value=value, inline=inline)
-
-    # Add fields to the embed
-    for name, value, inline in important_fields:
-        important.add_field(name=name, value=value, inline=inline)
-
-    # Add fields to the embed
-    for name, value, inline in modmail_fields:
-        modmail.add_field(name=name, value=value, inline=inline)
-
+    # Return all the embeds
     return fun, interactive, interactive_2, relationship, \
            enso, waifu_and_husbando, important, modmail
 

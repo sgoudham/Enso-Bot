@@ -9,13 +9,13 @@ class testinghelp(commands.Cog):
 
     @commands.command(name="help2")
     @commands.has_permissions(add_reactions=True, embed_links=True)
-    async def _help(self, ctx, *cog):
+    async def help(self, ctx, *cog):
         """Gets all cogs and commands of mine."""
         try:
             if not cog:
                 """Cog listing.  What more?"""
                 halp = discord.Embed(title='Cog Listing and Uncatergorized Commands',
-                                     description=f'Use `{ctx.prefix}help *cog*` to find out more about them!\n(BTW, the Cog Name Must Be in Title Case, Just Like this Sentence.)')
+                                     description='Use `~help *cog*` to find out more about them!\n(BTW, the Cog Name Must Be in Title Case, Just Like this Sentence.)')
                 cogs_desc = ''
                 for x in self.bot.cogs:
                     cogs_desc += ('{} - {}'.format(x, self.bot.cogs[x].__doc__) + '\n')
@@ -39,7 +39,7 @@ class testinghelp(commands.Cog):
                     for x in self.bot.cogs:
                         for y in cog:
                             if x == y:
-                                halp = discord.Embed(title=cog[0] + ' Command',
+                                halp = discord.Embed(title=cog[0] + ' Command Listing',
                                                      description=self.bot.cogs[cog[0]].__doc__)
                                 for c in self.bot.get_cog(y).get_commands():
                                     if not c.hidden:

@@ -1,7 +1,7 @@
 owotext
 Pillow
 aiohttp
-mariadb
+python-decouple
 discord
 git+https://github.com/Rapptz/discord-ext-menus
 mariadb

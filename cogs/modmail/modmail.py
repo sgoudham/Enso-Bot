@@ -9,7 +9,7 @@ from discord import File
 from discord.ext import commands
 
 import db
-from settings import enso_embedmod_colours, blank_space, hammyMention
+from settings import enso_embedmod_colours, blank_space
 
 
 # Method to ask the user if they want to be anonymous or not
@@ -90,7 +90,7 @@ def MessageSentConfirmation(author):
     ConfirmationEmbed.set_footer(text=f"Sent by {author}")
 
     fields = [("Thank you for your input! The staff team appreciate it very much!",
-               f"\n As mentioned previously, please don't be hesistant to DM {hammyMention} for anything! :P",
+               f"\n As mentioned previously, please don't be hesistant to DM the Staff for anything! :P",
                False)]
 
     for name, value, inline in fields:

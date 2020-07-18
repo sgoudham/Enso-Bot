@@ -1,16 +1,10 @@
 import datetime
-from typing import List, Tuple, Any
 
 from discord import Embed
 from discord.ext import commands, menus
 from discord.ext.commands import command
 
 from settings import enso_embedmod_colours
-
-
-async def make_embed(embed, seq: List[Tuple[Any, Any, bool]]) -> Embed:
-    embed.add_field(seq)
-    return embed
 
 
 # Pages of the help embed

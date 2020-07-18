@@ -100,7 +100,7 @@ def help_menu(self, guild_icon):
     enso_fields = [
         (f"**{self.ctx.prefix}enso `<person>`**",
          "\nShows Specified Image of User" +
-         f"\n(Using **{self.ctx.prefix}enso** by itself shows random image of )",
+         f"\n(Using **{self.ctx.prefix}enso** by itself shows random image of users in the server)",
          True),
         (f"**{self.ctx.prefix}enso `list`**",
          "\nReturns all Users", False),

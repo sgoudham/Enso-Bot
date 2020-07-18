@@ -72,7 +72,7 @@ class SetupModmail(commands.Cog):
                             ("React to this message if you want to send a message to the Staff Team!",
                              "**React with ✅**", False),
                             ("We encourage all suggestions/thoughts and opinions on the server!" +
-                             "As long as it is **valid** criticism.",
+                             "\nAs long as it is **valid** criticism.",
                              "**Purely negative feedback will not be considered**", False)]
 
                         # Add the fields to the embed

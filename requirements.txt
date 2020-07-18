@@ -5,3 +5,4 @@ mariadb
 discord
 git+https://github.com/Rapptz/discord-ext-menus
 mariadb
+discord.py

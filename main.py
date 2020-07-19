@@ -6,7 +6,7 @@ from typing import Optional
 import discord
 import mariadb
 from decouple import config
-from discord import Embed, Forbidden
+from discord import Embed
 from discord.ext import commands
 from discord.ext.commands import when_mentioned_or, has_permissions, guild_only
 
@@ -18,6 +18,7 @@ from settings import blank_space, enso_embedmod_colours, enso_guild_ID, enso_new
 cached_prefixes = {}
 
 
+# Updating the prefix within the dict and database when the method is called
 async def storage_prefix_for_guild(ctx, prefix):
     cached_prefixes[str(ctx.guild.id)] = prefix
 
@@ -286,6 +287,8 @@ async def on_member_remove(member):
 # Bot Event for handling all errors within discord.commands
 @client.event
 async def on_command_error(ctx, args2):
+    discord.errors.Forbidden = getattr(discord.errors.Forbidden, "original", discord.errors.Forbidden)
+
     # if the user did not specify an user
     if isinstance(args2, commands.MissingRequiredArgument):
         await on_command_missing_user(ctx)
@@ -302,7 +305,7 @@ async def on_command_error(ctx, args2):
     elif isinstance(args2, commands.BadArgument):
         await on_command_bad_argument(ctx)
     # if the bot does not permissions to send the command
-    elif isinstance(args2, Forbidden):
+    elif isinstance(args2, discord.errors.Forbidden):
         await on_command_forbidden(ctx)
 
 

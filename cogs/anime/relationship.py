@@ -144,7 +144,7 @@ class Relationship(commands.Cog):
             print(ex)
 
             # Delete the "proposal"
-            msg.delete()
+            await msg.delete()
             # Send out an error message if the user waited too long
             await ctx.send("**(｡T ω T｡) They waited too long**")
 
@@ -218,23 +218,26 @@ class Relationship(commands.Cog):
 
                 # Congratulate them!
                 await ctx.send(
-                    f"**૮( ´⁰▱๋⁰ )ა {ctx.author.mention} and {member.mention} are now divorced. I hope you two can find happiness in life with other people")
+                    f"**૮( ´⁰▱๋⁰ )ა {ctx.author.mention} and {member.mention} are now divorced."
+                    f"\nI hope you two can find happiness in life with other people**")
 
             # if the person says no
             elif msg.content.lower() in ['n', 'no', 'nah']:
 
                 # Try to console the person and wish them the best in their life
-                await ctx.send(f"Sorry but you're gonna need {ctx.author.mention}'s consent to move forward with this!")
+                await ctx.send(
+                    f"**Sorry but you're gonna need {ctx.author.mention}'s consent to move forward with this!**")
 
             else:
                 # Abort the process as the message sent did not make sense
-                await ctx.send("Senpaiiii! (｡╯︵╰｡) Speak English Please")
+                await ctx.send("**Senpaiiii! (｡╯︵╰｡) Speak English Please**")
 
         except asyncio.TimeoutError as ex:
             print(ex)
 
+            await msg.delete()
             # Send out an error message if the user waited too long
-            await ctx.send("(｡T ω T｡) They waited too long")
+            await ctx.send("**(｡T ω T｡) They waited too long**")
 
     @command(name="minfo", aliases=["Minfo", "mInfo"])
     @cooldown(1, 1, BucketType.user)

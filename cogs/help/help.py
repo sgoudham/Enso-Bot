@@ -174,14 +174,12 @@ def help_menu(self, guild_icon):
     msc.set_thumbnail(url=guild_icon)
 
     # Setting up the fields in a separate array
-    msc_fields = [
-        (f"**{self.ctx.prefix}ping**",
-         "\nReturns latency in ms", True),
-        (f"**{self.ctx.prefix}dm `<person>`**",
-         f"\nFor admins to DM Users" +
-         "\n**(Perms: Co-Owner)**", True),
-        (f"**{self.ctx.prefix}remindme `<time>` `<text>`**",
-         "\nGet Enso~Chan to remind you in DMs", True)]
+    msc_fields = [(f"**{self.ctx.prefix}ping**", "\nReturns latency in ms", True),
+                  (f"**{self.ctx.prefix}dm `<person>`**",
+                   f"\nFor admins to DM Users" +
+                   "\n**(Perms: Co-Owner)**", True),
+                  (f"**{self.ctx.prefix}remindme `<time>` `<text>`**",
+                   "\nGet Enso~Chan to remind you in DMs", True)]
 
     # Defining dictionary of embeds as keys, list of fields as values
     help_dict = {
@@ -202,9 +200,7 @@ def help_menu(self, guild_icon):
             embed.add_field(name=name, value=value, inline=inline)
 
     # Return all the embeds
-    return fun, interactive, interactive_2, relationship, \
-           enso, waifu_and_husbando, important, modmail, \
-           msc_fields
+    return fun, interactive, interactive_2, relationship, enso, waifu_and_husbando, important, modmail, msc
 
 
 def embeds(self):
@@ -212,9 +208,7 @@ def embeds(self):
     guild_icon = self.ctx.guild.icon_url
 
     # Set the different pages of the embed
-    page1, page2, page3, \
-    page4, page5, page6, \
-    page7, page8, page9 = help_menu(self, guild_icon)
+    page1, page2, page3, page4, page5, page6, page7, page8, page9 = help_menu(self, guild_icon)
 
     # Store all the categories of the menu to an array called pages
     pages = [page1, page2, page3,

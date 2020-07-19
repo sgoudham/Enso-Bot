@@ -19,7 +19,7 @@ cached_prefixes = {}
 
 
 async def storage_prefix_for_guild(ctx, prefix):
-    cached_prefixes[ctx.guild.id] = prefix
+    cached_prefixes[str(ctx.guild.id)] = prefix
 
     with db.connection() as connection:
         # Update the existing prefix within the database

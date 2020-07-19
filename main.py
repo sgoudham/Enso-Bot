@@ -1,12 +1,14 @@
 import asyncio
 import datetime
+from contextlib import closing
+from typing import Optional
 
 import discord
 import mariadb
 from decouple import config
 from discord import Embed, Forbidden
 from discord.ext import commands
-from discord.ext.commands import when_mentioned_or
+from discord.ext.commands import when_mentioned_or, has_permissions, guild_only
 
 import db
 import settings
@@ -22,7 +24,7 @@ async def get_prefix(bot, message):
         # Grab the prefix of the server from the database
         select_query = """SELECT * FROM guilds WHERE guildID = (?)"""
         val = message.guild.id,
-        with conn.cursor as cursor:
+        with closing(conn.cursor()) as cursor:
             # Execute the query
             cursor.execute(select_query, val)
             result = cursor.fetchone()
@@ -47,11 +49,51 @@ if __name__ == '__main__':
         client.load_extension(ext)
 
 
-# Bot ~Ping command in milliseconds
+# Bot ping command in milliseconds
 @client.command(name="ping", aliases=["Ping"])
 async def _ping(ctx):
     """Sends the latency of the bot (ms)"""
     await ctx.send(f'Pong! `{round(client.latency * 1000)}ms`')
+
+
+# Bot prefix command that returns the prefix or updates it
+@client.command(name="prefix", aliases=["Prefix"])
+@guild_only()
+@has_permissions(manage_guild=True)
+async def change_prefix(ctx, new: Optional[str]):
+    # Using database connection
+    with db.connection() as conn:
+        # Grab the guild and prefix information of the guild that the message was sent in
+        select_query = """SELECT * FROM guilds WHERE guildID = (?)"""
+        select_val = ctx.guild.id,
+
+        # Using connection cursor
+        with closing(conn.cursor()) as cursor:
+
+            # Execute the query
+            cursor.execute(select_query, select_val)
+            result = cursor.fetchone()
+
+            # Grab the guild prefix
+            curr_prefix = result[1]
+
+        # If no argument has been given, display the current prefix
+        if not new:
+            await ctx.send(f"**The current guild prefix is `{curr_prefix}`**")
+
+        # Update the prefix for the guild
+        else:
+
+            # Update the existing prefix within the database
+            update_query = """UPDATE guilds SET prefix = (?) WHERE guildID = (?)"""
+            update_vals = new, ctx.guild.id,
+
+            # Using the connection cursor
+            with closing(conn.cursor()) as cursor:
+
+                # Execute the query
+                cursor.execute(update_query, update_vals)
+                print(cursor.rowcount, f"Guild prefix has been updated for guild {ctx.guild.name}")
 
 
 # Bot event making sure that messages sent by the bot do nothing
@@ -90,7 +132,7 @@ async def on_guild_join(guild):
                 # Define the insert statement that will insert the user's information
                 insert_query = """INSERT INTO members (guildID, discordUser, discordID) VALUES (?, ?, ?)"""
                 vals = guild.id, name, member.id,
-                with conn.cursor as cursor:
+                with closing(conn.cursor()) as cursor:
                     # Execute the query
                     cursor.execute(insert_query, vals)
                     print(cursor.rowcount, f"Record inserted successfully into Members from {guild.name}")
@@ -98,7 +140,7 @@ async def on_guild_join(guild):
             # Define the insert statement for inserting the guild into the guilds table
             insert_query = """INSERT INTO guilds (guildID) VALUES (?)"""
             val = guild.id,
-            with conn.cursor as cursor:
+            with closing(conn.cursor()) as cursor:
                 # Execute the query
                 cursor.execute(insert_query, val)
                 print(cursor.rowcount, f"Record inserted successfully into Guilds from {guild.name}")
@@ -117,7 +159,7 @@ async def on_guild_remove(guild):
                 # Delete the record of the member as the bot leaves the server
                 delete_query = """DELETE FROM members WHERE discordID = (?) AND guildID = (?)"""
                 vals = member.id, guild.id,
-                with conn.cursor as cursor:
+                with closing(conn.cursor()) as cursor:
                     # Execute the SQL Query
                     cursor.execute(delete_query, vals)
                     print(cursor.rowcount, f"Record deleted successfully from Members from {guild.name}")
@@ -125,7 +167,7 @@ async def on_guild_remove(guild):
             # Delete the guild and prefix information as the bot leaves the server
             delete_query = """DELETE FROM guilds WHERE guildID = (?)"""
             val = guild.id,
-            with conn.cursor as cursor:
+            with closing(conn.cursor()) as cursor:
                 # Execute the query
                 cursor.execute(delete_query, val)
                 print(cursor.rowcount, f"Record deleted successfully from Guilds from {guild.name}")

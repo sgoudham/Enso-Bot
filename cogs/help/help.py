@@ -165,6 +165,24 @@ def help_menu(self, guild_icon):
                       (f"**{self.ctx.prefix}mmsetup delete modmail**",
                        "Existing modmail system will be deleted", False)]
 
+    # Setting up the Embed for the Miscellaneous commands
+    msc = Embed(title="(っ◔◡◔)っ Misc (っ◔◡◔)っ",
+                colour=enso_embedmod_colours,
+                timestamp=datetime.datetime.utcnow())
+
+    # Setting thumbnail and author
+    msc.set_thumbnail(url=guild_icon)
+
+    # Setting up the fields in a separate array
+    msc_fields = [
+        (f"**{self.ctx.prefix}ping**",
+         "\nReturns latency in ms", True),
+        (f"**{self.ctx.prefix}dm `<person>`**",
+         f"\nFor admins to DM Users" +
+         "\n**(Perms: Co-Owner)**", True),
+        (f"**{self.ctx.prefix}remindme `<time>` `<text>`**",
+         "\nGet Enso~Chan to remind you in DMs", True)]
+
     # Defining dictionary of embeds as keys, list of fields as values
     help_dict = {
         fun: fun_fields,
@@ -174,7 +192,8 @@ def help_menu(self, guild_icon):
         enso: enso_fields,
         waifu_and_husbando: waifu_and_husbando_fields,
         important: important_fields,
-        modmail: modmail_fields
+        modmail: modmail_fields,
+        msc: msc_fields
     }
 
     # Iterating through the dictionary and adding fields to the embeds
@@ -184,34 +203,8 @@ def help_menu(self, guild_icon):
 
     # Return all the embeds
     return fun, interactive, interactive_2, relationship, \
-           enso, waifu_and_husbando, important, modmail
-
-
-# Page 9
-def misc_function(self, guild_icon):
-    # Setting up the Embed for the Miscellaneous commands
-    misc_commands = Embed(title="(っ◔◡◔)っ Misc (っ◔◡◔)っ",
-                          colour=enso_embedmod_colours,
-                          timestamp=datetime.datetime.utcnow())
-
-    # Setting thumbnail and author
-    misc_commands.set_thumbnail(url=guild_icon)
-
-    # Setting up the fields in a separate array
-    misc_fields = [
-        (f"**{self.ctx.prefix}ping**",
-         "\nReturns latency in ms", True),
-        (f"**{self.ctx.prefix}dm `<person>`**",
-         f"\nFor admins to DM Users" +
-         "\n**(Perms: Co-Owner)**", True),
-        (f"**{self.ctx.prefix}remindme `<time>` `<text>`**",
-         "\nGet Enso~Chan to remind you in DMs", True)]
-
-    # Add fields to the embed
-    for name, value, inline in misc_fields:
-        misc_commands.add_field(name=name, value=value, inline=inline)
-
-    return misc_commands
+           enso, waifu_and_husbando, important, modmail, \
+           msc_fields
 
 
 def embeds(self):
@@ -221,8 +214,7 @@ def embeds(self):
     # Set the different pages of the embed
     page1, page2, page3, \
     page4, page5, page6, \
-    page7, page8 = help_menu(self, guild_icon)
-    page9 = misc_function(self, guild_icon)
+    page7, page8, page9 = help_menu(self, guild_icon)
 
     # Store all the categories of the menu to an array called pages
     pages = [page1, page2, page3,

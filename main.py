@@ -6,6 +6,7 @@ import mariadb
 from decouple import config
 from discord import Embed, Forbidden
 from discord.ext import commands
+from discord.ext.commands import when_mentioned_or
 
 import db
 import settings
@@ -14,9 +15,17 @@ from settings import blank_space, enso_embedmod_colours, enso_guild_ID, enso_new
 # Getting the Bot token from Environment Variables
 API_TOKEN = config('DISCORD_TOKEN')
 
+PREFIX = "~"
+
+
+# Method to allow the commands to be used with mentioning the bot
+async def get_prefix(bot, message):
+    return when_mentioned_or(PREFIX)(bot, message)
+
+
 # Bot Initiation
 client = commands.Bot(  # Create a new bot
-    command_prefix="~",  # Set the prefix
+    command_prefix=get_prefix,  # Set the prefix
     description='All current available commands within Ensō~Chan',  # Set a description for the bot
     owner_id=154840866496839680)  # Your unique User ID
 

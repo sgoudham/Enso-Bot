@@ -197,6 +197,20 @@ async def on_command_error(ctx, args2):
     # if the user does not the correct permissions to call a command
     elif isinstance(args2, commands.CheckFailure):
         await on_command_permission(ctx)
+    # if the user tries to access a command that isn't available
+    elif isinstance(args2, commands.CommandNotFound):
+        await on_command_not_found(ctx)
+
+
+# Async def for handling cooldown error/permission errors
+async def on_command_not_found(ctx):
+    # Send an error message to the user telling them that the command is on cooldown
+    message = await ctx.send(f'**Command Not Found! Please use `{ctx.prefix}help` to see all commands**')
+
+    # Let the User read the message for 2.5 seconds
+    await asyncio.sleep(2.5)
+    # Delete the message
+    await message.delete()
 
 
 # Async def for handling cooldown error/permission errors

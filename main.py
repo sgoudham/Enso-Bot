@@ -14,25 +14,58 @@ import db
 import settings
 from settings import blank_space, enso_embedmod_colours, enso_guild_ID, enso_newpeople_ID
 
+# Storing the prefixes and guildID's in the cache
+cached_prefixes = {}
+
+
+async def storage_prefix_for_guild(ctx, prefix):
+    cached_prefixes[ctx.guild.id] = prefix
+
+    with db.connection() as connection:
+        # Update the existing prefix within the database
+        update_query = """UPDATE guilds SET prefix = (?) WHERE guildID = (?)"""
+        update_vals = prefix, ctx.guild.id,
+
+        # Using the connection cursor
+        with closing(connection.cursor()) as cur:
+            # Execute the query
+            cur.execute(update_query, update_vals)
+            print(cur.rowcount, f"Guild prefix has been updated for guild {ctx.guild.name}")
+
+    await ctx.send(f"**Guild prefix has been updated to `{prefix}`**")
+
+
+# Method to store the cached prefixes
+def cache_prefix(guildid, prefix):
+    cached_prefixes[guildid] = prefix
+
+
+def get_prefix_for_guild(guildid):
+    prefix = cached_prefixes[guildid]
+    if prefix is not None:
+        return prefix
+    return "defaultPrefix"
+
+
+with db.connection() as conn:
+    # Grab the prefix of the server from the database
+    select_query = """SELECT * FROM guilds"""
+    with closing(conn.cursor()) as cursor:
+        # Execute the query
+        cursor.execute(select_query)
+        results = cursor.fetchall()
+
+        # Store the guildids and prefixes within
+        for row in results:
+            cache_prefix(row[0], row[1])
+
 # Getting the Bot token from Environment Variables
 API_TOKEN = config('DISCORD_TOKEN')
 
 
 # Method to allow the commands to be used with mentioning the bot
 async def get_prefix(bot, message):
-    with db.connection() as conn:
-        # Grab the prefix of the server from the database
-        select_query = """SELECT * FROM guilds WHERE guildID = (?)"""
-        val = message.guild.id,
-        with closing(conn.cursor()) as cursor:
-            # Execute the query
-            cursor.execute(select_query, val)
-            result = cursor.fetchone()
-
-            # Store the prefix in a variable
-            PREFIX = result[1]
-
-    return when_mentioned_or(PREFIX)(bot, message)
+    return when_mentioned_or(get_prefix_for_guild(str(message.guild.id)))(bot, message)
 
 
 # Bot Initiation
@@ -61,39 +94,16 @@ async def _ping(ctx):
 @guild_only()
 @has_permissions(manage_guild=True)
 async def change_prefix(ctx, new: Optional[str]):
-    # Using database connection
-    with db.connection() as conn:
-        # Grab the guild and prefix information of the guild that the message was sent in
-        select_query = """SELECT * FROM guilds WHERE guildID = (?)"""
-        select_val = ctx.guild.id,
+    # As long as a new prefix has been given and is less than 5 characters
+    if new and len(new) < 5:
 
-        # Using connection cursor
-        with closing(conn.cursor()) as cursor:
+        # Store the new prefix in the dictionary and update the database
+        await storage_prefix_for_guild(ctx, new)
 
-            # Execute the query
-            cursor.execute(select_query, select_val)
-            result = cursor.fetchone()
-
-            # Grab the guild prefix
-            curr_prefix = result[1]
-
-        # If no argument has been given, display the current prefix
-        if not new:
-            await ctx.send(f"**The current guild prefix is `{curr_prefix}`**")
-
-        # Update the prefix for the guild
-        else:
-
-            # Update the existing prefix within the database
-            update_query = """UPDATE guilds SET prefix = (?) WHERE guildID = (?)"""
-            update_vals = new, ctx.guild.id,
-
-            # Using the connection cursor
-            with closing(conn.cursor()) as cursor:
-
-                # Execute the query
-                cursor.execute(update_query, update_vals)
-                print(cursor.rowcount, f"Guild prefix has been updated for guild {ctx.guild.name}")
+    # if no prefix was provided
+    elif not new:
+        # Grab the current prefix for the guild within the cached dictionary
+        await ctx.send(f"**The current guild prefix is `{get_prefix_for_guild(str(ctx.guild.id))}`**")
 
 
 # Bot event making sure that messages sent by the bot do nothing
@@ -407,4 +417,29 @@ def write_to_dm_file(time, author, content):
 
             except mariadb.Error as ex:
                 print("Parameterized Query Failed: {}".format(ex))
+                
+        
+        
+ # Using database connection
+    with db.connection() as conn:
+        # Grab the guild and prefix information of the guild that the message was sent in
+        select_query = """"""SELECT * FROM guilds WHERE guildID = (?)""""""
+        select_val = ctx.guild.id,
+
+        # Using connection cursor
+        with closing(conn.cursor()) as cursor:
+
+            # Execute the query
+            cursor.execute(select_query, select_val)
+            result = cursor.fetchone()
+
+            # Grab the guild prefix
+            curr_prefix = result[1]
+
+        # If no argument has been given, display the current prefix
+        if not new:
+            await ctx.send(f"**The current guild prefix is `{curr_prefix}`**")
+
+        # Update the prefix for the guild
+        else:
 """

@@ -140,7 +140,7 @@ class Relationship(commands.Cog):
                 # Abort the process as the message sent did not make sense
                 await ctx.send("**Senpaiiii! (｡╯︵╰｡) Speak English Please**")
 
-        except Exception as ex:
+        except asyncio.TimeoutError as ex:
             print(ex)
 
             # Delete the "proposal"

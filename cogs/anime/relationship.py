@@ -73,12 +73,12 @@ class Relationship(commands.Cog):
 
             # Make sure that the user cannot marry themselves
             if member.id == ctx.author.id:
-                await ctx.send("Senpaii! ˭̡̞(◞⁎˃ᆺ˂)◞*✰ You can't possibly marry yourself!")
+                await ctx.send("**Senpaii! ˭̡̞(◞⁎˃ᆺ˂)◞*✰ You can't possibly marry yourself!**")
                 return
             # Make sure that the person is not already married to someone else within the server
             elif author_result[2] is not None:
                 member = guild.get_member(int(author_result[2]))
-                await ctx.send(f"((╬◣﹏◢)) You're already married to {member.mention}!")
+                await ctx.send(f"**((╬◣﹏◢)) You're already married to {member.mention}!**")
                 return
             # Close the previous cursor
             author_cursor.close()
@@ -91,7 +91,7 @@ class Relationship(commands.Cog):
 
             if member_result[2] is not None:
                 member = guild.get_member(int(member_result[2]))
-                await ctx.send(f"Sorry! That user is already married to {member.mention}")
+                await ctx.send(f"**Sorry! That user is already married to {member.mention}**")
                 return
 
         # Send a message to the channel mentioning the author and the person they want to wed.
@@ -128,22 +128,24 @@ class Relationship(commands.Cog):
 
                 # Congratulate them!
                 await ctx.send(
-                    f"Congratulations! ｡ﾟ( ﾟ^∀^ﾟ)ﾟ｡ {ctx.author.mention} and {member.mention} are now married to each other!")
+                    f"**Congratulations! ｡ﾟ( ﾟ^∀^ﾟ)ﾟ｡ {ctx.author.mention} and {member.mention} are now married to each other!**")
 
             # if the person says no
             elif msg.content.lower() in ['n', 'no', 'nah']:
 
                 # Try to console the person and wish them the best in their life
-                await ctx.send(f"{ctx.author.mention} It's okay King. Pick up your crown and move on (◕‿◕✿)")
+                await ctx.send(f"**{ctx.author.mention} It's okay king. Pick up your crown and move on (◕‿◕✿)**")
             else:
                 # Abort the process as the message sent did not make sense
-                await ctx.send("Senpaiiii! (｡╯︵╰｡) Speak English Please")
+                await ctx.send("**Senpaiiii! (｡╯︵╰｡) Speak English Please**")
 
-        except asyncio.TimeoutError as ex:
+        except Exception as ex:
             print(ex)
 
+            # Delete the "proposal"
+            msg.delete()
             # Send out an error message if the user waited too long
-            await ctx.send("(｡T ω T｡) They waited too long")
+            await ctx.send("**(｡T ω T｡) They waited too long**")
 
     @command(name="divorce", aliases=["Divorce"])
     @cooldown(1, 1, BucketType.user)
@@ -167,17 +169,17 @@ class Relationship(commands.Cog):
 
             # Make sure that the user cannot divorce themselves
             if member.id == ctx.author.id:
-                await ctx.send("Senpaii! ˭̡̞(◞⁎˃ᆺ˂)◞*✰ You can't possibly divorce yourself!")
+                await ctx.send("**Senpaii! ˭̡̞(◞⁎˃ᆺ˂)◞*✰ You can't possibly divorce yourself!**")
                 return
             # Make sure that the person trying to divorce is actually married to the user
             elif result[2] is None:
-                await ctx.send(f"((╬◣﹏◢)) You must be married in order to divorce someone! Baka!")
+                await ctx.send(f"**((╬◣﹏◢)) You must be married in order to divorce someone! Baka!**")
                 return
             # Make sure the person is married to the person that they're trying to divorce
             elif result[2] != str(member.id):
                 member = guild.get_member(int(result[2]))
-                await ctx.send(f"(ノ ゜口゜)ノ You can only divorce the person that you're married!"
-                               f"\n That person is {member.mention}")
+                await ctx.send(f"**(ノ ゜口゜)ノ You can only divorce the person that you're married!"
+                               f"\n That person is {member.mention}**")
                 return
 
         # Send a message to the channel mentioning the author and the person they want to wed.
@@ -214,7 +216,7 @@ class Relationship(commands.Cog):
 
                 # Congratulate them!
                 await ctx.send(
-                    f" ૮( ´⁰▱๋⁰ )ა {ctx.author.mention} and {member.mention} are now divorced. I hope you two can find happiness in life with other people")
+                    f"**૮( ´⁰▱๋⁰ )ა {ctx.author.mention} and {member.mention} are now divorced. I hope you two can find happiness in life with other people")
 
             # if the person says no
             elif msg.content.lower() in ['n', 'no', 'nah']:

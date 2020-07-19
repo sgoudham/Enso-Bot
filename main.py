@@ -202,13 +202,13 @@ async def on_command_error(ctx, args2):
         await on_command_not_found(ctx)
 
 
-# Async def for handling cooldown error/permission errors
+# Async def for handling command not found error
 async def on_command_not_found(ctx):
-    # Send an error message to the user telling them that the command is on cooldown
+    # Send an error message to the user telling them that the command doesn't exist
     message = await ctx.send(f'**Command Not Found! Please use `{ctx.prefix}help` to see all commands**')
 
-    # Let the User read the message for 2.5 seconds
-    await asyncio.sleep(2.5)
+    # Let the User read the message for 5 seconds
+    await asyncio.sleep(5)
     # Delete the message
     await message.delete()
 
@@ -218,8 +218,8 @@ async def on_command_cooldown(ctx, error):
     # Send an error message to the user telling them that the command is on cooldown
     message = await ctx.send(f'That command is on cooldown. Try again in **{error.retry_after:,.2f}** seconds.')
 
-    # Let the User read the message for 2.5 seconds
-    await asyncio.sleep(2.5)
+    # Let the User read the message for 5 seconds
+    await asyncio.sleep(5)
     # Delete the message
     await message.delete()
 
@@ -229,8 +229,8 @@ async def on_command_permission(ctx):
     # Send an error message to the user saying that they don't have permission to use this command
     message = await ctx.send("**Uh oh! You don't have permission to use this command!**")
 
-    # Let the user read the message for 2.5 seconds
-    await asyncio.sleep(2.5)
+    # Let the user read the message for 5 seconds
+    await asyncio.sleep(5)
     # Delete the message
     await message.delete()
 
@@ -239,8 +239,8 @@ async def on_command_missing_user(ctx):
     # Send an error message to the user saying that an argument is missing
     message = await ctx.send("**Uh oh! Couldn't find anyone to mention! Try again!**")
 
-    # Let the user read the message for 2.5 seconds
-    await asyncio.sleep(2.5)
+    # Let the user read the message for 5 seconds
+    await asyncio.sleep(5)
     # Delete the message
     await message.delete()
 

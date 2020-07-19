@@ -235,7 +235,7 @@ def embeds(self):
 # Set up the Cog
 class HelpMenu(menus.Menu):
     def __init__(self, i, bot):
-        super().__init__()
+        super().__init__(timeout=60.0, delete_message_after=True)
         self.i = i
         self.bot = bot
 

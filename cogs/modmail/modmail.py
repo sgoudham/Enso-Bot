@@ -153,8 +153,9 @@ class modmail(commands.Cog):
         # Don't count reactions that are made by the bot
         if payload.user_id == self.bot.user.id:
             return
-        elif not self.bot.user.id and payload.emoji not in ['✅', '❌']:
-            return
+        elif payload.user_id:
+            if str(payload.emoji) not in ['✅', '❌']:
+                return
 
         # Find a role corresponding to the Emoji name.
         guildid = payload.guild_id

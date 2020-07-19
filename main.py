@@ -4,7 +4,7 @@ import datetime
 import discord
 import mariadb
 from decouple import config
-from discord import Embed
+from discord import Embed, Forbidden
 from discord.ext import commands
 
 import db
@@ -203,14 +203,28 @@ async def on_command_error(ctx, args2):
     # if the user provides an argument that isn't recognised
     elif isinstance(args2, commands.BadArgument):
         await on_command_bad_argument(ctx)
+    # if the bot does not permissions to send the command
+    elif isinstance(args2, Forbidden):
+        await on_command_forbidden(ctx)
 
 
-# Async def for handling command not found error
+# Async def for handling command bad argument error
+async def on_command_forbidden(ctx):
+    # Send an error message to the user telling them that the member specified could not be found
+    message = await ctx.send(f"**I don't have permissions to execute this command**")
+
+    # Let the user read the message for 5 seconds
+    await asyncio.sleep(5)
+    # Delete the message
+    await message.delete()
+
+
+# Async def for handling command bad argument error
 async def on_command_bad_argument(ctx):
-    # Send an error message to the user telling them that the command doesn't exist
+    # Send an error message to the user telling them that the member specified could not be found
     message = await ctx.send(f'**I could not find that member!**')
 
-    # Let the User read the message for 5 seconds
+    # Let the user read the message for 5 seconds
     await asyncio.sleep(5)
     # Delete the message
     await message.delete()
@@ -221,7 +235,7 @@ async def on_command_not_found(ctx):
     # Send an error message to the user telling them that the command doesn't exist
     message = await ctx.send(f'**Command Not Found! Please use `{ctx.prefix}help` to see all commands**')
 
-    # Let the User read the message for 5 seconds
+    # Let the user read the message for 5 seconds
     await asyncio.sleep(5)
     # Delete the message
     await message.delete()
@@ -232,7 +246,7 @@ async def on_command_cooldown(ctx, error):
     # Send an error message to the user telling them that the command is on cooldown
     message = await ctx.send(f'That command is on cooldown. Try again in **{error.retry_after:,.2f}** seconds.')
 
-    # Let the User read the message for 5 seconds
+    # Let the user read the message for 5 seconds
     await asyncio.sleep(5)
     # Delete the message
     await message.delete()

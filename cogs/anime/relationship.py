@@ -95,7 +95,8 @@ class Relationship(commands.Cog):
                 return
 
         # Send a message to the channel mentioning the author and the person they want to wed.
-        await ctx.send(f"{ctx.author.mention} **Proposes To** {member.mention} **Do you accept??** "
+        await ctx.send(f"{ctx.author.mention} **Proposes To** {member.mention}"
+                       f"\n**Do you accept??**"
                        f"\nRespond with [**Y**es/**N**o]")
 
         # A check that makes sure that the reply is not from the author
@@ -184,7 +185,8 @@ class Relationship(commands.Cog):
 
         # Send a message to the channel mentioning the author and the person they want to wed.
         await ctx.send(
-            f"{ctx.author.mention} **Wishes to Divorce** {member.mention} **Are you willing to break this sacred bond??**"
+            f"{ctx.author.mention} **Wishes to Divorce** {member.mention}"
+            f"\n**Are you willing to break this sacred bond?**"
             f"\nRespond with [**Y**es/**N**o]")
 
         # A check that makes sure that the reply is not from the author

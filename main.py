@@ -200,6 +200,20 @@ async def on_command_error(ctx, args2):
     # if the user tries to access a command that isn't available
     elif isinstance(args2, commands.CommandNotFound):
         await on_command_not_found(ctx)
+    # if the user provides an argument that isn't recognised
+    elif isinstance(args2, commands.BadArgument):
+        await on_command_bad_argument(ctx)
+
+
+# Async def for handling command not found error
+async def on_command_bad_argument(ctx):
+    # Send an error message to the user telling them that the command doesn't exist
+    message = await ctx.send(f'**I could not find that member!**')
+
+    # Let the User read the message for 5 seconds
+    await asyncio.sleep(5)
+    # Delete the message
+    await message.delete()
 
 
 # Async def for handling command not found error

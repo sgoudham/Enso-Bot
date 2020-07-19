@@ -15,11 +15,21 @@ from settings import blank_space, enso_embedmod_colours, enso_guild_ID, enso_new
 # Getting the Bot token from Environment Variables
 API_TOKEN = config('DISCORD_TOKEN')
 
-PREFIX = "~"
-
 
 # Method to allow the commands to be used with mentioning the bot
 async def get_prefix(bot, message):
+    with db.connection() as conn:
+        # Grab the prefix of the server from the database
+        select_query = """SELECT * FROM guilds WHERE guildID = (?)"""
+        val = message.guild.id,
+        with conn.cursor as cursor:
+            # Execute the query
+            cursor.execute(select_query, val)
+            result = cursor.fetchone()
+
+            # Store the prefix in a variable
+            PREFIX = result[1]
+
     return when_mentioned_or(PREFIX)(bot, message)
 
 

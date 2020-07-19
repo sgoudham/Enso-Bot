@@ -1,4 +1,3 @@
-import asyncio
 import datetime
 import random
 
@@ -7,7 +6,6 @@ from discord.ext import commands
 from discord.ext.commands import cooldown, command, BucketType
 
 import db
-import settings
 from settings import colour_list, enso_ensochancommands_Mention
 
 
@@ -74,37 +72,24 @@ class interactive(commands.Cog):
         # Surround with try/except to catch any exceptions that may occur
         try:
 
-            # If the channel that the command has been sent is in the list of accepted channels
-            if str(ctx.channel) in settings.channels:
+            # Open the file containing the kissing gifs
+            with open('images/FunCommands/kissing.txt') as file:
+                # Store content of the file in kissing_array
+                kissing_array = file.readlines()
 
-                # Open the file containing the kissing gifs
-                with open('images/FunCommands/kissing.txt') as file:
-                    # Store content of the file in kissing_array
-                    kissing_array = file.readlines()
+            # Get the member and the userAvatar
+            member, userAvatar = getMember(ctx)
 
-                # Get the member and the userAvatar
-                member, userAvatar = getMember(ctx)
+            # Set up the embed to display a random kissing gif
+            embed = Embed(
+                title=title,
+                colour=Colour(int(random.choice(colour_list))),
+                timestamp=datetime.datetime.utcnow())
+            embed.set_image(url=random.choice(kissing_array))
+            embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
 
-                # Set up the embed to display a random kissing gif
-                embed = Embed(
-                    title=title,
-                    colour=Colour(int(random.choice(colour_list))),
-                    timestamp=datetime.datetime.utcnow())
-                embed.set_image(url=random.choice(kissing_array))
-                embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
-
-                # Send the embedded message to the user
-                await ctx.send(embed=embed)
-
-            # else the command is sent in an invalid channel
-            else:
-                # Call error_function() and display it to the user
-                message = await ctx.send(error_function())
-
-                # Let the user read the message for 2.5 seconds
-                await asyncio.sleep(2.5)
-                # Delete the message
-                await message.delete()
+            # Send the embedded message to the user
+            await ctx.send(embed=embed)
 
         except FileNotFoundError as e:
             print(e)
@@ -152,37 +137,24 @@ class interactive(commands.Cog):
         # Surround with try/except to catch any exceptions that may occur
         try:
 
-            # If the channel that the command has been sent is in the list of accepted channels
-            if str(ctx.channel) in settings.channels:
+            # Open the file containing the cuddling gifs
+            with open('images/FunCommands/cuddling.txt') as file:
+                # Store content of the file in cuddling_array
+                cuddling_array = file.readlines()
 
-                # Open the file containing the cuddling gifs
-                with open('images/FunCommands/cuddling.txt') as file:
-                    # Store content of the file in cuddling_array
-                    cuddling_array = file.readlines()
+            # Get the member and the userAvatar
+            member, userAvatar = getMember(ctx)
 
-                # Get the member and the userAvatar
-                member, userAvatar = getMember(ctx)
+            # Set up the embed to display a random cuddling gif
+            embed = Embed(
+                title=title,
+                colour=Colour(int(random.choice(colour_list))),
+                timestamp=datetime.datetime.utcnow())
+            embed.set_image(url=random.choice(cuddling_array))
+            embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
 
-                # Set up the embed to display a random cuddling gif
-                embed = Embed(
-                    title=title,
-                    colour=Colour(int(random.choice(colour_list))),
-                    timestamp=datetime.datetime.utcnow())
-                embed.set_image(url=random.choice(cuddling_array))
-                embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
-
-                # Send the embedded message to the user
-                await ctx.send(embed=embed)
-
-            # else the command is sent in an invalid channel
-            else:
-                # Call error_function() and display it to the user
-                message = await ctx.send(error_function())
-
-                # Let the user read the message for 2.5 seconds
-                await asyncio.sleep(2.5)
-                # Delete the message
-                await message.delete()
+            # Send the embedded message to the user
+            await ctx.send(embed=embed)
 
         except FileNotFoundError as e:
             print(e)
@@ -200,37 +172,24 @@ class interactive(commands.Cog):
         # Surround with try/except to catch any exceptions that may occur
         try:
 
-            # If the channel that the command has been sent is in the list of accepted channels
-            if str(ctx.channel) in settings.channels:
+            # Open the file containing the killing gifs
+            with open('images/FunCommands/killing.txt') as file:
+                # Store content of the file in killing_array
+                killing_array = file.readlines()
 
-                # Open the file containing the killing gifs
-                with open('images/FunCommands/killing.txt') as file:
-                    # Store content of the file in killing_array
-                    killing_array = file.readlines()
+            # Get the member and the userAvatar
+            member, userAvatar = getMember(ctx)
 
-                # Get the member and the userAvatar
-                member, userAvatar = getMember(ctx)
+            # Set up the embed to display a random killing gif
+            embed = Embed(
+                title=title,
+                colour=Colour(int(random.choice(colour_list))),
+                timestamp=datetime.datetime.utcnow())
+            embed.set_image(url=random.choice(killing_array))
+            embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
 
-                # Set up the embed to display a random killing gif
-                embed = Embed(
-                    title=title,
-                    colour=Colour(int(random.choice(colour_list))),
-                    timestamp=datetime.datetime.utcnow())
-                embed.set_image(url=random.choice(killing_array))
-                embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
-
-                # Send the embedded message to the user
-                await ctx.send(embed=embed)
-
-            # else the command is sent in an invalid channel
-            else:
-                # Call error_function() and display it to the user
-                message = await ctx.send(error_function())
-
-                # Let the user read the message for 2.5 seconds
-                await asyncio.sleep(2.5)
-                # Delete the message
-                await message.delete()
+            # Send the embedded message to the user
+            await ctx.send(embed=embed)
 
         except FileNotFoundError as e:
             print(e)
@@ -248,37 +207,24 @@ class interactive(commands.Cog):
         # Surround with try/except to catch any exceptions that may occur
         try:
 
-            # If the channel that the command has been sent is in the list of accepted channels
-            if str(ctx.channel) in settings.channels:
+            # Open the file containing the cuddling gifs
+            with open('images/FunCommands/slapping.txt') as file:
+                # Store content of the file in cuddling_array
+                slapping_array = file.readlines()
 
-                # Open the file containing the cuddling gifs
-                with open('images/FunCommands/slapping.txt') as file:
-                    # Store content of the file in cuddling_array
-                    slapping_array = file.readlines()
+            # Get the member and the userAvatar
+            member, userAvatar = getMember(ctx)
 
-                # Get the member and the userAvatar
-                member, userAvatar = getMember(ctx)
+            # Set up the embed to display a random slapping gif
+            embed = Embed(
+                title=title,
+                colour=Colour(int(random.choice(colour_list))),
+                timestamp=datetime.datetime.utcnow())
+            embed.set_image(url=random.choice(slapping_array))
+            embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
 
-                # Set up the embed to display a random slapping gif
-                embed = Embed(
-                    title=title,
-                    colour=Colour(int(random.choice(colour_list))),
-                    timestamp=datetime.datetime.utcnow())
-                embed.set_image(url=random.choice(slapping_array))
-                embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
-
-                # Send the embedded message to the user
-                await ctx.send(embed=embed)
-
-            # else the command is sent in an invalid channel
-            else:
-                # Call error_function() and display it to the user
-                message = await ctx.send(error_function())
-
-                # Let the user read the message for 2.5 seconds
-                await asyncio.sleep(2.5)
-                # Delete the message
-                await message.delete()
+            # Send the embedded message to the user
+            await ctx.send(embed=embed)
 
         except FileNotFoundError as e:
             print(e)
@@ -296,37 +242,24 @@ class interactive(commands.Cog):
         # Surround with try/except to catch any exceptions that may occur
         try:
 
-            # If the channel that the command has been sent is in the list of accepted channels
-            if str(ctx.channel) in settings.channels:
+            # Open the file containing the patting gifs
+            with open('images/FunCommands/patting.txt') as file:
+                # Store content of the file in patting_array
+                patting_array = file.readlines()
 
-                # Open the file containing the patting gifs
-                with open('images/FunCommands/patting.txt') as file:
-                    # Store content of the file in patting_array
-                    patting_array = file.readlines()
+            # Get the member and the userAvatar
+            member, userAvatar = getMember(ctx)
 
-                # Get the member and the userAvatar
-                member, userAvatar = getMember(ctx)
+            # Set up the embed to display a random patting gif
+            embed = Embed(
+                title=title,
+                colour=Colour(int(random.choice(colour_list))),
+                timestamp=datetime.datetime.utcnow())
+            embed.set_image(url=random.choice(patting_array))
+            embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
 
-                # Set up the embed to display a random patting gif
-                embed = Embed(
-                    title=title,
-                    colour=Colour(int(random.choice(colour_list))),
-                    timestamp=datetime.datetime.utcnow())
-                embed.set_image(url=random.choice(patting_array))
-                embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
-
-                # Send the embedded message to the user
-                await ctx.send(embed=embed)
-
-            # else the command is sent in an invalid channel
-            else:
-                # Call error_function() and display it to the user
-                message = await ctx.send(error_function())
-
-                # Let the user read the message for 2.5 seconds
-                await asyncio.sleep(2.5)
-                # Delete the message
-                await message.delete()
+            # Send the embedded message to the user
+            await ctx.send(embed=embed)
 
         except FileNotFoundError as e:
             print(e)
@@ -348,32 +281,19 @@ class interactive(commands.Cog):
         # Surround with try/except to catch any exceptions that may occur
         try:
 
-            # If the channel that the command has been sent is in the list of accepted channels
-            if str(ctx.channel) in settings.channels:
+            # Get the member and the userAvatar
+            member, userAvatar = getMember(ctx)
 
-                # Get the member and the userAvatar
-                member, userAvatar = getMember(ctx)
+            # Set up the embed to display a random lemon gif
+            embed = Embed(
+                title=title,
+                colour=Colour(int(random.choice(colour_list))),
+                timestamp=datetime.datetime.utcnow())
+            embed.set_image(url=random.choice(lemon_array))
+            embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
 
-                # Set up the embed to display a random lemon gif
-                embed = Embed(
-                    title=title,
-                    colour=Colour(int(random.choice(colour_list))),
-                    timestamp=datetime.datetime.utcnow())
-                embed.set_image(url=random.choice(lemon_array))
-                embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
-
-                # Send the embedded message to the user
-                await ctx.send(embed=embed)
-
-                # else the command is sent in an invalid channel
-            else:
-                # Call error_function() and display it to the user
-                message = await ctx.send(error_function())
-
-                # Let the user read the message for 2.5 seconds
-                await asyncio.sleep(2.5)
-                # Delete the message
-                await message.delete()
+            # Send the embedded message to the user
+            await ctx.send(embed=embed)
 
         except FileNotFoundError as e:
             print(e)
@@ -390,38 +310,24 @@ class interactive(commands.Cog):
 
         # Surround with try/except to catch any exceptions that may occur
         try:
+            # Open the file containing the choking gifs
+            with open('images/FunCommands/choking.txt') as file:
+                # Store content of the file in choking_array
+                choking_array = file.readlines()
 
-            # If the channel that the command has been sent is in the list of accepted channels
-            if str(ctx.channel) in settings.channels:
+            # Get the member and the userAvatar
+            member, userAvatar = getMember(ctx)
 
-                # Open the file containing the choking gifs
-                with open('images/FunCommands/choking.txt') as file:
-                    # Store content of the file in choking_array
-                    choking_array = file.readlines()
+            # Set up the embed to display a random choking gif
+            embed = Embed(
+                title=title,
+                colour=Colour(int(random.choice(colour_list))),
+                timestamp=datetime.datetime.utcnow())
+            embed.set_image(url=random.choice(choking_array))
+            embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
 
-                # Get the member and the userAvatar
-                member, userAvatar = getMember(ctx)
-
-                # Set up the embed to display a random choking gif
-                embed = Embed(
-                    title=title,
-                    colour=Colour(int(random.choice(colour_list))),
-                    timestamp=datetime.datetime.utcnow())
-                embed.set_image(url=random.choice(choking_array))
-                embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
-
-                # Send the embedded message to the user
-                await ctx.send(embed=embed)
-
-            # else the command is sent in an invalid channel
-            else:
-                # Call error_function() and display it to the user
-                message = await ctx.send(error_function())
-
-                # Let the user read the message for 2.5 seconds
-                await asyncio.sleep(2.5)
-                # Delete the message
-                await message.delete()
+            # Send the embedded message to the user
+            await ctx.send(embed=embed)
 
         except FileNotFoundError as e:
             print(e)
@@ -439,37 +345,24 @@ class interactive(commands.Cog):
         # Surround with try/except to catch any exceptions that may occur
         try:
 
-            # If the channel that the command has been sent is in the list of accepted channels
-            if str(ctx.channel) in settings.channels:
+            # Open the file containing the hug gifs
+            with open('images/FunCommands/hugging.txt') as file:
+                # Store content of the file in hugging_array
+                hugging_array = file.readlines()
 
-                # Open the file containing the hug gifs
-                with open('images/FunCommands/hugging.txt') as file:
-                    # Store content of the file in hugging_array
-                    hugging_array = file.readlines()
+            # Get the member and the userAvatar
+            member, userAvatar = getMember(ctx)
 
-                # Get the member and the userAvatar
-                member, userAvatar = getMember(ctx)
+            # Set up the embed to display a random hugging gif
+            embed = Embed(
+                title=title,
+                colour=Colour(int(random.choice(colour_list))),
+                timestamp=datetime.datetime.utcnow())
+            embed.set_image(url=random.choice(hugging_array))
+            embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
 
-                # Set up the embed to display a random hugging gif
-                embed = Embed(
-                    title=title,
-                    colour=Colour(int(random.choice(colour_list))),
-                    timestamp=datetime.datetime.utcnow())
-                embed.set_image(url=random.choice(hugging_array))
-                embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
-
-                # Send the embedded message to the user
-                await ctx.send(embed=embed)
-
-            # else the command is sent in an invalid channel
-            else:
-                # Call error_function() and display it to the user
-                message = await ctx.send(error_function())
-
-                # Let the user read the message for 2.5 seconds
-                await asyncio.sleep(2.5)
-                # Delete the message
-                await message.delete()
+            # Send the embedded message to the user
+            await ctx.send(embed=embed)
 
         except FileNotFoundError as e:
             print(e)

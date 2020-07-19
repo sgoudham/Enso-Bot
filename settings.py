@@ -71,8 +71,7 @@ def extensions():
     anime_ext = ['cogs.anime.interactive', 'cogs.anime.waifu_husbandos', 'cogs.anime.relationship']
 
     help_ext = ['cogs.help.admin', 'cogs.help.help', 'cogs.help.self_roles',
-                'cogs.help.info', 'cogs.help.verification', 'cogs.help.oldmodmail',
-                'cogs.help.test']
+                'cogs.help.info', 'cogs.help.verification', 'cogs.help.test']
 
     fun_ext = ['cogs.fun.eightball', 'cogs.fun.enso', 'cogs.fun.fun',
                'cogs.fun.owo_text', 'cogs.fun.reminder', 'cogs.fun.homies',

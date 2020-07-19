@@ -32,6 +32,7 @@ async def storage_prefix_for_guild(ctx, prefix):
             cur.execute(update_query, update_vals)
             print(cur.rowcount, f"Guild prefix has been updated for guild {ctx.guild.name}")
 
+    # Let the user know that the guild prefix has been updated
     await ctx.send(f"**Guild prefix has been updated to `{prefix}`**")
 
 
@@ -40,6 +41,7 @@ def cache_prefix(guildid, prefix):
     cached_prefixes[guildid] = prefix
 
 
+# Get the prefix of the guild that the user is in
 def get_prefix_for_guild(guildid):
     prefix = cached_prefixes[guildid]
     if prefix is not None:
@@ -47,6 +49,7 @@ def get_prefix_for_guild(guildid):
     return "defaultPrefix"
 
 
+# Before initialising the cache. Store the prefixes from the database within the cache
 with db.connection() as conn:
     # Grab the prefix of the server from the database
     select_query = """SELECT * FROM guilds"""

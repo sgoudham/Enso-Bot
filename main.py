@@ -41,6 +41,11 @@ def cache_prefix(guildid, prefix):
     cached_prefixes[guildid] = prefix
 
 
+# Deleting the key - value pair for guild
+def del_cache_prefix(guildid):
+    del cached_prefixes[guildid]
+
+
 # Get the prefix of the guild that the user is in
 def get_prefix_for_guild(guildid):
     prefix = cached_prefixes[guildid]
@@ -135,6 +140,9 @@ async def on_ready():
 # Bot event for the bot joining a new guild, storing all users in the database
 @client.event
 async def on_guild_join(guild):
+    # Store the default prefix when the bot joins a guild
+    cache_prefix(str(guild.id), prefix="~")
+
     try:
         # Set up connection to database
         with db.connection() as conn:
@@ -165,6 +173,9 @@ async def on_guild_join(guild):
 # Bot event for the bot leaving a guild, deleted all users stored in the database
 @client.event
 async def on_guild_remove(guild):
+    # Delete the key - value pair for the guild
+    del_cache_prefix(str(guild.id))
+
     try:
         # Set up connection to database
         with db.connection() as conn:
@@ -183,7 +194,7 @@ async def on_guild_remove(guild):
             with closing(conn.cursor()) as cursor:
                 # Execute the query
                 cursor.execute(delete_query, val)
-                print(cursor.rowcount, f"Record deleted successfully from Guilds from {guild.name}")
+                print(cursor.rowcount, f"Record deleted successfully from Guild {guild.name}")
 
     except mariadb.Error as ex:
         print("Parameterized Query Failed: {}".format(ex))

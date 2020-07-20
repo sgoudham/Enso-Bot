@@ -9,7 +9,7 @@ from discord.ext.commands import cooldown, BucketType, command
 
 import settings
 from cogs.anime.interactive import error_function
-from settings import colour_list
+from settings import colour_list, enso_guild_ID
 
 
 # Gets the member and user avatar
@@ -47,7 +47,7 @@ class Enso(commands.Cog):
     @cooldown(1, 1, BucketType.user)
     async def enso_person(self, ctx, name=None):
 
-        if not ctx.guild.id == settings.enso_guild_ID:
+        if not ctx.guild.id == enso_guild_ID:
             await ctx.send("**Sorry! That command is only for a certain guild!**")
             return
 

@@ -54,7 +54,6 @@ def DetectPermissions(message, fset):
 class info(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.bot.VERSION = "1.4.1"
 
     @command(name="userinfo", aliases=["ui"])
     @cooldown(1, 5, BucketType.user)
@@ -203,7 +202,7 @@ class info(commands.Cog):
         await ctx.send(embed=embed)
 
     @command(name="stats")
-    async def checking_bot_status(self, ctx):
+    async def checking_bot_stats(self, ctx):
         """Bot Statistics (CPU/Mem Usage etc)"""
 
         stats = Embed(title="Bot Stats",
@@ -221,7 +220,7 @@ class info(commands.Cog):
             mem_usage = mem_total * (mem_of_total / 100)
 
         fields = [
-            ("Bot Version", self.bot.VERSION, True),
+            ("Bot Version", "1.7.2", True),
             ("Python Version", python_version(), True),
             ("Discord.py Version", discord_version, True),
             ("Uptime", uptime, True),

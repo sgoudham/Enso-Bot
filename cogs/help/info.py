@@ -215,7 +215,8 @@ class Info(commands.Cog):
         with proc.oneshot():
             uptime = datetime.timedelta(seconds=time() - proc.create_time())
             cpu = proc.cpu_times()
-            cpu_time = datetime.timedelta(seconds=cpu.system + cpu.user)
+            if cpu:
+                cpu_time = datetime.timedelta(seconds=cpu.system + cpu.user)
             mem_total = virtual_memory().total / (1024 ** 2)
             mem_of_total = proc.memory_percent()
             mem_usage = mem_total * (mem_of_total / 100)

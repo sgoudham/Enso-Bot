@@ -51,7 +51,7 @@ def DetectPermissions(message, fset):
     return ", ".join(filtered)
 
 
-class info(commands.Cog):
+class Info(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -220,13 +220,22 @@ class info(commands.Cog):
             mem_of_total = proc.memory_percent()
             mem_usage = mem_total * (mem_of_total / 100)
 
+        cpu_hours, cpu_remainder = divmod(cpu_time.seconds, 3600)
+        cpu_minutes, cpu_seconds = divmod(cpu_remainder, 60)
+        uptime_hours, uptime_remainder = divmod(uptime.seconds, 3600)
+        uptime_minutes, uptime_seconds = divmod(uptime_remainder, 60)
+        frmt_uptime = '{:01} Hours, {:01} Minutes, {:01} Seconds'.format(int(uptime_hours), int(uptime_minutes),
+                                                                         int(uptime_seconds))
+        frmt_cputime = '{:01} Hours, {:01} Minutes, {:01} Seconds'.format(int(cpu_hours), int(cpu_minutes),
+                                                                          int(cpu_seconds))
+
         # Setting up fields
         fields = [
-            ("Bot Version", "1.7.2", True),
-            ("Python Version", python_version(), True),
-            ("Discord.py Version", discord_version, True),
-            ("Uptime", uptime, True),
-            ("CPU Time", cpu_time, True),
+            ("Developer", "Hamothy#5619", True),
+            ("Bot Version", "1.7.2", False),
+            ("Language | Library", f"Python {python_version()} | Discord.py {discord_version}", False),
+            ("Uptime", frmt_uptime, True),
+            ("CPU Time", frmt_cputime, True),
             ("Memory Usage", f"{mem_usage:,.2f} / {mem_total:,.2f} MiB ({mem_of_total:.2f}%)", False),
             ("Guilds", f"{len(self.bot.guilds)}", True),
             ("Users", f"{len(self.bot.users):,}", True)
@@ -240,4 +249,4 @@ class info(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(info(bot))
+    bot.add_cog(Info(bot))

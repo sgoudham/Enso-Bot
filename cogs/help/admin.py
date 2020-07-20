@@ -5,7 +5,7 @@ from discord import Embed
 from discord.ext import commands
 from discord.ext.commands import command, cooldown, BucketType
 
-from settings import enso_embedmod_colours, blank_space
+from settings import enso_embedmod_colours, blank_space, enso_guild_ID
 
 
 # Method to retrieve information about the user and the guild
@@ -22,7 +22,7 @@ def get_user_info(self, ctx):
 
 
 # Set up the Cog
-class CustomHelp(commands.Cog):
+class rules_roles(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -30,6 +30,11 @@ class CustomHelp(commands.Cog):
     @command(name="rules", aliases=["Rules"])
     @cooldown(1, 5, BucketType.user)
     async def rules(self, ctx):
+        # Making sure this command only works in Enso
+        if not ctx.guild.id == enso_guild_ID:
+            await ctx.send("**Sorry! That command is only for a certain guild!**")
+            return
+
         # Define Izzy's roles ID
         izzyID = '<@397944038440828928>'
 
@@ -148,6 +153,11 @@ class CustomHelp(commands.Cog):
     @command(name="roles", aliases=["Roles"])
     @cooldown(1, 5, BucketType.user)
     async def roles(self, ctx):
+        # Making sure this command only works in Enso
+        if not ctx.guild.id == enso_guild_ID:
+            await ctx.send("**Sorry! That command is only for a certain guild!**")
+            return
+
         # Get the url of the leveled roles image
         roles_image = "https://media.discordapp.net/attachments/669812887564320769/717149671771996180/unknown.png"
 
@@ -198,4 +208,4 @@ def helpDm():
 
 
 def setup(bot):
-    bot.add_cog(CustomHelp(bot))
+    bot.add_cog(rules_roles(bot))

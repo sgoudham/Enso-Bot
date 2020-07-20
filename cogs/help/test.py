@@ -1,60 +1,65 @@
-import discord
+import datetime
+
+from discord import Embed
 from discord.ext import commands
 
+from settings import enso_embedmod_colours
 
-# Set up the cog
-class testinghelp(commands.Cog):
+
+class helper(commands.Cog, command_attrs=dict(hidden=True)):
+    """Help Command!"""
+
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(name="help2")
-    @commands.has_permissions(add_reactions=True, embed_links=True)
-    async def help(self, ctx, *cog):
-        """Gets all cogs and commands of mine."""
-        try:
-            if not cog:
-                """Cog listing.  What more?"""
-                halp = discord.Embed(title='Cog Listing and Uncatergorized Commands',
-                                     description='Use `~help *cog*` to find out more about them!\n(BTW, the Cog Name Must Be in Title Case, Just Like this Sentence.)')
-                cogs_desc = ''
-                for x in self.bot.cogs:
-                    cogs_desc += ('{} - {}'.format(x, self.bot.cogs[x].__doc__) + '\n')
-                halp.add_field(name='Cogs', value=cogs_desc[0:len(cogs_desc) - 1], inline=False)
-                cmds_desc = ''
-                for y in self.bot.walk_commands():
-                    if not y.cog_name and not y.hidden:
-                        cmds_desc += ('{} - {}'.format(y.name, y.help) + '\n')
-                halp.add_field(name='Uncatergorized Commands', value=cmds_desc[0:len(cmds_desc) - 1], inline=False)
-                await ctx.message.add_reaction(emoji='✉')
-                await ctx.message.author.send('', embed=halp)
+    @commands.command(hidden=True)
+    async def help2(self, ctx, *cog):
+        if not cog:
+            coggers = Embed(title="(っ◔◡◔)っ Custom Help (っ◔◡◔)っ",
+                            colour=enso_embedmod_colours,
+                            timestamp=datetime.datetime.utcnow(), )
+            coggers.set_thumbnail(url=ctx.guild.icon_url)
+            cog_desc = ''
+            for x in self.bot.cogs:
+                cog_desc += f"**{x}** - {self.bot.cogs[x].__doc__}\n"
+            coggers.add_field(name="Cogs", value=cog_desc[0:len(cog_desc) - 1], inline=False)
+            await ctx.message.add_reaction(emoji="✉️")
+            await ctx.send(embed=coggers)
+        else:
+            if len(cog) > 1:
+                coggers = Embed(title="Error!",
+                                description="Too Many Cogs!",
+                                colour=enso_embedmod_colours)
+                await ctx.send(embed=coggers)
             else:
-                """Helps me remind you if you pass too many args."""
-                if len(cog) > 1:
-                    halp = discord.Embed(title='Error!', description='That is way too many cogs!',
-                                         color=discord.Color.red())
-                    await ctx.message.author.send('', embed=halp)
-                else:
-                    """Command listing within a cog."""
-                    found = False
+                found = False
+                for x in self.bot.cogs:
+                    for y in cog:
+                        if x == y:
+                            coggers = Embed(colour=enso_embedmod_colours)
+                            cogger_info = ''
+                            for c in self.bot.get_cog(y).get_commands():
+                                if not c.hidden:
+                                    cogger_info += f"**{c.name}** - {c.help}\n"
+                            coggers.add_field(name=f"{cog[0]} Module - {self.bot.cogs[cog[0]].__doc__}",
+                                              value=cogger_info)
+                            found = True
+                if not found:
                     for x in self.bot.cogs:
-                        for y in cog:
-                            if x == y:
-                                halp = discord.Embed(title=cog[0] + ' Command Listing',
-                                                     description=self.bot.cogs[cog[0]].__doc__)
-                                for c in self.bot.get_cog(y).get_commands():
-                                    if not c.hidden:
-                                        halp.add_field(name=c.name, value=c.help, inline=False)
+                        for c in self.bot.get_cog(x).get_commands():
+                            if c.name == cog[0]:
+                                coggers = Embed(colour=enso_embedmod_colours)
+                                coggers.add_field(name=f"{c.name} - {c.help}",
+                                                  value=f"Proper Syntax:\n`{c.qualified_name} {c.signature}`")
                                 found = True
                     if not found:
-                        """Reminds you if that cog doesn't exist."""
-                        halp = discord.Embed(title='Error!', description='How do you even use "' + cog[0] + '"?',
-                                             color=discord.Color.red())
-                    else:
-                        await ctx.message.add_reaction(emoji='✉')
-                    await ctx.message.author.send('', embed=halp)
-        except:
-            await ctx.send("Excuse me, I can't send embeds.")
+                        coggers = Embed(title="Error!",
+                                        description=f"How do you even use `{cog[0]}`?",
+                                        colour=enso_embedmod_colours)
+                else:
+                    await ctx.message.add_reaction(emoji="✉️")
+                await ctx.send(embed=coggers)
 
 
 def setup(bot):
-    bot.add_cog(testinghelp(bot))
+    bot.add_cog(helper(bot))

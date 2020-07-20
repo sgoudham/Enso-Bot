@@ -58,7 +58,7 @@ class Verification(commands.Cog):
                     await general.send(general_welcome)
 
     # Allowing people to get ping-able self roles
-    @command(name="verification")
+    @command(name="verification", hidden=True)
     @is_owner()
     async def verification(self, ctx):
         # Set up embed to let the user know that they have to react with ✅

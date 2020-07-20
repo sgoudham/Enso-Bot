@@ -210,6 +210,7 @@ class info(commands.Cog):
                       timestamp=datetime.datetime.utcnow())
         stats.set_thumbnail(url=ctx.guild.icon_url)
 
+        # Grabbing technical statistics of the bot
         proc = Process()
         with proc.oneshot():
             uptime = datetime.timedelta(seconds=time() - proc.create_time())
@@ -219,6 +220,7 @@ class info(commands.Cog):
             mem_of_total = proc.memory_percent()
             mem_usage = mem_total * (mem_of_total / 100)
 
+        # Setting up fields
         fields = [
             ("Bot Version", "1.7.2", True),
             ("Python Version", python_version(), True),

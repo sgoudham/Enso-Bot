@@ -4,3 +4,4 @@ aiohttp
 discord
 mariadb
 psutil
+APScheduler

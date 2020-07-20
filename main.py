@@ -111,9 +111,12 @@ async def _ping(ctx):
 async def change_prefix(ctx, new: Optional[str]):
     # As long as a new prefix has been given and is less than 5 characters
     if new and len(new) < 5:
-
-        # Store the new prefix in the dictionary and update the database
-        await storage_prefix_for_guild(ctx, new)
+        if len(new) > 1:
+            spaced_prefix = f"{new} "
+            await storage_prefix_for_guild(ctx, new)
+        else:
+            # Store the new prefix in the dictionary and update the database
+            await storage_prefix_for_guild(ctx, new)
 
     # Making sure that errors are handled if prefix is above 5 characters
     elif new and len(new) > 5:

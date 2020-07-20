@@ -113,7 +113,7 @@ async def change_prefix(ctx, new: Optional[str]):
     if new and len(new) < 5:
         if len(new) > 1:
             spaced_prefix = f"{new} "
-            await storage_prefix_for_guild(ctx, new)
+            await storage_prefix_for_guild(ctx, spaced_prefix)
         else:
             # Store the new prefix in the dictionary and update the database
             await storage_prefix_for_guild(ctx, new)

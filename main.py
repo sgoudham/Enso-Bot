@@ -1,5 +1,6 @@
 import asyncio
 import datetime
+import random
 from contextlib import closing
 from typing import Optional
 
@@ -7,7 +8,7 @@ import discord
 import mariadb
 from decouple import config
 from discord import Embed
-from discord.ext import commands
+from discord.ext import commands, tasks
 from discord.ext.commands import when_mentioned_or, has_permissions, guild_only
 
 import db
@@ -77,11 +78,16 @@ async def get_prefix(bot, message):
     return when_mentioned_or(get_prefix_for_guild(str(message.guild.id)))(bot, message)
 
 
+def get_version():
+    return "1.7.2"
+
+
 # Bot Initiation
 client = commands.Bot(  # Create a new bot
     command_prefix=get_prefix,  # Set the prefix
     description='All current available commands within Ensō~Chan',  # Set a description for the bot
-    owner_id=154840866496839680)  # Your unique User ID
+    owner_id=154840866496839680,  # Your unique User ID
+    version=get_version)  # Version number of Ensō~Chan
 
 # Calls the cogs from the settings.py file and loads them
 (anime, helps, fun, modmail) = settings.extensions()
@@ -126,16 +132,42 @@ async def on_message(message):
     await client.process_commands(message)
 
 
+@tasks.loop(seconds=10, reconnect=True)
+async def change_status():
+    """Creating Custom Statuses as a Background Task"""
+
+    # Waiting for the bot to ready
+    await client.wait_until_ready()
+    # Get all the guilds
+    guilds = client.guilds
+    # Choose a random guild
+    guild = random.choice(guilds)
+    # Choose a random member from the guild
+    member = random.choice(guild.members)
+
+    # Choose a random status
+    looping_statuses = random.choice(
+        [
+            discord.Activity(
+                type=discord.ActivityType.watching,
+                name=f"{len(client.users)} Users | Version : {get_version()}"),
+            discord.Activity(
+                type=discord.ActivityType.watching,
+                name=f"{member.name} | {guild.name} | Version : {get_version()}"),
+            discord.Game(name=f"~help | Version - {get_version()}")
+        ]
+    )
+    await client.change_presence(activity=looping_statuses)
+
+
+change_status.start()
+
+
 # Bot Status on Discord
 @client.event
 async def on_ready():
     # Tells me that the bot is ready and logged in
     print('Bot is ready.')
-
-    # Sets the bots status on discord for everyone to view
-    await client.change_presence(
-        activity=discord.Game(name="with yo feelings 😍 😳 🙈"))
-    # await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="Spider Man 3"))
 
 
 # Bot event for the bot joining a new guild, storing all users in the database

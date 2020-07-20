@@ -47,6 +47,7 @@ class Enso(commands.Cog):
     @cooldown(1, 1, BucketType.user)
     async def enso_person(self, ctx, name=None):
 
+        # Making sure this command only works in Enso
         if not ctx.guild.id == enso_guild_ID:
             await ctx.send("**Sorry! That command is only for a certain guild!**")
             return

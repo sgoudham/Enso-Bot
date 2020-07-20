@@ -47,6 +47,9 @@ class Enso(commands.Cog):
     @cooldown(1, 1, BucketType.user)
     async def enso_person(self, ctx, name=None):
 
+        if not ctx.guild.id == settings.enso_guild_ID:
+            return
+
         # Defining array of all the people that have images stored in the bot
         array = ['hammy', 'hussein', 'inna', 'kate', 'calvin',
                  'lukas', 'stitch', 'corona', 'ging', 'ash',

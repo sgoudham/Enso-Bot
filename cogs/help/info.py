@@ -1,13 +1,20 @@
 import datetime
 import random
 import string
+from asyncio.subprocess import Process
+from platform import python_version
+from time import time
 from typing import Optional
 
-from discord import Embed, Member, Colour
+from discord import Embed
+from discord import Member, Colour
+from discord import __version__ as discord_version
 from discord.ext import commands
-from discord.ext.commands import BucketType, cooldown, command
+from discord.ext.commands import BucketType, cooldown
+from discord.ext.commands import command
+from psutil import Process, virtual_memory
 
-from settings import colour_list
+from settings import colour_list, enso_embedmod_colours
 
 # Using forzenset
 # Permissions to filter through
@@ -44,9 +51,10 @@ def DetectPermissions(message, fset):
     return ", ".join(filtered)
 
 
-class GetInfo(commands.Cog):
+class info(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.bot.VERSION = "1.4.1"
 
     @command(name="userinfo", aliases=["ui"])
     @cooldown(1, 5, BucketType.user)
@@ -194,6 +202,41 @@ class GetInfo(commands.Cog):
         # Send the embed to the channel that the command was triggered in
         await ctx.send(embed=embed)
 
+    @command(name="stats")
+    async def checking_bot_status(self, ctx):
+        """Bot Statistics (CPU/Mem Usage etc)"""
+
+        stats = Embed(title="Bot Stats",
+                      colour=enso_embedmod_colours,
+                      timestamp=datetime.datetime.utcnow())
+        stats.set_thumbnail(url=ctx.guild.icon_url)
+
+        proc = Process()
+        with proc.oneshot():
+            uptime = datetime.timedelta(seconds=time() - proc.create_time())
+            cpu = proc.cpu_times()
+            cpu_time = datetime.timedelta(seconds=cpu.system + cpu.user)
+            mem_total = virtual_memory().total / (1024 ** 2)
+            mem_of_total = proc.memory_percent()
+            mem_usage = mem_total * (mem_of_total / 100)
+
+        fields = [
+            ("Bot Version", self.bot.VERSION, True),
+            ("Python Version", python_version(), True),
+            ("Discord.py Version", discord_version, True),
+            ("Uptime", uptime, True),
+            ("CPU Time", cpu_time, True),
+            ("Memory Usage", f"{mem_usage:,.2f} / {mem_total:,.2f} MiB ({mem_of_total:.2f}%)", False),
+            ("Guilds", f"{len(self.bot.guilds)}", True),
+            ("Users", f"{len(self.bot.users):,}", True)
+        ]
+
+        # Add fields to the embed
+        for name, value, inline in fields:
+            stats.add_field(name=name, value=value, inline=inline)
+
+        await ctx.send(embed=stats)
+
 
 def setup(bot):
-    bot.add_cog(GetInfo(bot))
+    bot.add_cog(info(bot))

@@ -159,7 +159,7 @@ def help_menu(self, guild_icon):
     modmail.set_thumbnail(url=guild_icon)
 
     # Setting up the fields in a separate array
-    modmail_fields = [(f"**{self.ctx.prefix}mmsetup setup modmail `<channelID>`**",
+    modmail_fields = [(f"**{self.ctx.prefix}mmsetup set modmail `<channelID>`**",
                        "Sets up the modmail system in the guild,"
                        "channelID given will be the channel that the user will interact with", False),
                       (f"**{self.ctx.prefix}mmsetup update modmail `<channelID>`**",
@@ -300,7 +300,7 @@ class HelpMenu(menus.Menu):
 
 
 # Set up the cog
-class ReactionMenu(commands.Cog):
+class CustomHelp(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.bot.remove_command("help")
@@ -318,4 +318,4 @@ class ReactionMenu(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(ReactionMenu(bot))
+    bot.add_cog(CustomHelp(bot))

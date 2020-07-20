@@ -226,7 +226,7 @@ class Relationship(commands.Cog):
 
                 # Try to console the person and wish them the best in their life
                 await ctx.send(
-                    f"**{ctx.author.mention}Sorry but you're gonna need {member.mention}'s consent to move forward with this!**")
+                    f"**{ctx.author.mention} Sorry but you're gonna need {member.mention}'s consent to move forward with this!**")
 
             else:
                 # Abort the process as the message sent did not make sense

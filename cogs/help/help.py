@@ -145,6 +145,8 @@ def help_menu(self, guild_icon):
          "\nReturns information about the user", True),
         (f"**{self.ctx.prefix}serverinfo**",
          "\nReturns information about the server", True),
+        (f"**{self.ctx.prefix}prefix `<new_prefix>`**",
+         "\nView current prefix/Update current prefix", True),
         (f"**{self.ctx.prefix}help**",
          "\nSee every command in the bot", True)]
 
@@ -174,12 +176,14 @@ def help_menu(self, guild_icon):
     msc.set_thumbnail(url=guild_icon)
 
     # Setting up the fields in a separate array
-    msc_fields = [(f"**{self.ctx.prefix}ping**", "\nReturns latency in ms", True),
-                  (f"**{self.ctx.prefix}dm `<person>`**",
+    msc_fields = [(f"**{self.ctx.prefix}dm `<person>`**",
                    f"\nFor admins to DM Users" +
                    "\n**(Perms: Co-Owner)**", True),
                   (f"**{self.ctx.prefix}remindme `<time>` `<text>`**",
-                   "\nGet Enso~Chan to remind you in DMs", True)]
+                   "\nGet Enso~Chan to remind you in DMs", True),
+                  (f"**{self.ctx.prefix}stats**",
+                   "\nView bot statistics (CPU/Mem Usage etc)", True),
+                  (f"**{self.ctx.prefix}ping**", "\nReturns latency in ms", True)]
 
     # Defining dictionary of embeds as keys, list of fields as values
     help_dict = {
@@ -221,7 +225,7 @@ def embeds(self):
 # Set up the Cog
 class HelpMenu(menus.Menu):
     def __init__(self, i, bot):
-        super().__init__(timeout=60.0, delete_message_after=True)
+        super().__init__(timeout=125.0, delete_message_after=True)
         self.i = i
         self.bot = bot
 

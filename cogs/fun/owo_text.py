@@ -14,9 +14,9 @@ class OwOText(commands.Cog):
     @cooldown(1, 1, BucketType.user)
     async def owo(self, ctx):
         # Making sure that the string that gets converted is excluding the ~owo
-        if ctx.message.content.startswith("~owo"):
+        if ctx.message.content.startswith(f"{ctx.prefix}owo"):
             # Get the message to be converted
-            msg = ctx.message.content.split("~owo ", 1)
+            msg = ctx.message.content.split(f"{ctx.prefix}owo ", 1)
 
             # Convert the message into owo text
             uwu = OwO()

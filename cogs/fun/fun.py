@@ -3,7 +3,7 @@ import random
 
 from discord import Member, Colour, Embed
 from discord.ext import commands
-from discord.ext.commands import BucketType, cooldown, command, has_any_role, is_owner
+from discord.ext.commands import BucketType, cooldown, command, is_owner
 
 from settings import colour_list
 
@@ -14,7 +14,7 @@ class Fun(commands.Cog):
         self.bot = bot
 
     @command(name="attack", aliases=['Attack'], hidden=True)
-    @has_any_role(664585078487252993, 715412394968350756)
+    @is_owner()
     async def attack(self, ctx, target: Member):
         """Allows Co-Owners to throw insults at people"""
 

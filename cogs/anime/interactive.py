@@ -25,7 +25,9 @@ def error_function():
 
 
 # Set up the Cog
-class interactive(commands.Cog):
+class Interactive(commands.Cog):
+    """Interactive Commands! (E.G Kiss/Hug/Cuddle)"""
+
     def __init__(self, bot):
         self.bot = bot
 
@@ -369,4 +371,4 @@ class interactive(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(interactive(bot))
+    bot.add_cog(Interactive(bot))

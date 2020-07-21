@@ -73,9 +73,7 @@ def extensions():
     help_ext = ['cogs.help.admin', 'cogs.help.help', 'cogs.help.self_roles',
                 'cogs.help.info', 'cogs.help.verification', 'cogs.help.test']
 
-    fun_ext = ['cogs.fun.eightball', 'cogs.fun.enso', 'cogs.fun.fun',
-               'cogs.fun.owo_text', 'cogs.fun.reminder', 'cogs.fun.homies',
-               'cogs.fun.doggo']
+    fun_ext = ['cogs.fun.fun', 'cogs.fun.enso']
 
     modmail_ext = ['cogs.modmail.setup', 'cogs.modmail.modmail']
 

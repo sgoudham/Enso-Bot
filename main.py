@@ -140,7 +140,7 @@ async def on_message(message):
     await client.process_commands(message)
 
 
-@tasks.loop(seconds=30, reconnect=True)
+@tasks.loop(seconds=10.0, reconnect=True)
 async def change_status():
     """Creating Custom Statuses as a Background Task"""
 

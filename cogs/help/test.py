@@ -17,7 +17,7 @@ class helper(commands.Cog, command_attrs=dict(hidden=True)):
         if not cog:
             coggers = Embed(title="(っ◔◡◔)っ Custom Help (っ◔◡◔)っ",
                             colour=enso_embedmod_colours,
-                            timestamp=datetime.datetime.utcnow(), )
+                            timestamp=datetime.datetime.utcnow())
             coggers.set_thumbnail(url=ctx.guild.icon_url)
             cog_desc = ''
             for x in self.bot.cogs:
@@ -50,7 +50,7 @@ class helper(commands.Cog, command_attrs=dict(hidden=True)):
                             if c.name == cog[0]:
                                 coggers = Embed(colour=enso_embedmod_colours)
                                 coggers.add_field(name=f"{c.name} - {c.help}",
-                                                  value=f"Proper Syntax:\n`{c.qualified_name} {c.signature}`")
+                                                  value=f"Proper Syntax: `{c.qualified_name} {c.signature}`")
                                 found = True
                     if not found:
                         coggers = Embed(title="Error!",

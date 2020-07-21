@@ -80,7 +80,7 @@ async def get_prefix(bot, message):
 
 
 def get_version():
-    return "1.7.2"
+    return "v1.7.2"
 
 
 # Bot Initiation
@@ -158,11 +158,11 @@ async def change_status():
         [
             discord.Activity(
                 type=discord.ActivityType.watching,
-                name=f"{len(client.users)} Weebs | Version : {get_version()}"),
+                name=f"{len(client.users)} Weebs | {get_version()}"),
             discord.Activity(
                 type=discord.ActivityType.watching,
-                name=f"{string.capwords(member.name.capitalize())} | {guild.name} | Version : {get_version()}"),
-            discord.Game(name=f"~help | Version - {get_version()}")
+                name=f"{string.capwords(member.name.capitalize())} | {guild.name} | {get_version()}"),
+            discord.Game(name=f"~help | {get_version()}")
         ]
     )
     await client.change_presence(activity=looping_statuses)

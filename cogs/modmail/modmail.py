@@ -152,12 +152,12 @@ class Modmail(commands.Cog, command_attrs=dict(hidden=True)):
         self.anon = None
 
     @commands.group(invoke_without_command=True)
-    async def mmsetup(self, ctx):
+    async def modmail(self, ctx):
         pass
 
-    @mmsetup.command()
-    async def set(self, ctx, channelID: int):
-        """Set modmail system"""
+    @modmail.command()
+    async def setup(self, ctx, channelID: int):
+        """Setup modmail system"""
 
         # Retrieve a list of channel id's in the guild
         channels = [channel.id for channel in ctx.guild.channels]
@@ -246,7 +246,7 @@ class Modmail(commands.Cog, command_attrs=dict(hidden=True)):
             await ctx.send("**Invalid Channel ID. Aborting Process...**")
             return
 
-    @mmsetup.command()
+    @modmail.command()
     async def update(self, ctx, channelID: int):
         """Update modmail system"""
 
@@ -297,7 +297,7 @@ class Modmail(commands.Cog, command_attrs=dict(hidden=True)):
             await ctx.send("**Invalid Channel ID. Aborting Process...**")
             return
 
-    @mmsetup.command()
+    @modmail.command()
     async def delete(self, ctx):
         """Delete modmail system"""
 

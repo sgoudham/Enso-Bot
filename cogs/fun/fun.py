@@ -142,7 +142,7 @@ class Fun(commands.Cog):
             f"{target.mention} Your wedding will be wonderful, but the y is silent <a:huh:676195228872474643> <a:huh:676195228872474643>",
             f"{target.mention} I would give up my lifelong goals just to have a chance with you <a:huh:676195228872474643> <a:huh:676195228872474643>",
             f"{target.mention} Will you be the **yee** to my **haw**? :pleading_face: :pleading_face:",
-            f"{target.mention} is the definition of perfection :heart_eyes: :heart_eyes:"
+            f"{target.mention} is the definition of perfection :heart_eyes: :heart_eyes:",
             f"{target.mention} My love for you is bigger than the amount of code Hammy has written <:Kawaii:676203363922214953> <:Kawaii:676203363922214953> <:Kawaii:676203363922214953>"
         ]
 

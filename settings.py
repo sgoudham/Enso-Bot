@@ -70,8 +70,7 @@ enso_modmail_ID = 728083016290926623
 def extensions():
     anime_ext = ['cogs.anime.interactive', 'cogs.anime.waifu_husbandos', 'cogs.anime.relationship']
 
-    help_ext = ['cogs.help.admin', 'cogs.help.help', 'cogs.help.self_roles',
-                'cogs.help.info', 'cogs.help.verification', 'cogs.help.test']
+    help_ext = ['cogs.help.help', 'cogs.help.self_roles', 'cogs.help.info', 'cogs.help.test']
 
     fun_ext = ['cogs.fun.fun', 'cogs.fun.enso']
 

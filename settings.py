@@ -74,6 +74,6 @@ def extensions():
 
     fun_ext = ['cogs.fun.fun', 'cogs.fun.enso']
 
-    modmail_ext = ['cogs.modmail.setup', 'cogs.modmail.modmail']
+    modmail_ext = ['cogs.modmail.modmail']
 
     return (anime_ext, help_ext, fun_ext, modmail_ext)

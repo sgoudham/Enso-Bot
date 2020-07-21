@@ -1,11 +1,58 @@
+import asyncio
 import datetime
 import random
+import string
+import textwrap
+import urllib.parse
 
+import discord
+from PIL import Image, ImageDraw, ImageFont
+from aiohttp import request
 from discord import Member, Colour, Embed
 from discord.ext import commands
-from discord.ext.commands import BucketType, cooldown, command, is_owner
+from discord.ext.commands import BucketType, cooldown, command
+from discord.ext.commands import is_owner
+from owotext import OwO
 
 from settings import colour_list
+
+
+def generate_meme(image_path, top_text, bottom_text='', font_path='homies/impact/Impacted.ttf', font_size=9):
+    get_image = Image.open(image_path)
+    draw = ImageDraw.Draw(get_image)
+    image_width, image_height = get_image.size
+
+    # Load font
+    font = ImageFont.truetype(font=font_path, size=int(image_height * font_size) // 100)
+
+    # Convert text to uppercase
+    top_text = top_text.upper()
+    bottom_text = bottom_text.upper()
+
+    # Text wrapping
+    char_width, char_height = font.getsize('A')
+    chars_per_line = image_width // char_width
+    top_lines = textwrap.wrap(top_text, width=chars_per_line)
+    bottom_lines = textwrap.wrap(bottom_text, width=chars_per_line)
+
+    # Draw top lines
+    y = 10
+    for line in top_lines:
+        line_width, line_height = font.getsize(line)
+        x = (image_width - line_width) / 2
+        draw.text((x, y), line, fill='white', font=font)
+        y += line_height
+
+    # Draw bottom lines
+    y = image_height - char_height * len(bottom_lines) - 15
+    for line in bottom_lines:
+        line_width, line_height = font.getsize(line)
+        x = (image_width - line_width) / 2
+        draw.text((x, y), line, fill='white', font=font)
+        y += line_height
+
+    # Save meme
+    get_image.save("AllMyHomiesHateMeme.jpg")
 
 
 # Set up the cog
@@ -16,7 +63,7 @@ class Fun(commands.Cog):
     @command(name="attack", aliases=['Attack'], hidden=True)
     @is_owner()
     async def attack(self, ctx, target: Member):
-        """Allows Co-Owners to throw insults at people"""
+        """Throw insults at users"""
 
         # Set up array of insults to throw at people
         responses = [
@@ -56,7 +103,7 @@ class Fun(commands.Cog):
     @command(name="comp", aliases=['Comp', 'Compliment'])
     @cooldown(1, 1, BucketType.user)
     async def compliment(self, ctx, target: Member):
-        """Allows users to compliment other people"""
+        """Give compliments to users"""
 
         # Set up array of compliments to throw at people
         responses = [
@@ -105,31 +152,27 @@ class Fun(commands.Cog):
     @command(name="flip", aliases=['Flip'])
     @cooldown(1, 1, BucketType.user)
     async def flip(self, ctx):
-        """"Allows for 50 / 50 chance decisions"""
+        """"Flip a coin"""
 
-        # Define 3 arrays that only have 2 strings stored in them
+        # Define array with only 2 entries to create 50/50 chance
         pp_array = ["Smol pp", "Huge pp"]
-        pewds_array = ["Floor Gang", "Ceiling Gang"]
-
-        # Creating a 50/50 chance by choosing the array first
-        responses = random.choice([pp_array, pewds_array])
 
         # Send out one of the responses stored in the array
-        await ctx.send(f"{ctx.author.mention} {random.choice(responses)}")
+        await ctx.send(f"{ctx.author.mention} {random.choice[pp_array]}")
 
     @command(name="dm", aliases=["DM", "dM"])
     @is_owner()
     async def dm(self, ctx, member: Member, *, text):
-        """Allows me to DM anyone through the bot"""
+        """DM users"""
 
         # Send the message typed the mentioned user
         await member.send(text)
         # Delete the message sent instantly
         await ctx.message.delete()
 
-    @command(name="digby", aliases=["Digby"])
+    @command(name="digby", aliases=["Digby"], hidden=True)
     async def digby(self, ctx):
-        """Allows users to see a picture of Digby"""
+        """Pictures of Digby!"""
 
         # Surround with try/except to catch any exceptions that may occur
         try:
@@ -157,6 +200,187 @@ class Fun(commands.Cog):
 
         except FileNotFoundError as e:
             print(e)
+
+    @command(name="doggo", aliases=["Doggo"])
+    @cooldown(1, 1, BucketType.user)
+    async def doggo(self, ctx, breed=None):
+        """Pictures of doggos!"""
+
+        # Set member as the author
+        member = ctx.message.author
+        # Get the member avatar
+        userAvatar = member.avatar_url
+
+        # Initialise array to store doggo pics
+        b_list = []
+
+        # If a breed if specified
+        if breed:
+            # Get the lowercase string input
+            lowercase_breed = breed.lower()
+
+            # If the user wants to know what breeds there are
+            if lowercase_breed == "breeds":
+                # Get the list of breeds
+                breed_url = "https://dog.ceo/api/breeds/list/all"
+
+                # Using API, retrieve the full list of breeds available
+                async with request("GET", breed_url, headers={}) as response:
+                    if response.status == 200:
+                        data = await response.json()
+                        breed_link = data["message"]
+
+                        # Store every Doggo in an array
+                        for doggo in breed_link:
+                            b_list.append(doggo)
+
+                        # Join together all the breeds into a string
+                        doggo_string = string.capwords(", ".join(b_list))
+
+                        # Tell the user to try the breeds listed below
+                        await ctx.send(f"Try the Breeds listed below!\n{doggo_string}")
+
+            # If no breed has been specified
+            else:
+
+                # Grab a random image of a doggo with the breed specified
+                image_url = f"https://dog.ceo/api/breed/{lowercase_breed}/images/random"
+
+                # Using API, retrieve the image of a doggo of the breed specified
+                async with request("GET", image_url, headers={}) as response:
+                    if response.status == 200:
+                        data = await response.json()
+                        image_link = data["message"]
+
+                        # Set up the embed for a doggo image
+                        doggo_embed = Embed(
+                            title=f"**It's a {lowercase_breed.capitalize()} Doggo!!** ",
+                            colour=Colour(random.choice(colour_list)),
+                            timestamp=datetime.datetime.utcnow())
+                        doggo_embed.set_image(url=image_link)
+                        doggo_embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
+
+                        # Send the doggo image
+                        await ctx.send(embed=doggo_embed)
+
+                    else:
+
+                        # Send error message that Doggo was not found!
+                        await ctx.send(
+                            "Doggo Not Found! Please do **~doggo `breeds`** to see the full list of Doggos!")
+        else:
+
+            # Grab a random image of a doggo of any breed
+            image_url = "https://dog.ceo/api/breeds/image/random"
+
+            # Using API, retrieve the image of a doggo of any breed
+            async with request("GET", image_url, headers={}) as response:
+                if response.status == 200:
+                    data = await response.json()
+                    image_link = data["message"]
+
+                    # Set up the embed for a random doggo image
+                    doggo_embed = Embed(
+                        title=f"**Doggo!** ",
+                        colour=Colour(random.choice(colour_list)),
+                        timestamp=datetime.datetime.utcnow())
+                    doggo_embed.set_image(url=image_link)
+                    doggo_embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
+
+                    # Send random doggo image to the channel
+                    await ctx.send(embed=doggo_embed)
+
+                else:
+
+                    # Send error message that Doggo was not found!
+                    await ctx.send(
+                        "Doggo Not Found! Please do **~doggo `breeds`** to see the full list of Doggos!")
+
+    @command(name="8ball", aliases=['8Ball'])
+    @cooldown(1, 1, BucketType.user)
+    async def _8ball(self, ctx, *, question):
+        """8ball responses!"""
+
+        try:
+            # Make the text readable to the api
+            eightball_question = urllib.parse.quote(question)
+
+            # Using API, make a connection to 8ball API
+            async with request("GET", f"https://8ball.delegator.com/magic/JSON/{eightball_question}",
+                               headers={}) as response:
+
+                # With a successful connection
+                # Get the answer
+                if response.status == 200:
+                    data = await response.json()
+                    api_question = data["magic"]
+                    api_answer = api_question["answer"]
+
+            await ctx.send(api_answer)
+
+        except Exception as e:
+            print(e)
+
+    @command(name="homies", aliases=["Homies", "homie", "Homie"])
+    @cooldown(1, 10, BucketType.user)
+    async def homies(self, ctx, *, user_word):
+        """Summoning the homies"""
+
+        try:
+            # Make sure the text entered is less than 20 characters
+            if len(user_word) >= 20:
+                await ctx.send("Please make sure the prompt is below **20** characters!")
+                return
+            else:
+
+                # Define the text to be drawn on the top and the bottom
+                top_text = f"Ayo fuck {user_word}"
+                bottom_text = f"All my homies hate {user_word}"
+
+                # Call the method to generate the image
+                generate_meme('homies/AllMyHomies.jpg', top_text=top_text, bottom_text=bottom_text)
+
+                # Send the image file stored in the directory
+                await ctx.send(file=discord.File('AllMyHomiesHateMeme.jpg'))
+        except Exception as e:
+            print(e)
+
+    @command(name="owo", aliases=["Owo", "OwO"])
+    @cooldown(1, 1, BucketType.user)
+    async def owo(self, ctx, *, text):
+        """Converts given text to 'OwO' format"""
+
+        # Convert to "OwO" text
+        uwu = OwO()
+        owo = uwu.whatsthis(text)
+
+        # Send the text back
+        await ctx.message.channel.send(owo)
+
+    @command(name="remindme", aliases=["Remindme", "rm"])
+    async def remind_me(self, ctx, time=None, *, text):
+        """Remind you in DMs"""
+
+        # Grab the author and store it in "author"
+        author = ctx.author
+
+        # If a value for time as been given
+        if time:
+
+            # Send a confirmation message
+            await ctx.send(f"{author.mention} I will remind you in {time} seconds with the message '{text}'")
+
+            # Sleep the thread for the amount of time specified by the user
+            await asyncio.sleep(float(time))
+
+            # Remind the user in the channel and then send message to user's dms
+            await ctx.send(f"I've reminded you in your dms! {ctx.author.mention}")
+            await author.send(text)
+
+        # else no time has been given
+        else:
+            # Instantly Send message to user's dms
+            await author.send(text)
 
 
 def setup(bot):

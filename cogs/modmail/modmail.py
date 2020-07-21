@@ -2,6 +2,7 @@ import asyncio
 import datetime
 import os
 import random
+from contextlib import closing
 
 import discord
 from discord import Embed
@@ -167,21 +168,20 @@ class Modmail(commands.Cog, command_attrs=dict(hidden=True)):
             # Get the author's row from the Members Table
             select_query = """SELECT * FROM moderatormail WHERE guildID = (?)"""
             val = guildid,
-            cursor = conn.cursor()
+            with closing(conn.cursor()) as cursor:
+                # Execute the SQL Query
+                cursor.execute(select_query, val)
+                result = cursor.fetchone()
 
-            # Execute the SQL Query
-            cursor.execute(select_query, val)
-            result = cursor.fetchone()
+                # Adding error handlingpip3 install
+                if result is None:
+                    return
 
-            # Adding error handling
-            if result is None:
-                return
-
-            # Define variables
-            guild_id = int(result[0])
-            channel_id = int(result[1])
-            message_id = int(result[2])
-            modmail_channel_id = int(result[3])
+                # Define variables
+                guild_id = int(result[0])
+                channel_id = int(result[1])
+                message_id = int(result[2])
+                modmail_channel_id = int(result[3])
 
         # Bunch of checks to make sure it has the right guild, channel, message and reaction
         if payload.guild_id == guild_id and payload.channel_id == channel_id and payload.message_id == message_id and payload.emoji.name == "✅":

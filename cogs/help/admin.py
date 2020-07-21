@@ -22,7 +22,7 @@ def get_user_info(self, ctx):
 
 
 # Set up the Cog
-class rules_roles(commands.Cog):
+class rules_roles(commands.Cog, command_attrs=dict(hidden=True)):
     def __init__(self, bot):
         self.bot = bot
 

@@ -1,6 +1,7 @@
 import asyncio
 import datetime
 import random
+import string
 from contextlib import closing
 from typing import Optional
 
@@ -139,7 +140,7 @@ async def on_message(message):
     await client.process_commands(message)
 
 
-@tasks.loop(seconds=10, reconnect=True)
+@tasks.loop(seconds=30, reconnect=True)
 async def change_status():
     """Creating Custom Statuses as a Background Task"""
 
@@ -160,7 +161,7 @@ async def change_status():
                 name=f"{len(client.users)} Weebs | Version : {get_version()}"),
             discord.Activity(
                 type=discord.ActivityType.watching,
-                name=f"{member.name.capitalize()} | {guild.name} | Version : {get_version()}"),
+                name=f"{string.capwords(member.name.capitalize())} | {guild.name} | Version : {get_version()}"),
             discord.Game(name=f"~help | Version - {get_version()}")
         ]
     )

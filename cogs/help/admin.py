@@ -30,6 +30,8 @@ class rules_roles(commands.Cog, command_attrs=dict(hidden=True)):
     @command(name="rules", aliases=["Rules"])
     @cooldown(1, 5, BucketType.user)
     async def rules(self, ctx):
+        """Ruleset for Ensō"""
+
         # Making sure this command only works in Enso
         if not ctx.guild.id == enso_guild_ID:
             await ctx.send("**Sorry! That command is only for a certain guild!**")
@@ -42,101 +44,72 @@ class rules_roles(commands.Cog, command_attrs=dict(hidden=True)):
         author, guild_icon, enso_icon, enso_name = get_user_info(self, ctx)
 
         # Set up embed to list all the rules within the server
-        embed = Embed(title="```(っ◔◡◔)っ Ensō Rules```",
+        embed = Embed(title="(っ◔◡◔)っ Ensō Rules",
                       colour=enso_embedmod_colours,
-                      description="``` ヽ(͡◕ ͜ʖ ͡◕)ﾉ Please respect the following rules that are going to be listed below ヽ(͡◕ ͜ʖ ͡◕)ﾉ ```",
+                      description="ヽ(͡◕ ͜ʖ ͡◕)ﾉ Please respect the following rules that are going to be listed below ヽ(͡◕ ͜ʖ ͡◕)ﾉ",
                       timestamp=datetime.datetime.utcnow())
 
         embed.set_thumbnail(url=guild_icon)
         embed.set_author(name=enso_name,
                          icon_url=enso_icon)
 
-        embed.add_field(
-            name=blank_space,
-            value="**➳ Don't be overly toxic/purposely problematic**" +
-                  "\n This one is pretty self explanatory, just treat others the way you want to be treated and you'll get along with everyone :)",
-            inline=False)
-        embed.add_field(
-            name=blank_space,
-            value="**➳ Respect all admins and staff**" +
-                  "\n They are enforcing these rules to help make and keep this server a fantastic place to hang out.",
-            inline=False)
-        embed.add_field(
-            name=blank_space,
-            value="**➳ Keep content organized into their respective channels**" +
-                  "\n For example. When connected to a voice channel, all messages relating to the discussion in voice-chat should be sent in #vc-chat",
-            inline=False)
-        embed.add_field(
-            name=blank_space,
-            value="**➳ No advertising other servers**" +
-                  "\nIt's disrespectful to do that and won't be tolerated in this server",
-            inline=False)
-        embed.add_field(
-            name=blank_space,
-            value="**➳ No pornographic/adult/other NSFW material**" +
-                  "\n This is a community server and not meant to share this kind of material. Try to stay around PG 13 as most of our users are between 13 - 16",
-            inline=False)
-        embed.add_field(
-            name=blank_space,
-            value="**➳ Don't take insults too far**" +
-                  "\n Poking fun at others is okay, just don't take it too far. Any disputes can be brought up to a staff member and they will handle it." +
-                  "\nIf you end up causing a problem or taking things into your in hands, you will be punished",
-            inline=False)
-        embed.add_field(
-            name=blank_space,
-            value="**➳ Explicit Language**" +
-                  "\n Swearing is perfectly fine as long as it's not in excess, with some exceptions of course." +
-                  "These exceptions being racial, sexual, and ethnic slurs",
-            inline=False)
-        embed.add_field(
-            name=blank_space,
-            value="**➳ Discord ToS**" +
-                  "\n As well as following the rules we have set forth, please make sure to follow Discord's ToS https://discordapp.com/terms ",
-            inline=False)
-        embed.add_field(
-            name=blank_space,
-            value="```( ͡°ω ͡°) Disciplinary Actions ( ͡°ω ͡°)```",
-            inline=False)
-        embed.add_field(
-            name=blank_space,
-            value="**➳ First Offense**" +
-                  "\n Warning",
-            inline=True)
-        embed.add_field(
-            name=blank_space,
-            value="**➳ Second Offense**" +
-                  "\n1 hour mute",
-            inline=True)
-        embed.add_field(
-            name=blank_space,
-            value="**➳ Third Offense**" +
-                  "\n12 hour mute",
-            inline=True)
-        embed.add_field(
-            name=blank_space,
-            value="**➳ Fourth Offense**" +
-                  "\n24 hour mute",
-            inline=True)
-        embed.add_field(
-            name=blank_space,
-            value="**➳Fifth Offense**" +
-                  "\n Kicked from the server",
-            inline=True)
-        embed.add_field(
-            name=blank_space,
-            value="**➳ Sixth Offense**" +
-                  "\n Banned from the server",
-            inline=True)
-        embed.add_field(
-            name=blank_space,
-            value="**➳ There are, of course, exceptions to these rules based on the severity of the offense. "
-                  "Minor offenses will play out as described but major offenses will be dealt with at the discretion of the staff member involved.**",
-            inline=False)
-        embed.add_field(
-            name=blank_space,
-            value=f"**➳ Any disputes about a staff members choices or actions can be brought to myself, {ctx.message.author.mention} " +
-                  f", or my co-owner, {izzyID}**",
-            inline=False)
+        fields = [
+            (blank_space,
+             "**➳ Don't be overly toxic/purposely problematic** \n This one is pretty self explanatory, just treat others the way you want to be treated and you'll get along with everyone :)",
+             False),
+            (blank_space,
+             "**➳ Respect all admins and staff** \n They are enforcing these rules to help make and keep this server a fantastic place to hang out.",
+             False),
+            (blank_space,
+             "**➳ Keep content organized into their respective channels** \n For example. When connected to a voice channel, all messages relating to the discussion in voice-chat should be sent in #vc-chat",
+             False),
+            (blank_space,
+             "**➳ No advertising other servers** \nIt's disrespectful to do that and won't be tolerated in this server",
+             False),
+            (blank_space,
+             "**➳ No pornographic/adult/other NSFW material** \n This is a community server and not meant to share this kind of material. Try to stay around PG 13 as most of our users are between 13 - 16",
+             False),
+            (blank_space,
+             "**➳ Don't take insults too far** \n Poking fun at others is okay, just don't take it too far. Any disputes can be brought up to a staff member and they will handle it." +
+             "\nIf you end up causing a problem or taking things into your in hands, you will be punished",
+             False),
+            (blank_space,
+             "**➳ Explicit Language** \n Swearing is perfectly fine as long as it's not in excess, with some exceptions of course." +
+             "These exceptions being racial, sexual, and ethnic slurs",
+             False),
+            (blank_space,
+             "**➳ Discord ToS** \n As well as following the rules we have set forth, please make sure to follow Discord's ToS https://discordapp.com/terms ",
+             False),
+            (blank_space,
+             "```( ͡°ω ͡°) Disciplinary Actions ( ͡°ω ͡°)```", False),
+            (blank_space,
+             "**➳ First Offense** \n Warning",
+             True),
+            (blank_space,
+             "**➳ Second Offense** \n1 hour mute",
+             True),
+            (blank_space,
+             "**➳ Third Offense** \n12 hour mute",
+             True),
+            (blank_space,
+             "**➳ Fourth Offense** \n24 hour mute",
+             True),
+            (blank_space,
+             "**➳Fifth Offense** \n Kicked from the server",
+             True),
+            (blank_space,
+             "**➳ Sixth Offense** \n Banned from the server",
+             True),
+            (blank_space,
+             "**➳ There are, of course, exceptions to these rules based on the severity of the offense Minor offenses will play out as described but major offenses will be dealt with at the discretion of the staff member involved.**",
+             False),
+            (blank_space,
+             f"**➳ Any disputes about a staff members choices or actions can be brought to myself, {ctx.message.author.mention} or my co-owner, {izzyID}**",
+             False)]
+
+        # Add fields to the embed
+        for name, value, inline in fields:
+            embed.add_field(name=name, value=value, inline=inline)
 
         # Dm the user the embedded message
         await author.send(embed=embed)

@@ -144,6 +144,8 @@ def SendMsgToModMail(self, msg, author):
 
 # Set up the Cog
 class Modmail(commands.Cog, command_attrs=dict(hidden=True)):
+    """Set up modmail system!"""
+
     def __init__(self, bot):
         self.bot = bot
         self.anon = None

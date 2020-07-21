@@ -9,7 +9,7 @@ from settings import enso_guild_ID, enso_verification_ID
 
 
 # Set up Cog
-class Verification(commands.Cog):
+class Verification(commands.Cog, command_attrs=dict(hidden=True)):
     def __init__(self, bot):
         self.bot = bot
         self.guild = None

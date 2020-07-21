@@ -153,6 +153,7 @@ class Modmail(commands.Cog, command_attrs=dict(hidden=True)):
         # Don't count reactions that are made by the bot
         if payload.user_id == self.bot.user.id:
             return
+        # Don't count other reactions other than ✅ and ❌
         elif payload.user_id:
             if str(payload.emoji) not in ['✅', '❌']:
                 return
@@ -172,6 +173,11 @@ class Modmail(commands.Cog, command_attrs=dict(hidden=True)):
             cursor.execute(select_query, val)
             result = cursor.fetchone()
 
+            # Adding error handling
+            if result is None:
+                return
+
+            # Define variables
             guild_id = int(result[0])
             channel_id = int(result[1])
             message_id = int(result[2])

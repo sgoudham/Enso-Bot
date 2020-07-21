@@ -162,6 +162,9 @@ async def change_status():
             discord.Activity(
                 type=discord.ActivityType.watching,
                 name=f"{string.capwords(member.name.capitalize())} | {guild.name} | {get_version()}"),
+            discord.Activity(
+                type=discord.ActivityType.watching,
+                name=f"Hamothy Program His Life Away | {get_version()}"),
             discord.Game(name=f"~help | {get_version()}")
         ]
     )

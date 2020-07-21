@@ -1,4 +1,4 @@
 #Hiding Token
 .env
 __pycache__/
-.idea
+.idea/

@@ -101,7 +101,7 @@ def displayAnimeImage(array, msg, name):
     return anime_embed
 
 
-class Waifus_Husbandos(commands.Cog):
+class Anime(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -206,4 +206,4 @@ class Waifus_Husbandos(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(Waifus_Husbandos(bot))
+    bot.add_cog(Anime(bot))

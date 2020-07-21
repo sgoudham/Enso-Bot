@@ -142,7 +142,7 @@ def SendMsgToModMail(self, msg, author):
 
 
 # Set up the Cog
-class modmail(commands.Cog):
+class Modmail(commands.Cog, command_attrs=dict(hidden=True)):
     def __init__(self, bot):
         self.bot = bot
         self.anon = None
@@ -369,4 +369,4 @@ class modmail(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(modmail(bot))
+    bot.add_cog(Modmail(bot))

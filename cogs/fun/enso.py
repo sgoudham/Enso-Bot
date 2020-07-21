@@ -8,8 +8,12 @@ from discord.ext import commands
 from discord.ext.commands import cooldown, BucketType, command
 
 import settings
-from cogs.anime.interactive import error_function
-from settings import colour_list, enso_guild_ID
+from settings import colour_list, enso_guild_ID, enso_ensochancommands_Mention
+
+
+# Error handling function to make sure that the commands only work in "enso-chan-commands"
+def error_function():
+    return f"**Sorry! I only work in {enso_ensochancommands_Mention}**"
 
 
 # Gets the member and user avatar

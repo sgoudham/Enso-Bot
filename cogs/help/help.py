@@ -159,12 +159,12 @@ def help_menu(self, guild_icon):
     modmail.set_thumbnail(url=guild_icon)
 
     # Setting up the fields in a separate array
-    modmail_fields = [(f"**{self.ctx.prefix}mmsetup set `<channelID>`**",
+    modmail_fields = [(f"**{self.ctx.prefix}modmail setup `<channelID>`**",
                        "Sets up the modmail system in the guild,"
                        "channelID given will be the channel that the user will interact with", False),
-                      (f"**{self.ctx.prefix}mmsetup update `<channelID>`**",
+                      (f"**{self.ctx.prefix}modmail update `<channelID>`**",
                        "Updates the channel that the modmail will be sent to", False),
-                      (f"**{self.ctx.prefix}mmsetup delete modmail**",
+                      (f"**{self.ctx.prefix}modmail delete modmail**",
                        "Existing modmail system will be deleted", False)]
 
     # Setting up the Embed for the Miscellaneous commands

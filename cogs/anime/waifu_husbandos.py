@@ -6,7 +6,6 @@ from discord import Embed, Colour
 from discord.ext import commands
 from discord.ext.commands import cooldown, BucketType, command
 
-import settings
 from settings import colour_list
 
 # Defining the full names of the waifu's/husbando's
@@ -114,49 +113,46 @@ class Waifus_Husbandos(commands.Cog):
         # Defining array for the list of waifus available
         waifu_array = ["toga", "yumeko", "maki"]
 
-        # If the channel that the command has been sent is in the list of accepted channels
-        if str(ctx.channel) in settings.channels:
+        # if a name is specified
+        if waifu:
+            # Get the lowercase
+            proper_waifu = waifu.lower()
 
-            # if a name is specified
-            if waifu:
-                # Get the lowercase
-                proper_waifu = waifu.lower()
+            # if the user does ~w list
+            if proper_waifu == "list":
+                # Tell the user to try the waifus in the array
+                await ctx.send(f"Try the waifu's listed below!")
 
-                # if the user does ~w list
-                if proper_waifu == "list":
-                    # Tell the user to try the waifus in the array
-                    await ctx.send(f"Try the waifu's listed below!")
+                # Send the list of waifus in the bot to the channel
+                waifu_list = string.capwords(', '.join(map(str, waifu_array)))
+                await ctx.send(waifu_list)
 
-                    # Send the list of waifus in the bot to the channel
-                    waifu_list = string.capwords(', '.join(map(str, waifu_array)))
-                    await ctx.send(waifu_list)
-
-                else:
-                    # Surround with try/except to catch any exceptions that may occur
-                    try:
-
-                        # Retrieve image of the waifu specified
-                        with open(f'images/AnimeImages/Waifus/{proper_waifu}.txt') as file:
-                            w_array = file.readlines()
-
-                        # Get the full name of the waifu
-                        full_name = Abbrev(proper_waifu)
-
-                        # Embed the image into a message and send it to the channel
-                        embed = displayAnimeImage(w_array, ctx, full_name)
-                        await ctx.send(embed=embed)
-
-                    except Exception as e:
-                        print(e)
-
-                        # Send error message saying that the person isn't recognised
-                        await ctx.send(f"Sorry! That waifu doesn't exist!"
-                                       f"\nPlease do **~w list** to see the list of waifu's")
             else:
+                # Surround with try/except to catch any exceptions that may occur
+                try:
 
-                # Get embed from randomWaifu() and send it to the channel
-                embed = randomWaifu(ctx, waifu_array)
-                await ctx.send(embed=embed)
+                    # Retrieve image of the waifu specified
+                    with open(f'images/AnimeImages/Waifus/{proper_waifu}.txt') as file:
+                        w_array = file.readlines()
+
+                    # Get the full name of the waifu
+                    full_name = Abbrev(proper_waifu)
+
+                    # Embed the image into a message and send it to the channel
+                    embed = displayAnimeImage(w_array, ctx, full_name)
+                    await ctx.send(embed=embed)
+
+                except Exception as e:
+                    print(e)
+
+                    # Send error message saying that the person isn't recognised
+                    await ctx.send(f"Sorry! That waifu doesn't exist!"
+                                   f"\nPlease do **~w list** to see the list of waifu's")
+        else:
+
+            # Get embed from randomWaifu() and send it to the channel
+            embed = randomWaifu(ctx, waifu_array)
+            await ctx.send(embed=embed)
 
     # Bot ~h/husbando command for the husbando's stored in the bot
     @command(name="h", aliases=['H'])
@@ -166,50 +162,47 @@ class Waifus_Husbandos(commands.Cog):
         # Defining array for the list of husbando's available
         husbando_array = ["husk", "kakashi", "tamaki"]
 
-        # If the channel that the command has been sent is in the list of accepted channels
-        if str(ctx.channel) in settings.channels:
+        # if a name is specified
+        if husbando:
+            # Get the lowercase
+            proper_husbando = husbando.lower()
 
-            # if a name is specified
-            if husbando:
-                # Get the lowercase
-                proper_husbando = husbando.lower()
+            # Surround with try/except to catch any exceptions that may occur
+            try:
 
-                # Surround with try/except to catch any exceptions that may occur
-                try:
+                # if the user does ~h list
+                if proper_husbando == "list":
+                    # Tell the user to try the husbando's in the array
+                    await ctx.send(f"Try the husbando's listed below!")
 
-                    # if the user does ~h list
-                    if proper_husbando == "list":
-                        # Tell the user to try the husbando's in the array
-                        await ctx.send(f"Try the husbando's listed below!")
+                    # Send the list of waifus in the bot to the channel
+                    husbando_list = string.capwords(', '.join(map(str, husbando_array)))
+                    await ctx.send(husbando_list)
 
-                        # Send the list of waifus in the bot to the channel
-                        husbando_list = string.capwords(', '.join(map(str, husbando_array)))
-                        await ctx.send(husbando_list)
+                else:
+                    # Retrieve image of the husbando specified
+                    with open(f'images/AnimeImages/Husbandos/{proper_husbando}.txt') as file:
+                        h_array = file.readlines()
 
-                    else:
-                        # Retrieve image of the husbando specified
-                        with open(f'images/AnimeImages/Husbandos/{proper_husbando}.txt') as file:
-                            h_array = file.readlines()
+                    # Get the full name of the husbando
+                    full_name = Abbrev(proper_husbando)
 
-                        # Get the full name of the husbando
-                        full_name = Abbrev(proper_husbando)
+                    # Embed the image into a message and send it to the channel
+                    embed = displayAnimeImage(h_array, ctx, full_name)
+                    await ctx.send(embed=embed)
 
-                        # Embed the image into a message and send it to the channel
-                        embed = displayAnimeImage(h_array, ctx, full_name)
-                        await ctx.send(embed=embed)
+            except Exception as e:
+                print(e)
 
-                except Exception as e:
-                    print(e)
+                # Send error message saying that the person isn't recognised
+                await ctx.send(
+                    f"Sorry! That husbando doesn't exist!"
+                    f"\nPlease do **~h list** to see the list of husbando's")
+        else:
 
-                    # Send error message saying that the person isn't recognised
-                    await ctx.send(
-                        f"Sorry! That husbando doesn't exist!"
-                        f"\nPlease do **~h list** to see the list of husbando's")
-            else:
-
-                # Get embed from randomHusbando() and send it to the channel
-                embed = randomHusbando(ctx, husbando_array)
-                await ctx.send(embed=embed)
+            # Get embed from randomHusbando() and send it to the channel
+            embed = randomHusbando(ctx, husbando_array)
+            await ctx.send(embed=embed)
 
 
 def setup(bot):

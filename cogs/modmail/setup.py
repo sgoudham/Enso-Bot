@@ -18,14 +18,14 @@ class SetupModmail(commands.Cog):
     @has_permissions(manage_messages=True, manage_roles=True, manage_channels=True)
     @cooldown(1, 1, BucketType.user)
     async def _setup(self, ctx, *args):
-        """Allows the bot to setup a channel for users to react to for sending modmail"""
+        """Setup a channel for users to react to for sending modmail"""
 
         # Retrieve a list of channel id's in the guild
         channels = [channel.id for channel in ctx.guild.channels]
 
         # Allows the user to setup modmail for the first time
-        if args[0] == "set":
-            if args[1] == "modmail":
+        if args[0].lower() == "set":
+            if args[1].lower() == "modmail":
 
                 # Checking if the guild already exists within the database
                 with db.connection() as conn:
@@ -106,16 +106,16 @@ class SetupModmail(commands.Cog):
                                            f"\nPlease check `{ctx.prefix}help` for information on how to update/delete existing information")
                     else:
                         # Send error message if the channel ID is not recognised
-                        await ctx.send("`Invalid Channel ID. Aborting Process...`")
+                        await ctx.send("**Invalid Channel ID. Aborting Process...**")
                         return
                 else:
                     # Send error message if the channel ID is not recognised
-                    await ctx.send("`Invalid Channel ID. Aborting Process...`")
+                    await ctx.send("**Invalid Channel ID. Aborting Process...**")
                     return
 
         # Allows the user to update the channel that the modmail can be sent to
-        if args[0] == "update":
-            if args[1] == "modmail":
+        if args[0].lower() == "update":
+            if args[1].lower() == "modmail":
 
                 # Checking if the guild already exists within the database
                 with db.connection() as conn:
@@ -160,12 +160,12 @@ class SetupModmail(commands.Cog):
 
                 else:
                     # Send error message if the channel ID is not recognised
-                    await ctx.send("`Invalid Channel ID. Aborting Process...`")
+                    await ctx.send("**Invalid Channel ID. Aborting Process...**")
                     return
 
         # Allows the user to completely erase the modmail system currently set up
-        if args[0] == "delete":
-            if args[1] == "modmail":
+        if args[0].lower() == "delete":
+            if args[1].lower() == "modmail":
 
                 # Checking if the guild already exists within the database
                 with db.connection() as conn:

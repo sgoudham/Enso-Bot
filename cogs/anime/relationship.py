@@ -1,6 +1,7 @@
 import asyncio
 import datetime
 import random
+from contextlib import closing
 from typing import Optional
 
 from discord import Member, Embed, Colour
@@ -65,32 +66,32 @@ class Relationship(commands.Cog):
             member_val = member.id, guild.id,
 
             # Define two cursors
-            author_cursor = conn.cursor()
+            with closing(conn.cursor()) as author_cursor:
 
-            # Execute the Author SQL Query
-            author_cursor.execute(select_query, author_val)
-            author_result = author_cursor.fetchone()
+                # Execute the Author SQL Query
+                author_cursor.execute(select_query, author_val)
+                author_result = author_cursor.fetchone()
+                married_user = author_result[2]
 
             # Make sure that the user cannot marry themselves
             if member.id == ctx.author.id:
                 await ctx.send("**Senpaii! ˭̡̞(◞⁎˃ᆺ˂)◞*✰ You can't possibly marry yourself!**")
                 return
             # Make sure that the person is not already married to someone else within the server
-            elif author_result[2] is not None:
-                member = guild.get_member(int(author_result[2]))
+            elif married_user is not None:
+                member = guild.get_member(int(married_user))
                 await ctx.send(f"**((╬◣﹏◢)) You're already married to {member.mention}!**")
                 return
-            # Close the previous cursor
-            author_cursor.close()
 
             # Set up new cursor for member row
-            member_cursor = conn.cursor()
-            # Execute the Member SQL Query
-            member_cursor.execute(select_query, member_val)
-            member_result = member_cursor.fetchone()
+            with closing(conn.cursor()) as member_cursor:
+                # Execute the Member SQL Query
+                member_cursor.execute(select_query, member_val)
+                member_result = member_cursor.fetchone()
+                target_user = member_result[2]
 
-            if member_result[2] is not None:
-                member = guild.get_member(int(member_result[2]))
+            if target_user is not None:
+                member = guild.get_member(int(target_user))
                 await ctx.send(f"**Sorry! That user is already married to {member.mention}**")
                 return
 

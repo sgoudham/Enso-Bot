@@ -1,12 +1,13 @@
 import datetime
 import random
+from contextlib import closing
 
 from discord import Colour, Embed, Member
 from discord.ext import commands
 from discord.ext.commands import cooldown, command, BucketType
 
 import db
-from settings import colour_list, enso_ensochancommands_Mention
+from settings import colour_list
 
 
 # Gets the member and user avatar
@@ -17,11 +18,6 @@ def getMember(ctx):
     userAvatar = member.avatar_url
 
     return member, userAvatar
-
-
-# Error handling function to make sure that the commands only work in "enso-chan-commands"
-def error_function():
-    return f"**Sorry! I only work in {enso_ensochancommands_Mention}**"
 
 
 # Set up the Cog
@@ -45,11 +41,12 @@ class Interactive(commands.Cog):
             # Get the author's row from the Members Table
             select_query = """SELECT * FROM members WHERE discordID = (?) and guildID = (?)"""
             val = ctx.author.id, guild.id,
-            cursor = conn.cursor()
+            with closing(conn.cursor()) as cursor:
 
-            # Execute the SQL Query
-            cursor.execute(select_query, val)
-            result = cursor.fetchone()
+                # Execute the SQL Query
+                cursor.execute(select_query, val)
+                result = cursor.fetchone()
+                married_user = result[2]
 
             # Error handling to make sure that the user can kiss themselves
             if target.id == ctx.author.id:
@@ -61,11 +58,11 @@ class Interactive(commands.Cog):
 
         try:
             # Make sure the user isn't trying to kiss someone else besides their partner
-            if result[2] is None and kiss:
+            if married_user is None and kiss:
                 await ctx.send("Σ(‘◉⌓◉’) You need to be married in order to use this command! Baka!")
                 return
             # Make sure that the married people can only kiss their partner
-            elif not str(target.id) == result[2] and kiss:
+            elif not str(target.id) == married_user and kiss:
                 await ctx.send("Σ(‘◉⌓◉’) You can only kiss your partner! Baka!")
                 return
         except Exception as ex:
@@ -110,11 +107,12 @@ class Interactive(commands.Cog):
             # Get the author's row from the Members Table
             select_query = """SELECT * FROM members WHERE discordID = (?) and guildID = (?)"""
             val = ctx.author.id, guild.id
-            cursor = conn.cursor()
+            with closing(conn.cursor()) as cursor:
 
-            # Execute the SQL Query
-            cursor.execute(select_query, val)
-            result = cursor.fetchone()
+                # Execute the SQL Query
+                cursor.execute(select_query, val)
+                result = cursor.fetchone()
+                married_user = result[2]
 
             # Error handling to make sure that the user can cuddle themselves
             if target.id == ctx.author.id:
@@ -126,11 +124,11 @@ class Interactive(commands.Cog):
 
         try:
             # Make sure the user isn't trying to cuddle someone else besides their partner
-            if result[2] is None and cuddle:
+            if married_user is None and cuddle:
                 await ctx.send("Σ(‘◉⌓◉’) You need to be married in order to use this command! Baka!")
                 return
             # Make sure that the married people can only cuddle their partner
-            elif not str(target.id) == result[2] and cuddle:
+            elif not str(target.id) == married_user and cuddle:
                 await ctx.send("Σ(‘◉⌓◉’) You can only cuddle your partner! Baka!")
                 return
         except Exception as ex:

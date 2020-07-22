@@ -162,6 +162,7 @@ async def change_status():
     # Waiting for the bot to ready
     await client.wait_until_ready()
 
+    # Display the next status in the loop
     await client.change_presence(activity=next(looping_statuses))
 
 

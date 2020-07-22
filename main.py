@@ -1,16 +1,15 @@
 import asyncio
 import datetime
-import random
-import string
 from contextlib import closing
+from itertools import cycle
 from typing import Optional
 
 import discord
 import mariadb
 from decouple import config
-from discord import Embed
+from discord import Embed, DMChannel
 from discord.ext import commands, tasks
-from discord.ext.commands import when_mentioned_or, has_permissions, guild_only
+from discord.ext.commands import when_mentioned_or, has_permissions, guild_only, is_owner
 
 import db
 import settings
@@ -76,6 +75,8 @@ API_TOKEN = config('DISCORD_TOKEN')
 
 # Method to allow the commands to be used with mentioning the bot
 async def get_prefix(bot, message):
+    if isinstance(message.channel, DMChannel):
+        return "~"
     return when_mentioned_or(get_prefix_for_guild(str(message.guild.id)))(bot, message)
 
 
@@ -137,39 +138,42 @@ async def on_message(message):
     await client.process_commands(message)
 
 
-@tasks.loop(seconds=10.0, reconnect=True)
+# Choose a random status
+looping_statuses = cycle(
+    [
+        discord.Activity(
+            type=discord.ActivityType.watching,
+            name=f"{len(client.users)} Weebs | {get_version()}"),
+        discord.Activity(
+            type=discord.ActivityType.watching,
+            name=f"Hamothy | Real Life | {get_version()}"),
+        discord.Activity(
+            type=discord.ActivityType.watching,
+            name=f"Hamothy Program | {get_version()}"),
+        discord.Game(name=f"~help | {get_version()}")
+    ]
+)
+
+
+@tasks.loop(seconds=180.0, reconnect=True)
 async def change_status():
     """Creating Custom Statuses as a Background Task"""
 
     # Waiting for the bot to ready
     await client.wait_until_ready()
-    # Get all the guilds
-    guilds = client.guilds
-    # Choose a random guild
-    guild = random.choice(guilds)
-    # Choose a random member from the guild
-    member = random.choice(guild.members)
 
-    # Choose a random status
-    looping_statuses = random.choice(
-        [
-            discord.Activity(
-                type=discord.ActivityType.watching,
-                name=f"{len(client.users)} Weebs | {get_version()}"),
-            discord.Activity(
-                type=discord.ActivityType.watching,
-                name=f"{string.capwords(member.name.capitalize())} | {guild.name} | {get_version()}"),
-            discord.Activity(
-                type=discord.ActivityType.watching,
-                name=f"Hamothy Program His Life Away | {get_version()}"),
-            discord.Game(name=f"~help | {get_version()}")
-        ]
-    )
-    await client.change_presence(activity=looping_statuses)
+    await client.change_presence(activity=next(looping_statuses))
 
 
 # Start the background task
 change_status.start()
+
+
+@client.command(name="restart", hidden=True)
+@is_owner()
+async def restart(ctx):
+    """Restart the Bot"""
+    await client.logout()
 
 
 # Bot Status on Discord

@@ -52,10 +52,15 @@ def DetectPermissions(message, fset):
 
 
 class Info(commands.Cog):
-    """User/Server/Bot Information!"""
+    """(User/Server/Bot etc) Information!"""
 
     def __init__(self, bot):
         self.bot = bot
+
+    @command(name="ping", aliases=["Ping"])
+    async def _ping(self, ctx):
+        """Sends the latency of the bot (ms)"""
+        await ctx.send(f'Pong! `{round(self.bot.latency * 1000)}ms`')
 
     @command(name="userinfo", aliases=["ui"])
     @cooldown(1, 5, BucketType.user)

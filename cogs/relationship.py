@@ -46,6 +46,8 @@ def marriageInfo(target, marriedUser, marriedDate, currentDate, married):
 
 # Set up the Cog
 class Relationship(commands.Cog):
+    """Marry/Divorce etc!"""
+
     def __init__(self, bot):
         self.bot = bot
 

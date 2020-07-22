@@ -144,14 +144,14 @@ def SendMsgToModMail(self, msg, author):
 
 
 # Set up the Cog
-class Modmail(commands.Cog, command_attrs=dict(hidden=True)):
+class Modmail(commands.Cog):
     """Set up modmail system!"""
 
     def __init__(self, bot):
         self.bot = bot
         self.anon = None
 
-    @commands.group(invoke_without_command=True)
+    @commands.group(invoke_without_command=True, hidden=True)
     async def modmail(self, ctx):
         pass
 

@@ -158,7 +158,7 @@ class Fun(commands.Cog):
         pp_array = ["Smol pp", "Huge pp"]
 
         # Send out one of the responses stored in the array
-        await ctx.send(f"{ctx.author.mention} {random.choice[pp_array]}")
+        await ctx.send(f"{ctx.author.mention} {random.choice(pp_array)}")
 
     @command(name="dm", aliases=["DM", "dM"])
     @is_owner()

@@ -300,7 +300,7 @@ class HelpMenu(menus.Menu):
 
 
 # Set up the cog
-class CustomHelp(commands.Cog):
+class Help(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.bot.remove_command("help")
@@ -318,4 +318,4 @@ class CustomHelp(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(CustomHelp(bot))
+    bot.add_cog(Help(bot))

@@ -57,6 +57,8 @@ def generate_meme(image_path, top_text, bottom_text='', font_path='homies/impact
 
 # Set up the cog
 class Fun(commands.Cog):
+    """Fun commands! (8ball, Doggo etc!)"""
+
     def __init__(self, bot):
         self.bot = bot
 

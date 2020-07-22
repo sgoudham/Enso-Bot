@@ -122,13 +122,13 @@ class Relationship(commands.Cog):
                     update_query = """UPDATE members SET married = (?), marriedDate = (?) WHERE discordID = (?) AND guildID = (?)"""
                     proposer = member.id, message_time, ctx.author.id, guild.id,
                     proposee = ctx.author.id, message_time, member.id, guild.id,
-                    cursor = conn.cursor()
 
-                    # Execute the SQL Query's
-                    cursor.execute(update_query, proposer)
-                    cursor.execute(update_query, proposee)
-                    conn.commit()
-                    print(cursor.rowcount, "2 people have been married!")
+                    with closing(conn.cursor()) as cursor:
+                        # Execute the SQL Query's
+                        cursor.execute(update_query, proposer)
+                        cursor.execute(update_query, proposee)
+                        conn.commit()
+                        print(cursor.rowcount, "2 people have been married!")
 
                 # Congratulate them!
                 await ctx.send(
@@ -165,23 +165,24 @@ class Relationship(commands.Cog):
             # Get the author's row from the Members Table
             select_query = """SELECT * FROM members WHERE discordID = (?) and guildID = (?)"""
             val = ctx.author.id, guild.id,
-            cursor = conn.cursor()
+            with closing(conn.cursor()) as cursor:
 
-            # Execute the SQL Query
-            cursor.execute(select_query, val)
-            result = cursor.fetchone()
+                # Execute the SQL Query
+                cursor.execute(select_query, val)
+                result = cursor.fetchone()
+                married_user = result[2]
 
             # Make sure that the user cannot divorce themselves
             if member.id == ctx.author.id:
                 await ctx.send("**Senpaii! ˭̡̞(◞⁎˃ᆺ˂)◞*✰ You can't possibly divorce yourself!**")
                 return
             # Make sure that the person trying to divorce is actually married to the user
-            elif result[2] is None:
+            elif married_user is None:
                 await ctx.send(f"**((╬◣﹏◢)) You must be married in order to divorce someone! Baka!**")
                 return
             # Make sure the person is married to the person that they're trying to divorce
-            elif result[2] != str(member.id):
-                member = guild.get_member(int(result[2]))
+            elif married_user != str(member.id):
+                member = guild.get_member(int(married_user))
                 await ctx.send(f"**(ノ ゜口゜)ノ You can only divorce the person that you're married!"
                                f"\n That person is {member.mention}**")
                 return
@@ -211,13 +212,12 @@ class Relationship(commands.Cog):
                     update_query = """UPDATE members SET married = null, marriedDate = null WHERE discordID = (?) and guildID = (?)"""
                     divorcer = ctx.author.id, guild.id,
                     divorcee = member.id, guild.id,
-                    cursor = conn.cursor()
-
-                    # Execute the SQL Query's
-                    cursor.execute(update_query, divorcer)
-                    cursor.execute(update_query, divorcee)
-                    conn.commit()
-                    print(cursor.rowcount, "2 Members have been divorced :(!")
+                    with closing(conn.cursor()) as cursor:
+                        # Execute the SQL Query's
+                        cursor.execute(update_query, divorcer)
+                        cursor.execute(update_query, divorcee)
+                        conn.commit()
+                        print(cursor.rowcount, "2 Members have been divorced :(!")
 
                 # Congratulate them!
                 await ctx.send(
@@ -263,21 +263,23 @@ class Relationship(commands.Cog):
             # Get the author's row from the Members Table
             select_query = """SELECT * FROM members WHERE discordID = (?) and guildID = (?)"""
             val = target.id, guild.id,
-            cursor = conn.cursor()
+            with closing(conn.cursor()) as cursor:
 
-            # Execute the SQL Query
-            cursor.execute(select_query, val)
-            result = cursor.fetchone()
+                # Execute the SQL Query
+                cursor.execute(select_query, val)
+                result = cursor.fetchone()
+                user = result[2]
+                marriage_date = result[3]
 
             # Set empty values for non-married users
-            if result[2] is None:
+            if user is None:
                 married = False
                 marriedUser = ""
                 marriedDate = ""
             # Set the member, date married and setting married status
             else:
-                marriedUser = guild.get_member(int(result[2]))
-                marriedDate = result[3]
+                marriedUser = guild.get_member(int(user))
+                marriedDate = marriage_date
                 married = True
 
             # Get the current date of the message sent by the user

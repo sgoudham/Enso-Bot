@@ -314,6 +314,33 @@ class Enso(commands.Cog):
     async def on_raw_reaction_add(self, payload):
         """Verification listener for Ensō"""
 
+    # Allowing people to get ping-able self roles
+    @command(name="verification", hidden=True)
+    @is_owner()
+    async def verification(self, ctx):
+        # Set up embed to let the user know that they have to react with ✅
+        embed = Embed(title="**Verification**",
+                      colour=Colour(0xFF69B4),
+                      timestamp=datetime.datetime.utcnow())
+
+        embed.set_thumbnail(url=ctx.guild.icon_url)
+        embed.set_author(name=ctx.author, icon_url=ctx.author.avatar_url)
+        embed.add_field(
+            name="Remember to read the rules!",
+            value="React with ✅ to gain access to the rest of the server!",
+            inline=False)
+
+        # Send embed to the channel it was called in and automatically add the reaction ✅
+        # verif = await ctx.send(embed=embed)
+        # await verif.add_reaction('✅')
+
+        # Edit the Embed And Update it
+        verif = await ctx.fetch_message(728424149692842115)
+        await verif.edit(embed=embed)
+
+    # Cog listener for enabling roles to be added to users when they react to the embedded message
+    @commands.Cog.listener()
+    async def on_raw_reaction_add(self, payload):
         # Get the guild
         guild = self.bot.get_guild(enso_guild_ID)
         # Get the member
@@ -353,34 +380,6 @@ class Enso(commands.Cog):
 
                     # Send welcome message to #general
                     await general.send(general_welcome)
-
-    # Allowing people to get ping-able self roles
-    @command(name="verification", hidden=True)
-    @is_owner()
-    async def verification(self, ctx):
-        # Set up embed to let the user know that they have to react with ✅
-        embed = Embed(title="**Verification**",
-                      colour=Colour(0xFF69B4),
-                      timestamp=datetime.datetime.utcnow())
-
-        embed.set_thumbnail(url=ctx.guild.icon_url)
-        embed.set_author(name=ctx.author, icon_url=ctx.author.avatar_url)
-        embed.add_field(
-            name="Remember to read the rules!",
-            value="React with ✅ to gain access to the rest of the server!",
-            inline=False)
-
-        # Send embed to the channel it was called in and automatically add the reaction ✅
-        # verif = await ctx.send(embed=embed)
-        # await verif.add_reaction('✅')
-
-        # Edit the Embed And Update it
-        verif = await ctx.fetch_message(728424149692842115)
-        await verif.edit(embed=embed)
-
-    # Cog listener for enabling roles to be added to users when they react to the embedded message
-    @commands.Cog.listener()
-    async def on_raw_reaction_add(self, payload):
 
         # If the message id equals the self roles message
         if payload.message_id == 722514840559812649:

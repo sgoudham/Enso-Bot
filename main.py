@@ -1,7 +1,6 @@
 import asyncio
 import datetime
 from contextlib import closing
-from itertools import cycle
 from typing import Optional
 
 import discord
@@ -131,31 +130,35 @@ async def on_message(message):
     await client.process_commands(message)
 
 
-if client.is_ready():
-    looping_statuses = cycle(
-        [
-            discord.Activity(
-                type=discord.ActivityType.watching,
-                name=f"{len(client.users)} Weebs | {get_version()}"),
-            discord.Activity(
-                type=discord.ActivityType.watching,
-                name=f"Hamothy | Real Life | {get_version()}"),
-            discord.Activity(
-                type=discord.ActivityType.watching,
-                name=f"Hamothy Program | {get_version()}"),
-            discord.Game(name=f"~help | {get_version()}")
-        ]
-    )
+counter = 0
 
 
-@tasks.loop(seconds=5, reconnect=True)
+@tasks.loop(seconds=180, reconnect=True)
 async def change_status():
     """Creating Custom Statuses as a Background Task"""
-
+    global counter
     # Waiting for the bot to ready
     await client.wait_until_ready()
+
+    looping_statuses = [
+        discord.Activity(
+            type=discord.ActivityType.watching,
+            name=f"{len(client.users)} Weebs | {get_version()}"),
+        discord.Activity(
+            type=discord.ActivityType.watching,
+            name=f"Hamothy | Real Life | {get_version()}"),
+        discord.Activity(
+            type=discord.ActivityType.watching,
+            name=f"Hamothy Program | {get_version()}"),
+        discord.Game(name=f"~help | {get_version()}")
+    ]
+    if counter == 3:
+        counter = 0
+    else:
+        counter += 1
+
     # Display the next status in the loop
-    await client.change_presence(activity=next(looping_statuses))
+    await client.change_presence(activity=looping_statuses[counter])
 
 
 # Start the background task

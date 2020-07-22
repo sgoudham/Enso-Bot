@@ -7,7 +7,7 @@ from typing import Optional
 import discord
 import mariadb
 from decouple import config
-from discord import Embed, DMChannel
+from discord import Embed
 from discord.ext import commands, tasks
 from discord.ext.commands import when_mentioned_or, has_permissions, guild_only, is_owner
 
@@ -75,7 +75,7 @@ API_TOKEN = config('DISCORD_TOKEN')
 
 # Method to allow the commands to be used with mentioning the bot
 async def get_prefix(bot, message):
-    if isinstance(message.channel, DMChannel):
+    if message.guild is None:
         return "~"
     return when_mentioned_or(get_prefix_for_guild(str(message.guild.id)))(bot, message)
 

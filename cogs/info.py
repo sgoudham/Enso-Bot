@@ -52,6 +52,8 @@ def DetectPermissions(message, fset):
 
 
 class Info(commands.Cog):
+    """User/Server/Bot Information!"""
+
     def __init__(self, bot):
         self.bot = bot
 

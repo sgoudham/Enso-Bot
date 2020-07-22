@@ -102,6 +102,8 @@ def displayAnimeImage(array, msg, name):
 
 
 class Anime(commands.Cog):
+    """Waifus and Husbandos!"""
+
     def __init__(self, bot):
         self.bot = bot
 

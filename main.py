@@ -16,6 +16,7 @@ from settings import blank_space, enso_embedmod_colours, enso_guild_ID, enso_new
 
 # Storing the prefixes and guildID's in the cache
 cached_prefixes = {}
+counter = 0
 
 
 # Updating the prefix within the dict and database when the method is called
@@ -130,16 +131,14 @@ async def on_message(message):
     await client.process_commands(message)
 
 
-counter = 0
-
-
-@tasks.loop(seconds=180, reconnect=True)
+@tasks.loop(seconds=5, reconnect=True)
 async def change_status():
     """Creating Custom Statuses as a Background Task"""
     global counter
     # Waiting for the bot to ready
     await client.wait_until_ready()
 
+    # Define array of statuses
     looping_statuses = [
         discord.Activity(
             type=discord.ActivityType.watching,
@@ -152,9 +151,13 @@ async def change_status():
             name=f"Hamothy Program | {get_version()}"),
         discord.Game(name=f"~help | {get_version()}")
     ]
-    if counter == 3:
+
+    # Check if the counter is at the end of the array
+    if counter == (len(looping_statuses) - 1):
+        # Reset the loop
         counter = 0
     else:
+        # Increase the counter
         counter += 1
 
     # Display the next status in the loop

@@ -310,10 +310,6 @@ class Enso(commands.Cog):
         # Delete the message
         await message.delete()
 
-    @commands.Cog.listener()
-    async def on_raw_reaction_add(self, payload):
-        """Verification listener for Ensō"""
-
     # Allowing people to get ping-able self roles
     @command(name="verification", hidden=True)
     @is_owner()

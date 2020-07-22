@@ -78,6 +78,8 @@ def displayServerImage(array, ctx, name):
 
 
 class Enso(commands.Cog):
+    """Commands for Ensō server"""
+
     def __init__(self, bot):
         self.bot = bot
 

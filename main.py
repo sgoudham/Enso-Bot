@@ -96,13 +96,6 @@ if __name__ == '__main__':
         client.load_extension(ext)
 
 
-# Bot ping command in milliseconds
-@client.command(name="ping", aliases=["Ping"])
-async def _ping(ctx):
-    """Sends the latency of the bot (ms)"""
-    await ctx.send(f'Pong! `{round(client.latency * 1000)}ms`')
-
-
 # Bot prefix command that returns the prefix or updates it
 @client.command(name="prefix", aliases=["Prefix"])
 @guild_only()
@@ -138,30 +131,29 @@ async def on_message(message):
     await client.process_commands(message)
 
 
-# Choose a random status
-looping_statuses = cycle(
-    [
-        discord.Activity(
-            type=discord.ActivityType.watching,
-            name=f"{len(client.users)} Weebs | {get_version()}"),
-        discord.Activity(
-            type=discord.ActivityType.watching,
-            name=f"Hamothy | Real Life | {get_version()}"),
-        discord.Activity(
-            type=discord.ActivityType.watching,
-            name=f"Hamothy Program | {get_version()}"),
-        discord.Game(name=f"~help | {get_version()}")
-    ]
-)
+if client.is_ready():
+    looping_statuses = cycle(
+        [
+            discord.Activity(
+                type=discord.ActivityType.watching,
+                name=f"{len(client.users)} Weebs | {get_version()}"),
+            discord.Activity(
+                type=discord.ActivityType.watching,
+                name=f"Hamothy | Real Life | {get_version()}"),
+            discord.Activity(
+                type=discord.ActivityType.watching,
+                name=f"Hamothy Program | {get_version()}"),
+            discord.Game(name=f"~help | {get_version()}")
+        ]
+    )
 
 
-@tasks.loop(seconds=180.0, reconnect=True)
+@tasks.loop(seconds=5, reconnect=True)
 async def change_status():
     """Creating Custom Statuses as a Background Task"""
 
     # Waiting for the bot to ready
     await client.wait_until_ready()
-
     # Display the next status in the loop
     await client.change_presence(activity=next(looping_statuses))
 

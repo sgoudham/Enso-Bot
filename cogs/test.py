@@ -2,6 +2,7 @@ import datetime
 
 from discord import Embed
 from discord.ext import commands
+from discord.ext.commands import is_owner
 
 from settings import enso_embedmod_colours
 
@@ -13,9 +14,11 @@ class helper(commands.Cog, command_attrs=dict(hidden=True)):
         self.bot = bot
 
     @commands.command(hidden=True)
+    @is_owner()
     async def help2(self, ctx, *cog):
         if not cog:
             coggers = Embed(title="(っ◔◡◔)っ Custom Help (っ◔◡◔)っ",
+                            description="Use ~help *cog* to find out more about them!",
                             colour=enso_embedmod_colours,
                             timestamp=datetime.datetime.utcnow())
             coggers.set_thumbnail(url=ctx.guild.icon_url)

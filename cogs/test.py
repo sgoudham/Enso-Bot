@@ -38,7 +38,7 @@ class helper(commands.Cog, command_attrs=dict(hidden=True)):
                         if x == y:
                             coggers = Embed(colour=enso_embedmod_colours)
                             cogger_info = ''
-                            for c in self.bot.get_cog(y).walk_commands():
+                            for c in self.bot.get_cog(y).get_commands():
                                 if not c.hidden:
                                     cogger_info += f"**{c.name}** - {c.help}\n"
                             coggers.add_field(name=f"{cog[0]} Module - {self.bot.cogs[cog[0]].__doc__}",

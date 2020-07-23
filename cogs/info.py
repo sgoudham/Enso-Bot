@@ -57,11 +57,6 @@ class Info(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @command(name="ping", aliases=["Ping"])
-    async def _ping(self, ctx):
-        """Sends the latency of the bot (ms)"""
-        await ctx.send(f'Pong! `{round(self.bot.latency * 1000)}ms`')
-
     @command(name="userinfo", aliases=["ui"])
     @cooldown(1, 5, BucketType.user)
     async def user_info(self, ctx, target: Optional[Member]):

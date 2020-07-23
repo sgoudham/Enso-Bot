@@ -160,7 +160,6 @@ async def _ping(ctx):
 
 
 @client.command(name='help')
-@is_owner()
 async def _help(ctx, *, command: str = None):
     """Shows help about a command or the bot"""
     try:

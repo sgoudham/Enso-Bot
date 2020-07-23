@@ -21,7 +21,8 @@ class helper(commands.Cog, command_attrs=dict(hidden=True)):
             coggers = Embed(title="(っ◔◡◔)っ Custom Help (っ◔◡◔)っ",
                             description=f"Use **{ctx.prefix}help** `<cog>` to find out more about them!"
                                         f"\n\n`[]` | **Optional**"
-                                        f"\n`<>` | **Required**",
+                                        f"\n`<>` | **Required**"
+                                        f"**^^ Do not include those in your commands!**",
                             colour=enso_embedmod_colours,
                             timestamp=datetime.datetime.utcnow())
             coggers.set_footer(text=f"Requested by {ctx.author}", icon_url='{}'.format(ctx.author.avatar_url))

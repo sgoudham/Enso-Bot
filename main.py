@@ -12,6 +12,7 @@ from discord.ext.commands import when_mentioned_or, is_owner, guild_only, has_pe
 
 import db
 import settings
+from cogs.HelpPaginator import HelpPaginator
 from settings import blank_space, enso_embedmod_colours, enso_guild_ID, enso_newpeople_ID
 
 # Storing the prefixes and guildID's in the cache
@@ -90,6 +91,7 @@ client = commands.Bot(  # Create a new bot
     description='All current available commands within Ensō~Chan',  # Set a description for the bot
     owner_id=154840866496839680,  # Your unique User ID
     version=get_version)  # Version number of Ensō~Chan
+client.remove_command("help")
 
 if __name__ == '__main__':
     for ext in settings.extensions():
@@ -155,6 +157,29 @@ async def on_ready():
 async def _ping(ctx):
     """Sends the latency of the bot (ms)"""
     await ctx.send(f'Pong! `{round(client.latency * 1000)}ms`')
+
+
+@client.command(name='help')
+@is_owner()
+async def _help(ctx, *, command: str = None):
+    """Shows help about a command or the bot"""
+    try:
+        if command is None:
+            p = await HelpPaginator.from_bot(ctx)
+        else:
+            entity = ctx.self.bot.get_cog(command) or ctx.self.bot.get_command(command)
+
+            if entity is None:
+                clean = command.replace('@', '@\u200b')
+                return await ctx.send(f'**Command or Category "{clean}" Not Found.**')
+            elif isinstance(entity, commands.Command):
+                p = await HelpPaginator.from_command(ctx, entity)
+            else:
+                p = await HelpPaginator.from_cog(ctx, entity)
+
+        await p.paginate()
+    except Exception as ex:
+        await ctx.send(ex)
 
 
 @client.command(name="prefix", aliases=["Prefix"])

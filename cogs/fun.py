@@ -65,7 +65,7 @@ class Fun(commands.Cog):
     @command(name="attack", aliases=['Attack'], hidden=True)
     @is_owner()
     async def attack(self, ctx, target: Member):
-        """Throw insults at users"""
+        """Throw Insults at Members"""
 
         # Set up array of insults to throw at people
         responses = [
@@ -105,7 +105,7 @@ class Fun(commands.Cog):
     @command(name="comp", aliases=['Comp', 'Compliment'])
     @cooldown(1, 1, BucketType.user)
     async def compliment(self, ctx, target: Member):
-        """Give compliments to users"""
+        """Give Compliments to Members"""
 
         # Set up array of compliments to throw at people
         responses = [
@@ -154,7 +154,7 @@ class Fun(commands.Cog):
     @command(name="flip", aliases=['Flip'])
     @cooldown(1, 1, BucketType.user)
     async def flip(self, ctx):
-        """Flip a coin"""
+        """Flip a Coin (Huge pp/Smol pp)"""
 
         # Define array with only 2 entries to create 50/50 chance
         pp_array = ["Smol pp", "Huge pp"]
@@ -206,7 +206,7 @@ class Fun(commands.Cog):
     @command(name="doggo", aliases=["Doggo"])
     @cooldown(1, 1, BucketType.user)
     async def doggo(self, ctx, breed=None):
-        """Pictures of doggos!"""
+        """Pictures of Doggos!"""
 
         # Set member as the author
         member = ctx.message.author
@@ -296,12 +296,12 @@ class Fun(commands.Cog):
 
                     # Send error message that Doggo was not found!
                     await ctx.send(
-                        "Doggo Not Found! Please do **~doggo `breeds`** to see the full list of Doggos!")
+                        f"Doggo Not Found! Please do **{ctx.prefix}doggo breeds** to see the full list of Doggos!")
 
     @command(name="8ball", aliases=['8Ball'])
     @cooldown(1, 1, BucketType.user)
     async def _8ball(self, ctx, *, question):
-        """8ball responses!"""
+        """8ball Responses!"""
 
         try:
             # Make the text readable to the api
@@ -326,7 +326,7 @@ class Fun(commands.Cog):
     @command(name="homies", aliases=["Homies", "homie", "Homie"])
     @cooldown(1, 10, BucketType.user)
     async def homies(self, ctx, *, text):
-        """Summoning the homies"""
+        """Summoning the Homies"""
 
         try:
             # Make sure the text entered is less than 20 characters

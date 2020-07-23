@@ -1,7 +1,6 @@
 import datetime
 import random
 import string
-from typing import Optional
 
 from discord import Embed, Colour
 from discord.ext import commands
@@ -117,7 +116,7 @@ class Anime(commands.Cog):
         self.bot = bot
 
     @commands.group(invoke_without_command=True)
-    async def waifu(self, ctx, waifu: Optional):
+    async def waifu(self, ctx, waifu=None):
         """Shows a Waifu"""
 
         if waifu:
@@ -149,7 +148,7 @@ class Anime(commands.Cog):
             await ctx.send(embed=embed)
 
     @commands.group(invoke_without_command=True)
-    async def husbando(self, ctx, husbando: Optional):
+    async def husbando(self, ctx, husbando=None):
         """Shows a Husbando"""
 
         if husbando:

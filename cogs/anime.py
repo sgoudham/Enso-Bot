@@ -117,7 +117,7 @@ class Anime(commands.Cog):
         self.bot = bot
 
     @commands.group(invoke_without_command=True)
-    async def waifu(self, ctx, waifu: Optional[str]):
+    async def waifu(self, ctx, waifu: Optional):
         """Shows a Waifu"""
 
         if waifu:
@@ -149,7 +149,7 @@ class Anime(commands.Cog):
             await ctx.send(embed=embed)
 
     @commands.group(invoke_without_command=True)
-    async def husbando(self, ctx, husbando: Optional[str]):
+    async def husbando(self, ctx, husbando: Optional):
         """Shows a Husbando"""
 
         if husbando:

@@ -344,6 +344,7 @@ class Modmail(commands.Cog):
         # Don't count reactions that are made by the bot
         if payload.user_id == self.bot.user.id:
             return
+
         # Don't count other reactions other than ✅ and ❌
         elif payload.user_id:
             if str(payload.emoji) not in ['✅', '❌']:
@@ -363,7 +364,7 @@ class Modmail(commands.Cog):
                 cursor.execute(select_query, val)
                 result = cursor.fetchone()
 
-                # Adding error handlingpip3 install
+                # Adding error handling
                 if result is None:
                     return
 

@@ -325,19 +325,19 @@ class Fun(commands.Cog):
 
     @command(name="homies", aliases=["Homies", "homie", "Homie"])
     @cooldown(1, 10, BucketType.user)
-    async def homies(self, ctx, *, user_word):
+    async def homies(self, ctx, *, text):
         """Summoning the homies"""
 
         try:
             # Make sure the text entered is less than 20 characters
-            if len(user_word) >= 20:
+            if len(text) >= 20:
                 await ctx.send("Please make sure the prompt is below **20** characters!")
                 return
             else:
 
                 # Define the text to be drawn on the top and the bottom
-                top_text = f"Ayo fuck {user_word}"
-                bottom_text = f"All my homies hate {user_word}"
+                top_text = f"Ayo fuck {text}"
+                bottom_text = f"All my homies hate {text}"
 
                 # Call the method to generate the image
                 generate_meme('homies/AllMyHomies.jpg', top_text=top_text, bottom_text=bottom_text)

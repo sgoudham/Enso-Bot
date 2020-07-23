@@ -166,7 +166,7 @@ async def _help(ctx, *, command: str = None):
         if command is None:
             p = await HelpPaginator.from_bot(ctx)
         else:
-            entity = ctx.self.bot.get_cog(command) or ctx.self.bot.get_command(command)
+            entity = ctx.bot.get_cog(command) or ctx.bot.get_command(command)
 
             if entity is None:
                 clean = command.replace('@', '@\u200b')

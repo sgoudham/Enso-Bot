@@ -146,17 +146,21 @@ async def change_status():
 # Start the background task
 change_status.start()
 
+h
+
 
 # Bot Status on Discord
 @client.event
 async def on_ready():
-    # Tells me that the bot is ready and logged in
-    print('Bot is ready.')
+    """Displaying if Bot is Ready"""
+
+    print("UvU Senpaiii I'm rweady")
 
 
 @client.command(name="ping", aliases=["Ping"])
 async def _ping(ctx):
     """Latency of the Bot (ms)"""
+
     await ctx.send(f'Pong! `{round(client.latency * 1000)}ms`')
 
 
@@ -164,6 +168,7 @@ async def _ping(ctx):
 @is_owner()
 async def leave(ctx):
     """Leaves the guild"""
+
     await ctx.send("**Leaving the guild... Bye Bye uvu**")
     await ctx.guild.leave()
 
@@ -180,6 +185,7 @@ async def someone(ctx):
 @client.command(name='help')
 async def _help(ctx, *, command: str = None):
     """Shows help about a command or the bot"""
+
     try:
         if command is None:
             p = await HelpPaginator.from_bot(ctx)
@@ -228,13 +234,16 @@ async def change_prefix(ctx, new: Optional[str]):
 @is_owner()
 async def restart(ctx):
     """Restart the Bot"""
+
     await client.logout()
 
 
 # Bot event for the bot joining a new guild, storing all users in the database
 @client.event
 async def on_guild_join(guild):
-    # Store the default prefix when the bot joins a guild
+    """Store users in a database when the bot has joined a new guild"""
+
+    # Store default prefix within cache and database
     cache_prefix(str(guild.id), prefix="~")
 
     try:
@@ -267,6 +276,8 @@ async def on_guild_join(guild):
 # Bot event for the bot leaving a guild, deleted all users stored in the database
 @client.event
 async def on_guild_remove(guild):
+    """Remove users in the database for the guild"""
+
     # Delete the key - value pair for the guild
     del_cache_prefix(str(guild.id))
 

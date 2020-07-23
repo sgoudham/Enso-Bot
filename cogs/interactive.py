@@ -29,8 +29,8 @@ class Interactive(commands.Cog):
 
     @command(name="kiss", aliases=["Kiss"])
     @cooldown(1, 1, BucketType.user)
-    async def kiss(self, ctx, target: Member):
-        """Kiss your partner"""
+    async def kiss(self, ctx, member: Member):
+        """Kiss your Partner"""
 
         # Get the guild
         guild = ctx.author.guild
@@ -49,12 +49,12 @@ class Interactive(commands.Cog):
                 married_user = result[2]
 
             # Error handling to make sure that the user can kiss themselves
-            if target.id == ctx.author.id:
+            if member.id == ctx.author.id:
                 kiss = False
                 title = f":kissing_heart: :kissing_heart: | **{ctx.author.name}** kissed **themselves**"
             else:
                 kiss = True
-                title = f":kissing_heart: :kissing_heart: | **{ctx.author.name}** kissed **{target.display_name}**"
+                title = f":kissing_heart: :kissing_heart: | **{ctx.author.name}** kissed **{member.display_name}**"
 
         try:
             # Make sure the user isn't trying to kiss someone else besides their partner
@@ -62,7 +62,7 @@ class Interactive(commands.Cog):
                 await ctx.send("Σ(‘◉⌓◉’) You need to be married in order to use this command! Baka!")
                 return
             # Make sure that the married people can only kiss their partner
-            elif not str(target.id) == married_user and kiss:
+            elif not str(member.id) == married_user and kiss:
                 await ctx.send("Σ(‘◉⌓◉’) You can only kiss your partner! Baka!")
                 return
         except Exception as ex:
@@ -95,8 +95,8 @@ class Interactive(commands.Cog):
 
     @command(name="cuddle", aliases=["Cuddle"])
     @cooldown(1, 1, BucketType.user)
-    async def cuddle(self, ctx, target: Member):
-        """Cuddle your partner"""
+    async def cuddle(self, ctx, member: Member):
+        """Cuddle your Partner"""
 
         # Get the guild
         guild = ctx.author.guild
@@ -115,12 +115,12 @@ class Interactive(commands.Cog):
                 married_user = result[2]
 
             # Error handling to make sure that the user can cuddle themselves
-            if target.id == ctx.author.id:
+            if member.id == ctx.author.id:
                 cuddle = False
                 title = f":blush: :blush: | **{ctx.author.name}** cuddled **themselves**"
             else:
                 cuddle = True
-                title = f":blush: :blush: | **{ctx.author.name}** cuddled **{target.display_name}**"
+                title = f":blush: :blush: | **{ctx.author.name}** cuddled **{member.display_name}**"
 
         try:
             # Make sure the user isn't trying to cuddle someone else besides their partner
@@ -128,7 +128,7 @@ class Interactive(commands.Cog):
                 await ctx.send("Σ(‘◉⌓◉’) You need to be married in order to use this command! Baka!")
                 return
             # Make sure that the married people can only cuddle their partner
-            elif not str(target.id) == married_user and cuddle:
+            elif not str(member.id) == married_user and cuddle:
                 await ctx.send("Σ(‘◉⌓◉’) You can only cuddle your partner! Baka!")
                 return
         except Exception as ex:
@@ -161,13 +161,13 @@ class Interactive(commands.Cog):
 
     @command(name="kill", aliases=["Kill"])
     @cooldown(1, 1, BucketType.user)
-    async def kill(self, ctx, target: Member):
-        """Kill a person in the server"""
+    async def kill(self, ctx, member: Member):
+        """Kill a Member"""
 
-        if target is ctx.author:
+        if member is ctx.author:
             title = f":scream: :scream: | **{ctx.author.name}** killed **themselves**"
         else:
-            title = f":scream: :scream: | **{ctx.author.name}** killed **{target.display_name}**"
+            title = f":scream: :scream: | **{ctx.author.name}** killed **{member.display_name}**"
 
         # Surround with try/except to catch any exceptions that may occur
         try:
@@ -196,13 +196,13 @@ class Interactive(commands.Cog):
 
     @command(name="slap", aliases=["Slap"])
     @cooldown(1, 1, BucketType.user)
-    async def slap(self, ctx, target: Member):
-        """Slap a person in the server"""
+    async def slap(self, ctx, member: Member):
+        """Slap a Member"""
 
-        if target is ctx.author:
+        if member is ctx.author:
             title = f":cold_sweat: :cold_sweat: | **{ctx.author.name}** slapped **themselves**"
         else:
-            title = f":cold_sweat: :cold_sweat: | **{ctx.author.name}** slapped **{target.display_name}**"
+            title = f":cold_sweat: :cold_sweat: | **{ctx.author.name}** slapped **{member.display_name}**"
 
         # Surround with try/except to catch any exceptions that may occur
         try:
@@ -231,13 +231,13 @@ class Interactive(commands.Cog):
 
     @command(name="pat", aliases=["Pat"])
     @cooldown(1, 1, BucketType.user)
-    async def pat(self, ctx, target: Member):
-        """Pat a person in the server"""
+    async def pat(self, ctx, member: Member):
+        """Pat a Member"""
 
-        if target is ctx.author:
+        if member is ctx.author:
             title = f":scream: :scream: | **{ctx.author.name}** patted **themselves**"
         else:
-            title = f":scream: :scream: | **{ctx.author.name}** patted **{target.display_name}**"
+            title = f":scream: :scream: | **{ctx.author.name}** patted **{member.display_name}**"
 
         # Surround with try/except to catch any exceptions that may occur
         try:
@@ -266,13 +266,13 @@ class Interactive(commands.Cog):
 
     @command(name="lemon", aliases=["Lemon"])
     @cooldown(1, 1, BucketType.user)
-    async def lemon(self, ctx, target: Member):
-        """Give lemons to members in the user"""
+    async def lemon(self, ctx, member: Member):
+        """Give Lemon to Member"""
 
-        if target is ctx.author:
+        if member is ctx.author:
             title = f":relaxed: :relaxed: | **{ctx.author.name}** gave a lemon to **themselves**"
         else:
-            title = f":relaxed: :relaxed: | **{ctx.author.name}** gave a lemon to **{target.display_name}**"
+            title = f":relaxed: :relaxed: | **{ctx.author.name}** gave a lemon to **{member.display_name}**"
 
         lemon_array = ["https://media.discordapp.net/attachments/669812887564320769/720093589056520202/lemon.gif",
                        "https://media.discordapp.net/attachments/669812887564320769/720093575492272208/lemon2.gif",
@@ -300,13 +300,13 @@ class Interactive(commands.Cog):
 
     @command(name="choke", aliases=["Choke"])
     @cooldown(1, 1, BucketType.user)
-    async def choke(self, ctx, target: Member):
-        """Choke a person in the server"""
+    async def choke(self, ctx, member: Member):
+        """Choke a Member"""
 
-        if target is ctx.author:
+        if member is ctx.author:
             title = f":confounded: :confounded: | **{ctx.author.name}** choked **themselves**"
         else:
-            title = f":confounded: :confounded: | **{ctx.author.name}** choked **{target.display_name}**"
+            title = f":confounded: :confounded: | **{ctx.author.name}** choked **{member.display_name}**"
 
         # Surround with try/except to catch any exceptions that may occur
         try:
@@ -334,13 +334,13 @@ class Interactive(commands.Cog):
 
     @command(name="hug", aliases=["Hug"])
     @cooldown(1, 1, BucketType.user)
-    async def hug(self, ctx, target: Member):
-        """Hug a person in the server"""
+    async def hug(self, ctx, member: Member):
+        """Hug a Member"""
 
-        if target is ctx.author:
+        if member is ctx.author:
             title = f":smiling_face_with_3_hearts: :smiling_face_with_3_hearts: | **{ctx.author.name}** hugged **themselves**"
         else:
-            title = f":smiling_face_with_3_hearts: :smiling_face_with_3_hearts: | **{ctx.author.name}** hugged **{target.display_name}**"
+            title = f":smiling_face_with_3_hearts: :smiling_face_with_3_hearts: | **{ctx.author.name}** hugged **{member.display_name}**"
 
         # Surround with try/except to catch any exceptions that may occur
         try:

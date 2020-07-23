@@ -69,7 +69,6 @@ enso_modmail_ID = 728083016290926623
 # Returns a list of all the cogs
 def extensions():
     ext = ['cogs.interactive', 'cogs.anime', 'cogs.relationship',
-           'cogs.info', 'cogs.fun', 'cogs.enso',
-           'cogs.modmail']
+           'cogs.info', 'cogs.fun', 'cogs.enso', 'cogs.modmail']
 
     return ext

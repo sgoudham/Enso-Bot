@@ -481,17 +481,6 @@ except discord.errors.LoginFailure as e:
     print("Login unsuccessful.")
 
 """    
-def write_to_dm_file(time, author, content):
-    with open('images/logs/dm-logs.txt', mode='a') as dm_logs_file:
-    dm_logs_file.write(f"{time}: {author}: {content}")
-    
-    # File Writing Variables
-    time = message.created_at
-    msg_time = time.strftime('%Y-%m-%dT%H:%M:%S')
-    msg_author = message.author
-    msg_content = message.content
-    
-
  # Don't count messages that are taken in the dms
     if not isinstance(message.channel, DMChannel):
         # Using connection to the database

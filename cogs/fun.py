@@ -154,7 +154,7 @@ class Fun(commands.Cog):
     @command(name="flip", aliases=['Flip'])
     @cooldown(1, 1, BucketType.user)
     async def flip(self, ctx):
-        """"Flip a coin"""
+        """Flip a coin"""
 
         # Define array with only 2 entries to create 50/50 chance
         pp_array = ["Smol pp", "Huge pp"]

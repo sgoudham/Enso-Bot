@@ -416,7 +416,7 @@ class HelpPaginator(Pages):
 
         entries = sorted(ctx.bot.commands, key=key)
         nested_pages = []
-        per_page = 9
+        per_page = 4
 
         # 0: (cog, desc, commands) (max len == 9)
         # 1: (cog, desc, commands) (max len == 9)

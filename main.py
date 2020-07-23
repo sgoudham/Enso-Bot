@@ -1,5 +1,6 @@
 import asyncio
 import datetime
+import random
 from contextlib import closing
 from typing import Optional
 
@@ -8,7 +9,7 @@ import mariadb
 from decouple import config
 from discord import Embed
 from discord.ext import commands, tasks
-from discord.ext.commands import when_mentioned_or, is_owner, guild_only, has_permissions
+from discord.ext.commands import when_mentioned_or, is_owner, guild_only, has_permissions, cooldown, BucketType
 
 import db
 import settings
@@ -165,6 +166,15 @@ async def leave(ctx):
     """Leaves the guild"""
     await ctx.send("**Leaving the guild... Bye Bye uvu**")
     await ctx.guild.leave()
+
+
+@client.command()
+@guild_only()
+@cooldown(1, 300, BucketType.guild)
+async def someone(ctx):
+    """Tags Someone Randomly in the Server"""
+
+    await ctx.send(random.choice(tuple(member.mention for member in ctx.guild.members if not member.bot)))
 
 
 @client.command(name='help')

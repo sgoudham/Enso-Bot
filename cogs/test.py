@@ -63,8 +63,7 @@ class helper(commands.Cog, command_attrs=dict(hidden=True)):
                                 for val in c.commands:
                                     if string == val.qualified_name:
                                         coggers = Embed(title="Proper Syntax",
-                                                        description=f"**{val.help}"
-                                                                    f"\n{ctx.prefix}{val.qualified_name}** `{val.signature}`",
+                                                        description=f"**{ctx.prefix}{val.qualified_name}** `{val.signature}` | {val.help}",
                                                         colour=enso_embedmod_colours,
                                                         timestamp=datetime.datetime.utcnow())
                                         coggers.set_footer(text=f"Requested by {ctx.author}",
@@ -72,7 +71,7 @@ class helper(commands.Cog, command_attrs=dict(hidden=True)):
                                         await ctx.message.add_reaction(emoji="✉️")
                             else:
                                 coggers = Embed(title=f"Proper Syntax",
-                                                description=f"**{ctx.prefix}{c.qualified_name}** `{c.signature}` | {c.help}",
+                                                description=f"**{ctx.prefix}{c.qualified_name}** | {c.help}",
                                                 colour=enso_embedmod_colours, timestamp=datetime.datetime.utcnow())
                                 coggers.set_footer(text=f"Requested by {ctx.author}",
                                                    icon_url='{}'.format(ctx.author.avatar_url))

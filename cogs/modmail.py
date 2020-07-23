@@ -151,8 +151,9 @@ class Modmail(commands.Cog):
         self.bot = bot
         self.anon = None
 
-    @commands.group(invoke_without_command=True, hidden=True)
+    @commands.group(invoke_without_command=True)
     async def modmail(self, ctx):
+        """Setup/Update/Delete Modmail System"""
         pass
 
     @modmail.command()

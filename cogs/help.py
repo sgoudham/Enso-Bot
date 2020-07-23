@@ -301,6 +301,8 @@ class HelpMenu(menus.Menu):
 
 # Set up the cog
 class Help(commands.Cog):
+    """Shows this Help Embed!"""
+
     def __init__(self, bot):
         self.bot = bot
         self.bot.remove_command("help")

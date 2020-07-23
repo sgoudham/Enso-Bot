@@ -155,8 +155,16 @@ async def on_ready():
 
 @client.command(name="ping", aliases=["Ping"])
 async def _ping(ctx):
-    """Sends the latency of the bot (ms)"""
+    """Latency of the Bot (ms)"""
     await ctx.send(f'Pong! `{round(client.latency * 1000)}ms`')
+
+
+@client.command(name="leave", aliases=["Leave"])
+@is_owner()
+async def leave(ctx):
+    """Leaves the guild"""
+    await ctx.send("Leaving the guild... Bye Bye uvu")
+    await leave()
 
 
 @client.command(name='help')

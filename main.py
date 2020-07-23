@@ -146,8 +146,6 @@ async def change_status():
 # Start the background task
 change_status.start()
 
-h
-
 
 # Bot Status on Discord
 @client.event

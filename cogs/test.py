@@ -25,10 +25,13 @@ class helper(commands.Cog, command_attrs=dict(hidden=True)):
                             colour=enso_embedmod_colours,
                             timestamp=datetime.datetime.utcnow())
             coggers.set_footer(text=f"Requested by {ctx.author}", icon_url='{}'.format(ctx.author.avatar_url))
-            coggers.set_thumbnail(url=ctx.guild.icon_url)
+            if ctx.message.guild is None:
+                coggers.set_thumbnail(url=ctx.author.avatar_url)
+            else:
+                coggers.set_thumbnail(url=ctx.guild.icon_url)
             cog_desc = ''
             for x in self.bot.cogs:
-                cog_desc += f"**{x}** - {self.bot.cogs[x].__doc__}\n"
+                cog_desc += f"**{x}** | {self.bot.cogs[x].__doc__}\n"
             coggers.add_field(name=blank_space, value=cog_desc[0:len(cog_desc) - 1], inline=False)
             await ctx.message.add_reaction(emoji="✉️")
             await ctx.send(embed=coggers)

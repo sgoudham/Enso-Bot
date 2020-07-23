@@ -2,9 +2,12 @@
 # Edited by F4stZ4p
 
 import asyncio
+import datetime
 
 import discord
 from discord.ext.commands import Cog
+
+from settings import enso_embedmod_colours
 
 
 class CannotPaginate(Exception):
@@ -52,7 +55,8 @@ class Pages:
         if left_over:
             pages += 1
         self.maximum_pages = pages
-        self.embed = discord.Embed(colour=0xff0000)  # any HEX color here
+        self.embed = discord.Embed(colour=enso_embedmod_colours,
+                                   timestamp=datetime.datetime.utcnow())  # any HEX color here
         self.paginating = len(entries) > per_page
         self.show_entry_count = show_entry_count
         self.reaction_emojis = [

@@ -163,11 +163,8 @@ async def _ping(ctx):
 @is_owner()
 async def leave(ctx):
     """Leaves the guild"""
-    try:
-        await ctx.send("**Leaving the guild... Bye Bye uvu**")
-        await ctx.guild.leave()
-    except Exception as ex:
-        print(ex)
+    await ctx.send("**Leaving the guild... Bye Bye uvu**")
+    await ctx.guild.leave()
 
 
 @client.command(name='help')

@@ -42,9 +42,6 @@ colors = {
     'MEDIUM_VIOLET_RED': 0xC71585,
 }
 
-# Allowed channel for Enso~Chan commands
-channels = ["enso-chan-commands", "picto-chat", 663651584399507481]
-
 # Grabbing the list of colours
 colour_list = [c for c in colors.values()]
 

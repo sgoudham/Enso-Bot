@@ -44,7 +44,8 @@ class Pages:
         Our permissions for the channel.
     """
 
-    def __init__(self, ctx, *, entries, per_page=12, show_entry_count=True):
+    def __init__(self, ctx, *, entries, per_page=6, show_entry_count=True):
+
         self.bot = ctx.bot
         self.entries = entries
         self.message = ctx.message
@@ -55,8 +56,8 @@ class Pages:
         if left_over:
             pages += 1
         self.maximum_pages = pages
-        self.embed = discord.Embed(colour=enso_embedmod_colours,
-                                   timestamp=datetime.datetime.utcnow())  # any HEX color here
+        self.embed = discord.Embed(colour=enso_embedmod_colours,  # any HEX color here
+                                   timestamp=datetime.datetime.utcnow())
         self.paginating = len(entries) > per_page
         self.show_entry_count = show_entry_count
         self.reaction_emojis = [
@@ -358,6 +359,11 @@ class HelpPaginator(Pages):
     async def from_cog(cls, ctx, cog):
         cog_name = cog.__class__.__name__
 
+        if ctx.guild is None:
+            icon = ctx.author.avatar_url
+        else:
+            icon = ctx.guild.icon_url
+
         # get the commands
         entries = sorted(Cog.get_commands(cog), key=lambda c: c.name)
 
@@ -366,6 +372,7 @@ class HelpPaginator(Pages):
 
         self = cls(ctx, entries)
         self.title = f'(っ◔◡◔)っ {cog_name} (っ◔◡◔)っ'
+        self.embed.set_thumbnail(url=icon)
         self.description = inspect.getdoc(cog)
         self.prefix = cleanup_prefix(ctx.bot, ctx.prefix)
 
@@ -382,9 +389,17 @@ class HelpPaginator(Pages):
 
         self = cls(ctx, entries)
         if not isinstance(command, discord.ext.commands.Group):
-            self.title = f"{command.qualified_name} `{command.signature}`"
+            if command.aliases:
+                aliases = " | ".join(command.aliases)
+                self.title = f"{command.qualified_name} | {aliases} `{command.signature}`"
+            else:
+                self.title = f"{command.qualified_name} `{command.signature}`"
         else:
-            self.title = command.name
+            if command.aliases:
+                aliases = " | ".join(command.aliases)
+                self.title = f"{command.name} | {aliases}"
+            else:
+                self.title = command.name
 
         if command.description:
             self.description = f'{command.description}\n\n{command.help}'
@@ -421,8 +436,14 @@ class HelpPaginator(Pages):
             nested_pages.extend(
                 (cog, description, plausible[i:i + per_page]) for i in range(0, len(plausible), per_page))
 
+        if ctx.guild is None:
+            icon = ctx.author.avatar_url
+        else:
+            icon = ctx.guild.icon_url
+
         self = cls(ctx, nested_pages, per_page=1)  # this forces the pagination session
         self.prefix = cleanup_prefix(ctx.bot, ctx.prefix)
+        self.embed.set_thumbnail(url=icon)
 
         # swap the get_page implementation with one that supports our style of pagination
         self.get_page = self.get_bot_page

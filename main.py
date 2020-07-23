@@ -151,11 +151,18 @@ async def on_ready():
     print('Bot is ready.')
 
 
-# Bot prefix command that returns the prefix or updates it
+@client.command(name="ping", aliases=["Ping"])
+async def _ping(ctx):
+    """Sends the latency of the bot (ms)"""
+    await ctx.send(f'Pong! `{round(client.latency * 1000)}ms`')
+
+
 @client.command(name="prefix", aliases=["Prefix"])
 @guild_only()
 @has_permissions(manage_guild=True)
 async def change_prefix(ctx, new: Optional[str]):
+    """View/Change Guild Prefix"""
+
     # As long as a new prefix has been given and is less than 5 characters
     if new and len(new) < 5:
         if len(new) > 1:

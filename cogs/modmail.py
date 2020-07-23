@@ -158,7 +158,7 @@ class Modmail(commands.Cog):
 
     @modmail.command()
     async def setup(self, ctx, channelID: int):
-        """Setup modmail system"""
+        """Setup Modmail System"""
 
         # Retrieve a list of channel id's in the guild
         channels = [channel.id for channel in ctx.guild.channels]
@@ -249,7 +249,7 @@ class Modmail(commands.Cog):
 
     @modmail.command()
     async def update(self, ctx, channelID: int):
-        """Update modmail system"""
+        """Update Modmail Channel"""
 
         # Retrieve a list of channel id's in the guild
         channels = [channel.id for channel in ctx.guild.channels]
@@ -300,7 +300,7 @@ class Modmail(commands.Cog):
 
     @modmail.command()
     async def delete(self, ctx):
-        """Delete modmail system"""
+        """Delete Modmail System"""
 
         # Checking if the guild already exists within the database
         with db.connection() as conn:

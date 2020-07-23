@@ -377,7 +377,7 @@ class HelpPaginator(Pages):
             entries = [cmd for cmd in entries if (await _can_run(cmd, ctx)) and not cmd.hidden]
 
         self = cls(ctx, entries)
-        self.title = command.signature
+        self.title = f"{command.qualified_name} `{command.signature}`"
 
         if command.description:
             self.description = f'{command.description}\n\n{command.help}'

@@ -319,12 +319,11 @@ async def on_member_join(member):
             # Define the insert statement that will insert the user's information
             insert_query = """INSERT INTO members (guildID, discordUser, discordID) VALUES (?, ?, ?)"""
             vals = member.guild.id, name, member.id,
-            cursor = conn.cursor()
-
-            # Execute the SQL Query
-            cursor.execute(insert_query, vals)
-            conn.commit()
-            print(cursor.rowcount, "Record inserted successfully into Members")
+            with closing(conn.cursor()) as cursor:
+                # Execute the SQL Query
+                cursor.execute(insert_query, vals)
+                conn.commit()
+                print(cursor.rowcount, "Record inserted successfully into Members")
 
     except mariadb.Error as ex:
         print("Parameterized Query Failed: {}".format(ex))
@@ -377,12 +376,11 @@ async def on_member_remove(member):
             # Delete the record of the member as they leave the server
             delete_query = """DELETE FROM members WHERE discordID = (?) AND guildID = (?)"""
             vals = member.id, guild.id,
-            cursor = conn.cursor()
-
-            # Execute the SQL Query
-            cursor.execute(delete_query, vals)
-            conn.commit()
-            print(cursor.rowcount, "Record deleted successfully from Members")
+            with closing(conn.cursor()) as cursor:
+                # Execute the SQL Query
+                cursor.execute(delete_query, vals)
+                conn.commit()
+                print(cursor.rowcount, "Record deleted successfully from Members")
 
     except mariadb.Error as ex:
         print("Parameterized Query Failed: {}".format(ex))

@@ -12,7 +12,7 @@ from discord.ext.commands import when_mentioned_or, is_owner, guild_only, has_pe
 
 import db
 import settings
-from cogs.HelpPaginator import HelpPaginator
+from cogs.help import HelpPaginator
 from settings import blank_space, enso_embedmod_colours, enso_guild_ID, enso_newpeople_ID
 
 # Storing the prefixes and guildID's in the cache

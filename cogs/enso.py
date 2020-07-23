@@ -8,7 +8,6 @@ from discord import Embed, Colour
 from discord.ext import commands
 from discord.ext.commands import cooldown, BucketType, command, is_owner
 
-import settings
 from settings import colour_list, enso_guild_ID, enso_ensochancommands_Mention, blank_space, enso_embedmod_colours, \
     enso_verification_ID
 
@@ -77,74 +76,58 @@ def displayServerImage(array, ctx, name):
     return embed
 
 
+def enso_people():
+    """Return all the people in the txt files"""
+
+    return ['hammy', 'hussein', 'inna', 'kate', 'calvin',
+            'lukas', 'stitch', 'corona', 'ging', 'ash',
+            'gria', 'lilu', 'ifrah', 'skye', 'chloe',
+            'connor', 'taz', 'ryder', 'ange', 'rin',
+            'izzy', 'david', 'clarity', 'angel', "studentjon"]
+
+
 class Enso(commands.Cog):
     """Commands for Ensō server"""
 
     def __init__(self, bot):
         self.bot = bot
 
-    # Bot ~ensoPerson command for the server members
-    @command(name="enso", aliases=['Enso'])
-    @cooldown(1, 1, BucketType.user)
-    async def enso_person(self, ctx, name=None):
+    @commands.group(invoke_without_command=True)
+    async def enso(self, ctx, name=None):
+        """Shows Random Person from Ensō"""
 
         # Making sure this command only works in Enso
         if not ctx.guild.id == enso_guild_ID:
             await ctx.send("**Sorry! That command is only for a certain guild!**")
             return
 
-        # Defining array of all the people that have images stored in the bot
-        array = ['hammy', 'hussein', 'inna', 'kate', 'calvin',
-                 'lukas', 'stitch', 'corona', 'ging', 'ash',
-                 'gria', 'lilu', 'ifrah', 'skye', 'chloe',
-                 'connor', 'taz', 'ryder', 'ange', 'rin',
-                 'izzy', 'david', 'clarity', 'angel', "studentjon"]
-
         # If the channel that the command has been sent is in the list of accepted channels
-        if str(ctx.channel) in settings.channels:
-
-            # if a name is specified
+        if str(ctx.channel) in "enso-chan-commands":
             if name:
                 # Get the lowercase
-                proper_name = name.lower()
-
-                # Surround with try/except to catch any exceptions that may occur
+                lcase_name = name.lower()
                 try:
+                    # Retrieve image of the member specified
+                    with open(f'images/ServerMembers/{lcase_name}.txt') as file:
+                        images_array = file.readlines()
 
-                    # if the user does ~enso list
-                    if proper_name == "list":
-                        # Tell the user to try the names in the array
-                        await ctx.send(f"Try the names listed below!")
-
-                        # Send the list of members in the bot to the channel
-                        server_members = string.capwords(', '.join(map(str, array)))
-                        await ctx.send(server_members)
-
-                    else:
-
-                        # Retrieve image of the member specified
-                        with open(f'images/ServerMembers/{proper_name}.txt') as file:
-                            images_array = file.readlines()
-
-                        # Embed the image into a message and send it to the channel
-                        embed = displayServerImage(images_array, ctx, proper_name)
-                        await ctx.send(embed=embed)
+                    # Embed the image into a message and send it to the channel
+                    embed = displayServerImage(images_array, ctx, lcase_name)
+                    await ctx.send(embed=embed)
 
                 except Exception as e:
                     print(e)
 
-                    # Send error message saying that the person isn't recognised
-                    await ctx.send(f"Sorry! That person doesn't exist! Try the names listed below!")
-
                     # Send the list of available members to the channel
-                    nice = string.capwords(', '.join(map(str, array)))
-                    await ctx.send(nice)
+                    nice = string.capwords(', '.join(map(str, enso_people())))
+                    # Send error message saying that the person isn't recognised
+                    await ctx.send(f"Sorry! That person doesn't exist! Try the names listed below!"
+                                   f"\n{nice}")
 
-            # Else if the name is not specified
             else:
 
                 # Retrieve a random image of a member in the bot
-                with open(f'images/ServerMembers/{random.choice(array)}.txt') as file:
+                with open(f'images/ServerMembers/{random.choice(enso_people())}.txt') as file:
                     array = file.readlines()
 
                 # Get the member and the userAvatar
@@ -159,7 +142,6 @@ class Enso(commands.Cog):
                 embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
 
                 await ctx.send(embed=embed)
-
         else:
 
             message = await ctx.send(error_function())
@@ -168,6 +150,16 @@ class Enso(commands.Cog):
             await asyncio.sleep(2.5)
             # Delete the message
             await message.delete()
+
+    @enso.command()
+    async def list(self, ctx):
+        """Shows the List of People in the Bot"""
+
+        # Send the list of available members to the channel
+        nice = string.capwords(', '.join(map(str, enso_people())))
+        # Send error message saying that the person isn't recognised
+        await ctx.send(f"Try the names listed below!"
+                       f"\n{nice}")
 
     @command(name="rules", aliases=["Rules"])
     @cooldown(1, 5, BucketType.user)

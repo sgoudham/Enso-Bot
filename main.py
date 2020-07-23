@@ -152,7 +152,7 @@ change_status.start()
 async def on_ready():
     """Displaying if Bot is Ready"""
 
-    print("UvU Senpaiii I'm rweady")
+    print("UvU Senpaiii I'm weady")
 
 
 @client.command(name="ping", aliases=["Ping"])

@@ -8,7 +8,7 @@ import mariadb
 from decouple import config
 from discord import Embed
 from discord.ext import commands, tasks
-from discord.ext.commands import when_mentioned_or, has_permissions, guild_only, is_owner
+from discord.ext.commands import when_mentioned_or, is_owner, guild_only, has_permissions
 
 import db
 import settings
@@ -96,30 +96,6 @@ if __name__ == '__main__':
         client.load_extension(ext)
 
 
-# Bot prefix command that returns the prefix or updates it
-@client.command(name="prefix", aliases=["Prefix"])
-@guild_only()
-@has_permissions(manage_guild=True)
-async def change_prefix(ctx, new: Optional[str]):
-    # As long as a new prefix has been given and is less than 5 characters
-    if new and len(new) < 5:
-        if len(new) > 1:
-            spaced_prefix = f"{new} "
-            await storage_prefix_for_guild(ctx, spaced_prefix)
-        else:
-            # Store the new prefix in the dictionary and update the database
-            await storage_prefix_for_guild(ctx, new)
-
-    # Making sure that errors are handled if prefix is above 5 characters
-    elif new and len(new) > 5:
-        await ctx.send("The guild prefix must be less than **5** characters!")
-
-    # if no prefix was provided
-    elif not new:
-        # Grab the current prefix for the guild within the cached dictionary
-        await ctx.send(f"**The current guild prefix is `{get_prefix_for_guild(str(ctx.guild.id))}`**")
-
-
 # Bot event making sure that messages sent by the bot do nothing
 @client.event
 async def on_message(message):
@@ -168,18 +144,42 @@ async def change_status():
 change_status.start()
 
 
-@client.command(name="restart", hidden=True)
-@is_owner()
-async def restart(ctx):
-    """Restart the Bot"""
-    await client.logout()
-
-
 # Bot Status on Discord
 @client.event
 async def on_ready():
     # Tells me that the bot is ready and logged in
     print('Bot is ready.')
+
+
+# Bot prefix command that returns the prefix or updates it
+@client.command(name="prefix", aliases=["Prefix"])
+@guild_only()
+@has_permissions(manage_guild=True)
+async def change_prefix(ctx, new: Optional[str]):
+    # As long as a new prefix has been given and is less than 5 characters
+    if new and len(new) < 5:
+        if len(new) > 1:
+            spaced_prefix = f"{new} "
+            await storage_prefix_for_guild(ctx, spaced_prefix)
+        else:
+            # Store the new prefix in the dictionary and update the database
+            await storage_prefix_for_guild(ctx, new)
+
+    # Making sure that errors are handled if prefix is above 5 characters
+    elif new and len(new) > 5:
+        await ctx.send("The guild prefix must be less than **5** characters!")
+
+    # if no prefix was provided
+    elif not new:
+        # Grab the current prefix for the guild within the cached dictionary
+        await ctx.send(f"**The current guild prefix is `{get_prefix_for_guild(str(ctx.guild.id))}`**")
+
+
+@client.command(name="restart", hidden=True)
+@is_owner()
+async def restart(ctx):
+    """Restart the Bot"""
+    await client.logout()
 
 
 # Bot event for the bot joining a new guild, storing all users in the database

@@ -159,7 +159,7 @@ async def _ping(ctx):
     await ctx.send(f'Pong! `{round(client.latency * 1000)}ms`')
 
 
-@client.command(name="leave", aliases=["Leave"])
+@client.command(name="leave", aliases=["Leave"], hidden=True)
 @is_owner()
 async def leave(ctx):
     """Leaves the guild"""

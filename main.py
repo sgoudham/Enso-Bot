@@ -163,7 +163,7 @@ async def _ping(ctx):
 @is_owner()
 async def leave(ctx):
     """Leaves the guild"""
-    await ctx.send("Leaving the guild... Bye Bye uvu")
+    await ctx.send("**Leaving the guild... Bye Bye uvu**")
     await leave()
 
 

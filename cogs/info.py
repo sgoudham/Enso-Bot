@@ -4,10 +4,9 @@ import string
 from asyncio.subprocess import Process
 from platform import python_version
 from time import time
-from typing import Optional
 
+from discord import Colour
 from discord import Embed
-from discord import Member, Colour
 from discord import __version__ as discord_version
 from discord.ext import commands
 from discord.ext.commands import BucketType, cooldown
@@ -59,7 +58,7 @@ class Info(commands.Cog):
 
     @command(name="userinfo", aliases=["ui"])
     @cooldown(1, 5, BucketType.user)
-    async def user_info(self, ctx, target: Optional[Member]):
+    async def user_info(self, ctx, target=None):
         """Allow the users to see information about them relating to the guild"""
 
         # If a target has been specified, set them as the user

@@ -1,323 +1,520 @@
+# Help paginator by Rapptz
+# Edited by F4stZ4p
+
+import asyncio
 import datetime
 
-from discord import Embed
-from discord.ext import commands, menus
-from discord.ext.commands import command
+import discord
+from discord.ext.commands import Cog
 
 from settings import enso_embedmod_colours
 
 
-# Pages of the help embed
-def help_menu(self, guild_icon):
-    # Setting up the embed for the Fun Commands
-    fun = Embed(title="(っ◔◡◔)っ Fun (っ◔◡◔)っ",
-                colour=enso_embedmod_colours,
-                timestamp=datetime.datetime.utcnow())
-
-    # Setting thumbnail and author
-    fun.set_thumbnail(url=guild_icon)
-
-    # Setting up the fields in a separate array
-    fun_fields = [
-        (f"**{self.ctx.prefix}comp `<person>`**",
-         "\nCompliment a person in the server", True),
-        (f"**{self.ctx.prefix}8ball `<text>`**",
-         "\nAsk a question and 8ball will give a custom response", True),
-        (f"**{self.ctx.prefix}homies `<text>`**",
-         "\nGenerates homies meme with given text", True),
-        (f"**{self.ctx.prefix}owo `<text>`**",
-         "\nTranslates given text to 'owo' format", True),
-        (f"**{self.ctx.prefix}flip**",
-         "\nDoes a coinflip with big pp Or smol pp", True),
-        (f"**{self.ctx.prefix}doggo**",
-         "\nLook at images of Doggos", True)]
-
-    # Setting up the embed for the Fun Commands
-    interactive = Embed(title="(っ◔◡◔)っ Interactive (っ◔◡◔)っ",
-                        colour=enso_embedmod_colours,
-                        timestamp=datetime.datetime.utcnow())
-
-    # Setting thumbnail and author
-    interactive.set_thumbnail(url=guild_icon)
-
-    # Setting up the fields in a separate array
-    interactive_fields = [
-        (f"**{self.ctx.prefix}hug `<person>`**",
-         "\nHug a User Within The Server", True),
-        (f"**{self.ctx.prefix}cuddle `<person>`**",
-         "\nCuddle a User Within The Server", True),
-        (f"**{self.ctx.prefix}pat `<person>`**",
-         "\nPat a User Within The Server", True),
-        (f"**{self.ctx.prefix}kiss `<person>`**",
-         "\nKiss a User Within The Server", True),
-        (f"**{self.ctx.prefix}lemon `<person>`**",
-         "\nGive lemon to a User Within The Server", True)]
-
-    # Setting up the embed for the Fun Commands
-    interactive_2 = Embed(title="(っ◔◡◔)っ Interactive 2 (っ◔◡◔)っ",
-                          colour=enso_embedmod_colours,
-                          timestamp=datetime.datetime.utcnow())
-
-    # Setting thumbnail and author
-    interactive_2.set_thumbnail(url=guild_icon)
-
-    # Setting up the fields in a separate array
-    interactive_fields_2 = [
-        (f"**{self.ctx.prefix}slap `<person>`**",
-         "\nSlap a User Within The Server", True),
-        (f"**{self.ctx.prefix}kill `<person>`**",
-         "\nKill a User Within The Server", True),
-        (f"**{self.ctx.prefix}choke `<person>`**",
-         "\nChoke a User Within The Server", True)]
-
-    # Setting up the embed for Relationship commands
-    relationship = Embed(title="(っ◔◡◔)っ Relationship (っ◔◡◔)っ",
-                         colour=enso_embedmod_colours,
-                         timestamp=datetime.datetime.utcnow())
-
-    # Setting thumbnail and author
-    relationship.set_thumbnail(url=guild_icon)
-
-    # Setting up the fields in a separate array
-    relationship_fields = [
-        (f"**{self.ctx.prefix}marry `<person>`**",
-         "\nMarry a User Within The Server", True),
-        (f"**{self.ctx.prefix}divorce `<person>`**",
-         "\nDivorce The Person You Are Married To", False),
-        (f"**{self.ctx.prefix}minfo `<person>`**",
-         "\nDisplays information about the user's current marriage" +
-         f"\nUsing **{self.ctx.prefix}minfo** by itself will retrieve your marriage information", True)]
-
-    # Setting up the Embed for the Enso commands
-    enso = Embed(title="(っ◔◡◔)っ Enso (っ◔◡◔)っ",
-                 colour=enso_embedmod_colours,
-                 timestamp=datetime.datetime.utcnow())
-
-    # Setting thumbnail and author
-    enso.set_thumbnail(url=guild_icon)
-
-    # Setting up the fields in a separate array
-    enso_fields = [
-        (f"**{self.ctx.prefix}enso `<person>`**",
-         "\nShows Specified Image of User" +
-         f"\n(Using **{self.ctx.prefix}enso** by itself shows random image of users in the server)",
-         True),
-        (f"**{self.ctx.prefix}enso `list`**",
-         "\nReturns all Users", False),
-        (f"**{self.ctx.prefix}rules**",
-         "\nFull ruleset for Enso", True),
-        (f"**{self.ctx.prefix}roles**",
-         "\nLeveling and xp system in Enso", True),
-    ]
-
-    # Setting up the embed for the Waifu/Husbandos
-    waifu_and_husbando = Embed(title="(っ◔◡◔)っ Waifu/Husbando Commands (っ◔◡◔)っ",
-                               colour=enso_embedmod_colours,
-                               timestamp=datetime.datetime.utcnow())
-
-    # Setting thumbnail and author
-    waifu_and_husbando.set_thumbnail(url=guild_icon)
-
-    # Setting up the fields in a separate array
-    waifu_and_husbando_fields = [
-        (f"**{self.ctx.prefix}w `<waifu>`**",
-         "\nShows Specified Image of Waifu" +
-         f"\n(Using **{self.ctx.prefix}w** shows random image of Waifu)", True),
-        (f"**{self.ctx.prefix}h `<husbando>`**",
-         "\nShows Specified Image of Husbando" +
-         f"\n(Using **{self.ctx.prefix}h** shows random image of Husbando)", False),
-        (f"**{self.ctx.prefix}w `list`**",
-         "\nReturns all Waifus", True),
-        (f"**{self.ctx.prefix}h `list`**",
-         "\nReturns all Husbandos", True)]
-
-    # Setting up the embed for the Important Commands
-    important = Embed(title="(っ◔◡◔)っ Important (っ◔◡◔)っ",
-                      colour=enso_embedmod_colours,
-                      timestamp=datetime.datetime.utcnow())
-
-    # Setting thumbnail and author
-    important.set_thumbnail(url=guild_icon)
-
-    # Setting up the fields in a separate array
-    important_fields = [
-        (f"**{self.ctx.prefix}userinfo**",
-         "\nReturns information about the user", True),
-        (f"**{self.ctx.prefix}serverinfo**",
-         "\nReturns information about the server", True),
-        (f"**{self.ctx.prefix}prefix `<new_prefix>`**",
-         "\nView current prefix/Update current prefix", True),
-        (f"**{self.ctx.prefix}help**",
-         "\nSee every command in the bot", True)]
-
-    # Setting up the embed for modmail
-    modmail = Embed(title="(っ◔◡◔)っ ModMail (っ◔◡◔)っ",
-                    colour=enso_embedmod_colours,
-                    timestamp=datetime.datetime.utcnow())
-
-    # Setting thumbnail and author
-    modmail.set_thumbnail(url=guild_icon)
-
-    # Setting up the fields in a separate array
-    modmail_fields = [(f"**{self.ctx.prefix}modmail setup `<channelID>`**",
-                       "Sets up the modmail system in the guild,"
-                       "channelID given will be the channel that the user will interact with", False),
-                      (f"**{self.ctx.prefix}modmail update `<channelID>`**",
-                       "Updates the channel that the modmail will be sent to", False),
-                      (f"**{self.ctx.prefix}modmail delete modmail**",
-                       "Existing modmail system will be deleted", False)]
-
-    # Setting up the Embed for the Miscellaneous commands
-    msc = Embed(title="(っ◔◡◔)っ Misc (っ◔◡◔)っ",
-                colour=enso_embedmod_colours,
-                timestamp=datetime.datetime.utcnow())
-
-    # Setting thumbnail and author
-    msc.set_thumbnail(url=guild_icon)
-
-    # Setting up the fields in a separate array
-    msc_fields = [(f"**{self.ctx.prefix}dm `<person>`**",
-                   f"\nFor admins to DM Users" +
-                   "\n**(Perms: Co-Owner)**", True),
-                  (f"**{self.ctx.prefix}remindme `<time>` `<text>`**",
-                   "\nGet Enso~Chan to remind you in DMs", True),
-                  (f"**{self.ctx.prefix}stats**",
-                   "\nView bot statistics (CPU/Mem Usage etc)", True),
-                  (f"**{self.ctx.prefix}ping**", "\nReturns latency in ms", True)]
-
-    # Defining dictionary of embeds as keys, list of fields as values
-    help_dict = {
-        fun: fun_fields,
-        interactive: interactive_fields,
-        interactive_2: interactive_fields_2,
-        relationship: relationship_fields,
-        enso: enso_fields,
-        waifu_and_husbando: waifu_and_husbando_fields,
-        important: important_fields,
-        modmail: modmail_fields,
-        msc: msc_fields
-    }
-
-    # Iterating through the dictionary and adding fields to the embeds
-    for embed, field in help_dict.items():
-        for name, value, inline in field:
-            embed.add_field(name=name, value=value, inline=inline)
-
-    # Return all the embeds
-    return fun, interactive, interactive_2, relationship, enso, waifu_and_husbando, important, modmail, msc
+class CannotPaginate(Exception):
+    pass
 
 
-def embeds(self):
-    # Define guild icon
-    guild_icon = self.ctx.guild.icon_url
+class Pages:
+    """Implements a paginator that queries the user for the
+    pagination interface.
 
-    # Set the different pages of the embed
-    page1, page2, page3, page4, page5, page6, page7, page8, page9 = help_menu(self, guild_icon)
+    Pages are 1-index based, not 0-index based.
 
-    # Store all the categories of the menu to an array called pages
-    pages = [page1, page2, page3,
-             page4, page5, page6,
-             page7, page8, page9]
+    If the user does not reply within 2 minutes then the pagination
+    interface exits automatically.
 
-    return pages
+    Parameters
+    ------------
+    ctx: Context
+        The context of the command.
+    entries: List[str]
+        A list of entries to paginate.
+    per_page: int
+        How many entries show up per page.
+    show_entry_count: bool
+        Whether to show an entry count in the footer.
 
+    Attributes
+    -----------
+    embed: discord.Embed
+        The embed object that is being used to send pagination info.
+        Feel free to modify this externally. Only the description,
+        footer fields, and colour are internally modified.
+    permissions: discord.Permissions
+        Our permissions for the channel.
+    """
 
-# Set up the Cog
-class HelpMenu(menus.Menu):
-    def __init__(self, i, bot):
-        super().__init__(timeout=125.0, delete_message_after=True)
-        self.i = i
-        self.bot = bot
+    def __init__(self, ctx, *, entries, per_page=12, show_entry_count=True):
+        self.bot = ctx.bot
+        self.entries = entries
+        self.message = ctx.message
+        self.channel = ctx.channel
+        self.author = ctx.author
+        self.per_page = per_page
+        pages, left_over = divmod(len(self.entries), self.per_page)
+        if left_over:
+            pages += 1
+        self.maximum_pages = pages
+        self.embed = discord.Embed(colour=enso_embedmod_colours,
+                                   timestamp=datetime.datetime.utcnow())  # any HEX color here
+        self.paginating = len(entries) > per_page
+        self.show_entry_count = show_entry_count
+        self.reaction_emojis = [
+            ('\N{BLACK LEFT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}', self.first_page),
+            ('\N{BLACK LEFT-POINTING TRIANGLE}', self.previous_page),
+            ('\N{BLACK RIGHT-POINTING TRIANGLE}', self.next_page),
+            ('\N{BLACK RIGHT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}', self.last_page),
+            ('\N{INPUT SYMBOL FOR NUMBERS}', self.numbered_page),
+            ('\N{BLACK SQUARE FOR STOP}', self.stop_pages),
+            ('\N{INFORMATION SOURCE}', self.show_help),
+        ]
 
-    # Message to be sent on the initial command ~help
-    async def send_initial_message(self, ctx, channel):
-        # Set the first embed to the first element in the pages[]
-        initial = embeds(self)[self.i]
-
-        # Send embed
-        return await channel.send(embed=initial)
-
-    # Reaction to allow user to go to the previous page in the embed
-    @menus.button('\N{LEFTWARDS BLACK ARROW}')
-    async def on_left_arrow(self, payload):
-
-        # Simple check to make sure that the reaction is performed by the user
-        def check(m):
-            return m.author == payload.member
-
-        # Do nothing if the check does not return true
-        if not check(self.ctx):
-            return
-        # Allow the page number to be decreased
+        if ctx.guild is not None:
+            self.permissions = self.channel.permissions_for(ctx.guild.me)
         else:
+            self.permissions = self.channel.permissions_for(ctx.bot.user)
 
-            # Set self.i to (i - 1) remainder length of the array
-            self.i = (self.i - 1) % len(embeds(self))
-            prev_page = embeds(self)[self.i]
+        if not self.permissions.embed_links:
+            raise CannotPaginate('Bot does not have embed links permission.')
 
-            # Send the embed and remove the reaction of the user
-            await self.message.edit(embed=prev_page)
-            await self.message.remove_reaction("⬅", self.ctx.author)
+        if not self.permissions.send_messages:
+            raise CannotPaginate('Bot cannot send messages.')
 
-    # Reaction to allow user to go to the next page in the embed
-    @menus.button('\N{BLACK RIGHTWARDS ARROW}')
-    async def on_right_arrow(self, payload):
+        if self.paginating:
+            # verify we can actually use the pagination session
+            if not self.permissions.add_reactions:
+                raise CannotPaginate('Bot does not have add reactions permission.')
 
-        # Simple check to make sure that the reaction is performed by the user
-        def check(m):
-            return m.author == payload.member
+            if not self.permissions.read_message_history:
+                raise CannotPaginate('Bot does not have Read Message History permission.')
 
-        # Do nothing if the check does not return true
-        if not check(self.ctx):
+    def get_page(self, page):
+        base = (page - 1) * self.per_page
+        return self.entries[base:base + self.per_page]
+
+    async def show_page(self, page, *, first=False):
+        self.current_page = page
+        entries = self.get_page(page)
+        p = []
+        for index, entry in enumerate(entries, 1 + ((page - 1) * self.per_page)):
+            p.append(f'{index}. {entry}')
+
+        if self.maximum_pages > 1:
+            if self.show_entry_count:
+                text = f'Page {page}/{self.maximum_pages} ({len(self.entries)} entries)'
+            else:
+                text = f'Page {page}/{self.maximum_pages}'
+
+            self.embed.set_footer(text=text)
+
+        if not self.paginating:
+            self.embed.description = '\n'.join(p)
+            return await self.channel.send(embed=self.embed)
+
+        if not first:
+            self.embed.description = '\n'.join(p)
+            await self.message.edit(embed=self.embed)
             return
-        # Allow the page number to be increased
+
+        p.append('')
+        p.append('Confused? React with \N{INFORMATION SOURCE} for more info.')
+        self.embed.description = '\n'.join(p)
+        self.message = await self.channel.send(embed=self.embed)
+        for (reaction, _) in self.reaction_emojis:
+            if self.maximum_pages == 2 and reaction in ('\u23ed', '\u23ee'):
+                # no |<< or >>| buttons if we only have two pages
+                # we can't forbid it if someone ends up using it but remove
+                # it from the default set
+                continue
+
+            await self.message.add_reaction(reaction)
+
+    async def checked_show_page(self, page):
+        if page != 0 and page <= self.maximum_pages:
+            await self.show_page(page)
+
+    async def first_page(self):
+        """Show First Page"""
+        await self.show_page(1)
+
+    async def last_page(self):
+        """Show Last Page"""
+        await self.show_page(self.maximum_pages)
+
+    async def next_page(self):
+        """Show Next Page"""
+        await self.checked_show_page(self.current_page + 1)
+
+    async def previous_page(self):
+        """Show Previous Page"""
+        await self.checked_show_page(self.current_page - 1)
+
+    async def show_current_page(self):
+        if self.paginating:
+            await self.show_page(self.current_page)
+
+    async def numbered_page(self):
+        """Go to Given Page"""
+        to_delete = []
+        to_delete.append(await self.channel.send('What page do you want to go to?'))
+
+        def message_check(m):
+            return m.author == self.author and \
+                   self.channel == m.channel and \
+                   m.content.isdigit()
+
+        try:
+            msg = await self.bot.wait_for('message', check=message_check, timeout=30.0)
+        except asyncio.TimeoutError:
+            to_delete.append(await self.channel.send('Took too long.'))
+            await asyncio.sleep(5)
         else:
+            page = int(msg.content)
+            to_delete.append(msg)
+            if page != 0 and page <= self.maximum_pages:
+                await self.show_page(page)
+            else:
+                to_delete.append(await self.channel.send(f'Invalid page given. ({page}/{self.maximum_pages})'))
+                await asyncio.sleep(5)
 
-            # Set self.i to (i + 1) remainder length of the array
-            self.i = (self.i + 1) % len(embeds(self))
-            next_page = embeds(self)[self.i]
+        try:
+            await self.channel.delete_messages(to_delete)
+        except Exception:
+            pass
 
-            # Send the embed and remove the reaction of the user
-            await self.message.edit(embed=next_page)
-            await self.message.remove_reaction("➡", self.ctx.author)
+    async def show_help(self):
+        """shows this message"""
+        messages = ['Welcome to the interactive paginator!\n']
+        messages.append('This interactively allows you to see pages of text by navigating with ' \
+                        'reactions. They are as follows:\n')
 
-    @menus.button('\N{BLACK SQUARE FOR STOP}\ufe0f')
-    async def on_stop(self, payload):
+        for (emoji, func) in self.reaction_emojis:
+            messages.append(f'{emoji} {func.__doc__}')
 
-        # Simple check to make sure that the reaction is performed by the user
-        def check(m):
-            return m.author == payload.member
+        self.embed.description = '\n'.join(messages)
+        self.embed.clear_fields()
+        self.embed.set_footer(text=f'We were on page {self.current_page} before this message.')
+        await self.message.edit(embed=self.embed)
 
-        # Do nothing if the check does not return true
-        if not check(self.ctx):
+        async def go_back_to_current_page():
+            await asyncio.sleep(60.0)
+            await self.show_current_page()
+
+        self.bot.loop.create_task(go_back_to_current_page())
+
+    async def stop_pages(self):
+        """Deletes Help Message"""
+        await self.message.delete()
+        self.paginating = False
+
+    def react_check(self, reaction, user):
+        if user is None or user.id != self.author.id:
+            return False
+
+        if reaction.message.id != self.message.id:
+            return False
+
+        for (emoji, func) in self.reaction_emojis:
+            if reaction.emoji == emoji:
+                self.match = func
+                return True
+        return False
+
+    async def paginate(self):
+        """Actually paginate the entries and run the interactive loop if necessary."""
+        first_page = self.show_page(1, first=True)
+        if not self.paginating:
+            await first_page
+        else:
+            # allow us to react to reactions right away if we're paginating
+            self.bot.loop.create_task(first_page)
+
+        while self.paginating:
+            try:
+                reaction, user = await self.bot.wait_for('reaction_add', check=self.react_check, timeout=120.0)
+            except asyncio.TimeoutError:
+                self.paginating = False
+                try:
+                    await self.message.clear_reactions()
+                except:
+                    pass
+                finally:
+                    break
+
+            try:
+                await self.message.remove_reaction(reaction, user)
+            except:
+                pass  # can't remove it so don't bother doing so
+
+            await self.match()
+
+
+class FieldPages(Pages):
+    """Similar to Pages except entries should be a list of
+    tuples having (key, value) to show as embed fields instead.
+    """
+
+    async def show_page(self, page, *, first=False):
+        self.current_page = page
+        entries = self.get_page(page)
+
+        self.embed.clear_fields()
+        self.embed.description = discord.Embed.Empty
+
+        for key, value in entries:
+            self.embed.add_field(name=key, value=value, inline=False)
+
+        if self.maximum_pages > 1:
+            if self.show_entry_count:
+                text = f'Page {page}/{self.maximum_pages} ({len(self.entries)} entries)'
+            else:
+                text = f'Page {page}/{self.maximum_pages}'
+
+            self.embed.set_footer(text=text)
+
+        if not self.paginating:
+            return await self.channel.send(embed=self.embed)
+
+        if not first:
+            await self.message.edit(embed=self.embed)
             return
-        # Allow the embed to be deleted
+
+        self.message = await self.channel.send(embed=self.embed)
+        for (reaction, _) in self.reaction_emojis:
+            if self.maximum_pages == 2 and reaction in ('\u23ed', '\u23ee'):
+                # no |<< or >>| buttons if we only have two pages
+                # we can't forbid it if someone ends up using it but remove
+                # it from the default set
+                continue
+
+            await self.message.add_reaction(reaction)
+
+
+import itertools
+import inspect
+import re
+
+# ?help
+# ?help Cog
+# ?help command
+#   -> could be a subcommand
+
+_mention = re.compile(r'<@\!?([0-9]{1,19})>')
+
+
+def cleanup_prefix(bot, prefix):
+    m = _mention.match(prefix)
+    if m:
+        user = bot.get_user(int(m.group(1)))
+        if user:
+            return f'@{user.name} '
+    return prefix
+
+
+async def _can_run(cmd, ctx):
+    try:
+        return await cmd.can_run(ctx)
+    except:
+        return False
+
+
+def _command_signature(cmd):
+    # this is modified from discord.py source
+    # which I wrote myself lmao
+
+    result = [cmd.qualified_name]
+    if cmd.usage:
+        result.append(cmd.usage)
+        return ' '.join(result)
+
+    params = cmd.clean_params
+    if not params:
+        return ' '.join(result)
+
+    for name, param in params.items():
+        if param.default is not param.empty:
+            # We don't want None or '' to trigger the [name=value] case and instead it should
+            # do [name] since [name=None] or [name=] are not exactly useful for the user.
+            should_print = param.default if isinstance(param.default, str) else param.default is not None
+            if should_print:
+                result.append(f'[{name}={param.default!r}]')
+            else:
+                result.append(f'`[{name}]`')
+        elif param.kind == param.VAR_POSITIONAL:
+            result.append(f'`[{name}...]`')
         else:
+            result.append(f'`<{name}>`')
 
-            # Delete the embed and stop the function from running
-            await self.message.delete()
-            self.stop()
-
-
-# Set up the cog
-class Help(commands.Cog):
-    """Shows this Help Embed!"""
-
-    def __init__(self, bot):
-        self.bot = bot
-        self.bot.remove_command("help")
-
-    @command(name="help", aliases=["Help"])
-    async def help(self, ctx):
-        """Returns a menu for help commands controlled by reactions"""
-
-        # Local Variable i to allow the index of the pages[] to be modified
-        i = 0
-
-        # Send the menu to the display
-        menu = HelpMenu(i, self)
-        await menu.start(ctx)
+    return ' '.join(result)
 
 
-def setup(bot):
-    bot.add_cog(Help(bot))
+class HelpPaginator(Pages):
+    def __init__(self, ctx, entries, *, per_page=4):
+        super().__init__(ctx, entries=entries, per_page=per_page)
+        self.reaction_emojis.append(('\N{WHITE QUESTION MARK ORNAMENT}', self.show_bot_help))
+        self.total = len(entries)
+
+    @classmethod
+    async def from_cog(cls, ctx, cog):
+        cog_name = cog.__class__.__name__
+
+        # get the commands
+        entries = sorted(Cog.get_commands(cog), key=lambda c: c.name)
+
+        # remove the ones we can't run
+        entries = [cmd for cmd in entries if (await _can_run(cmd, ctx)) and not cmd.hidden]
+
+        self = cls(ctx, entries)
+        self.title = f'(っ◔◡◔)っ {cog_name} (っ◔◡◔)っ'
+        self.description = inspect.getdoc(cog)
+        self.prefix = cleanup_prefix(ctx.bot, ctx.prefix)
+
+        return self
+
+    @classmethod
+    async def from_command(cls, ctx, command):
+        try:
+            entries = sorted(command.commands, key=lambda c: c.name)
+        except AttributeError:
+            entries = []
+        else:
+            entries = [cmd for cmd in entries if (await _can_run(cmd, ctx)) and not cmd.hidden]
+
+        self = cls(ctx, entries)
+        self.title = f"{command.qualified_name} `{command.signature}`"
+
+        if command.description:
+            self.description = f'{command.description}\n\n{command.help}'
+        else:
+            self.description = command.help or 'No help given.'
+
+        self.prefix = cleanup_prefix(ctx.bot, ctx.prefix)
+        return self
+
+    @classmethod
+    async def from_bot(cls, ctx):
+        def key(c):
+            return c.cog_name or '\u200bMisc'
+
+        entries = sorted(ctx.bot.commands, key=key)
+        nested_pages = []
+        per_page = 9
+
+        # 0: (cog, desc, commands) (max len == 9)
+        # 1: (cog, desc, commands) (max len == 9)
+        # ...
+
+        for cog, commands in itertools.groupby(entries, key=key):
+            plausible = [cmd for cmd in commands if (await _can_run(cmd, ctx)) and not cmd.hidden]
+            if len(plausible) == 0:
+                continue
+
+            description = ctx.bot.get_cog(cog)
+            if description is None:
+                description = discord.Embed.Empty
+            else:
+                description = inspect.getdoc(description) or discord.Embed.Empty
+
+            nested_pages.extend(
+                (cog, description, plausible[i:i + per_page]) for i in range(0, len(plausible), per_page))
+
+        self = cls(ctx, nested_pages, per_page=1)  # this forces the pagination session
+        self.prefix = cleanup_prefix(ctx.bot, ctx.prefix)
+
+        # swap the get_page implementation with one that supports our style of pagination
+        self.get_page = self.get_bot_page
+        self._is_bot = True
+
+        # replace the actual total
+        self.total = sum(len(o) for _, _, o in nested_pages)
+        return self
+
+    def get_bot_page(self, page):
+        cog, description, commands = self.entries[page - 1]
+        self.title = f'{cog} Commands'
+        self.description = description
+        return commands
+
+    async def show_page(self, page, *, first=False):
+        self.current_page = page
+        entries = self.get_page(page)
+
+        self.embed.clear_fields()
+        self.embed.description = self.description
+        self.embed.title = self.title
+
+        self.embed.set_footer(text=f'Use "{self.prefix}help command" for more info on a command.')
+
+        signature = _command_signature
+
+        for entry in entries:
+            self.embed.add_field(name=signature(entry), value=entry.short_doc or "No help given", inline=False)
+
+        if self.maximum_pages:
+            self.embed.set_author(name=f'Page {page}/{self.maximum_pages} ({self.total} commands)')
+
+        if not self.paginating:
+            return await self.channel.send(embed=self.embed)
+
+        if not first:
+            await self.message.edit(embed=self.embed)
+            return
+
+        self.message = await self.channel.send(embed=self.embed)
+        for (reaction, _) in self.reaction_emojis:
+            if self.maximum_pages == 2 and reaction in ('\u23ed', '\u23ee'):
+                # no |<< or >>| buttons if we only have two pages
+                # we can't forbid it if someone ends up using it but remove
+                # it from the default set
+                continue
+
+            await self.message.add_reaction(reaction)
+
+    async def show_help(self):
+        """Shows This Message"""
+
+        self.embed.title = 'Paginator help'
+        self.embed.description = 'Hello! Welcome to the help page.'
+
+        messages = [f'{emoji} {func.__doc__}' for emoji, func in self.reaction_emojis]
+        self.embed.clear_fields()
+        self.embed.add_field(name='What are these reactions for?', value='\n'.join(messages), inline=False)
+
+        self.embed.set_footer(text=f'We were on page {self.current_page} before this message.')
+        await self.message.edit(embed=self.embed)
+
+        async def go_back_to_current_page():
+            await asyncio.sleep(30.0)
+            await self.show_current_page()
+
+        self.bot.loop.create_task(go_back_to_current_page())
+
+    async def show_bot_help(self):
+        """Information On The Bot"""
+
+        self.embed.title = 'Using Ensō~Chan'
+        self.embed.description = 'Hiya! This is the Help Page!'
+        self.embed.clear_fields()
+
+        entries = (
+            ('`<argument>`', 'This means the argument is **required**.'),
+            ('`[argument]`', 'This means the argument is **optional**.'),
+            ('`[A|B]`', 'This means the it can be **either A or B**.'),
+            ('`[argument...]`', 'This means you can have multiple arguments.\n' \
+                                'Now that you know the basics, it should be noted that...\n' \
+                                '**You do not type in the brackets!**')
+        )
+
+        self.embed.add_field(name='How do I use Ensō~Chan', value='Reading the signature is pretty straightforward')
+
+        for name, value in entries:
+            self.embed.add_field(name=name, value=value, inline=False)
+
+        self.embed.set_footer(text=f'We were on page {self.current_page} before this message.')
+        await self.message.edit(embed=self.embed)
+
+        async def go_back_to_current_page():
+            await asyncio.sleep(30.0)
+            await self.show_current_page()
+
+        self.bot.loop.create_task(go_back_to_current_page())

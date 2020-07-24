@@ -5,7 +5,7 @@ from asyncio.subprocess import Process
 from platform import python_version
 from time import time
 
-from discord import Colour
+from discord import Colour, Member
 from discord import Embed
 from discord import __version__ as discord_version
 from discord.ext import commands
@@ -63,25 +63,25 @@ class Info(commands.Cog):
 
     @command(name="userinfo", aliases=["ui"])
     @cooldown(1, 5, BucketType.user)
-    async def user_info(self, ctx, target=None):
+    async def user_info(self, ctx, member: Member = None):
         """User Information! (Created At/Joined/Roles etc)"""
 
-        # If a target has been specified, set them as the user
-        if target:
-            target = target
-        # If no target has been specified, choose the author
+        # If a member has been specified, set them as the user
+        if member:
+            member = member
+        # If no member has been specified, choose the author
         else:
-            target = ctx.author
+            member = ctx.author
 
         # Get the member avatar
-        userAvatar = target.avatar_url
+        userAvatar = member.avatar_url
 
         # Store all the roles that the user has
         # (Skipping the first element as it's always going to be @everyone)
-        roles = f"{' '.join(map(str, (role.mention for role in target.roles[1:])))}"
+        roles = f"{' '.join(map(str, (role.mention for role in member.roles[1:])))}"
 
         # Returns the permissions that the user has within the guild
-        filtered = filter(lambda x: x[1], target.guild_permissions)
+        filtered = filter(lambda x: x[1], member.guild_permissions)
         # Replace all "_" with " " in each item and join them together
         permission = ",".join(map(lambda x: x[0].replace("_", " "), filtered))
 
@@ -95,20 +95,20 @@ class Info(commands.Cog):
             timestamp=datetime.datetime.utcnow()
         )
         embed.set_thumbnail(url=userAvatar)
-        embed.set_footer(text=f"ID: {target.id}", icon_url='{}'.format(userAvatar))
+        embed.set_footer(text=f"ID: {member.id}", icon_url='{}'.format(userAvatar))
 
         # Define fields to be added into the embed
-        embed_fields = [("Name", str(target.mention), True),
-                        ("Tag", target.name, True),
-                        ("Discrim", "#" + target.discriminator, True),
-                        ("Registered", target.created_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"), True),
-                        ("Joined", target.joined_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"), True),
-                        ("Top Role", target.top_role.mention, False),
+        embed_fields = [("Name", str(member.mention), True),
+                        ("Tag", member.name, True),
+                        ("Discrim", "#" + member.discriminator, True),
+                        ("Registered", member.created_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"), True),
+                        ("Joined", member.joined_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"), True),
+                        ("Top Role", member.top_role.mention, False),
                         ("Roles", roles, False),
                         ("Key Permissions", permissions, False),
-                        ("Status", str(target.status).title(), True),
-                        ("Boosting Server", bool(target.premium_since), True),
-                        ("Bot", target.bot, True)]
+                        ("Status", str(member.status).title(), True),
+                        ("Boosting Server", bool(member.premium_since), True),
+                        ("Bot", member.bot, True)]
 
         # Add fields to the embed
         for name, value, inline in embed_fields:

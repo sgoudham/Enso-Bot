@@ -133,11 +133,11 @@ class Info(commands.Cog):
 
             # Store the first 20 roles in a string called "roles"
             # (Skipping the first element as it's always going to be @everyone)
-            role_string = f"{' **>** '.join(map(str, (role.mention for role in ctx.guild.roles[1:20])))} and **{length}** more"
+            role_string = f"{' **>** '.join(map(str, (role.mention for role in ctx.guild.roles[::-20])))} and **{length}** more"
 
         else:
-            # Display all the roles in the server as it is less than 20
-            role_string = f"{' **>** '.join(map(str, (role.mention for role in ctx.guild.roles[1:])))}"
+            # Display all the roles in the server as it is less than 20a
+            role_string = f"{' **>** '.join(map(str, (role.mention for role in ctx.guild.roles[::-1])))}"
 
         # Check if the list of emojis returned are greater than 20
         if len(ctx.guild.emojis) > 20:

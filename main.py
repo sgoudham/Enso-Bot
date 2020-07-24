@@ -82,6 +82,7 @@ async def get_prefix(bot, message):
 
 
 def get_version():
+    """Return the current version of the bot"""
     return "v1.7.2"
 
 
@@ -109,7 +110,7 @@ async def on_message(message):
     await client.process_commands(message)
 
 
-@tasks.loop(seconds=180, reconnect=True)
+@tasks.loop(seconds=120, reconnect=True)
 async def change_status():
     """Creating Custom Statuses as a Background Task"""
     global counter
@@ -170,6 +171,20 @@ async def leave(ctx):
     await ctx.guild.leave()
 
 
+@client.command(name="restart", hidden=True)
+@is_owner()
+async def restart(ctx):
+    """Restart the Bot"""
+    async with ctx.typing():
+        try:
+            await ctx.send("**Success Senpai! Bot has been restarted**")
+        except Exception as ex:
+            print(ex)
+            await ctx.send("Error: {}".format(ex))
+
+    await client.logout()
+
+
 @client.command(name='help')
 async def _help(ctx, *, command: str = None):
     """Shows help about a command or the bot"""
@@ -216,14 +231,6 @@ async def change_prefix(ctx, new: Optional[str]):
     elif not new:
         # Grab the current prefix for the guild within the cached dictionary
         await ctx.send(f"**The current guild prefix is `{get_prefix_for_guild(str(ctx.guild.id))}`**")
-
-
-@client.command(name="restart", hidden=True)
-@is_owner()
-async def restart(ctx):
-    """Restart the Bot"""
-
-    await client.logout()
 
 
 # Bot event for the bot joining a new guild, storing all users in the database

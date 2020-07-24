@@ -7,7 +7,7 @@ import mariadb
 from decouple import config
 from discord import Embed
 from discord.ext import commands, tasks
-from discord.ext.commands import when_mentioned_or, is_owner, guild_only, has_permissions
+from discord.ext.commands import when_mentioned_or, is_owner, guild_only, has_permissions, bot_has_permissions
 
 import db
 import settings
@@ -91,7 +91,7 @@ client = commands.Bot(  # Create a new bot
     description='All current available commands within Ensō~Chan',  # Set a description for the bot
     owner_id=154840866496839680,  # Your unique User ID
     version=get_version)  # Version number of Ensō~Chan
-client.remove_command("help")  # Remove
+client.remove_command("help")  # Remove default help command
 
 if __name__ == '__main__':
     for ext in settings.extensions():
@@ -205,6 +205,7 @@ async def _help(ctx, *, command: str = None):
 @client.command(name="prefix", aliases=["Prefix"])
 @guild_only()
 @has_permissions(manage_guild=True)
+@bot_has_permissions(manage_guild=True)
 async def change_prefix(ctx, new: str = None):
     """View/Change Guild Prefix"""
 

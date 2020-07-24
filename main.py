@@ -1,7 +1,6 @@
 import asyncio
 import datetime
 from contextlib import closing
-from typing import Optional
 
 import discord
 import mariadb
@@ -92,7 +91,7 @@ client = commands.Bot(  # Create a new bot
     description='All current available commands within Ensō~Chan',  # Set a description for the bot
     owner_id=154840866496839680,  # Your unique User ID
     version=get_version)  # Version number of Ensō~Chan
-client.remove_command("help")
+client.remove_command("help")  # Remove
 
 if __name__ == '__main__':
     for ext in settings.extensions():
@@ -206,17 +205,13 @@ async def _help(ctx, *, command: str = None):
 @client.command(name="prefix", aliases=["Prefix"])
 @guild_only()
 @has_permissions(manage_guild=True)
-async def change_prefix(ctx, new: Optional[str]):
+async def change_prefix(ctx, new: str = None):
     """View/Change Guild Prefix"""
 
     # As long as a new prefix has been given and is less than 5 characters
     if new and len(new) < 5:
-        if len(new) > 1:
-            spaced_prefix = f"{new} "
-            await storage_prefix_for_guild(ctx, spaced_prefix)
-        else:
-            # Store the new prefix in the dictionary and update the database
-            await storage_prefix_for_guild(ctx, new)
+        # Store the new prefix in the dictionary and update the database
+        await storage_prefix_for_guild(ctx, new)
 
     # Making sure that errors are handled if prefix is above 5 characters
     elif new and len(new) > 5:

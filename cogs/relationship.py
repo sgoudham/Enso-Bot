@@ -243,25 +243,25 @@ class Relationship(commands.Cog):
 
     @command(name="minfo", aliases=["Minfo", "mInfo"])
     @cooldown(1, 1, BucketType.user)
-    async def m_info(self, ctx, target: Member = None):
+    async def m_info(self, ctx, member: Member = None):
         """Marriage Information!"""
 
         # If a target has been specified, set them as the user
-        if target:
-            target = target
+        if member:
+            member = member
         # If no target has been specified, choose the author
         else:
-            target = ctx.author
+            member = ctx.author
 
         # Getting the guild of the user
-        guild = target.guild
+        guild = member.guild
 
         # Use database connection
         with db.connection() as conn:
 
             # Get the author's row from the Members Table
             select_query = """SELECT * FROM members WHERE discordID = (?) and guildID = (?)"""
-            val = target.id, guild.id,
+            val = member.id, guild.id,
             with closing(conn.cursor()) as cursor:
 
                 # Execute the SQL Query
@@ -285,7 +285,7 @@ class Relationship(commands.Cog):
             currentDate = ctx.message.created_at.strftime("%a, %b %d, %Y")
 
             # Get the marriage info embed and then send it to the display
-            embed = marriageInfo(target, marriedUser, marriedDate, currentDate, married)
+            embed = marriageInfo(member, marriedUser, marriedDate, currentDate, married)
             await ctx.send(embed=embed)
 
 

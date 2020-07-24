@@ -54,7 +54,7 @@ class Relationship(commands.Cog):
     @command(name="marry", aliases=["Marry"])
     @cooldown(1, 1, BucketType.user)
     async def marry(self, ctx, member: Member):
-        """Allows the bot to wed two young lovers together"""
+        """Wed your Lover!"""
 
         # Getting the guild of the user
         guild = ctx.author.guild
@@ -154,7 +154,7 @@ class Relationship(commands.Cog):
     @command(name="divorce", aliases=["Divorce"])
     @cooldown(1, 1, BucketType.user)
     async def divorce(self, ctx, member: Member):
-        """Allows the bot to divorce users"""
+        """Divorce your Partner!"""
 
         # Getting the guild of the user
         guild = ctx.author.guild
@@ -245,7 +245,7 @@ class Relationship(commands.Cog):
     @command(name="minfo", aliases=["Minfo", "mInfo"])
     @cooldown(1, 1, BucketType.user)
     async def m_info(self, ctx, target: Optional[Member]):
-        """Allows the users status of their marriage"""
+        """Marriage Information!"""
 
         # If a target has been specified, set them as the user
         if target:

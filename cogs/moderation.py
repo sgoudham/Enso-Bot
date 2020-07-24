@@ -1,3 +1,5 @@
+import asyncio
+
 from discord import Member
 from discord.ext import commands
 from discord.ext.commands import command, guild_only, has_guild_permissions
@@ -84,9 +86,17 @@ class Moderation(commands.Cog):
 
             async for message in channel.history(limit=amount):
                 messages.append(message)
+            try:
+                await channel.delete_messages(messages)
+                msg = await ctx.send(f"{ctx.author.mention} {amount} messages deleted!")
+            except Exception as ex:
+                print(ex)
+                await ctx.send("Error! {}".format(ex))
 
-            await channel.delete_messages(messages)
-            msg = await ctx.send(f"{ctx.author.mention} {amount} messages deleted!")
+            # Let the user read the message for 5 seconds
+            await asyncio.sleep(5)
+            # Delete the message
+            await msg.delete()
 
 
 def setup(bot):

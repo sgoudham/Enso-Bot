@@ -15,8 +15,10 @@
 
 > Please contact me on discord if you are interested in helping me with the development of this bot.
 > It would be much appreciated and I'm always looking for other like-minded programmers! 
-> - Hamothy#5619
-> 
+> - [Hamothy#5619](https://discord.bio/p/hammy)
+>
+> I would also like to credit my amazing friend [byfok#1665](https://twitter.com/byfok) who beautifully 
+> crafted the design for Ensō~Chan. Please go give her a follow on twitter where she will be posting more often!
 
 # Ensō Server 
 

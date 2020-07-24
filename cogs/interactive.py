@@ -26,7 +26,7 @@ class Interactive(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
-    
+
     @commands.Cog.listener()
     async def on_ready(self):
         """Printing out that Cog is ready on startup"""
@@ -240,9 +240,9 @@ class Interactive(commands.Cog):
         """Pat a Member"""
 
         if member is ctx.author:
-            title = f":scream: :scream: | **{ctx.author.name}** patted **themselves**"
+            title = f"👉 👈 | **{ctx.author.name}** patted **themselves**"
         else:
-            title = f":scream: :scream: | **{ctx.author.name}** patted **{member.display_name}**"
+            title = f"👉 👈 | **{ctx.author.name}** patted **{member.display_name}**"
 
         # Surround with try/except to catch any exceptions that may occur
         try:

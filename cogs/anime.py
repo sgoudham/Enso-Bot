@@ -115,6 +115,11 @@ class Anime(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    @commands.Cog.listener()
+    async def on_ready(self):
+        """Printing out that Cog is ready on startup"""
+        print(f"{self.__class__.__name__} Cog has been loaded!\n-----")
+
     @commands.group(invoke_without_command=True)
     async def waifu(self, ctx, waifu=None):
         """Shows a Waifu"""

@@ -92,6 +92,11 @@ class Enso(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    @commands.Cog.listener()
+    async def on_ready(self):
+        """Printing out that Cog is ready on startup"""
+        print(f"{self.__class__.__name__} Cog has been loaded\n-----")
+
     @commands.group(invoke_without_command=True)
     async def enso(self, ctx, name=None):
         """Shows Random Person from Ensō"""

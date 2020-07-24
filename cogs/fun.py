@@ -62,6 +62,11 @@ class Fun(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    @commands.Cog.listener()
+    async def on_ready(self):
+        """Printing out that Cog is ready on startup"""
+        print(f"{self.__class__.__name__} Cog has been loaded\n-----")
+
     @command(name="attack", aliases=['Attack'], hidden=True)
     @is_owner()
     async def attack(self, ctx, target: Member):

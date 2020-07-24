@@ -22,7 +22,7 @@ class Moderation(commands.Cog):
         await ctx.guild.kick(user=member, reason=reason)
 
         await ctx.send(f"{ctx.author.name} **kicked** {member.name}"
-                       f"\n**Reason:** {reason}")
+                       f"\n**Reason:** '{reason}'")
 
     @command()
     @guild_only()
@@ -33,7 +33,7 @@ class Moderation(commands.Cog):
         await ctx.guild.ban(user=member, reason=reason)
 
         await ctx.send(f"{ctx.author.name} **banned** {member.name}"
-                       f"\n**Reason:** {reason}")
+                       f"\n**Reason:** '{reason}'")
 
     @command()
     @guild_only()
@@ -45,7 +45,7 @@ class Moderation(commands.Cog):
         await ctx.guild.unban(member, reason=reason)
 
         await ctx.send(f"{ctx.author.name} **unbanned** {member.name}"
-                       f"\n**Reason:** {reason}")
+                       f"\n**Reason:** '{reason}'")
 
     @command()
     @guild_only()

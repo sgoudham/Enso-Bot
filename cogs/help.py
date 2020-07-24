@@ -385,7 +385,7 @@ class HelpPaginator(Pages):
         except AttributeError:
             entries = []
         else:
-            entries = [cmd for cmd in entries if (await _can_run(cmd, ctx)) and not cmd.hidden]
+            entries = [cmd for cmd in entries if not cmd.hidden]
 
         self = cls(ctx, entries)
         if not isinstance(command, discord.ext.commands.Group):
@@ -423,7 +423,7 @@ class HelpPaginator(Pages):
         # ...
 
         for cog, commands in itertools.groupby(entries, key=key):
-            plausible = [cmd for cmd in commands if (await _can_run(cmd, ctx)) and not cmd.hidden]
+            plausible = [cmd for cmd in commands if not cmd.hidden]
             if len(plausible) == 0:
                 continue
 

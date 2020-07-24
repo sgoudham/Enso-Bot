@@ -64,7 +64,7 @@ class Info(commands.Cog):
     @command(name="userinfo", aliases=["ui"])
     @cooldown(1, 5, BucketType.user)
     async def user_info(self, ctx, target=None):
-        """Allow the users to see information about them relating to the guild"""
+        """User Information! (Created At/Joined/Roles etc)"""
 
         # If a target has been specified, set them as the user
         if target:
@@ -120,7 +120,7 @@ class Info(commands.Cog):
     @command(name="serverinfo", aliases=["guildinfo"])
     @cooldown(1, 5, BucketType.user)
     async def server_info(self, ctx):
-        """Allow the users to see information the guild itself"""
+        """Guild Information! (Owner/Roles/Emojis etc)"""
 
         # Define guild icon and id
         guild_icon = ctx.guild.icon_url
@@ -207,9 +207,42 @@ class Info(commands.Cog):
         # Send the embed to the channel that the command was triggered in
         await ctx.send(embed=embed)
 
+    @command(name="channelinfo", aliases=["chinfo"])
+    @cooldown(1, 5, BucketType.user)
+    async def channel_info(self, ctx):
+        """Channel Statistics! (Category/Created At etc)"""
+
+        # Get the channel that the user is in
+        channel = ctx.channel
+
+        # Set up Embed
+        embed = Embed(title=f"Statistics For **{string.capwords(channel.name.capitalize())}**",
+                      description=f"{'Category: {}'.format(channel.category.name) if channel.category else 'N/A'}",
+                      timestamp=datetime.datetime.utcnow(),
+                      colur=Colour(int(random.choice(colour_list))))
+        embed.set_thumbnail(url=ctx.guild.icon_url)
+        embed.set_footer(text=f"ID: {channel.id}")
+
+        # Setting up fields
+        fields = [
+            ("Guild", ctx.guild.name, True),
+            ("Creation At", channel.created_at, True),
+            ("Topic", f"{channel.topic if channel.topic else 'No Topic'}", True),
+            ("Permissions Synced?", channel.permissions_synced, True),
+            ("Position", channel.position, True),
+            ("NSFW?", channel.is_nsfw(), True)
+        ]
+
+        # Add fields to the embed
+        for name, value, inline in fields:
+            embed.add_field(name=name, value=value, inline=inline)
+
+        await ctx.send(embed=embed)
+
     @command(name="stats")
+    @cooldown(1, 5, BucketType.user)
     async def checking_bot_stats(self, ctx):
-        """Bot Statistics (CPU/Mem Usage etc)"""
+        """Bot Statistics! (CPU/Mem Usage etc)"""
 
         stats = Embed(title="Bot Stats",
                       colour=enso_embedmod_colours,

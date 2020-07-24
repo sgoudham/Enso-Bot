@@ -175,13 +175,9 @@ async def leave(ctx):
 @is_owner()
 async def restart(ctx):
     """Restart the Bot"""
-    try:
-        await client.logout()
-    except Exception as ex:
-        print(ex)
-        await ctx.send("Error: {}".format(ex))
 
     await ctx.send("**Success Senpai! Bot has been restarted**")
+    await client.logout()
 
 
 @client.command(name='help')

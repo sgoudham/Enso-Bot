@@ -540,67 +540,7 @@ except discord.errors.LoginFailure as e:
 
         # Update the prefix for the guild
         else:
-        
-DON'T USE - BANNABLE CODE 
-colours = [
-    discord.Colour(0x000000),
-    discord.Colour(0xFFFFFF),
-    discord.Colour(0x1ABC9C),
-    discord.Colour(0x2ECC71),
-    discord.Colour(0x3498DB),
-    discord.Colour(0x9B59B6),
-    discord.Colour(0xE91E63),
-    discord.Colour(0xF1C40F),
-    discord.Colour(0xE67E22),
-    discord.Colour(0xE74C3C),
-    discord.Colour(0x95A5A6),
-    discord.Colour(0x34495E),
-    discord.Colour(0x11806A),
-    discord.Colour(0x1F8B4C),
-    discord.Colour(0x206694),
-    discord.Colour(0x71368A),
-    discord.Colour(0xAD1457),
-    discord.Colour(0xC27C0E),
-    discord.Colour(0xA84300),
-    discord.Colour(0x992D22),
-    discord.Colour(0x979C9F),
-    discord.Colour(0x7F8C8D),
-    discord.Colour(0xBCC0C0),
-    discord.Colour(0x2C3E50),
-    discord.Colour(0x7289DA),
-    discord.Colour(0x99AAB5),
-    discord.Colour(0x2C2F33),
-    discord.Colour(0x23272A),
-    discord.Colour(0xDC143C),
-    discord.Colour(0xFF69B4),
-    discord.Colour(0xFF69B4),
-    discord.Colour(0xFF00FF),
-    discord.Colour(0xEE82EE),
-    discord.Colour(0x008080),
-    discord.Colour(0x191970),
-    discord.Colour(0xFFE4E1),
-    discord.Colour(0x2E8B57),
-    discord.Colour(0xC71585)]
-guild_id = 663651584399507476
-role_name = "Rainbow"
-
-
-@loop(seconds=5.0)
-async def colour_change():
-    try:
-        await role_to_change.edit(colour=random.choice(colours))
-    except Exception as ex:
-        print(ex)
-
-
-@colour_change.before_loop
-async def colour_change_before():
-    global role_to_change
-    await client.wait_until_ready()
-    guild = client.get_guild(guild_id)
-    role_to_change = get(guild.roles, name=role_name)
-
-
+    
 colour_change.start()
 @client.command()
 @guild_only()

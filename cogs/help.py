@@ -368,7 +368,7 @@ class HelpPaginator(Pages):
         entries = sorted(Cog.get_commands(cog), key=lambda c: c.name)
 
         # remove the ones we can't run
-        entries = [cmd for cmd in entries if (await _can_run(cmd, ctx)) and not cmd.hidden]
+        entries = [cmd for cmd in entries if not cmd.hidden]
 
         self = cls(ctx, entries)
         self.title = f'(っ◔◡◔)っ {cog_name} (っ◔◡◔)っ'

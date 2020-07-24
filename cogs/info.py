@@ -136,7 +136,7 @@ class Info(commands.Cog):
             role_string = f"{' **>** '.join(map(str, (role.mention for role in ctx.guild.roles[-20:])))} and **{length}** more"
 
         else:
-            # Display all the roles in the server as it is less than 20a
+            # Display all the roles in the server as it is less than 20 roles
             role_string = f"{' **>** '.join(map(str, (role.mention for role in ctx.guild.roles[1:])))}"
 
         # Check if the list of emojis returned are greater than 20

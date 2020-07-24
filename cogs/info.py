@@ -216,7 +216,7 @@ class Info(commands.Cog):
         channel = ctx.channel
 
         # Set up Embed
-        embed = Embed(title=f"Statistics For {channel.name}",
+        embed = Embed(title=f"Statistics For #{channel.name}",
                       description=f"{'Category: {}'.format(channel.category.name) if channel.category else 'N/A'}",
                       timestamp=datetime.datetime.utcnow(),
                       colur=Colour(int(random.choice(colour_list))))

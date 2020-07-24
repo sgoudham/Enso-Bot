@@ -71,7 +71,7 @@ class Moderation(commands.Cog):
     @command()
     @guild_only()
     @has_guild_permissions(manage_messages=True)
-    async def purge(self, ctx, amount: int):
+    async def purge(self, ctx, amount: int = None):
         """Purge Messages from Channel"""
         if not amount:
             amount = 100

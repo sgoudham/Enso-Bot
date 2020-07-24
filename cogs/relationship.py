@@ -2,7 +2,6 @@ import asyncio
 import datetime
 import random
 from contextlib import closing
-from typing import Optional
 
 from discord import Member, Embed, Colour
 from discord.ext import commands
@@ -244,7 +243,7 @@ class Relationship(commands.Cog):
 
     @command(name="minfo", aliases=["Minfo", "mInfo"])
     @cooldown(1, 1, BucketType.user)
-    async def m_info(self, ctx, target: Optional[Member]):
+    async def m_info(self, ctx, target: Member = None):
         """Marriage Information!"""
 
         # If a target has been specified, set them as the user

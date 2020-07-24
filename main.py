@@ -98,10 +98,10 @@ if __name__ == '__main__':
         client.load_extension(ext)
 
 
-# Bot event making sure that messages sent by the bot do nothing
 @client.event
 async def on_message(message):
-    # Making sure that the bot does not take in its own messages
+    """Make sure bot messages are not tracked"""
+
     if message.author.bot:
         return
 
@@ -112,6 +112,7 @@ async def on_message(message):
 @tasks.loop(seconds=120, reconnect=True)
 async def change_status():
     """Creating Custom Statuses as a Background Task"""
+
     global counter
     # Waiting for the bot to ready
     await client.wait_until_ready()
@@ -146,7 +147,6 @@ async def change_status():
 change_status.start()
 
 
-# Bot Status on Discord
 @client.event
 async def on_ready():
     """Displaying if Bot is Ready"""

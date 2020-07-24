@@ -375,7 +375,7 @@ async def on_member_remove(member):
 # Bot Event for handling all errors within discord.commands
 @client.event
 async def on_command_error(ctx, args2):
-    discord.errors.Forbidden = getattr(discord.errors.Forbidden, "original", discord.errors.Forbidden)
+    Forbidden = hasattr(exec, args2)
 
     # if the user did not specify an user
     if isinstance(args2, commands.MissingRequiredArgument):
@@ -392,9 +392,10 @@ async def on_command_error(ctx, args2):
     # if the user provides an argument that isn't recognised
     elif isinstance(args2, commands.BadArgument):
         await on_command_bad_argument(ctx)
-    # if the bot does not permissions to send the command
-    elif isinstance(args2, discord.errors.Forbidden):
-        await on_command_forbidden(ctx)
+    if Forbidden:
+        # if the bot does not permissions to send the command
+        if isinstance(args2, discord.errors.Forbidden):
+            await on_command_forbidden(ctx)
 
 
 # Async def for handling command bad argument error

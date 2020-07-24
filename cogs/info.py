@@ -209,7 +209,7 @@ class Info(commands.Cog):
 
     @command(name="stats")
     async def checking_bot_stats(self, ctx):
-        """Bot Statistics (CPU/Mem Usage etc) """
+        """Bot Statistics (CPU/Mem Usage etc)"""
 
         stats = Embed(title="Bot Stats",
                       colour=enso_embedmod_colours,

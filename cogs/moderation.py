@@ -16,8 +16,15 @@ class Moderation(commands.Cog):
     @command()
     @guild_only()
     @has_guild_permissions(kick_members=True)
-    async def kick(self, ctx, member: Member, *, reason="No Reason Given"):
+    async def kick(self, ctx, member: Member, *, reason=None):
         """Kick Members from Server"""
+
+        # Check if reason has been given
+        if reason:
+            reason = reason
+        # Set default reason to None
+        else:
+            reason = "No Reason Given"
 
         await ctx.guild.kick(user=member, reason=reason)
 
@@ -27,8 +34,15 @@ class Moderation(commands.Cog):
     @command()
     @guild_only()
     @has_guild_permissions(ban_members=True)
-    async def ban(self, ctx, member: Member, *, reason="No Reason Given"):
+    async def ban(self, ctx, member: Member, *, reason=None):
         """Ban Members from Server"""
+
+        # Check if reason has been given
+        if reason:
+            reason = reason
+        # Set default reason to None
+        else:
+            reason = "No Reason Given"
 
         await ctx.guild.ban(user=member, reason=reason)
 
@@ -38,8 +52,15 @@ class Moderation(commands.Cog):
     @command()
     @guild_only()
     @has_guild_permissions(ban_members=True)
-    async def unban(self, ctx, member: int, *, reason="No Reason Given"):
+    async def unban(self, ctx, member: int, *, reason=None):
         """Unban Member from Server"""
+
+        # Check if reason has been given
+        if reason:
+            reason = reason
+        # Set default reason to None
+        else:
+            reason = "No Reason Given"
 
         member = await self.bot.fetch_user(member)
         await ctx.guild.unban(member, reason=reason)
@@ -50,12 +71,14 @@ class Moderation(commands.Cog):
     @command()
     @guild_only()
     @has_guild_permissions(manage_messages=True)
-    async def purge(self, ctx, amount=100):
+    async def purge(self, ctx, amount: int):
         """Purge Messages from Channel"""
+        if not amount:
+            amount = 100
 
         if amount > 100:
             await ctx.send("Sorry! You can only purge up to **100** messages at a time!")
-        else:
+        elif amount <= 100:
             channel = ctx.message.channel
             messages = []
 
@@ -63,7 +86,7 @@ class Moderation(commands.Cog):
                 messages.append(message)
 
             await channel.delete_messages(messages)
-            await ctx.send(f"{ctx.author.mention} {amount} messages deleted!")
+            msg = await ctx.send(f"{ctx.author.mention} {amount} messages deleted!")
 
 
 def setup(bot):

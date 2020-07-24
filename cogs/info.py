@@ -216,7 +216,7 @@ class Info(commands.Cog):
         channel = ctx.channel
 
         # Set up Embed
-        embed = Embed(title=f"Statistics For **{string.capwords(channel.name.capitalize())}**",
+        embed = Embed(title=f"Statistics For {channel.mention}",
                       description=f"{'Category: {}'.format(channel.category.name) if channel.category else 'N/A'}",
                       timestamp=datetime.datetime.utcnow(),
                       colur=Colour(int(random.choice(colour_list))))
@@ -226,7 +226,7 @@ class Info(commands.Cog):
         # Setting up fields
         fields = [
             ("Guild", ctx.guild.name, True),
-            ("Creation At", channel.created_at, True),
+            ("Creation At", channel.created_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"), True),
             ("Topic", f"{channel.topic if channel.topic else 'No Topic'}", True),
             ("Permissions Synced?", channel.permissions_synced, True),
             ("Position", channel.position, True),

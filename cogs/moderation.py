@@ -52,14 +52,18 @@ class Moderation(commands.Cog):
     @has_guild_permissions(manage_messages=True)
     async def purge(self, ctx, amount=100):
         """Purge Messages from Channel"""
-        channel = ctx.message.channel
-        messages = []
 
-        async for message in channel.history(limit=amount):
-            messages.append(message)
+        if amount > 100:
+            await ctx.send("Sorry! You can only purge up to **100** messages at a time!")
+        else:
+            channel = ctx.message.channel
+            messages = []
 
-        await channel.delete_messages(messages)
-        await ctx.send('Messages deleted.')
+            async for message in channel.history(limit=amount):
+                messages.append(message)
+
+            await channel.delete_messages(messages)
+            await ctx.send(f"{ctx.author.mention} {amount} messages deleted!")
 
 
 def setup(bot):

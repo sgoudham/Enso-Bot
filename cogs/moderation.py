@@ -80,6 +80,7 @@ class Moderation(commands.Cog):
     @bot_has_guild_permissions(manage_messages=True)
     async def purge(self, ctx, amount: int = None):
         """Purge Messages from Channel"""
+
         if amount:
             if 0 < amount <= 100:
                 with ctx.channel.typing():

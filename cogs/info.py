@@ -193,7 +193,7 @@ class Info(commands.Cog):
 
                   (f"Channels ({len(ctx.guild.channels)})",
                    f"\nText: {len(ctx.guild.text_channels)}" +
-                   f"\nVoice: {len(ctx.guild.voice_channels)}"
+                   f"\nVoice: {len(ctx.guild.voice_channels)}" +
                    f"\nCategories: {len(ctx.guild.categories)}", True),
 
                   ("Misc", f"Invites: {invites}", True),

@@ -80,16 +80,19 @@ class Moderation(commands.Cog):
     @bot_has_guild_permissions(manage_messages=True)
     async def purge(self, ctx, amount: int = None):
         """Purge Messages from Channel"""
+        if amount:
+            if 0 < amount <= 100:
+                with ctx.channel.typing():
+                    await ctx.message.delete()
+                    deleted = await ctx.channel.purge(limit=amount + 1,
+                                                      after=datetime.datetime.utcnow() - timedelta(days=14))
 
-        if 0 < amount <= 100:
-            with ctx.channel.typing():
-                await ctx.message.delete()
-                deleted = await ctx.channel.purge(limit=amount, after=datetime.datetime.utcnow() - timedelta(days=14))
+                    await ctx.send(f"Deleted **{len(deleted):,}** messages.", delete_after=5)
 
-                await ctx.send(f"Deleted **{len(deleted):,}** messages.", delete_after=5)
-
+            else:
+                await ctx.send("The amount provided is not between **0** and **100**")
         else:
-            await ctx.send("The amount provided is not between **0** and **100**")
+            await ctx.send("**You must specify an amount!**")
 
 
 def setup(bot):

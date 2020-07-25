@@ -1,4 +1,5 @@
-import asyncio
+import datetime
+from datetime import timedelta
 
 from discord import Member
 from discord.ext import commands
@@ -79,28 +80,16 @@ class Moderation(commands.Cog):
     @bot_has_guild_permissions(manage_messages=True)
     async def purge(self, ctx, amount: int = None):
         """Purge Messages from Channel"""
-        if not amount:
-            amount = 100
 
-        if amount > 100:
-            await ctx.send("Sorry! You can only purge up to **100** messages at a time!")
-        elif amount <= 100:
-            channel = ctx.message.channel
-            messages = []
+        if 0 < amount <= 100:
+            with ctx.channel.typing():
+                await ctx.message.delete()
+                deleted = await ctx.channel.purge(limit=amount, after=datetime.datetime.utcnow() - timedelta(days=14))
 
-            async for message in channel.history(limit=amount):
-                messages.append(message)
-            try:
-                await channel.delete_messages(messages)
-                msg = await ctx.send(f"{ctx.author.mention} {amount} messages deleted!")
-            except Exception as ex:
-                print(ex)
-                await ctx.send("Error! {}".format(ex))
+                await ctx.send(f"Deleted **{len(deleted):,}** messages.", delete_after=5)
 
-            # Let the user read the message for 5 seconds
-            await asyncio.sleep(5)
-            # Delete the message
-            await msg.delete()
+        else:
+            await ctx.send("The amount provided is not between **0** and **100**")
 
 
 def setup(bot):

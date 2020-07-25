@@ -3,3 +3,12 @@
 */__pycache__/*
 __pycache__*/
 .idea/__pycache__  
+/.idea/.gitignore
+/.idea/discord.xml
+/.idea/EnsoBot.iml
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/inspectionProfiles/profiles_settings.xml
+/.idea/saveactions_settings.xml
+/.idea/dictionaries/sgoud.xml
+/.idea/vcs.xml

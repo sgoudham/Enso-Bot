@@ -187,8 +187,8 @@ class Modmail(commands.Cog):
 
             # Throw error if the guild already exists and then stop the function
             if result is not None:
-                await ctx.send("**Looks like this guild already has a modmail system set up!" +
-                               f"\nPlease check `{ctx.prefix}help` for information on how to update/delete existing information**")
+                await ctx.send("Looks like this guild already has a **Modmail System** set up!" +
+                               f"\nPlease check **{ctx.prefix}help** for information on how to update/delete existing information")
                 return
 
         # As long as the channel exists within the guild
@@ -242,14 +242,14 @@ class Modmail(commands.Cog):
                             # Execute the SQL Query
                             cursor.execute(insert_query, vals)
 
-                    await ctx.send("**Your Modmail system is now successfully set up!" +
-                                   f"\nPlease refer to `{ctx.prefix}help` for any information**")
+                    await ctx.send("Your **Modmail System** is now successfully set up!" +
+                                   f"\nPlease refer to **{ctx.prefix}help** for any information")
                     return
 
                 except mariadb.IntegrityError as err:
                     print(err)
-                    await ctx.send("Looks like this guild already has a modmail system set up!" +
-                                   f"\nPlease check `{ctx.prefix}help` for information on how to update/delete existing information")
+                    await ctx.send("Looks like this guild already has a **Modmail System** set up!" +
+                                   f"\nPlease check **{ctx.prefix}help** for information on how to update/delete existing information")
             else:
                 # Send error message if the channel ID is not recognised
                 await ctx.send("**Invalid Channel ID. Aborting Process...**")

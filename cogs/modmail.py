@@ -168,7 +168,9 @@ class Modmail(commands.Cog):
     @has_permissions(manage_guild=True)
     @bot_has_permissions(administrator=True)
     async def setup(self, ctx, channelID: int):
-        """Setup Modmail System"""
+        """Setup Modmail System through inputting ChannelID
+        of the Modmail Channel and the Channel you want the Modmail
+        to be logged to"""
 
         # Retrieve a list of channel id's in the guild
         channels = [channel.id for channel in ctx.guild.channels]
@@ -261,7 +263,7 @@ class Modmail(commands.Cog):
     @has_permissions(manage_guild=True)
     @bot_has_permissions(administrator=True)
     async def update(self, ctx, channelID: int):
-        """Update Modmail Channel"""
+        """Update the Channel that the Modmail is logged to"""
 
         # Retrieve a list of channel id's in the guild
         channels = [channel.id for channel in ctx.guild.channels]
@@ -314,7 +316,7 @@ class Modmail(commands.Cog):
     @has_permissions(manage_guild=True)
     @bot_has_permissions(administrator=True)
     async def delete(self, ctx):
-        """Delete Modmail System"""
+        """Delete the entire Modmail System from the Guild"""
 
         # Checking if the guild already exists within the database
         with db.connection() as conn:

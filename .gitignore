@@ -13,3 +13,5 @@ __pycache__*/
 /.idea/dictionaries/sgoud.xml
 /.idea/vcs.xml
 /venv/
+venv/ 
+venv 

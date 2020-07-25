@@ -4,6 +4,7 @@ import random
 import string
 import textwrap
 import urllib.parse
+from typing import Optional
 
 import discord
 from PIL import Image, ImageDraw, ImageFont
@@ -213,7 +214,7 @@ class Fun(commands.Cog):
     @command(name="doggo", aliases=["Doggo"])
     @bot_has_permissions(embed_links=True)
     @cooldown(1, 1, BucketType.user)
-    async def doggo(self, ctx, breed=None):
+    async def doggo(self, ctx, breed: Optional[str] = None):
         """Pictures of Doggos!"""
 
         # Set member as the author
@@ -370,7 +371,7 @@ class Fun(commands.Cog):
         await ctx.message.channel.send(owo)
 
     @command(name="remindme", aliases=["Remindme", "rm"])
-    async def remind_me(self, ctx, time=None, *, text):
+    async def remind_me(self, ctx, time: Optional[int] = None, *, text):
         """Remind you in DMs"""
 
         # Grab the author and store it in "author"

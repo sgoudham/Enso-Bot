@@ -197,7 +197,6 @@ class Info(commands.Cog):
                    f"\nCategories: {len(ctx.guild.categories)}", True),
 
                   ("Misc", f"Invites: {invites}", True),
-
                   (f"Roles ({len(ctx.guild.roles)})", role_string, True),
                   (f"Emojis ({len(ctx.guild.emojis)})", emojis, False)]
 

@@ -4,7 +4,7 @@ from contextlib import closing
 
 from discord import Colour, Embed, Member
 from discord.ext import commands
-from discord.ext.commands import cooldown, command, BucketType
+from discord.ext.commands import cooldown, command, BucketType, bot_has_permissions
 
 import db
 from settings import colour_list
@@ -33,6 +33,7 @@ class Interactive(commands.Cog):
         print(f"{self.__class__.__name__} Cog has been loaded\n-----")
 
     @command(name="kiss", aliases=["Kiss"])
+    @bot_has_permissions(embed_links=True)
     @cooldown(1, 1, BucketType.user)
     async def kiss(self, ctx, member: Member):
         """Kiss your Partner"""
@@ -99,6 +100,7 @@ class Interactive(commands.Cog):
             print(e)
 
     @command(name="cuddle", aliases=["Cuddle"])
+    @bot_has_permissions(embed_links=True)
     @cooldown(1, 1, BucketType.user)
     async def cuddle(self, ctx, member: Member):
         """Cuddle your Partner"""
@@ -165,6 +167,7 @@ class Interactive(commands.Cog):
             print(e)
 
     @command(name="kill", aliases=["Kill"])
+    @bot_has_permissions(embed_links=True)
     @cooldown(1, 1, BucketType.user)
     async def kill(self, ctx, member: Member):
         """Kill a Member"""
@@ -200,6 +203,7 @@ class Interactive(commands.Cog):
             print(e)
 
     @command(name="slap", aliases=["Slap"])
+    @bot_has_permissions(embed_links=True)
     @cooldown(1, 1, BucketType.user)
     async def slap(self, ctx, member: Member):
         """Slap a Member"""
@@ -235,6 +239,7 @@ class Interactive(commands.Cog):
             print(e)
 
     @command(name="pat", aliases=["Pat"])
+    @bot_has_permissions(embed_links=True)
     @cooldown(1, 1, BucketType.user)
     async def pat(self, ctx, member: Member):
         """Pat a Member"""
@@ -270,6 +275,7 @@ class Interactive(commands.Cog):
             print(e)
 
     @command(name="lemon", aliases=["Lemon"])
+    @bot_has_permissions(embed_links=True)
     @cooldown(1, 1, BucketType.user)
     async def lemon(self, ctx, member: Member):
         """Give Lemon to Member"""
@@ -304,6 +310,7 @@ class Interactive(commands.Cog):
             print(e)
 
     @command(name="choke", aliases=["Choke"])
+    @bot_has_permissions(embed_links=True)
     @cooldown(1, 1, BucketType.user)
     async def choke(self, ctx, member: Member):
         """Choke a Member"""
@@ -338,6 +345,7 @@ class Interactive(commands.Cog):
             print(e)
 
     @command(name="hug", aliases=["Hug"])
+    @bot_has_permissions(embed_links=True)
     @cooldown(1, 1, BucketType.user)
     async def hug(self, ctx, member: Member):
         """Hug a Member"""

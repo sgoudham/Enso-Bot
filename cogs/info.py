@@ -308,10 +308,7 @@ class Info(commands.Cog):
         for name, value, inline in fields:
             stats.add_field(name=name, value=value, inline=inline)
 
-        try:
-            await ctx.send(embed=stats)
-        except Exception as e:
-            print(e)
+        await ctx.send(embed=stats)
 
 
 def setup(bot):

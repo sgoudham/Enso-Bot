@@ -325,8 +325,8 @@ class Fun(commands.Cog):
 
             await ctx.send(api_answer)
 
-        except Exception as e:
-            print(e)
+        except commands.BadArgument as e:
+            raise e
 
     @command(name="homies", aliases=["Homies", "homie", "Homie"])
     @cooldown(1, 10, BucketType.user)
@@ -349,8 +349,9 @@ class Fun(commands.Cog):
 
                 # Send the image file stored in the directory
                 await ctx.send(file=discord.File('AllMyHomiesHateMeme.jpg'))
-        except Exception as e:
-            print(e)
+
+        except commands.BadArgument as e:
+            raise e
 
     @command(name="owo", aliases=["Owo", "OwO"])
     @cooldown(1, 1, BucketType.user)

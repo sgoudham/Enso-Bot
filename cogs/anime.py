@@ -4,6 +4,7 @@ import string
 
 from discord import Embed, Colour
 from discord.ext import commands
+from discord.ext.commands import bot_has_permissions
 
 from settings import colour_list
 
@@ -121,6 +122,7 @@ class Anime(commands.Cog):
         print(f"{self.__class__.__name__} Cog has been loaded!\n-----")
 
     @commands.group(invoke_without_command=True)
+    @bot_has_permissions(embed_links=True)
     async def waifu(self, ctx, waifu=None):
         """Shows a Waifu"""
 
@@ -153,6 +155,7 @@ class Anime(commands.Cog):
             await ctx.send(embed=embed)
 
     @commands.group(invoke_without_command=True)
+    @bot_has_permissions(embed_links=True)
     async def husbando(self, ctx, husbando=None):
         """Shows a Husbando"""
 

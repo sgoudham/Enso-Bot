@@ -10,8 +10,8 @@ from PIL import Image, ImageDraw, ImageFont
 from aiohttp import request
 from discord import Member, Colour, Embed
 from discord.ext import commands
-from discord.ext.commands import BucketType, cooldown, command
-from discord.ext.commands import is_owner
+from discord.ext.commands import BucketType, cooldown, command, has_permissions
+from discord.ext.commands import is_owner, bot_has_permissions
 from owotext import OwO
 
 from settings import colour_list
@@ -169,6 +169,7 @@ class Fun(commands.Cog):
 
     @command(name="dm", aliases=["DM", "dM"])
     @is_owner()
+    @has_permissions(administrator=True)
     async def dm(self, ctx, member: Member, *, text):
         """DM users"""
 
@@ -178,6 +179,7 @@ class Fun(commands.Cog):
         await ctx.message.delete()
 
     @command(name="digby", aliases=["Digby"], hidden=True)
+    @bot_has_permissions(embed_links=True)
     async def digby(self, ctx):
         """Pictures of Digby!"""
 
@@ -209,6 +211,7 @@ class Fun(commands.Cog):
             print(e)
 
     @command(name="doggo", aliases=["Doggo"])
+    @bot_has_permissions(embed_links=True)
     @cooldown(1, 1, BucketType.user)
     async def doggo(self, ctx, breed=None):
         """Pictures of Doggos!"""
@@ -330,6 +333,7 @@ class Fun(commands.Cog):
 
     @command(name="homies", aliases=["Homies", "homie", "Homie"])
     @cooldown(1, 10, BucketType.user)
+    @bot_has_permissions(attach_files=True)
     async def homies(self, ctx, *, text):
         """Summoning the Homies"""
 

@@ -68,7 +68,7 @@ def lineCount():
                     if not line.strip().startswith("#") or not line.strip():
                         total += 1
 
-    return total, file_amount
+    return "{} Lines | {} Files".format(total, file_amount)
 
 
 class Info(commands.Cog):

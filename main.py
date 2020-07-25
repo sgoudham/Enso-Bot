@@ -398,8 +398,8 @@ async def on_command_error(ctx, args2):
 
 # Async def for handling command bad argument error
 async def on_bot_forbidden(ctx, args2):
-    for perm in args2.missing_perms:
-        missing_perms = "".join(string.capwords(perm.replace("_", " ")))
+    # Convert list into string of the missing permissions
+    missing_perms = string.capwords(", ".join(args2.missing_perms).replace("_", " "))
 
     # Send an error message to the user telling them that the member specified could not be found
     message = await ctx.send(f"I need **{missing_perms}** permission(s) to execute this command!")

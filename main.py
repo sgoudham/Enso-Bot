@@ -2,6 +2,7 @@ import asyncio
 import datetime
 import string
 from contextlib import closing
+from typing import Optional
 
 import discord
 import mariadb
@@ -180,8 +181,8 @@ async def restart(ctx):
     await client.logout()
 
 
-@client.command(name='help')
-async def _help(ctx, *, command: str = None):
+@client.command(name='help', aliases=["Help"])
+async def _help(ctx, *, command: Optional[str] = None):
     """Shows help about a command or the bot"""
 
     try:
@@ -206,7 +207,7 @@ async def _help(ctx, *, command: str = None):
 @client.command(name="prefix", aliases=["Prefix"])
 @guild_only()
 @has_permissions(manage_guild=True)
-async def change_prefix(ctx, new: str = None):
+async def change_prefix(ctx, new: Optional[str] = None):
     """View/Change Guild Prefix"""
 
     # As long as a new prefix has been given and is less than 5 characters

@@ -118,7 +118,7 @@ class Info(commands.Cog):
         await ctx.send(embed=embed)
 
     @command(name="serverinfo", aliases=["guildinfo"])
-    @bot_has_permissions(adminstrator=True)
+    @bot_has_permissions(administrator=True)
     @cooldown(1, 5, BucketType.user)
     async def server_info(self, ctx):
         """Guild Information! (Owner/Roles/Emojis etc)"""

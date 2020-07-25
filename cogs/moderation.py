@@ -1,9 +1,39 @@
+import asyncio
 import datetime
 from datetime import timedelta
+from typing import Optional
 
-from discord import Member
+from discord import Member, Embed
 from discord.ext import commands
-from discord.ext.commands import command, guild_only, has_guild_permissions, bot_has_guild_permissions
+from discord.ext.commands import command, guild_only, has_guild_permissions, bot_has_guild_permissions, Greedy, \
+    has_permissions, bot_has_permissions, cooldown, BucketType
+
+from settings import enso_embedmod_colours
+
+# Store guildID's and modlog channel within a cached dictionary
+modlogs = {}
+
+
+async def kick_members(message, targets, reason):
+    for target in targets:
+        if (message.guild.me.top_role.position > target.top_role.position
+                and not target.guild_permissions.administrator):
+            await target.kick(reason=reason)
+
+            embed = Embed(title="Member Kicked",
+                          colour=enso_embedmod_colours,
+                          timestamp=datetime.datetime.utcnow())
+
+            embed.set_thumbnail(url=target.avatar_url)
+
+            fields = [("Member", f"{target.mention}", False),
+                      ("Actioned by", message.author.mention, False),
+                      ("Reason", reason, False)]
+
+            for name, value, inline in fields:
+                embed.add_field(name=name, value=value, inline=inline)
+
+            return embed
 
 
 class Moderation(commands.Cog):
@@ -16,29 +46,49 @@ class Moderation(commands.Cog):
     async def on_ready(self):
         print(f"{self.__class__.__name__} Cog has been loaded\n-----")
 
-    @command(name="kick", aliases=["Kick"])
+    @commands.group()
+    @has_permissions(manage_guild=True)
+    @bot_has_permissions(administrator=True)
+    @cooldown(1, 1, BucketType.user)
+    async def modlogs(self, ctx):
+        pass
+
+    @command(name="kick", aliases=["Kick"], usage="`<member>` `[reason]`")
     @guild_only()
     @has_guild_permissions(kick_members=True)
     @bot_has_guild_permissions(kick_members=True)
-    async def kick(self, ctx, member: Member, *, reason=None):
+    @cooldown(1, 1, BucketType.user)
+    async def kick_member(self, ctx, members: Greedy[Member], *, reason: Optional[str] = "No Reason Given"):
         """Kick Members from Server"""
 
-        # Check if reason has been given
-        if reason:
-            reason = reason
-        # Set default reason to None
-        else:
-            reason = "No Reason Given"
+        # Make sure member(s) are entered properly
+        if not len(members):
+            message = await ctx.send(
+                f"Not Correct Syntax!"
+                f"\nUse **{ctx.prefix}help** to find how to use **{ctx.command}**")
 
-        # Kick the user and then give confirmation to the channel
-        await ctx.guild.kick(user=member, reason=reason)
-        await ctx.send(f"{ctx.author.name} **kicked** {member.name}"
-                       f"\n**Reason:** '{reason}'")
+            # Let the user read the message for 5 seconds
+            await asyncio.sleep(5)
+            # Delete the message
+            await message.delete()
+
+        # As long as all members are valid
+        else:
+
+            # Send embed of the kicked member
+            embed = await kick_members(ctx.message, members, reason)
+            message = await ctx.send(embed=embed)
+
+            # Let the user read the message for 10 seconds
+            await asyncio.sleep(10)
+            # Delete the message
+            await message.delete()
 
     @command(name="ban", aliases=["Ban"])
     @guild_only()
     @has_guild_permissions(ban_members=True)
     @bot_has_guild_permissions(ban_members=True)
+    @cooldown(1, 1, BucketType.user)
     async def ban(self, ctx, member: Member, *, reason=None):
         """Ban Members from Server"""
 
@@ -58,6 +108,7 @@ class Moderation(commands.Cog):
     @guild_only()
     @has_guild_permissions(ban_members=True)
     @bot_has_guild_permissions(ban_members=True)
+    @cooldown(1, 1, BucketType.user)
     async def unban(self, ctx, member: int, *, reason=None):
         """Unban Member from Server"""
 
@@ -80,6 +131,7 @@ class Moderation(commands.Cog):
     @guild_only()
     @has_guild_permissions(manage_messages=True)
     @bot_has_guild_permissions(manage_messages=True, read_message_history=True)
+    @cooldown(1, 1, BucketType.user)
     async def purge(self, ctx, amount: int = None):
         """Purge Messages from Channel
         (No Amount Will Default to 50 Messages Deleted)"""

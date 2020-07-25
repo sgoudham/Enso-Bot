@@ -158,14 +158,14 @@ class Modmail(commands.Cog):
         print(f"{self.__class__.__name__} Cog has been loaded\n-----")
 
     @commands.group(invoke_without_command=True)
-    @has_permissions(manage_server=True)
+    @has_permissions(manage_guild=True)
     @bot_has_permissions(adminstrator=True)
     async def modmail(self, ctx):
         """Setup/Update/Delete Modmail System"""
         pass
 
     @modmail.command()
-    @has_permissions(manage_server=True)
+    @has_permissions(manage_guild=True)
     @bot_has_permissions(adminstrator=True)
     async def setup(self, ctx, channelID: int):
         """Setup Modmail System"""
@@ -258,7 +258,7 @@ class Modmail(commands.Cog):
             return
 
     @modmail.command()
-    @has_permissions(manage_server=True)
+    @has_permissions(manage_guild=True)
     @bot_has_permissions(adminstrator=True)
     async def update(self, ctx, channelID: int):
         """Update Modmail Channel"""
@@ -311,7 +311,7 @@ class Modmail(commands.Cog):
             return
 
     @modmail.command()
-    @has_permissions(manage_server=True)
+    @has_permissions(manage_guild=True)
     @bot_has_permissions(adminstrator=True)
     async def delete(self, ctx):
         """Delete Modmail System"""

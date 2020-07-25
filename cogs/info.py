@@ -6,6 +6,7 @@ import string
 from asyncio.subprocess import Process
 from platform import python_version
 from time import time
+from typing import Optional
 
 from discord import Colour, Member
 from discord import Embed
@@ -85,7 +86,7 @@ class Info(commands.Cog):
     @command(name="userinfo", aliases=["ui"])
     @cooldown(1, 5, BucketType.user)
     @guild_only()
-    async def user_info(self, ctx, member: Member = None):
+    async def user_info(self, ctx, member: Optional[Member] = None):
         """User Information! (Created At/Joined/Roles etc)"""
 
         # If a member has been specified, set them as the user

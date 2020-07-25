@@ -81,22 +81,36 @@ class Moderation(commands.Cog):
     @has_guild_permissions(manage_messages=True)
     @bot_has_guild_permissions(manage_messages=True, read_message_history=True)
     async def purge(self, ctx, amount: int = None):
-        """Purge Messages from Channel"""
+        """Purge Messages from Channel
+        (No Amount Will Default to 50 Messages Deleted)"""
 
+        # When an amount is specified and is between 0 and 100
         if amount:
             if 0 < amount <= 100:
                 with ctx.channel.typing():
+
+                    # Delete the message sent and then the amount specified
+                    # (Only messages sent within the last 14 days)
                     await ctx.message.delete()
-                    deleted = await ctx.channel.purge(limit=amount + 1,
+                    deleted = await ctx.channel.purge(limit=amount,
                                                       after=datetime.datetime.utcnow() - timedelta(days=14))
 
-                    await ctx.send(f"Deleted **{(len(deleted) - 1):,}** messages.", delete_after=5)
+                    await ctx.send(f"Deleted **{len(deleted):,}** messages.", delete_after=5)
 
-            # Send error if
+            # Send error if amount is not between 0 and 100
             else:
                 await ctx.send("The amount provided is not between **0** and **100**")
+
+        # Delete the last 50 messages if no amount is given
         else:
-            await ctx.send("**You must specify an amount!**")
+
+            # Delete the message sent and then the amount specified
+            # (Only messages sent within the last 14 days)
+            await ctx.message.delete()
+            deleted = await ctx.channel.purge(limit=50,
+                                              after=datetime.datetime.utcnow() - timedelta(days=14))
+
+            await ctx.send(f"Deleted **{len(deleted):,}** messages.", delete_after=5)
 
 
 def setup(bot):

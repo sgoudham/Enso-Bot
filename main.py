@@ -377,7 +377,7 @@ async def on_member_remove(member):
 async def on_command_error(ctx, args2):
     # if the user did not specify an user
     if isinstance(args2, commands.MissingRequiredArgument):
-        await on_command_missing_user(ctx)
+        await on_command_missing_argument(ctx)
     # if the user has spammed a command and invoked a cooldown
     elif isinstance(args2, commands.CommandOnCooldown):
         await on_command_cooldown(ctx, args2)
@@ -465,10 +465,11 @@ async def on_command_permission(ctx):
     await message.delete()
 
 
-async def on_command_missing_user(ctx):
+async def on_command_missing_argument(ctx):
     # Send an error message to the user saying that an argument is missing
     message = await ctx.send(
-        f"Required Argument Missing! Use **{ctx.prefix}help** to find how to use **{ctx.command}**")
+        f"Required Argument Missing!"
+        f"\nUse **{ctx.prefix}help** to find how to use **{ctx.command}**")
 
     # Let the user read the message for 5 seconds
     await asyncio.sleep(5)

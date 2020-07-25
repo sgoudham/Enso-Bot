@@ -98,7 +98,7 @@ class Info(commands.Cog):
         embed.set_footer(text=f"ID: {member.id}", icon_url='{}'.format(userAvatar))
 
         # Define fields to be added into the embed
-        embed_fields = [("Name", str(member.mention), True),
+        embed_fields = [("Name", member.mention, True),
                         ("Tag", member.name, True),
                         ("Discrim", "#" + member.discriminator, True),
                         ("Registered", member.created_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"), True),

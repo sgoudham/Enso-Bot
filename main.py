@@ -1,5 +1,6 @@
 import asyncio
 import datetime
+import string
 from contextlib import closing
 
 import discord
@@ -7,7 +8,7 @@ import mariadb
 from decouple import config
 from discord import Embed
 from discord.ext import commands, tasks
-from discord.ext.commands import when_mentioned_or, is_owner, guild_only, has_permissions, bot_has_permissions
+from discord.ext.commands import when_mentioned_or, is_owner, guild_only, has_permissions
 
 import db
 import settings
@@ -205,7 +206,6 @@ async def _help(ctx, *, command: str = None):
 @client.command(name="prefix", aliases=["Prefix"])
 @guild_only()
 @has_permissions(manage_guild=True)
-@bot_has_permissions(manage_guild=True)
 async def change_prefix(ctx, new: str = None):
     """View/Change Guild Prefix"""
 
@@ -399,7 +399,7 @@ async def on_command_error(ctx, args2):
 # Async def for handling command bad argument error
 async def on_bot_forbidden(ctx, args2):
     for perm in args2.missing_perms:
-        missing_perms = "".join(perm)
+        missing_perms = "".join(string.capwords(perm.replace("_", " ")))
 
     # Send an error message to the user telling them that the member specified could not be found
     message = await ctx.send(f"I need **{missing_perms}** permission(s) to execute this command!")

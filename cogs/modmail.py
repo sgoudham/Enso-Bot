@@ -403,10 +403,10 @@ class Modmail(commands.Cog):
             }
 
             # Saving this for later within when discord.py 1.4 comes out
-            # cat = await guild.create_category_channel(member.name, overwrites=overwrites)
+            cat = await guild.create_category_channel(member.name, overwrites=overwrites)
 
             # Create the text channel
-            user_channel = await guild.create_text_channel(member.name, overwrites=overwrites,
+            user_channel = await guild.create_text_channel(member.name, overwrites=overwrites, category=cat,
                                                            position=0)
 
             # Mention the user to make sure that they get pinged
@@ -462,7 +462,7 @@ class Modmail(commands.Cog):
                             await instructions.delete()
 
                             # Determine a path for the message logs to be stored
-                            path = "cogs/modmail/Anon.txt"
+                            path = "cogs/Anon.txt"
                             with open(path, 'a+') as f:
                                 # Store the date and content of every message in the text file
                                 async for message in user_channel.history(limit=300):
@@ -521,7 +521,7 @@ class Modmail(commands.Cog):
                             await instructions.delete()
 
                             # Determine a path for the message logs to be stored
-                            path = "cogs/modmail/{}.txt".format(payload.member.name)
+                            path = "cogs/{}.txt".format(payload.member.name)
                             with open(path, 'a+') as f:
                                 # Store the date and content of every message in the text file
                                 async for message in user_channel.history(limit=300):

@@ -181,7 +181,7 @@ class Info(commands.Cog):
         invites = len(await ctx.guild.invites())
 
         # Define fields to be added into the embed
-        fields = [("Owner", ctx.guild.owner, True),
+        fields = [("Owner", ctx.guild.owner.mention, True),
                   ("Created", ctx.guild.created_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"), False),
                   ("Region", str(ctx.guild.region).capitalize(), False),
                   ("Statuses", f"🟢 {statuses[0]} \n🟠 {statuses[1]} \n🔴 {statuses[2]} \n⚪ {statuses[3]}", False),

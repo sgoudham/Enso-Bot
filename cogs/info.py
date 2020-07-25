@@ -9,7 +9,7 @@ from discord import Colour, Member
 from discord import Embed
 from discord import __version__ as discord_version
 from discord.ext import commands
-from discord.ext.commands import BucketType, cooldown
+from discord.ext.commands import BucketType, cooldown, bot_has_permissions
 from discord.ext.commands import command
 from psutil import Process, virtual_memory
 
@@ -118,6 +118,7 @@ class Info(commands.Cog):
         await ctx.send(embed=embed)
 
     @command(name="serverinfo", aliases=["guildinfo"])
+    @bot_has_permissions(adminstrator=True)
     @cooldown(1, 5, BucketType.user)
     async def server_info(self, ctx):
         """Guild Information! (Owner/Roles/Emojis etc)"""

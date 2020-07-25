@@ -87,7 +87,7 @@ class Moderation(commands.Cog):
                     deleted = await ctx.channel.purge(limit=amount + 1,
                                                       after=datetime.datetime.utcnow() - timedelta(days=14))
 
-                    await ctx.send(f"Deleted **{len(deleted - 1):,}** messages.", delete_after=5)
+                    await ctx.send(f"Deleted **{len(deleted) - 1:,}** messages.", delete_after=5)
 
             else:
                 await ctx.send("The amount provided is not between **0** and **100**")

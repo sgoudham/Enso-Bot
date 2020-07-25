@@ -157,7 +157,7 @@ class Modmail(commands.Cog):
         """Printing out that Cog is ready on startup"""
         print(f"{self.__class__.__name__} Cog has been loaded\n-----")
 
-    @commands.group(invoke_without_command=True)
+    @commands.group(invoke_without_command=True, usage="`[argument...]`")
     @has_permissions(manage_guild=True)
     @bot_has_permissions(administrator=True)
     async def modmail(self, ctx):

@@ -7,8 +7,7 @@ import mariadb
 from decouple import config
 from discord import Embed
 from discord.ext import commands, tasks
-from discord.ext.commands import when_mentioned_or, is_owner, guild_only, has_permissions, bot_has_permissions, \
-    CheckFailure
+from discord.ext.commands import when_mentioned_or, is_owner, guild_only, has_permissions, bot_has_permissions
 
 import db
 import settings
@@ -382,17 +381,33 @@ async def on_command_error(ctx, args2):
     # if the user has spammed a command and invoked a cooldown
     elif isinstance(args2, commands.CommandOnCooldown):
         await on_command_cooldown(ctx, args2)
-    # if the user does not the correct permissions to call a command
-    elif isinstance(args2, commands.CheckFailure):
-        await on_command_permission(ctx)
     # if the user tries to access a command that isn't available
     elif isinstance(args2, commands.CommandNotFound):
         await on_command_not_found(ctx)
     # if the user provides an argument that isn't recognised
     elif isinstance(args2, commands.BadArgument):
         await on_command_bad_argument(ctx)
-    if isinstance(args2, CheckFailure):
+    # if the user does not the correct permissions to call a command
+    elif isinstance(args2, commands.MissingPermissions):
+        await on_command_permission(ctx)
+    elif isinstance(args2, commands.CommandInvokeError):
         await on_command_forbidden(ctx)
+    elif isinstance(args2, commands.BotMissingPermissions):
+        await on_bot_forbidden(ctx, args2)
+
+
+# Async def for handling command bad argument error
+async def on_bot_forbidden(ctx, args2):
+    for perm in args2.missing_perms:
+        missing_perms = "".join(perm)
+
+    # Send an error message to the user telling them that the member specified could not be found
+    message = await ctx.send(f"I need **{missing_perms}** permission(s) to execute this command!")
+
+    # Let the user read the message for 5 seconds
+    await asyncio.sleep(5)
+    # Delete the message
+    await message.delete()
 
 
 # Async def for handling command bad argument error

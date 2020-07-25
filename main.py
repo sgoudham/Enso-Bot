@@ -7,7 +7,8 @@ import mariadb
 from decouple import config
 from discord import Embed
 from discord.ext import commands, tasks
-from discord.ext.commands import when_mentioned_or, is_owner, guild_only, has_permissions, bot_has_permissions
+from discord.ext.commands import when_mentioned_or, is_owner, guild_only, has_permissions, bot_has_permissions, \
+    CheckFailure
 
 import db
 import settings
@@ -199,7 +200,7 @@ async def _help(ctx, *, command: str = None):
 
         await p.paginate()
     except Exception as ex:
-        await ctx.send(ex)
+        await ctx.send("**{}**".format(ex))
 
 
 @client.command(name="prefix", aliases=["Prefix"])
@@ -375,8 +376,6 @@ async def on_member_remove(member):
 # Bot Event for handling all errors within discord.commands
 @client.event
 async def on_command_error(ctx, args2):
-    Forbidden = hasattr(exec, args2)
-
     # if the user did not specify an user
     if isinstance(args2, commands.MissingRequiredArgument):
         await on_command_missing_user(ctx)
@@ -392,10 +391,8 @@ async def on_command_error(ctx, args2):
     # if the user provides an argument that isn't recognised
     elif isinstance(args2, commands.BadArgument):
         await on_command_bad_argument(ctx)
-    if Forbidden:
-        # if the bot does not permissions to send the command
-        if isinstance(args2, discord.errors.Forbidden):
-            await on_command_forbidden(ctx)
+    if isinstance(args2, CheckFailure):
+        await on_command_forbidden(ctx)
 
 
 # Async def for handling command bad argument error

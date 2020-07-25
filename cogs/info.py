@@ -9,11 +9,11 @@ from discord import Colour, Member
 from discord import Embed
 from discord import __version__ as discord_version
 from discord.ext import commands
-from discord.ext.commands import BucketType, cooldown, bot_has_permissions
+from discord.ext.commands import BucketType, cooldown, bot_has_permissions, guild_only
 from discord.ext.commands import command
 from psutil import Process, virtual_memory
 
-from settings import colour_list, enso_embedmod_colours
+from settings import colour_list, enso_embedmod_colours, hammyMention
 
 # Using forzenset
 # Permissions to filter through
@@ -63,6 +63,8 @@ class Info(commands.Cog):
 
     @command(name="userinfo", aliases=["ui"])
     @cooldown(1, 5, BucketType.user)
+    @guild_only()
+    @bot_has_permissions(embed_links=True)
     async def user_info(self, ctx, member: Member = None):
         """User Information! (Created At/Joined/Roles etc)"""
 
@@ -118,7 +120,8 @@ class Info(commands.Cog):
         await ctx.send(embed=embed)
 
     @command(name="serverinfo", aliases=["guildinfo"])
-    @bot_has_permissions(administrator=True)
+    @bot_has_permissions(embed_links=True, administrator=True)
+    @guild_only()
     @cooldown(1, 5, BucketType.user)
     async def server_info(self, ctx):
         """Guild Information! (Owner/Roles/Emojis etc)"""
@@ -212,6 +215,8 @@ class Info(commands.Cog):
 
     @command(name="channelinfo", aliases=["chinfo"])
     @cooldown(1, 5, BucketType.user)
+    @guild_only()
+    @bot_has_permissions(embed_links=True)
     async def channel_info(self, ctx):
         """Channel Statistics! (Category/Created At etc)"""
 
@@ -242,12 +247,13 @@ class Info(commands.Cog):
 
         await ctx.send(embed=embed)
 
-    @command(name="stats")
+    @command(name="botinfo", aliases=["binfo"])
+    @bot_has_permissions(embed_links=True)
     @cooldown(1, 5, BucketType.user)
     async def checking_bot_stats(self, ctx):
         """Bot Statistics! (CPU/Mem Usage etc)"""
 
-        stats = Embed(title="Bot Stats",
+        stats = Embed(title="Bot Statistics",
                       colour=enso_embedmod_colours,
                       timestamp=datetime.datetime.utcnow())
         stats.set_thumbnail(url=ctx.guild.icon_url)
@@ -267,7 +273,7 @@ class Info(commands.Cog):
 
         # Setting up fields
         fields = [
-            ("Developer", "Hamothy#5619", True),
+            ("Developer", hammyMention, True),
             ("Bot Version", "1.7.2", False),
             ("Language | Library", f"Python {python_version()} | Discord.py {discord_version}", False),
             ("Uptime", frmt_uptime, False),

@@ -401,7 +401,7 @@ async def on_bot_forbidden(ctx, args2):
     # Convert list into string of the missing permissions
     missing_perms = string.capwords(", ".join(args2.missing_perms).replace("_", " "))
 
-    # Send an error message to the user telling them that the member specified could not be found
+    # Send an error message to the user notifying them of the permissions that are missing from the bot
     message = await ctx.send(f"I need **{missing_perms}** permission(s) to execute this command!")
 
     # Let the user read the message for 5 seconds

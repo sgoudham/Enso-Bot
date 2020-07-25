@@ -403,7 +403,7 @@ class Modmail(commands.Cog):
             }
 
             # Saving this for later within when discord.py 1.4 comes out
-            cat = await guild.create_category_channel(member.name, overwrites=overwrites)
+            # cat = await guild.create_category_channel(member.name, overwrites=overwrites, position=0)
 
             # Create the text channel
             user_channel = await guild.create_text_channel(member.name, overwrites=overwrites, category=cat,

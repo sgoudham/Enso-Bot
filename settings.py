@@ -1,6 +1,10 @@
+from contextlib import closing
+
 from discord import Colour
 
 # Defining a list of colours
+import db
+
 colors = {
     'DEFAULT': 0x000000,
     'WHITE': 0xFFFFFF,
@@ -44,6 +48,63 @@ colors = {
 
 # Grabbing the list of colours
 colour_list = [c for c in colors.values()]
+
+# Store guildID's and modlog channel within a cached dictionary
+modlogs = {}
+
+# Storing the prefixes and guildID's in the cache
+cached_prefixes = {}
+
+
+# Updating the prefix within the dict and database when the method is called
+async def storage_prefix_for_guild(ctx, prefix):
+    cached_prefixes[str(ctx.guild.id)] = prefix
+
+    with db.connection() as connection:
+        # Update the existing prefix within the database
+        update_query = """UPDATE guilds SET prefix = (?) WHERE guildID = (?)"""
+        update_vals = prefix, ctx.guild.id,
+
+        # Using the connection cursor
+        with closing(connection.cursor()) as cur:
+            # Execute the query
+            cur.execute(update_query, update_vals)
+            print(cur.rowcount, f"Guild prefix has been updated for guild {ctx.guild.name}")
+
+    # Let the user know that the guild prefix has been updated
+    await ctx.send(f"**Guild prefix has been updated to `{prefix}`**")
+
+
+# Method to store the cached prefixes
+def cache_prefix(guildid, prefix):
+    cached_prefixes[guildid] = prefix
+
+
+# Deleting the key - value pair for guild
+def del_cache_prefix(guildid):
+    del cached_prefixes[guildid]
+
+
+# Get the prefix of the guild that the user is in
+def get_prefix_for_guild(guildid):
+    prefix = cached_prefixes[guildid]
+    if prefix is not None:
+        return prefix
+    return "defaultPrefix"
+
+
+# Before initialising the cache. Store the prefixes from the database within the cache
+with db.connection() as conn:
+    # Grab the prefix of the server from the database
+    select_query = """SELECT * FROM guilds"""
+    with closing(conn.cursor()) as cursor:
+        # Execute the query
+        cursor.execute(select_query)
+        results = cursor.fetchall()
+
+        # Store the guildids and prefixes within
+        for row in results:
+            cache_prefix(row[0], row[1])
 
 # Define repeated variables
 hammyMention = '<@154840866496839680>'

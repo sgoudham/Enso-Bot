@@ -159,7 +159,7 @@ async def on_ready():
 async def _ping(ctx):
     """Latency of the Bot (ms)"""
 
-    await ctx.send(f'Pong! `{round(client.latency * 1000)}ms`')
+    await ctx.send(f"Pong! `{round(client.latency * 1000)}ms`")
 
 
 @client.command(name="leave", aliases=["Leave"], hidden=True)
@@ -192,7 +192,7 @@ async def _help(ctx, *, command: str = None):
 
             if entity is None:
                 clean = command.replace('@', '@\u200b')
-                return await ctx.send(f'**Command or Category "{clean}" Not Found.**')
+                return await ctx.send(f"**Command or Category '{clean}' Not Found.**")
             elif isinstance(entity, commands.Command):
                 p = await HelpPaginator.from_command(ctx, entity)
             else:
@@ -405,7 +405,7 @@ async def on_bot_forbidden(ctx, args2):
     message = await ctx.send(f"I need **{missing_perms}** permission(s) to execute this command!")
 
     # Let the user read the message for 5 seconds
-    await asyncio.sleep(5)
+    await asyncio.sleep(10)
     # Delete the message
     await message.delete()
 
@@ -415,8 +415,8 @@ async def on_command_forbidden(ctx):
     # Send an error message to the user telling them that the member specified could not be found
     message = await ctx.send(f"**I don't have permissions to execute this command**")
 
-    # Let the user read the message for 5 seconds
-    await asyncio.sleep(5)
+    # Let the user read the message for 10 seconds
+    await asyncio.sleep(10)
     # Delete the message
     await message.delete()
 
@@ -424,10 +424,10 @@ async def on_command_forbidden(ctx):
 # Async def for handling command bad argument error
 async def on_command_bad_argument(ctx):
     # Send an error message to the user telling them that the member specified could not be found
-    message = await ctx.send(f'**I could not find that member!**')
+    message = await ctx.send("**Uh oh! Couldn't find anyone to mention! Try again!**")
 
-    # Let the user read the message for 5 seconds
-    await asyncio.sleep(5)
+    # Let the user read the message for 10 seconds
+    await asyncio.sleep(10)
     # Delete the message
     await message.delete()
 
@@ -435,10 +435,10 @@ async def on_command_bad_argument(ctx):
 # Async def for handling command not found error
 async def on_command_not_found(ctx):
     # Send an error message to the user telling them that the command doesn't exist
-    message = await ctx.send(f'**Command Not Found! Please use `{ctx.prefix}help` to see all commands**')
+    message = await ctx.send(f"Command Not Found! Please use **{ctx.prefix}help** to see all commands")
 
-    # Let the user read the message for 5 seconds
-    await asyncio.sleep(5)
+    # Let the user read the message for 10 seconds
+    await asyncio.sleep(10)
     # Delete the message
     await message.delete()
 
@@ -446,10 +446,10 @@ async def on_command_not_found(ctx):
 # Async def for handling cooldown error/permission errors
 async def on_command_cooldown(ctx, error):
     # Send an error message to the user telling them that the command is on cooldown
-    message = await ctx.send(f'That command is on cooldown. Try again in **{error.retry_after:,.2f}** seconds.')
+    message = await ctx.send(f"That command is on cooldown. Try again in **{error.retry_after:,.2f}** seconds")
 
-    # Let the user read the message for 5 seconds
-    await asyncio.sleep(5)
+    # Let the user read the message for 10 seconds
+    await asyncio.sleep(10)
     # Delete the message
     await message.delete()
 
@@ -467,7 +467,8 @@ async def on_command_permission(ctx):
 
 async def on_command_missing_user(ctx):
     # Send an error message to the user saying that an argument is missing
-    message = await ctx.send("**Uh oh! Couldn't find anyone to mention! Try again!**")
+    message = await ctx.send(
+        f"Required Argument Missing! Use **{ctx.prefix}help** to find how to use **{ctx.command}**")
 
     # Let the user read the message for 5 seconds
     await asyncio.sleep(5)

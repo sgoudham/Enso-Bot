@@ -2,6 +2,7 @@ import asyncio
 import datetime
 import random
 import string
+from typing import Optional
 
 import discord
 from discord import Embed, Colour
@@ -99,7 +100,7 @@ class Enso(commands.Cog):
 
     @commands.group(invoke_without_command=True)
     @bot_has_permissions(embed_links=True)
-    async def enso(self, ctx, name=None):
+    async def enso(self, ctx, name: Optional[str] = None):
         """Shows Random Person from Ensō"""
 
         # Making sure this command only works in Enso

@@ -5,7 +5,7 @@ from contextlib import closing
 
 from discord import Member, Embed, Colour
 from discord.ext import commands
-from discord.ext.commands import BucketType, command, cooldown
+from discord.ext.commands import BucketType, command, cooldown, bot_has_permissions
 
 import db
 from settings import colour_list
@@ -49,7 +49,7 @@ class Relationship(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
-    
+
     @commands.Cog.listener()
     async def on_ready(self):
         """Printing out that Cog is ready on startup"""
@@ -246,8 +246,9 @@ class Relationship(commands.Cog):
             # Send out an error message if the user waited too long
             await ctx.send("**(｡T ω T｡) They waited too long**")
 
-    @command(name="minfo", aliases=["Minfo", "mInfo"])
+    @command(name="marriageinfo", aliases=["minfo", "Minfo"])
     @cooldown(1, 1, BucketType.user)
+    @bot_has_permissions(embed_links=True)
     async def m_info(self, ctx, member: Member = None):
         """Marriage Information!"""
 

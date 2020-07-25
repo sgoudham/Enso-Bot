@@ -90,11 +90,11 @@ class Moderation(commands.Cog):
             # Checking if the guild already exists within the database
             with db.connection() as conn:
                 # Get the author's row from the Members Table
-                insert_query = """INSERT INTO guilds (modlogs) VALUES (?)"""
-                val = channelID,
+                update_query = """UPDATE guilds SET modlogs = (?) WHERE guildID = (?)"""
+                val = channelID, ctx.author.guild.id
                 with closing(conn.cursor()) as cursor:
                     # Execute the SQL Query
-                    cursor.execute(insert_query, val)
+                    cursor.execute(update_query, val)
 
             await ctx.send("Your **Modlogs Channel** is now successfully set up!" +
                            f"\nPlease refer to **{ctx.prefix}help** for any information")

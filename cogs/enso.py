@@ -6,7 +6,7 @@ import string
 import discord
 from discord import Embed, Colour
 from discord.ext import commands
-from discord.ext.commands import cooldown, BucketType, command, is_owner
+from discord.ext.commands import cooldown, BucketType, command, is_owner, bot_has_permissions
 
 from settings import colour_list, enso_guild_ID, enso_ensochancommands_Mention, blank_space, enso_embedmod_colours, \
     enso_verification_ID
@@ -98,6 +98,7 @@ class Enso(commands.Cog):
         print(f"{self.__class__.__name__} Cog has been loaded\n-----")
 
     @commands.group(invoke_without_command=True)
+    @bot_has_permissions(embed_links=True)
     async def enso(self, ctx, name=None):
         """Shows Random Person from Ensō"""
 

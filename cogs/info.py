@@ -198,7 +198,7 @@ class Info(commands.Cog):
 
                   ("Misc",
                    f"Invites: {invites}" +
-                   f"\nVerification Level: {ctx.guild.verification_level.name.capitalize()}" +
+                   f"\nVerif Level: {ctx.guild.verification_level.name.capitalize()}" +
                    f"\nNitro Boosters: {len(ctx.guild.premium_subscribers)}", True),
                   (f"Roles ({len(ctx.guild.roles)})", role_string, True),
                   (f"Emojis ({len(ctx.guild.emojis)})", emojis, False)]

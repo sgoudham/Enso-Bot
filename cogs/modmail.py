@@ -406,7 +406,7 @@ class Modmail(commands.Cog):
             # cat = await guild.create_category_channel(member.name, overwrites=overwrites, position=0)
 
             # Create the text channel
-            user_channel = await guild.create_text_channel(member.name, overwrites=overwrites, category=cat,
+            user_channel = await guild.create_text_channel(member.name, overwrites=overwrites,
                                                            position=0)
 
             # Mention the user to make sure that they get pinged

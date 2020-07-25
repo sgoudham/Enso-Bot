@@ -2,7 +2,7 @@ import asyncio
 
 from discord import Member
 from discord.ext import commands
-from discord.ext.commands import command, guild_only, has_guild_permissions
+from discord.ext.commands import command, guild_only, has_guild_permissions, bot_has_guild_permissions
 
 
 class Moderation(commands.Cog):
@@ -18,6 +18,7 @@ class Moderation(commands.Cog):
     @command(name="kick", aliases=["Kick"])
     @guild_only()
     @has_guild_permissions(kick_members=True)
+    @bot_has_guild_permissions(kick_members=True)
     async def kick(self, ctx, member: Member, *, reason=None):
         """Kick Members from Server"""
 
@@ -36,6 +37,7 @@ class Moderation(commands.Cog):
     @command(name="ban", aliases=["Ban"])
     @guild_only()
     @has_guild_permissions(ban_members=True)
+    @bot_has_guild_permissions(ban_members=True)
     async def ban(self, ctx, member: Member, *, reason=None):
         """Ban Members from Server"""
 
@@ -54,6 +56,7 @@ class Moderation(commands.Cog):
     @command(name="unban", aliases=["Unban"])
     @guild_only()
     @has_guild_permissions(ban_members=True)
+    @bot_has_guild_permissions(ban_members=True)
     async def unban(self, ctx, member: int, *, reason=None):
         """Unban Member from Server"""
 
@@ -73,6 +76,7 @@ class Moderation(commands.Cog):
     @command(name="purge", aliases=["Purge"])
     @guild_only()
     @has_guild_permissions(manage_messages=True)
+    @bot_has_guild_permissions(manage_messages=True)
     async def purge(self, ctx, amount: int = None):
         """Purge Messages from Channel"""
         if not amount:

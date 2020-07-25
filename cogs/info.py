@@ -1,4 +1,6 @@
 import datetime
+import os
+import pathlib
 import random
 import string
 from asyncio.subprocess import Process
@@ -50,6 +52,25 @@ def DetectPermissions(message, fset):
     return ", ".join(filtered)
 
 
+def lineCount():
+    total = 0
+    file_amount = 0
+    ENV = "venv"  # change this to your env folder dir
+
+    for path, _, files in os.walk("."):
+        for name in files:
+            file_dir = str(pathlib.PurePath(path, name))
+            if not name.endswith(".py") or ENV in file_dir:  # ignore env folder and not python files.
+                continue
+            file_amount += 1
+            with open(file_dir, "r", encoding="utf-8") as file:
+                for line in file:
+                    if not line.strip().startswith("#") or not line.strip():
+                        total += 1
+
+    return total, file_amount
+
+
 class Info(commands.Cog):
     """(User/Server/Bot etc) Information!"""
 
@@ -64,7 +85,6 @@ class Info(commands.Cog):
     @command(name="userinfo", aliases=["ui"])
     @cooldown(1, 5, BucketType.user)
     @guild_only()
-    @bot_has_permissions(embed_links=True)
     async def user_info(self, ctx, member: Member = None):
         """User Information! (Created At/Joined/Roles etc)"""
 
@@ -120,7 +140,7 @@ class Info(commands.Cog):
         await ctx.send(embed=embed)
 
     @command(name="serverinfo", aliases=["guildinfo"])
-    @bot_has_permissions(embed_links=True, administrator=True)
+    @bot_has_permissions(administrator=True)
     @guild_only()
     @cooldown(1, 5, BucketType.user)
     async def server_info(self, ctx):
@@ -248,6 +268,7 @@ class Info(commands.Cog):
         await ctx.send(embed=embed)
 
     @command(name="botinfo", aliases=["binfo"])
+    @guild_only()
     @bot_has_permissions(embed_links=True)
     @cooldown(1, 5, BucketType.user)
     async def checking_bot_stats(self, ctx):
@@ -278,6 +299,7 @@ class Info(commands.Cog):
             ("Language | Library", f"Python {python_version()} | Discord.py {discord_version}", False),
             ("Uptime", frmt_uptime, False),
             ("Memory Usage", f"{mem_usage:,.2f} / {mem_total:,.2f} MiB ({mem_of_total:.2f}%)", False),
+            ("Line Count | No. Of Files", lineCount(), False),
             ("Guilds", f"{len(self.bot.guilds)}", True),
             ("Users", f"{len(self.bot.users):,}", True)
         ]
@@ -286,7 +308,10 @@ class Info(commands.Cog):
         for name, value, inline in fields:
             stats.add_field(name=name, value=value, inline=inline)
 
-        await ctx.send(embed=stats)
+        try:
+            await ctx.send(embed=stats)
+        except Exception as e:
+            print(e)
 
 
 def setup(bot):

@@ -469,7 +469,7 @@ async def on_command_permission(ctx):
 async def on_command_missing_argument(ctx):
     # Send an error message to the user saying that an argument is missing
     message = await ctx.send(
-        f"Required Argument Missing!"
+        f"Required Argument(s) Missing!"
         f"\nUse **{ctx.prefix}help** to find how to use **{ctx.command}**")
 
     # Let the user read the message for 5 seconds

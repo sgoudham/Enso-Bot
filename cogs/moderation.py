@@ -30,8 +30,8 @@ class Moderation(commands.Cog):
         else:
             reason = "No Reason Given"
 
+        # Kick the user and then give confirmation to the channel
         await ctx.guild.kick(user=member, reason=reason)
-
         await ctx.send(f"{ctx.author.name} **kicked** {member.name}"
                        f"\n**Reason:** '{reason}'")
 
@@ -49,8 +49,8 @@ class Moderation(commands.Cog):
         else:
             reason = "No Reason Given"
 
+        # Ban the user and send confirmation to the channel
         await ctx.guild.ban(user=member, reason=reason)
-
         await ctx.send(f"{ctx.author.name} **banned** {member.name}"
                        f"\n**Reason:** '{reason}'")
 
@@ -68,16 +68,18 @@ class Moderation(commands.Cog):
         else:
             reason = "No Reason Given"
 
+        # Get the member and unban them
         member = await self.bot.fetch_user(member)
         await ctx.guild.unban(member, reason=reason)
 
+        # Confirm that the user has been unbanned
         await ctx.send(f"{ctx.author.name} **unbanned** {member.name}"
                        f"\n**Reason:** '{reason}'")
 
     @command(name="purge", aliases=["Purge"])
     @guild_only()
     @has_guild_permissions(manage_messages=True)
-    @bot_has_guild_permissions(manage_messages=True)
+    @bot_has_guild_permissions(manage_messages=True, read_message_history=True)
     async def purge(self, ctx, amount: int = None):
         """Purge Messages from Channel"""
 
@@ -88,8 +90,9 @@ class Moderation(commands.Cog):
                     deleted = await ctx.channel.purge(limit=amount + 1,
                                                       after=datetime.datetime.utcnow() - timedelta(days=14))
 
-                    await ctx.send(f"Deleted **{len(deleted) - 1:,}** messages.", delete_after=5)
+                    await ctx.send(f"Deleted **{(len(deleted) - 1):,}** messages.", delete_after=5)
 
+            # Send error if
             else:
                 await ctx.send("The amount provided is not between **0** and **100**")
         else:

@@ -86,6 +86,7 @@ class Info(commands.Cog):
     @command(name="userinfo", aliases=["ui"])
     @cooldown(1, 5, BucketType.user)
     @guild_only()
+    @bot_has_permissions(embed_links=True)
     async def user_info(self, ctx, member: Optional[Member] = None):
         """User Information! (Created At/Joined/Roles etc)"""
 

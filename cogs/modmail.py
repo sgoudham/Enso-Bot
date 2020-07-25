@@ -280,8 +280,8 @@ class Modmail(commands.Cog):
 
         # Throw error if the guild already exists and then stop the function
         if result is None:
-            await ctx.send("**Looks like this guild does not have a modmail system setup!" +
-                           f"\nPlease check `{ctx.prefix}help` for information on how to update/delete existing information**")
+            await ctx.send("Looks like this guild does not have a **Modmail System** setup!" +
+                           f"\nPlease check **{ctx.prefix}help** for information on how to update/delete existing information")
             return
 
         # As long as the channel exists within the guild
@@ -330,8 +330,8 @@ class Modmail(commands.Cog):
 
             # Throw error if the guild already exists and then stop the function
             if result is None:
-                await ctx.send("**Looks like this guild does not have a modmail system setup!" +
-                               f"\nPlease check `{ctx.prefix}help` for information on how to update/delete existing information**")
+                await ctx.send("Looks like this guild does not have a **Modmail System** setup!" +
+                               f"\nPlease check **{ctx.prefix}help** for information on how to update/delete existing information")
                 return
 
         try:
@@ -347,12 +347,12 @@ class Modmail(commands.Cog):
 
         except mariadb.Error as err:
             print(err)
-            await ctx.send("**Looks like this guild has not set up the modmail system yet!" +
+            await ctx.send("**Looks like this guild has not set up the Modmail System yet!" +
                            f"\nPlease do `{ctx.prefix}help` to find out how to set it up!**")
 
         # Sending confirmation message that the modmail system has been deleted
-        await ctx.send("**Modmail system successfully deleted!" +
-                       f"\nPlease do `{ctx.prefix}help` to find out how to set Modmail again!**")
+        await ctx.send("**Modmail System** successfully deleted!" +
+                       f"\nPlease do **{ctx.prefix}help** to find out how to set Modmail again!")
 
     # Setting up Listener to listen for reactions within the modmail channel created
     @commands.Cog.listener()

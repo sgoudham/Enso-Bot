@@ -196,6 +196,7 @@ class Anime(commands.Cog):
 
         # Send the list of waifus in the bot to the channel
         waifu_list = string.capwords(', '.join(map(str, waifus())))
+        
         # Tell the user to try the waifus in the array
         await ctx.send(f"Try the waifu's listed below!"
                        f"\n{waifu_list}")
@@ -206,6 +207,7 @@ class Anime(commands.Cog):
 
         # Send the list of waifus in the bot to the channel
         husbando_list = string.capwords(', '.join(map(str, husbandos())))
+
         # Tell the user to try the husbando's in the array
         await ctx.send(f"Try the husbando's listed below!"
                        f"\n{husbando_list}")

@@ -76,18 +76,18 @@ class Pages:
             self.permissions = self.channel.permissions_for(ctx.bot.user)
 
         if not self.permissions.embed_links:
-            raise CannotPaginate('Bot does not have embed links permission.')
+            raise CannotPaginate('Bot does not have Embed Links permission')
 
         if not self.permissions.send_messages:
-            raise CannotPaginate('Bot cannot send messages.')
+            raise CannotPaginate('Bot Cannot Send Messages')
 
         if self.paginating:
             # verify we can actually use the pagination session
             if not self.permissions.add_reactions:
-                raise CannotPaginate('Bot does not have add reactions permission.')
+                raise CannotPaginate('Bot does not have Add Reactions permission')
 
             if not self.permissions.read_message_history:
-                raise CannotPaginate('Bot does not have Read Message History permission.')
+                raise CannotPaginate('Bot does not have Read Message History permission')
 
     def get_page(self, page):
         base = (page - 1) * self.per_page

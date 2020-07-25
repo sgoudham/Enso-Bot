@@ -363,6 +363,9 @@ class Fun(commands.Cog):
     async def owo(self, ctx, *, text):
         """Converts given text to 'OwO' format"""
 
+        # Delete the message sent by the user
+        await ctx.message.delete()
+
         # Convert to "OwO" text
         uwu = OwO()
         owo = uwu.whatsthis(text)

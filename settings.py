@@ -52,6 +52,58 @@ colour_list = [c for c in colors.values()]
 # Store guildID's and modlog channel within a cached dictionary
 modlogs = {}
 
+
+# Updating the prefix within the dict and database when the method is called
+async def storage_modlog_for_guild(ctx, channelID):
+    modlogs[str(ctx.guild.id)] = channelID
+
+    with db.connection() as connection:
+        # Update the existing prefix within the database
+        update_query = """UPDATE guilds SET modlogs = (?) WHERE guildID = (?)"""
+        update_vals = channelID, ctx.guild.id,
+
+        # Using the connection cursor
+        with closing(connection.cursor()) as cur:
+            # Execute the query
+            cur.execute(update_query, update_vals)
+            print(cur.rowcount, f"Modlog channel for guild {ctx.guild.name} has been updated")
+
+    channel = ctx.guild.get_channel(channelID)
+    # Let the user know that the guild prefix has been updated
+    await ctx.send(f"**Modlog Channel for **{ctx.guild.name}** has been updated to {channel.mention}**")
+
+
+# Method to store the cached modlog channels
+def cache_modlogs(guildid, channel):
+    modlogs[guildid] = channel
+
+
+# Deleting the key - value pair for guild/modlogs
+def del_modlog_channel(guildid):
+    del modlogs[guildid]
+
+
+# Get the modlog channel of the guild that the user is in
+def get_modlog_for_guild(guildid):
+    channel = modlogs[guildid]
+    if channel is not None:
+        return channel
+    return Exception
+
+
+# Before initialising the cache. Store the prefixes from the database within the cache
+with db.connection() as conn:
+    # Grab the prefix of the server from the database
+    select_query = """SELECT * FROM guilds"""
+    with closing(conn.cursor()) as cursor:
+        # Execute the query
+        cursor.execute(select_query)
+        results = cursor.fetchall()
+
+        # Store the guildids and modlog channels
+        for row in results:
+            cache_modlogs(row[0], row[2])
+
 # Storing the prefixes and guildID's in the cache
 cached_prefixes = {}
 

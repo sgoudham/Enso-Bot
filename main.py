@@ -186,17 +186,6 @@ async def on_guild_join(guild):
     try:
         # Set up connection to database
         with db.connection() as conn:
-            # Iterate through every member within the guild
-            for member in guild.members:
-                name = f"{member.name}#{member.discriminator}"
-
-                # Define the insert statement that will insert the user's information
-                insert_query = """INSERT INTO members (guildID, discordUser, discordID) VALUES (?, ?, ?)"""
-                vals = guild.id, name, member.id,
-                with closing(conn.cursor()) as cursor:
-                    # Execute the query
-                    cursor.execute(insert_query, vals)
-                    print(cursor.rowcount, f"Record inserted successfully into Members from {guild.name}")
 
             # Define the insert statement for inserting the guild into the guilds table
             insert_query = """INSERT INTO guilds (guildID) VALUES (?)"""
@@ -205,6 +194,14 @@ async def on_guild_join(guild):
                 # Execute the query
                 cursor.execute(insert_query, val)
                 print(cursor.rowcount, f"Record inserted successfully into Guilds from {guild.name}")
+
+            # Define the insert statement that will insert the user's information
+            insert = "INSERT INTO members (guildID, discordUser, discordID) VALUES" + ", ".join(
+                map(lambda m: f"('{guild.id}', '{m.name}#{m.discriminator}', '{m.id}')", guild.members))
+            with closing(conn.cursor()) as cursor:
+                # Execute the query
+                cursor.execute(insert)
+                print(cursor.rowcount, f"Record(s) inserted successfully into Members from {guild.name}")
 
     except mariadb.Error as ex:
         print("Parameterized Query Failed: {}".format(ex))
@@ -222,14 +219,6 @@ async def on_guild_remove(guild):
     try:
         # Set up connection to database
         with db.connection() as conn:
-            for member in guild.members:
-                # Delete the record of the member as the bot leaves the server
-                delete_query = """DELETE FROM members WHERE discordID = (?) AND guildID = (?)"""
-                vals = member.id, guild.id,
-                with closing(conn.cursor()) as cursor:
-                    # Execute the SQL Query
-                    cursor.execute(delete_query, vals)
-                    print(cursor.rowcount, f"Record deleted successfully from Members from {guild.name}")
 
             # Delete the guild and prefix information as the bot leaves the server
             delete_query = """DELETE FROM guilds WHERE guildID = (?)"""
@@ -238,6 +227,14 @@ async def on_guild_remove(guild):
                 # Execute the query
                 cursor.execute(delete_query, val)
                 print(cursor.rowcount, f"Record deleted successfully from Guild {guild.name}")
+
+            # Delete the record of the member as the bot leaves the server
+            delete_query = """DELETE FROM members WHERE guildID = (?)"""
+            vals = guild.id,
+            with closing(conn.cursor()) as cursor:
+                # Execute the SQL Query
+                cursor.execute(delete_query, vals)
+                print(cursor.rowcount, f"Record(s) deleted successfully from Members from {guild.name}")
 
     except mariadb.Error as ex:
         print("Parameterized Query Failed: {}".format(ex))
@@ -299,29 +296,6 @@ async def on_member_join(member):
 
     # Send embed to #newpeople
     await new_people.send(embed=embed)
-
-
-# Bot event for new member joining, sending an embed introducing them to the server
-@client.event
-async def on_member_remove(member):
-    # Get the guild
-    guild = member.guild
-
-    try:
-        # With the database connection
-        with db.connection() as conn:
-
-            # Delete the record of the member as they leave the server
-            delete_query = """DELETE FROM members WHERE discordID = (?) AND guildID = (?)"""
-            vals = member.id, guild.id,
-            with closing(conn.cursor()) as cursor:
-                # Execute the SQL Query
-                cursor.execute(delete_query, vals)
-                conn.commit()
-                print(cursor.rowcount, "Record deleted successfully from Members")
-
-    except mariadb.Error as ex:
-        print("Parameterized Query Failed: {}".format(ex))
 
 
 # Bot Event for handling all errors within discord.commands
@@ -512,5 +486,7 @@ async def someone(ctx):
     """"""Tags Someone Randomly in the Server""""""
 
     await ctx.send(random.choice(tuple(member.mention for member in ctx.guild.members if not member.bot)))
+    
+    
 
 """

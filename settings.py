@@ -93,6 +93,7 @@ def del_modlog_channel(guildid):
     del modlogs[guildid]
 
 
+# Remove the value of modlog for the guild specified
 def remove_modlog_channel(guildid):
     modlogs[guildid] = None
 

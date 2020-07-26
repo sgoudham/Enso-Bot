@@ -391,10 +391,12 @@ class HelpPaginator(Pages):
         if not isinstance(command, discord.ext.commands.Group):
             if command.aliases:
                 aliases = " | ".join(command.aliases)
-                if command.usage and command.signature:
+                if command.usage:
                     self.title = f"{command.qualified_name} | {aliases} {command.signature}"
-                else:
+                elif command.signature:
                     self.title = f"{command.qualified_name} | {aliases} `{command.signature}`"
+                else:
+                    self.title = f"{command.qualified_name} | {aliases}"
             else:
                 self.title = f"{command.qualified_name} `{command.signature}`"
         else:

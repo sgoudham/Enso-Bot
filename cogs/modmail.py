@@ -168,9 +168,10 @@ class Modmail(commands.Cog):
     @has_permissions(manage_guild=True)
     @bot_has_permissions(administrator=True)
     async def setup(self, ctx, channelID: int):
-        """Setup Modmail System through inputting ChannelID
-        of the Modmail Channel and the Channel you want the Modmail
-        to be logged to"""
+        """
+        Setup Modmail System
+        Input the ID of the Channel where the Modmail will be sent
+        """
 
         # Retrieve a list of channel id's in the guild
         channels = [channel.id for channel in ctx.guild.channels]
@@ -263,7 +264,10 @@ class Modmail(commands.Cog):
     @has_permissions(manage_guild=True)
     @bot_has_permissions(administrator=True)
     async def update(self, ctx, channelID: int):
-        """Update the Channel that the Modmail is logged to"""
+        """
+        Update the Channel that the Modmail is logged to
+        Input the ID of the New Channel
+        """
 
         # Retrieve a list of channel id's in the guild
         channels = [channel.id for channel in ctx.guild.channels]
@@ -290,9 +294,11 @@ class Modmail(commands.Cog):
             try:
                 # Store the information within the database
                 with db.connection() as conn:
-                    # Define the insert statement that will insert information about the modmail channel
+
+                    # Define the update statement that will insert information about the modmail channel
                     update_query = """UPDATE moderatormail SET modmailChannelID = (?) WHERE guildID = (?)"""
                     vals = channelID, ctx.author.guild.id
+
                     with closing(conn.cursor()) as cursor:
                         # Execute the SQL Query
                         cursor.execute(update_query, vals)
@@ -300,9 +306,9 @@ class Modmail(commands.Cog):
 
             except mariadb.Error as err:
                 print(err)
-                await ctx.send("**Looks like something went wrong during the update!"
-                               "\nMake sure that the Channel ID is correct!**")
+                await ctx.send("**Looks like something went wrong during the update!**")
 
+            # Send confirmation that the channel has been updated
             channel = ctx.author.guild.get_channel(channelID)
             await ctx.send(
                 f"**The channel has been updated! Your new modmail will be sent to** {channel.mention}")
@@ -316,7 +322,7 @@ class Modmail(commands.Cog):
     @has_permissions(manage_guild=True)
     @bot_has_permissions(administrator=True)
     async def delete(self, ctx):
-        """Delete the entire Modmail System from the Guild"""
+        """Delete the Entire Modmail System from the Guild"""
 
         # Checking if the guild already exists within the database
         with db.connection() as conn:

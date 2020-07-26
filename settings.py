@@ -88,7 +88,7 @@ def get_modlog_for_guild(guildid):
     channel = modlogs[guildid]
     if channel is not None:
         return channel
-    return Exception
+    return None
 
 
 # Before initialising the cache. Store the prefixes from the database within the cache

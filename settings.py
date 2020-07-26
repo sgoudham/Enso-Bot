@@ -80,7 +80,7 @@ async def storage_modlog_for_guild(ctx, channelID, setup):
     else:
         # Let the user know that the guild modlogs channel has been updated
         channel = ctx.guild.get_channel(channelID)
-        await ctx.send(f"**Modlog Channel for **{ctx.guild.name}** has been updated to {channel.mention}**")
+        await ctx.send(f"Modlog Channel for **{ctx.guild.name}** has been updated to {channel.mention}")
 
 
 # Method to store the cached modlog channels

@@ -66,10 +66,12 @@ async def storage_modlog_for_guild(ctx, channelID, setup):
         with closing(connection.cursor()) as cur:
             # Execute the query
             cur.execute(update_query, update_vals)
+
+            # Send custom confirmation messages to log based on the command update or setup
             if setup:
                 print(cur.rowcount, f"Modlog channel for guild {ctx.guild.name} has been Setup")
             else:
-                print(cur.rowcount, f"Modlog channel for guild {ctx.guild.name} has been updated")
+                print(cur.rowcount, f"Modlog channel for guild {ctx.guild.name} has been Updated")
 
     if setup:
         # Send confirmation that modmail channel has been setup

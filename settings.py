@@ -54,7 +54,7 @@ modlogs = {}
 
 
 # Updating the prefix within the dict and database when the method is called
-async def storage_modlog_for_guild(ctx, channelID):
+async def storage_modlog_for_guild(ctx, channelID, setup):
     modlogs[str(ctx.guild.id)] = channelID
 
     with db.connection() as connection:
@@ -66,11 +66,19 @@ async def storage_modlog_for_guild(ctx, channelID):
         with closing(connection.cursor()) as cur:
             # Execute the query
             cur.execute(update_query, update_vals)
-            print(cur.rowcount, f"Modlog channel for guild {ctx.guild.name} has been updated")
+            if setup:
+                print(cur.rowcount, f"Modlog channel for guild {ctx.guild.name} has been Setup")
+            else:
+                print(cur.rowcount, f"Modlog channel for guild {ctx.guild.name} has been updated")
 
-    channel = ctx.guild.get_channel(channelID)
-    # Let the user know that the guild prefix has been updated
-    await ctx.send(f"**Modlog Channel for **{ctx.guild.name}** has been updated to {channel.mention}**")
+    if setup:
+        # Send confirmation that modmail channel has been setup
+        await ctx.send("Your **Modlogs Channel** is now successfully set up!" +
+                       f"\nPlease refer to **{ctx.prefix}help** for any information")
+    else:
+        # Let the user know that the guild modlogs channel has been updated
+        channel = ctx.guild.get_channel(channelID)
+        await ctx.send(f"**Modlog Channel for **{ctx.guild.name}** has been updated to {channel.mention}**")
 
 
 # Method to store the cached modlog channels

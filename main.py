@@ -160,7 +160,7 @@ async def reload_db(ctx):
     async with pool.acquire() as conn:
         async with conn.cursor() as cursor:
             # Define the insert statement that will insert the user's information
-            insert = """INSERT INTO members (guildID, discordID) VALUES""" + ", ".join(
+            insert = """INSERT IGNORE INTO members (guildID, discordID) VALUES""" + ", ".join(
                 map(lambda m: f"({ctx.guild.id}, {m.id})", ctx.guild.members))
 
             try:  # Execute the query
@@ -206,7 +206,7 @@ async def on_guild_join(guild):
         with db.connection() as conn:
 
             # Define the insert statement for inserting the guild into the guilds table
-            insert_query = """INSERT INTO guilds (guildID) VALUES (?)"""
+            insert_query = """INSERT IGNORE INTO guilds (guildID) VALUES (?)"""
             val = guild.id,
             with closing(conn.cursor()) as cursor:
                 # Execute the query
@@ -214,7 +214,7 @@ async def on_guild_join(guild):
                 print(cursor.rowcount, f"Record inserted successfully into Guilds from {guild.name}")
 
             # Define the insert statement that will insert the user's information
-            insert = "INSERT INTO members (guildID, discordID) VALUES" + ", ".join(
+            insert = "INSERT IGNORE INTO members (guildID, discordID) VALUES" + ", ".join(
                 map(lambda m: f"({guild.id}, {m.id})", guild.members))
             with closing(conn.cursor()) as cursor:
                 # Execute the query

@@ -10,12 +10,28 @@ from discord.ext.commands import command, guild_only, has_guild_permissions, bot
     has_permissions, bot_has_permissions, cooldown, BucketType
 
 import db
-from settings import enso_embedmod_colours, get_modlog_for_guild
+from settings import enso_embedmod_colours, get_modlog_for_guild, storage_modlog_for_guild, remove_modlog_channel
 
 
 async def kick_members(message, targets, reason):
-    channel = message.guild.get_channel(get_modlog_for_guild(str(message.guild.id)))
+    """
 
+    Method to allow the kick member log to be sent to the modlog channel
+
+    If no channel has been detected in the cache, it will send the embed
+    to the current channel that the user is in
+
+    """
+
+    # Get the channel of the modlog within the guild
+    modlog = get_modlog_for_guild(str(message.guild.id))
+    if modlog is None:
+        channel = message.channel
+    else:
+        channel = message.guild.get_channel(int(modlog))
+
+    # With every member, kick them and send an embed confirming the kick
+    # The embed will either be sent to the current channel or the modlogs channel
     for target in targets:
         if (message.guild.me.top_role.position > target.top_role.position
                 and not target.guild_permissions.administrator):
@@ -35,6 +51,10 @@ async def kick_members(message, targets, reason):
                 embed.add_field(name=name, value=value, inline=inline)
 
             await channel.send(embed=embed)
+
+        # Send error message if the User could not be kicked
+        else:
+            await message.channel.send("**User {} could not be Kicked!**".format(target.mention))
 
 
 class Moderation(commands.Cog):
@@ -70,7 +90,7 @@ class Moderation(commands.Cog):
 
             # Get the row of the guild
             select_query = """SELECT * FROM guilds WHERE guildID = (?)"""
-            val = ctx.author.guild.id,
+            val = ctx.guild.id,
             with closing(conn.cursor()) as cursor:
                 # Execute the SQL Query
                 cursor.execute(select_query, val)
@@ -87,27 +107,98 @@ class Moderation(commands.Cog):
             await ctx.send("**Invalid ChannelID Detected... Aborting Process**")
 
         else:
-            # Checking if the guild already exists within the database
-            with db.connection() as conn:
-                # Get the author's row from the Members Table
-                update_query = """UPDATE guilds SET modlogs = (?) WHERE guildID = (?)"""
-                val = channelID, ctx.author.guild.id
-                with closing(conn.cursor()) as cursor:
-                    # Execute the SQL Query
-                    cursor.execute(update_query, val)
+            # Set up the modlogs channel within the guild
+            mod_log_setup = True
+            await storage_modlog_for_guild(ctx, channelID, mod_log_setup)
 
-            await ctx.send("Your **Modlogs Channel** is now successfully set up!" +
-                           f"\nPlease refer to **{ctx.prefix}help** for any information")
+    @modlogs.command()
+    @has_permissions(manage_guild=True)
+    @bot_has_permissions(administrator=True)
+    @cooldown(1, 1, BucketType.user)
+    async def update(self, ctx, channelID: int):
+        """Change the Channel that your Modlogs are Sent to"""
 
-    @command(name="kick", aliases=["Kick"], usage="`<member>` `[reason]`")
+        # Retrieve a list of channel id's in the guild
+        channels = [channel.id for channel in ctx.guild.channels]
+
+        # Checking if the modlogs does not exist within the database
+        with db.connection() as conn:
+            # Get the guilds row from the guilds table
+            select_query = """SELECT * FROM guilds WHERE guildID = (?)"""
+            vals = ctx.guild.id,
+            with closing(conn.cursor()) as cursor:
+                # Execute the SQL Query
+                cursor.execute(select_query, vals)
+                result = cursor.fetchone()
+
+            # Throw error if the modlog channel already exists and then stop the function
+            if result[2] is None:
+                await ctx.send("Looks like this guild has not setup a **Modlogs Channel**" +
+                               f"\nPlease check **{ctx.prefix}help** for information on how to update/delete existing information")
+                return
+
+        # Abort the process if the channel does not exist within the guild
+        if channelID not in channels:
+            await ctx.send("**Invalid ChannelID Detected... Aborting Process**")
+
+        else:
+            # Update the modlog channel within the database and cache
+            mod_log_setup = False
+            await storage_modlog_for_guild(ctx, channelID, mod_log_setup)
+
+    @modlogs.command()
+    @has_permissions(manage_guild=True)
+    @bot_has_permissions(administrator=True)
+    @cooldown(1, 1, BucketType.user)
+    async def delete(self, ctx):
+        """Delete the Existing Modlogs System"""
+
+        # Checking if the modlogs does not exist within the database
+        with db.connection() as conn:
+            # Get the guilds row from the guilds table
+            select_query = """SELECT * FROM guilds WHERE guildID = (?)"""
+            vals = ctx.guild.id,
+            with closing(conn.cursor()) as cursor:
+                # Execute the SQL Query
+                cursor.execute(select_query, vals)
+                result = cursor.fetchone()
+
+            # Throw error if the modlog channel already exists and then stop the function
+            if result[2] is None:
+                await ctx.send("Looks like this guild has not setup a **Modlogs Channel**" +
+                               f"\nPlease check **{ctx.prefix}help** for information on how to update/delete existing information")
+                return
+
+        # Update the row to get rid of modlogs
+        with db.connection() as connection:
+            # Update the existing prefix within the database
+            update_query = """UPDATE guilds SET modlogs = NULL WHERE guildID = (?)"""
+            update_vals = ctx.guild.id,
+
+            # Using the connection cursor
+            with closing(connection.cursor()) as cur:
+                # Execute the query
+                cur.execute(update_query, update_vals)
+
+        # Delete channel from cache
+        remove_modlog_channel(str(ctx.guild.id))
+
+        # Sending confirmation message that the modmail system has been deleted
+        await ctx.send("**Modlogs System** successfully deleted!" +
+                       f"\nPlease do **{ctx.prefix}help** to find out how to set Modmail again!")
+
+    @command(name="kick", aliases=["Kick"], usage="`<member>...` `[reason]`")
     @guild_only()
     @has_guild_permissions(kick_members=True)
     @bot_has_guild_permissions(kick_members=True)
     @cooldown(1, 1, BucketType.user)
     async def kick_member(self, ctx, members: Greedy[Member], *, reason: Optional[str] = "No Reason Given"):
-        """Kick Members from Server"""
+        """
+        Kick Member(s) from Server
+        Multiple Members can be Kicked at Once
+        """
 
-        # Make sure member(s) are entered properly
+        # When no members are entered. Throw an error
         if not len(members):
             message = await ctx.send(
                 f"Not Correct Syntax!"

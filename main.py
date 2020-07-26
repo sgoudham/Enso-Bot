@@ -157,14 +157,14 @@ async def _help(ctx, *, command: Optional[str] = None):
 async def reload_db(ctx):
     pool = await db.connection2(db.loop)
 
-    async with pool.acquire() as conn:
-        async with conn.cursor() as cursor:
+    with db.connection() as conn:
+        with closing(conn.cursor()) as cursor:
             # Define the insert statement that will insert the user's information
-            insert = """INSERT IGNORE INTO members (guildID, discordID) VALUES""" + ", ".join(
+            insert = "INSERT IGNORE INTO members (guildID, discordID) VALUES " + ", ".join(
                 map(lambda m: f"({ctx.guild.id}, {m.id})", ctx.guild.members))
 
             try:  # Execute the query
-                await cursor.execute(insert)
+                cursor.execute(insert)
             except Exception as e:
                 print(e)
             print(cursor.rowcount, f"Record(s) inserted successfully into Members from {ctx.guild.name}")
@@ -214,7 +214,7 @@ async def on_guild_join(guild):
                 print(cursor.rowcount, f"Record inserted successfully into Guilds from {guild.name}")
 
             # Define the insert statement that will insert the user's information
-            insert = "INSERT IGNORE INTO members (guildID, discordID) VALUES" + ", ".join(
+            insert = "INSERT INTO members (guildID, discordID) VALUES" + ", ".join(
                 map(lambda m: f"({guild.id}, {m.id})", guild.members))
             with closing(conn.cursor()) as cursor:
                 # Execute the query
@@ -269,7 +269,7 @@ async def on_member_join(member):
         with db.connection() as conn:
 
             # Define the insert statement that will insert the user's information
-            insert_query = """INSERT INTO members (guildID, discordID) VALUES (?, ?, ?)"""
+            insert_query = """INSERT INTO members (guildID, discordID) VALUES (?, ?)"""
             vals = member.guild.id, member.id,
             with closing(conn.cursor()) as cursor:
                 # Execute the SQL Query

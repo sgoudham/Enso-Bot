@@ -15,7 +15,7 @@ import db
 import settings
 from cogs.help import HelpPaginator
 from settings import blank_space, enso_embedmod_colours, enso_guild_ID, enso_newpeople_ID, get_prefix_for_guild, \
-    storage_prefix_for_guild, cache_prefix, del_cache_prefix
+    storage_prefix_for_guild, cache_prefix, del_cache_prefix, del_modlog_channel, cache_modlogs
 
 counter = 0
 
@@ -178,8 +178,10 @@ async def change_prefix(ctx, new: Optional[str] = None):
 async def on_guild_join(guild):
     """Store users in a database when the bot has joined a new guild"""
 
-    # Store default prefix within cache and database
+    # Store default prefix within cache
     cache_prefix(str(guild.id), prefix="~")
+    # Store default modlogs channel within cache
+    cache_modlogs(str(guild.id), channel=None)
 
     try:
         # Set up connection to database
@@ -213,8 +215,9 @@ async def on_guild_join(guild):
 async def on_guild_remove(guild):
     """Remove users in the database for the guild"""
 
-    # Delete the key - value pair for the guild
+    # Delete the key - value pairs for the guild
     del_cache_prefix(str(guild.id))
+    del_modlog_channel(str(guild.id))
 
     try:
         # Set up connection to database

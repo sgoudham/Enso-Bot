@@ -11,9 +11,6 @@ import db
 from db import connection2
 from settings import colour_list
 
-loop = asyncio.get_event_loop()
-loop.run_until_complete(connection2(loop))
-
 
 # Sets up the embed for the marriage info
 def marriageInfo(target, marriedUser, marriedDate, currentDate, married):
@@ -66,7 +63,7 @@ class Relationship(commands.Cog):
 
         # Getting the guild of the user
         guild = ctx.author.guild
-        pool = await connection2(loop)
+        pool = await connection2(db.loop)
 
         async with pool.acquire() as conn:
             async with conn.cursor() as author_cursor:
@@ -78,7 +75,7 @@ class Relationship(commands.Cog):
                 # Execute the Author SQL Query
                 await author_cursor.execute(select_query, author_val)
                 author_result = await author_cursor.fetchone()
-                married_user = author_result[2]
+                married_user = author_result[1]
 
             # Make sure that the user cannot marry themselves
             if member.id == ctx.author.id:
@@ -95,7 +92,7 @@ class Relationship(commands.Cog):
                 # Execute the Member SQL Query
                 await member_cursor.execute(select_query, member_val)
                 member_result = await member_cursor.fetchone()
-                target_user = member_result[2]
+                target_user = member_result[1]
 
             if target_user is not None:
                 member = guild.get_member(int(target_user))
@@ -175,7 +172,7 @@ class Relationship(commands.Cog):
                 # Execute the SQL Query
                 cursor.execute(select_query, val)
                 result = cursor.fetchone()
-                married_user = result[2]
+                married_user = result[1]
 
             # Make sure that the user cannot divorce themselves
             if member.id == ctx.author.id:
@@ -274,8 +271,8 @@ class Relationship(commands.Cog):
                 # Execute the SQL Query
                 cursor.execute(select_query, val)
                 result = cursor.fetchone()
-                user = result[2]
-                marriage_date = result[3]
+                user = result[1]
+                marriage_date = result[2]
 
             # Set empty values for non-married users
             if user is None:

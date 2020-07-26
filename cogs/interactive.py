@@ -52,7 +52,7 @@ class Interactive(commands.Cog):
                 # Execute the SQL Query
                 cursor.execute(select_query, val)
                 result = cursor.fetchone()
-                married_user = result[2]
+                married_user = result[1]
 
             # Error handling to make sure that the user can kiss themselves
             if member.id == ctx.author.id:
@@ -119,7 +119,7 @@ class Interactive(commands.Cog):
                 # Execute the SQL Query
                 cursor.execute(select_query, val)
                 result = cursor.fetchone()
-                married_user = result[2]
+                married_user = result[1]
 
             # Error handling to make sure that the user can cuddle themselves
             if member.id == ctx.author.id:

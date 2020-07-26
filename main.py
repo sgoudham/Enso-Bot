@@ -165,7 +165,7 @@ async def change_prefix(ctx, new: Optional[str] = None):
 
     # Making sure that errors are handled if prefix is above 5 characters
     elif new and len(new) > 5:
-        await ctx.send("The guild prefix must be less than **5** characters!")
+        await ctx.send("The guild prefix must be less than or equal to **5** characters!")
 
     # if no prefix was provided
     elif not new:

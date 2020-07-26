@@ -164,7 +164,7 @@ async def reload_db(ctx):
                 map(lambda m: f"({ctx.guild.id}, {m.id})", ctx.guild.members))
 
             try:  # Execute the query
-                await cursor.executemany(insert)
+                await cursor.execute(insert)
             except Exception as e:
                 print(e)
             print(cursor.rowcount, f"Record(s) inserted successfully into Members from {ctx.guild.name}")

@@ -152,6 +152,24 @@ async def _help(ctx, *, command: Optional[str] = None):
         await ctx.send("**{}**".format(ex))
 
 
+@client.command(name="reloaddb", hidden=True)
+@is_owner()
+async def reload_db(ctx):
+    pool = await db.connection2(db.loop)
+
+    async with pool.acquire() as conn:
+        async with conn.cursor() as cursor:
+            # Define the insert statement that will insert the user's information
+            insert = """INSERT INTO members (guildID, discordID) VALUES""" + ", ".join(
+                map(lambda m: f"({ctx.guild.id}, {m.id})", ctx.guild.members))
+
+            try:  # Execute the query
+                await cursor.executemany(insert)
+            except Exception as e:
+                print(e)
+            print(cursor.rowcount, f"Record(s) inserted successfully into Members from {ctx.guild.name}")
+
+
 @client.command(name="prefix", aliases=["Prefix"])
 @guild_only()
 @has_permissions(manage_guild=True)
@@ -196,8 +214,8 @@ async def on_guild_join(guild):
                 print(cursor.rowcount, f"Record inserted successfully into Guilds from {guild.name}")
 
             # Define the insert statement that will insert the user's information
-            insert = "INSERT INTO members (guildID, discordUser, discordID) VALUES" + ", ".join(
-                map(lambda m: f"('{guild.id}', '{m.name}#{m.discriminator}', '{m.id}')", guild.members))
+            insert = "INSERT INTO members (guildID, discordID) VALUES" + ", ".join(
+                map(lambda m: f"({guild.id}, {m.id})", guild.members))
             with closing(conn.cursor()) as cursor:
                 # Execute the query
                 cursor.execute(insert)
@@ -249,11 +267,10 @@ async def on_member_join(member):
     try:
         # Set up connection to database
         with db.connection() as conn:
-            name = f"{member.name}#{member.discriminator}"
 
             # Define the insert statement that will insert the user's information
-            insert_query = """INSERT INTO members (guildID, discordUser, discordID) VALUES (?, ?, ?)"""
-            vals = member.guild.id, name, member.id,
+            insert_query = """INSERT INTO members (guildID, discordID) VALUES (?, ?, ?)"""
+            vals = member.guild.id, member.id,
             with closing(conn.cursor()) as cursor:
                 # Execute the SQL Query
                 cursor.execute(insert_query, vals)
@@ -316,8 +333,6 @@ async def on_command_error(ctx, args2):
     # if the user does not the correct permissions to call a command
     elif isinstance(args2, commands.MissingPermissions):
         await on_command_permission(ctx)
-    elif isinstance(args2, commands.CommandInvokeError):
-        await on_command_forbidden(ctx)
     elif isinstance(args2, commands.BotMissingPermissions):
         await on_bot_forbidden(ctx, args2)
 

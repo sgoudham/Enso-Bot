@@ -82,7 +82,7 @@ class Fun(commands.Cog):
             f"{member.mention} is obviously compensating for something :eyes:",
             f"{member.mention} DIE DIE DIE :knife: :skull:",
             f"{member.mention} is so annoying smh :rolling_eyes:",
-            f"I'd say {member.mention} was dropped as a child but they would have be to held to dropped in the first place",
+            f"I'd say {member.mention} was dropped as a child but they would have to be held to be dropped in the first place",
             f"I hate {member.mention}",
             f"{member.mention} close your legs, it smells like clam chowder :face_vomiting: :face_vomiting: :nauseated_face: :nauseated_face:",
             f"I bet {member.mention} can't reach the wall cabinets without a booster chair",

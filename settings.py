@@ -93,12 +93,14 @@ def del_modlog_channel(guildid):
     del modlogs[guildid]
 
 
+def remove_modlog_channel(guildid):
+    modlogs[guildid] = None
+
+
 # Get the modlog channel of the guild that the user is in
 def get_modlog_for_guild(guildid):
     channel = modlogs[guildid]
-    if channel is not None:
-        return channel
-    return None
+    return channel
 
 
 # Before initialising the cache. Store the prefixes from the database within the cache

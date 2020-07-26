@@ -159,7 +159,7 @@ async def change_prefix(ctx, new: Optional[str] = None):
     """View/Change Guild Prefix"""
 
     # As long as a new prefix has been given and is less than 5 characters
-    if new and len(new) < 5:
+    if new and len(new) <= 5:
         # Store the new prefix in the dictionary and update the database
         await storage_prefix_for_guild(ctx, new)
 

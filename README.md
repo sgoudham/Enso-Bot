@@ -4,11 +4,13 @@
 
 <h4> The features currently are as listed below: </h4>
 <ul>
-	<li>Moderation Commands! (Kick/Ban/Mute etc)</li>
+	<li>Moderation Commands! (Kick/Ban/Mute/Purge etc)</li>
+	<li>Modlogs System! (To go hand in hand with Moderation Commands)</li>
 	<li>Marriage Commands! (Marry/Divorce etc)</li>
 	<li>Interactive Commands! (Kiss/Cuddle/Hug etc)</li>
 	<li>Information Commands! (Server/User/Channel etc)</li>
   	<li>Fully Integrated Modmail System!</li>
+  	<li>And many more commands!</li>
 </ul> 
 
 <p> <b> With much more to come in the future! I hope this little bot can have a place in your heart! </b> </p>

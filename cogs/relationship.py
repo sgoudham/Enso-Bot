@@ -8,7 +8,11 @@ from discord.ext import commands
 from discord.ext.commands import BucketType, command, cooldown, bot_has_permissions
 
 import db
+from db import connection2
 from settings import colour_list
+
+loop = asyncio.get_event_loop()
+loop.run_until_complete(connection2(loop))
 
 
 # Sets up the embed for the marriage info
@@ -62,21 +66,18 @@ class Relationship(commands.Cog):
 
         # Getting the guild of the user
         guild = ctx.author.guild
+        pool = await connection2(loop)
 
-        # Use database connection
-        with db.connection() as conn:
-
-            # Get the author's/members row from the Members Table
-            select_query = """SELECT * FROM members WHERE discordID = (?) and guildID = (?)"""
-            author_val = ctx.author.id, guild.id,
-            member_val = member.id, guild.id,
-
-            # Define two cursors
-            with closing(conn.cursor()) as author_cursor:
+        async with pool.acquire() as conn:
+            async with conn.cursor() as author_cursor:
+                # Get the author's/members row from the Members Table
+                select_query = """SELECT * FROM members WHERE discordID = %s and guildID = %s"""
+                author_val = ctx.author.id, guild.id,
+                member_val = member.id, guild.id,
 
                 # Execute the Author SQL Query
-                author_cursor.execute(select_query, author_val)
-                author_result = author_cursor.fetchone()
+                await author_cursor.execute(select_query, author_val)
+                author_result = await author_cursor.fetchone()
                 married_user = author_result[2]
 
             # Make sure that the user cannot marry themselves
@@ -90,10 +91,10 @@ class Relationship(commands.Cog):
                 return
 
             # Set up new cursor for member row
-            with closing(conn.cursor()) as member_cursor:
+            async with conn.cursor() as member_cursor:
                 # Execute the Member SQL Query
-                member_cursor.execute(select_query, member_val)
-                member_result = member_cursor.fetchone()
+                await member_cursor.execute(select_query, member_val)
+                member_result = await member_cursor.fetchone()
                 target_user = member_result[2]
 
             if target_user is not None:

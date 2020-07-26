@@ -90,7 +90,10 @@ def cache_modlogs(guildid, channel):
 
 # Deleting the key - value pair for guild/modlogs
 def del_modlog_channel(guildid):
-    del modlogs[guildid]
+    if modlogs[guildid] is not None:
+        del modlogs[guildid]
+    else:
+        pass
 
 
 # Remove the value of modlog for the guild specified

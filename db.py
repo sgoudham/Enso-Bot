@@ -11,7 +11,7 @@ host = config('DB_HOST')
 
 
 # Setting up connection using pool/aiomysql
-async def connection2(loop):
+async def connection(loop):
     pool = await aiomysql.create_pool(
         host=host,
         port=3306,
@@ -24,11 +24,11 @@ async def connection2(loop):
 
 
 loop = asyncio.get_event_loop()
-loop.run_until_complete(connection2(loop))
+loop.run_until_complete(connection(loop))
 
 
-# Connect to MariaDB Platform and database Enso
-def connection():
+# Defining connection for when the bot isn't ready yet
+def startup_connection():
     try:
         conn = mariadb.connect(
             user="hamothy",

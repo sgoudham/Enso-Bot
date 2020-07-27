@@ -54,7 +54,11 @@ def DetectPermissions(message, fset):
 
 
 def lineCount():
-    total = 0
+    """Getting the line count of the project"""
+
+    code = 0
+    comments = 0
+    blank = 0
     file_amount = 0
     ENV = "venv"  # change this to your env folder dir
 
@@ -66,10 +70,21 @@ def lineCount():
             file_amount += 1
             with open(file_dir, "r", encoding="utf-8") as file:
                 for line in file:
-                    if not line.strip().startswith("#") or not line.strip():
-                        total += 1
+                    if line.strip().startswith("#"):
+                        comments += 1
+                    elif not line.strip():
+                        blank += 1
+                    else:
+                        code += 1
 
-    return "{} Lines | {} Files".format(total, file_amount)
+    # Adding up the total lines of code
+    total = comments + blank + code
+
+    return "Code: {}\n " \
+           "Commentary: {}\n" \
+           "Blank: {}\n" \
+           "Total: {}\n" \
+           "Files: {}".format(code, comments, blank, total, file_amount)
 
 
 class Info(commands.Cog):

@@ -285,10 +285,11 @@ class Info(commands.Cog):
         """Bot Statistics! (CPU/Mem Usage etc)"""
 
         stats = Embed(title="Ensō~Chan Statistics",
+                      description="^^ Click To View My Github Code!",
                       url="https://github.com/sgoudham/Enso-Bot",
                       colour=enso_embedmod_colours,
                       timestamp=datetime.datetime.utcnow())
-        stats.set_thumbnail(url=ctx.guild.icon_url)
+        stats.set_thumbnail(url=self.bot.user.avatar_url)
 
         # Grabbing technical statistics of the bot
         proc = Process()

@@ -12,7 +12,7 @@ from discord.ext.commands import when_mentioned_or, is_owner, guild_only, has_pe
 import db
 import settings
 from cogs.help import HelpPaginator
-from db import connection2
+from db import connection
 from settings import blank_space, enso_embedmod_colours, enso_guild_ID, enso_newpeople_ID, get_prefix_for_guild, \
     storage_prefix_for_guild, cache_prefix, del_cache_prefix, del_modlog_channel, cache_modlogs
 
@@ -154,7 +154,7 @@ async def _help(ctx, *, command: Optional[str] = None):
 @is_owner()
 async def reload_db(ctx):
     # Setup pool
-    pool = await connection2(db.loop)
+    pool = await connection(db.loop)
 
     # Setup up pool connection and cursor
     async with pool.acquire() as conn:
@@ -205,7 +205,7 @@ async def on_guild_join(guild):
     cache_modlogs(str(guild.id), channel=None)
 
     # Setup pool
-    pool = await connection2(db.loop)
+    pool = await connection(db.loop)
 
     # Setup up pool connection and cursor
     async with pool.acquire() as conn:
@@ -242,7 +242,7 @@ async def on_guild_remove(guild):
     del_modlog_channel(str(guild.id))
 
     # Setup pool
-    pool = await connection2(db.loop)
+    pool = await connection(db.loop)
 
     # Setup pool connection and cursor
     async with pool.acquire() as conn:
@@ -276,7 +276,7 @@ async def on_member_join(member):
     guild = member.guild
 
     # Setup pool
-    pool = await db.connection2(db.loop)
+    pool = await db.connection(db.loop)
 
     # Setup pool connection and cursor
     async with pool.acquire() as conn:

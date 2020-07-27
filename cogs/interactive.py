@@ -1,6 +1,5 @@
 import datetime
 import random
-from contextlib import closing
 
 from discord import Colour, Embed, Member
 from discord.ext import commands
@@ -41,26 +40,28 @@ class Interactive(commands.Cog):
         # Get the guild
         guild = ctx.author.guild
 
-        # Use database connection
-        with db.connection() as conn:
+        # Setup pool
+        pool = await db.connection(db.loop)
 
-            # Get the author's row from the Members Table
-            select_query = """SELECT * FROM members WHERE discordID = (?) and guildID = (?)"""
-            val = ctx.author.id, guild.id,
-            with closing(conn.cursor()) as cursor:
+        # Setup pool connection and cursor
+        async with pool.acquire() as conn:
+            async with conn.cursor() as cur:
+                # Get the author's row from the Members Table
+                select_query = """SELECT * FROM members WHERE discordID = (%s) and guildID = (%s)"""
+                val = ctx.author.id, guild.id,
 
                 # Execute the SQL Query
-                cursor.execute(select_query, val)
-                result = cursor.fetchone()
+                await cur.execute(select_query, val)
+                result = await cur.fetchone()
                 married_user = result[1]
 
-            # Error handling to make sure that the user can kiss themselves
-            if member.id == ctx.author.id:
-                kiss = False
-                title = f":kissing_heart: :kissing_heart: | **{ctx.author.name}** kissed **themselves**"
-            else:
-                kiss = True
-                title = f":kissing_heart: :kissing_heart: | **{ctx.author.name}** kissed **{member.display_name}**"
+        # Error handling to make sure that the user can kiss themselves
+        if member.id == ctx.author.id:
+            kiss = False
+            title = f":kissing_heart: :kissing_heart: | **{ctx.author.display_name}** kissed **themselves**"
+        else:
+            kiss = True
+            title = f":kissing_heart: :kissing_heart: | **{ctx.author.display_name}** kissed **{member.display_name}**"
 
         try:
             # Make sure the user isn't trying to kiss someone else besides their partner
@@ -108,26 +109,28 @@ class Interactive(commands.Cog):
         # Get the guild
         guild = ctx.author.guild
 
-        # Use database connection
-        with db.connection() as conn:
+        # Setup pool
+        pool = await db.connection(db.loop)
 
-            # Get the author's row from the Members Table
-            select_query = """SELECT * FROM members WHERE discordID = (?) and guildID = (?)"""
-            val = ctx.author.id, guild.id
-            with closing(conn.cursor()) as cursor:
+        # Setup pool connection and cursor
+        async with pool.acquire() as conn:
+            async with conn.cursor() as cur:
+                # Get the author's row from the Members Table
+                select_query = """SELECT * FROM members WHERE discordID = (%s) and guildID = (%s)"""
+                val = ctx.author.id, guild.id
 
                 # Execute the SQL Query
-                cursor.execute(select_query, val)
-                result = cursor.fetchone()
+                await cur.execute(select_query, val)
+                result = await cur.fetchone()
                 married_user = result[1]
 
-            # Error handling to make sure that the user can cuddle themselves
-            if member.id == ctx.author.id:
-                cuddle = False
-                title = f":blush: :blush: | **{ctx.author.name}** cuddled **themselves**"
-            else:
-                cuddle = True
-                title = f":blush: :blush: | **{ctx.author.name}** cuddled **{member.display_name}**"
+        # Error handling to make sure that the user can cuddle themselves
+        if member.id == ctx.author.id:
+            cuddle = False
+            title = f":blush: :blush: | **{ctx.author.display_name}** cuddled **themselves**"
+        else:
+            cuddle = True
+            title = f":blush: :blush: | **{ctx.author.display_name}** cuddled **{member.display_name}**"
 
         try:
             # Make sure the user isn't trying to cuddle someone else besides their partner
@@ -173,9 +176,9 @@ class Interactive(commands.Cog):
         """Kill a Member"""
 
         if member is ctx.author:
-            title = f":scream: :scream: | **{ctx.author.name}** killed **themselves**"
+            title = f":scream: :scream: | **{ctx.author.display_name}** killed **themselves**"
         else:
-            title = f":scream: :scream: | **{ctx.author.name}** killed **{member.display_name}**"
+            title = f":scream: :scream: | **{ctx.author.display_name}** killed **{member.display_name}**"
 
         # Surround with try/except to catch any exceptions that may occur
         try:
@@ -209,9 +212,9 @@ class Interactive(commands.Cog):
         """Slap a Member"""
 
         if member is ctx.author:
-            title = f":cold_sweat: :cold_sweat: | **{ctx.author.name}** slapped **themselves**"
+            title = f":cold_sweat: :cold_sweat: | **{ctx.author.display_name}** slapped **themselves**"
         else:
-            title = f":cold_sweat: :cold_sweat: | **{ctx.author.name}** slapped **{member.display_name}**"
+            title = f":cold_sweat: :cold_sweat: | **{ctx.author.display_name}** slapped **{member.display_name}**"
 
         # Surround with try/except to catch any exceptions that may occur
         try:
@@ -245,9 +248,9 @@ class Interactive(commands.Cog):
         """Pat a Member"""
 
         if member is ctx.author:
-            title = f"👉 👈 | **{ctx.author.name}** patted **themselves**"
+            title = f"👉 👈 | **{ctx.author.display_name}** patted **themselves**"
         else:
-            title = f"👉 👈 | **{ctx.author.name}** patted **{member.display_name}**"
+            title = f"👉 👈 | **{ctx.author.display_name}** patted **{member.display_name}**"
 
         # Surround with try/except to catch any exceptions that may occur
         try:
@@ -281,9 +284,9 @@ class Interactive(commands.Cog):
         """Give Lemon to Member"""
 
         if member is ctx.author:
-            title = f":relaxed: :relaxed: | **{ctx.author.name}** gave a lemon to **themselves**"
+            title = f":relaxed: :relaxed: | **{ctx.author.display_name}** gave a lemon to **themselves**"
         else:
-            title = f":relaxed: :relaxed: | **{ctx.author.name}** gave a lemon to **{member.display_name}**"
+            title = f":relaxed: :relaxed: | **{ctx.author.display_name}** gave a lemon to **{member.display_name}**"
 
         lemon_array = ["https://media.discordapp.net/attachments/669812887564320769/720093589056520202/lemon.gif",
                        "https://media.discordapp.net/attachments/669812887564320769/720093575492272208/lemon2.gif",
@@ -316,9 +319,9 @@ class Interactive(commands.Cog):
         """Choke a Member"""
 
         if member is ctx.author:
-            title = f":confounded: :confounded: | **{ctx.author.name}** choked **themselves**"
+            title = f":confounded: :confounded: | **{ctx.author.display_name}** choked **themselves**"
         else:
-            title = f":confounded: :confounded: | **{ctx.author.name}** choked **{member.display_name}**"
+            title = f":confounded: :confounded: | **{ctx.author.display_name}** choked **{member.display_name}**"
 
         # Surround with try/except to catch any exceptions that may occur
         try:
@@ -351,9 +354,9 @@ class Interactive(commands.Cog):
         """Hug a Member"""
 
         if member is ctx.author:
-            title = f":smiling_face_with_3_hearts: :smiling_face_with_3_hearts: | **{ctx.author.name}** hugged **themselves**"
+            title = f":smiling_face_with_3_hearts: :smiling_face_with_3_hearts: | **{ctx.author.display_name}** hugged **themselves**"
         else:
-            title = f":smiling_face_with_3_hearts: :smiling_face_with_3_hearts: | **{ctx.author.name}** hugged **{member.display_name}**"
+            title = f":smiling_face_with_3_hearts: :smiling_face_with_3_hearts: | **{ctx.author.display_name}** hugged **{member.display_name}**"
 
         # Surround with try/except to catch any exceptions that may occur
         try:

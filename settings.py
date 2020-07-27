@@ -65,7 +65,7 @@ async def storage_modlog_for_guild(ctx, channelID, setup):
     modlogs[str(ctx.guild.id)] = channelID
 
     # Setup pool
-    pool = await db.connection2(db.loop)
+    pool = await db.connection(db.loop)
 
     # Setup up pool connection and cursor
     async with pool.acquire() as conn:
@@ -139,19 +139,23 @@ cached_prefixes = {}
 async def storage_prefix_for_guild(ctx, prefix):
     cached_prefixes[str(ctx.guild.id)] = prefix
 
-    with db.connection() as connection:
-        # Update the existing prefix within the database
-        update_query = """UPDATE guilds SET prefix = (?) WHERE guildID = (?)"""
-        update_vals = prefix, ctx.guild.id,
+    # Setup pool
+    pool = await db.connection(db.loop)
 
-        # Using the connection cursor
-        with closing(connection.cursor()) as cur:
+    # Setup up pool connection and cursor
+    async with pool.acquire() as conn:
+        async with conn.cursor() as cur:
+            # Update the existing prefix within the database
+            update_query = """UPDATE guilds SET prefix = (%s) WHERE guildID = (%s)"""
+            update_vals = prefix, ctx.guild.id,
+
             # Execute the query
-            cur.execute(update_query, update_vals)
+            await cur.execute(update_query, update_vals)
+            await conn.commit()
             print(cur.rowcount, f"Guild prefix has been updated for guild {ctx.guild.name}")
 
-    # Let the user know that the guild prefix has been updated
-    await ctx.send(f"**Guild prefix has been updated to `{prefix}`**")
+            # Let the user know that the guild prefix has been updated
+            await ctx.send(f"**Guild prefix has been updated to `{prefix}`**")
 
 
 # Method to store the cached prefixes

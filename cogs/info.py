@@ -284,7 +284,8 @@ class Info(commands.Cog):
     async def checking_bot_stats(self, ctx):
         """Bot Statistics! (CPU/Mem Usage etc)"""
 
-        stats = Embed(title="[Ensō~Chan Statistics](https://github.com/sgoudham/Enso-Bot)",
+        stats = Embed(title="Ensō~Chan Statistics",
+                      url="https://github.com/sgoudham/Enso-Bot",
                       colour=enso_embedmod_colours,
                       timestamp=datetime.datetime.utcnow())
         stats.set_thumbnail(url=ctx.guild.icon_url)

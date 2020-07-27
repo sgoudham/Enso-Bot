@@ -305,6 +305,7 @@ class Info(commands.Cog):
                       colour=enso_embedmod_colours,
                       timestamp=datetime.datetime.utcnow())
         stats.set_thumbnail(url=self.bot.user.avatar_url)
+        stats.set_footer(text=f"Requested by {ctx.author}", icon_url='{}'.format(ctx.author.avatar_url))
 
         # Grabbing technical statistics of the bot
         proc = Process()
@@ -323,16 +324,20 @@ class Info(commands.Cog):
 
         # Setting up fields
         fields = [
-            ("Developer", hammyMention, True),
+            ("Developer", hammyMention, False),
+            ("Discord Stats",
+             "Guilds: {}"
+             "\nChannels: {}"
+             "\nEmojis: {}"
+             "\nCommands: {}"
+             "\nUsers: {:,}".format(len(self.bot.guilds), sum(list(channels)), len(self.bot.emojis),
+                                    len(self.bot.commands),
+                                    len(self.bot.users)), True),
+            ("Line Count", lineCount(), True),
             ("Bot Version", "1.7.2", False),
             ("Language | Library", f"Python {python_version()} | Discord.py {discord_version}", False),
             ("Uptime", frmt_uptime, False),
-            ("Memory Usage", f"{mem_usage:,.2f} / {mem_total:,.2f} MiB ({mem_of_total:.2f}%)", False),
-            ("Line Count | No. Of Files", lineCount(), False),
-            ("Guilds", f"{len(self.bot.guilds)}", True),
-            ("Channels", sum(list(channels)), True),
-            ("Users", f"{len(self.bot.users):,}", True)
-        ]
+            ("Memory Usage", f"{mem_usage:,.2f} / {mem_total:,.2f} MiB ({mem_of_total:.2f}%)", False)]
 
         # Add fields to the embed
         for name, value, inline in fields:

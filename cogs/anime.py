@@ -108,7 +108,7 @@ def waifus():
 
 # List of Husbando's
 def husbandos():
-    return ["husk", "kakashi", "tamaki"]
+    return ["kakashi", "tamaki"]
 
 
 class Anime(commands.Cog):
@@ -196,7 +196,7 @@ class Anime(commands.Cog):
 
         # Send the list of waifus in the bot to the channel
         waifu_list = string.capwords(', '.join(map(str, waifus())))
-        
+
         # Tell the user to try the waifus in the array
         await ctx.send(f"Try the waifu's listed below!"
                        f"\n{waifu_list}")

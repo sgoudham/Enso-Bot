@@ -317,7 +317,7 @@ class Enso(commands.Cog):
     async def verification(self, ctx):
         # Set up embed to let the user know that they have to react with ✅
         embed = Embed(title="**Verification**",
-                      colour=Colour(0xFF69B4),
+                      colour=enso_embedmod_colours,
                       timestamp=datetime.datetime.utcnow())
 
         embed.set_thumbnail(url=ctx.guild.icon_url)

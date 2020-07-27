@@ -304,6 +304,8 @@ class Info(commands.Cog):
         frmt_uptime = '{:01} Hours, {:01} Minutes, {:01} Seconds'.format(int(uptime_hours), int(uptime_minutes),
                                                                          int(uptime_seconds))
 
+        channels = map(lambda m: len(m.channels), self.bot.guilds)
+
         # Setting up fields
         fields = [
             ("Developer", hammyMention, True),
@@ -313,6 +315,7 @@ class Info(commands.Cog):
             ("Memory Usage", f"{mem_usage:,.2f} / {mem_total:,.2f} MiB ({mem_of_total:.2f}%)", False),
             ("Line Count | No. Of Files", lineCount(), False),
             ("Guilds", f"{len(self.bot.guilds)}", True),
+            ("Channels", sum(list(channels)), True),
             ("Users", f"{len(self.bot.users):,}", True)
         ]
 

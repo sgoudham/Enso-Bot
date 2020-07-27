@@ -2,7 +2,6 @@ import asyncio
 import datetime
 import os
 import random
-from contextlib import closing
 
 import discord
 import mariadb
@@ -176,21 +175,25 @@ class Modmail(commands.Cog):
         # Retrieve a list of channel id's in the guild
         channels = [channel.id for channel in ctx.guild.channels]
 
-        # Checking if the guild already exists within the database
-        with db.connection() as conn:
-            # Get the author's row from the Members Table
-            select_query = """SELECT * FROM moderatormail WHERE guildID = (?)"""
-            val = ctx.author.guild.id,
-            with closing(conn.cursor()) as cursor:
-                # Execute the SQL Query
-                cursor.execute(select_query, val)
-                result = cursor.fetchone()
+        # Setup pool
+        pool = await db.connection(db.loop)
 
-            # Throw error if the guild already exists and then stop the function
-            if result is not None:
-                await ctx.send("Looks like this guild already has a **Modmail System** set up!" +
-                               f"\nPlease check **{ctx.prefix}help** for information on how to update/delete existing information")
-                return
+        # Setup up pool connection and cursor
+        async with pool.acquire() as conn:
+            async with conn.cursor() as cur:
+                # Get the author's row from the Members Table
+                select_query = """SELECT * FROM moderatormail WHERE guildID = (%s)"""
+                val = ctx.author.guild.id,
+
+                # Execute the SQL Query
+                await cur.execute(select_query, val)
+                result = await cur.fetchone()
+
+        # Throw error if the guild already exists and then stop the function
+        if result is not None:
+            await ctx.send("Looks like this guild already has a **Modmail System** set up!" +
+                           f"\nPlease check **{ctx.prefix}help** for information on how to update/delete existing information")
+            return
 
         # As long as the channel exists within the guild
         if channelID in channels:
@@ -234,18 +237,20 @@ class Modmail(commands.Cog):
                     # Auto add the ✅ reaction
                     await modmailchannelID.add_reaction('✅')
 
-                    # Store the information within the database
-                    with db.connection() as conn:
-                        # Define the insert statement that will insert information about the modmail channel
-                        insert_query = """INSERT INTO moderatormail (guildID, channelID, messageID, modmailChannelID) VALUES (?, ?, ?, ?)"""
-                        vals = ctx.author.guild.id, channelID, modmailchannelID.id, int(msg.content),
-                        with closing(conn.cursor()) as cursor:
-                            # Execute the SQL Query
-                            cursor.execute(insert_query, vals)
+                    # Setup up pool connection and cursor
+                    async with pool.acquire() as conn:
+                        async with conn.cursor() as cur:
+                            # Define the insert statement that will insert information about the modmail channel
+                            insert_query = """INSERT INTO moderatormail (guildID, channelID, messageID, modmailChannelID) VALUES (%s, %s, %s, %s)"""
+                            vals = ctx.author.guild.id, channelID, modmailchannelID.id, int(msg.content),
 
-                    await ctx.send("Your **Modmail System** is now successfully set up!" +
-                                   f"\nPlease refer to **{ctx.prefix}help** for any information")
-                    return
+                            # Execute the SQL Query
+                            await cur.execute(insert_query, vals)
+                            await conn.commit()
+
+                        await ctx.send("Your **Modmail System** is now successfully set up!" +
+                                       f"\nPlease refer to **{ctx.prefix}help** for any information")
+                        return
 
                 except mariadb.IntegrityError as err:
                     print(err)
@@ -272,37 +277,41 @@ class Modmail(commands.Cog):
         # Retrieve a list of channel id's in the guild
         channels = [channel.id for channel in ctx.guild.channels]
 
-        # Checking if the guild already exists within the database
-        with db.connection() as conn:
-            # Get the author's row from the Members Table
-            select_query = """SELECT * FROM moderatormail WHERE guildID = (?)"""
-            vals = ctx.author.guild.id,
-            with closing(conn.cursor()) as cursor:
-                # Execute the SQL Query
-                cursor.execute(select_query, vals)
-                result = cursor.fetchone()
+        # Setup pool
+        pool = await db.connection(db.loop)
 
-        # Throw error if the guild already exists and then stop the function
-        if result is None:
-            await ctx.send("Looks like this guild does not have a **Modmail System** setup!" +
-                           f"\nPlease check **{ctx.prefix}help** for information on how to update/delete existing information")
-            return
+        # Setup up pool connection and cursor
+        async with pool.acquire() as conn:
+            async with conn.cursor() as cur:
+                # Get the author's row from the Members Table
+                select_query = """SELECT * FROM moderatormail WHERE guildID = (%s)"""
+                vals = ctx.author.guild.id,
+
+                # Execute the SQL Query
+                await cur.execute(select_query, vals)
+                result = await cur.fetchone()
+
+            # Throw error if the guild already exists and then stop the function
+            if result is None:
+                await ctx.send("Looks like this guild does not have a **Modmail System** setup!" +
+                               f"\nPlease check **{ctx.prefix}help** for information on how to update/delete existing information")
+                return
 
         # As long as the channel exists within the guild
         if channelID in channels:
 
             try:
-                # Store the information within the database
-                with db.connection() as conn:
 
-                    # Define the update statement that will insert information about the modmail channel
-                    update_query = """UPDATE moderatormail SET modmailChannelID = (?) WHERE guildID = (?)"""
-                    vals = channelID, ctx.author.guild.id
+                # Setup up pool connection and cursor
+                async with pool.acquire() as conn:
+                    async with conn.cursor() as cur:
+                        # Define the update statement that will insert information about the modmail channel
+                        update_query = """UPDATE moderatormail SET modmailChannelID = (%s) WHERE guildID = (%s)"""
+                        vals = channelID, ctx.author.guild.id
 
-                    with closing(conn.cursor()) as cursor:
                         # Execute the SQL Query
-                        cursor.execute(update_query, vals)
-                        conn.commit()
+                        await cur.execute(update_query, vals)
+                        await conn.commit()
 
             except mariadb.Error as err:
                 print(err)
@@ -324,15 +333,19 @@ class Modmail(commands.Cog):
     async def delete(self, ctx):
         """Delete the Entire Modmail System from the Guild"""
 
-        # Checking if the guild already exists within the database
-        with db.connection() as conn:
-            # Get the author's row from the Members Table
-            select_query = """SELECT * FROM moderatormail WHERE guildID = (?)"""
-            vals = ctx.author.guild.id,
-            with closing(conn.cursor()) as cursor:
+        # Setup pool
+        pool = await db.connection(db.loop)
+
+        # Setup up pool connection and cursor
+        async with pool.acquire() as conn:
+            async with conn.cursor() as cur:
+                # Get the author's row from the Members Table
+                select_query = """SELECT * FROM moderatormail WHERE guildID = (%s)"""
+                vals = ctx.author.guild.id,
+
                 # Execute the SQL Query
-                cursor.execute(select_query, vals)
-                result = cursor.fetchone()
+                await cur.execute(select_query, vals)
+                result = await cur.fetchone()
 
             # Throw error if the guild already exists and then stop the function
             if result is None:
@@ -341,15 +354,17 @@ class Modmail(commands.Cog):
                 return
 
         try:
-            # Store the information within the database
-            with db.connection() as conn:
-                # Define the delete statement to remove all information about the guild
-                delete_query = """DELETE FROM moderatormail WHERE guildID = (?)"""
-                vals = ctx.author.guild.id,
-                with closing(conn.cursor()) as cursor:
+
+            # Setup up pool connection and cursor
+            async with pool.acquire() as conn:
+                async with conn.cursor() as cur:
+                    # Define the delete statement to remove all information about the guild
+                    delete_query = """DELETE FROM moderatormail WHERE guildID = (%s)"""
+                    vals = ctx.author.guild.id,
+
                     # Execute the SQL Query
-                    cursor.execute(delete_query, vals)
-                    conn.commit()
+                    await cur.execute(delete_query, vals)
+                    await conn.commit()
 
         except mariadb.Error as err:
             print(err)
@@ -375,26 +390,29 @@ class Modmail(commands.Cog):
         # Find a role corresponding to the Emoji name.
         guildid = payload.guild_id
 
-        # Use database connection
-        with db.connection() as conn:
+        # Setup pool
+        pool = await db.connection(db.loop)
 
-            # Get the author's row from the Members Table
-            select_query = """SELECT * FROM moderatormail WHERE guildID = (?)"""
-            val = guildid,
-            with closing(conn.cursor()) as cursor:
+        # Setup up pool connection and cursor
+        async with pool.acquire() as conn:
+            async with conn.cursor() as cur:
+                # Get the author's row from the Members Table
+                select_query = """SELECT * FROM moderatormail WHERE guildID = (%s)"""
+                val = guildid,
+
                 # Execute the SQL Query
-                cursor.execute(select_query, val)
-                result = cursor.fetchone()
+                await cur.execute(select_query, val)
+                result = await cur.fetchone()
 
-                # Adding error handling
-                if result is None:
-                    return
+            # Adding error handling
+            if result is None:
+                return
 
-                # Define variables
-                guild_id = int(result[0])
-                channel_id = int(result[1])
-                message_id = int(result[2])
-                modmail_channel_id = int(result[3])
+            # Define variables
+            guild_id = int(result[0])
+            channel_id = int(result[1])
+            message_id = int(result[2])
+            modmail_channel_id = int(result[3])
 
         # Bunch of checks to make sure it has the right guild, channel, message and reaction
         if payload.guild_id == guild_id and payload.channel_id == channel_id and payload.message_id == message_id and payload.emoji.name == "✅":

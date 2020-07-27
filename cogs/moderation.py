@@ -294,6 +294,32 @@ class Moderation(commands.Cog):
 
             await ctx.send(f"Deleted **{len(deleted):,}** messages.", delete_after=5)
 
+    @commands.Cog.listener()
+    async def on_raw_bulk_message_delete(self, payload):
+        """Storing Bulk Deleted Messages to Modlogs Channel"""
+
+        # Get the guild within the cache
+        guild = get_modlog_for_guild(str(payload.guild_id))
+
+        # When no modlogs channel is returned, do nothing
+        if guild is None:
+            pass
+        # Send the embed to the modlogs channel
+        else:
+
+            modlogs_channel = self.bot.get_channel(int(guild))
+            channel = self.bot.get_channel(payload.channel_id)
+
+            # Set up embed showing the messages deleted and what channel they were deleted in
+            embed = Embed(
+                description="**Bulk Delete in {}, {} messages deleted**".format(channel.mention,
+                                                                                len(payload.message_ids)),
+                colour=enso_embedmod_colours,
+                timestamp=datetime.datetime.utcnow())
+            embed.set_author(name=channel.guild.name, icon_url=channel.guild.icon_url)
+
+            await modlogs_channel.send(embed=embed)
+
 
 def setup(bot):
     bot.add_cog(Moderation(bot))

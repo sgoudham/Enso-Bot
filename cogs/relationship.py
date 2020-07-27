@@ -7,7 +7,7 @@ from discord.ext import commands
 from discord.ext.commands import BucketType, command, cooldown, bot_has_permissions
 
 import db
-from db import connection2
+from db import connection
 from settings import colour_list
 
 
@@ -63,7 +63,7 @@ class Relationship(commands.Cog):
         # Getting the guild of the user
         guild = ctx.author.guild
         # Setup pool
-        pool = await connection2(db.loop)
+        pool = await connection(db.loop)
 
         # Setup pool connection and cursor
         async with pool.acquire() as conn:
@@ -119,7 +119,7 @@ class Relationship(commands.Cog):
             if msg.content.lower() in ['y', 'yes', 'yea']:
 
                 # Setup pool
-                pool = await connection2(db.loop)
+                pool = await connection(db.loop)
 
                 # Setup pool connection and cursor
                 async with pool.acquire() as conn:
@@ -163,7 +163,7 @@ class Relationship(commands.Cog):
         # Getting the guild of the user
         guild = ctx.author.guild
         # Setup pool
-        pool = await connection2(db.loop)
+        pool = await connection(db.loop)
 
         # Setup pool connection and cursor
         async with pool.acquire() as conn:
@@ -211,7 +211,7 @@ class Relationship(commands.Cog):
             # if the person says yes
             if msg.content.lower() in ['y', 'yes', 'yea']:
                 # Setup pool
-                pool = await connection2(db.loop)
+                pool = await connection(db.loop)
 
                 # Setup pool connection and cursor
                 async with pool.acquire() as conn:
@@ -266,7 +266,7 @@ class Relationship(commands.Cog):
         guild = member.guild
 
         # Setup pool
-        pool = await connection2(db.loop)
+        pool = await connection(db.loop)
 
         # Setup pool connection and cursor
         async with pool.acquire() as conn:

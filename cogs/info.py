@@ -102,15 +102,23 @@ class Info(commands.Cog):
 
         # Store all the roles that the user has
         # (Skipping the first element as it's always going to be @everyone)
-        roles = f"{' '.join(map(str, (role.mention for role in member.roles[1:])))}"
+        role = f"{' '.join(map(str, (role.mention for role in member.roles[1:])))}"
+        if role == "":
+            roles = "No Roles"
+        else:
+            roles = role
 
         # Returns the permissions that the user has within the guild
         filtered = filter(lambda x: x[1], member.guild_permissions)
         # Replace all "_" with " " in each item and join them together
-        permission = ",".join(map(lambda x: x[0].replace("_", " "), filtered))
+        perms = ",".join(map(lambda x: x[0].replace("_", " "), filtered))
 
         # Capitalise every word in the array and filter out the permissions that are defined within the frozenset
-        permissions = string.capwords("".join(map(str, DetectPermissions(permission, Perms))))
+        permission = string.capwords("".join(map(str, DetectPermissions(perms, Perms))))
+        if permission == "":
+            permissions = "No Key Permissions"
+        else:
+            permissions = permission
 
         # Set up the embed to display everything about the user
         embed = Embed(
@@ -142,8 +150,8 @@ class Info(commands.Cog):
         await ctx.send(embed=embed)
 
     @command(name="serverinfo", aliases=["guildinfo"])
-    @bot_has_permissions(administrator=True)
     @guild_only()
+    @bot_has_permissions(ban_members=True)
     @cooldown(1, 5, BucketType.user)
     async def server_info(self, ctx):
         """Guild Information! (Owner/Roles/Emojis etc)"""
@@ -269,14 +277,14 @@ class Info(commands.Cog):
 
         await ctx.send(embed=embed)
 
-    @command(name="botinfo", aliases=["binfo"])
+    @command(name="about", aliases=["About"])
     @guild_only()
     @bot_has_permissions(embed_links=True)
     @cooldown(1, 5, BucketType.user)
     async def checking_bot_stats(self, ctx):
         """Bot Statistics! (CPU/Mem Usage etc)"""
 
-        stats = Embed(title="Bot Statistics",
+        stats = Embed(title="[Ensō~Chan Statistics](https://github.com/sgoudham/Enso-Bot)",
                       colour=enso_embedmod_colours,
                       timestamp=datetime.datetime.utcnow())
         stats.set_thumbnail(url=ctx.guild.icon_url)

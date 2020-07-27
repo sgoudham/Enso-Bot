@@ -53,32 +53,36 @@ colour_list = [c for c in colors.values()]
 
 def rndColour():
     """Generate a random hex colour"""
-    return "#{:06x}".format(random.randint(0, 0xFFFFFF))
+    return Colour(random.randint(0, 0xFFFFFF))
 
 
 # Store guildID's and modlog channel within a cached dictionary
 modlogs = {}
 
 
-# Updating the prefix within the dict and database when the method is called
+# Updating the modlog within the dict and database when the method is called
 async def storage_modlog_for_guild(ctx, channelID, setup):
     modlogs[str(ctx.guild.id)] = channelID
 
-    with db.connection() as connection:
-        # Update the existing prefix within the database
-        update_query = """UPDATE guilds SET modlogs = (?) WHERE guildID = (?)"""
-        update_vals = channelID, ctx.guild.id,
+    # Setup pool
+    pool = await db.connection2(db.loop)
 
-        # Using the connection cursor
-        with closing(connection.cursor()) as cur:
+    # Setup up pool connection and cursor
+    async with pool.acquire() as conn:
+        async with conn.cursor() as cur:
+            # Update the existing prefix within the database
+            update_query = """UPDATE guilds SET modlogs = (%s) WHERE guildID = (%s)"""
+            update_vals = channelID, ctx.guild.id,
+
             # Execute the query
-            cur.execute(update_query, update_vals)
+            await cur.execute(update_query, update_vals)
+            await conn.commit()
 
-            # Send custom confirmation messages to log based on the command update or setup
-            if setup:
-                print(cur.rowcount, f"Modlog channel for guild {ctx.guild.name} has been Setup")
-            else:
-                print(cur.rowcount, f"Modlog channel for guild {ctx.guild.name} has been Updated")
+    # Send custom confirmation messages to log based on the command update or setup
+    if setup:
+        print(cur.rowcount, f"Modlog channel for guild {ctx.guild.name} has been Setup")
+    else:
+        print(cur.rowcount, f"Modlog channel for guild {ctx.guild.name} has been Updated")
 
     if setup:
         # Send confirmation that modmail channel has been setup

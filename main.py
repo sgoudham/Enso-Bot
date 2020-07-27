@@ -169,6 +169,9 @@ async def reload_db(ctx):
             await conn.commit()
             print(cur.rowcount, f"Record(s) inserted successfully into Members from {ctx.guild.name}")
 
+            # Sending confirmation message
+            await ctx.send("**Database Reloaded Successfully for Guild {}**".format(ctx.guild.name))
+
 
 @client.command(name="prefix", aliases=["Prefix"])
 @guild_only()

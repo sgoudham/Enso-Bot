@@ -1,3 +1,4 @@
+import random
 from contextlib import closing
 
 from discord import Colour
@@ -48,6 +49,12 @@ colors = {
 
 # Grabbing the list of colours
 colour_list = [c for c in colors.values()]
+
+
+def rndColour():
+    """Generate a random hex colour"""
+    return "#{:06x}".format(random.randint(0, 0xFFFFFF))
+
 
 # Store guildID's and modlog channel within a cached dictionary
 modlogs = {}

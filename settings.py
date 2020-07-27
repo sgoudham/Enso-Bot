@@ -119,7 +119,7 @@ def get_modlog_for_guild(guildid):
 
 
 # Before initialising the cache. Store the prefixes from the database within the cache
-with db.connection() as conn:
+with db.startup_connection() as conn:
     # Grab the prefix of the server from the database
     select_query = """SELECT * FROM guilds"""
     with closing(conn.cursor()) as cursor:
@@ -173,7 +173,7 @@ def get_prefix_for_guild(guildid):
 
 
 # Before initialising the cache. Store the prefixes from the database within the cache
-with db.connection() as conn:
+with db.startup_connection() as conn:
     # Grab the prefix of the server from the database
     select_query = """SELECT * FROM guilds"""
     with closing(conn.cursor()) as cursor:

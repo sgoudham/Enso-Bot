@@ -1,6 +1,5 @@
 import asyncio
 import datetime
-from contextlib import closing
 from datetime import timedelta
 from typing import Optional
 
@@ -10,6 +9,7 @@ from discord.ext.commands import command, guild_only, has_guild_permissions, bot
     has_permissions, bot_has_permissions, cooldown, BucketType
 
 import db
+from db import connection
 from settings import enso_embedmod_colours, get_modlog_for_guild, storage_modlog_for_guild, remove_modlog_channel
 
 
@@ -85,22 +85,25 @@ class Moderation(commands.Cog):
         # Retrieve a list of channel id's in the guild
         channels = [channel.id for channel in ctx.guild.channels]
 
-        # Checking if the modlogs channel already exists within the database
-        with db.connection() as conn:
+        # Setup pool
+        pool = await connection(db.loop)
 
-            # Get the row of the guild
-            select_query = """SELECT * FROM guilds WHERE guildID = (?)"""
-            val = ctx.guild.id,
-            with closing(conn.cursor()) as cursor:
+        # Setup pool connection and cursor
+        async with pool.acquire() as conn:
+            async with conn.cursor() as cur:
+                # Get the row of the guild
+                select_query = """SELECT * FROM guilds WHERE guildID = (%s)"""
+                val = ctx.guild.id,
+
                 # Execute the SQL Query
-                cursor.execute(select_query, val)
-                result = cursor.fetchone()
+                await cur.execute(select_query, val)
+                result = await cur.fetchone()
 
-            # Throw error if the modlog channel already exists and then stop the function
-            if result[2] is not None:
-                await ctx.send("Looks like this guild already has a **Modlogs Channel** set up!" +
-                               f"\nPlease check **{ctx.prefix}help** for information on how to update/delete existing information")
-                return
+        # Throw error if the modlog channel already exists and then stop the function
+        if result[2] is not None:
+            await ctx.send("Looks like this guild already has a **Modlogs Channel** set up!" +
+                           f"\nPlease check **{ctx.prefix}help** for information on how to update/delete existing information")
+            return
 
         # Abort the process if the channel does not exist within the guild
         if channelID not in channels:
@@ -121,21 +124,25 @@ class Moderation(commands.Cog):
         # Retrieve a list of channel id's in the guild
         channels = [channel.id for channel in ctx.guild.channels]
 
-        # Checking if the modlogs does not exist within the database
-        with db.connection() as conn:
-            # Get the guilds row from the guilds table
-            select_query = """SELECT * FROM guilds WHERE guildID = (?)"""
-            vals = ctx.guild.id,
-            with closing(conn.cursor()) as cursor:
-                # Execute the SQL Query
-                cursor.execute(select_query, vals)
-                result = cursor.fetchone()
+        # Setup pool
+        pool = await db.connection(db.loop)
 
-            # Throw error if the modlog channel already exists and then stop the function
-            if result[2] is None:
-                await ctx.send("Looks like this guild has not setup a **Modlogs Channel**" +
-                               f"\nPlease check **{ctx.prefix}help** for information on how to update/delete existing information")
-                return
+        # Setup up pool connection and cursor
+        async with pool.acquire() as conn:
+            async with conn.cursor() as cur:
+                # Get the guilds row from the guilds table
+                select_query = """SELECT * FROM guilds WHERE guildID = (%s)"""
+                vals = ctx.guild.id,
+
+                # Execute the SQL Query
+                await cur.execute(select_query, vals)
+                result = await cur.fetchone()
+
+        # Throw error if the modlog channel already exists and then stop the function
+        if result[2] is None:
+            await ctx.send("Looks like this guild has not setup a **Modlogs Channel**" +
+                           f"\nPlease check **{ctx.prefix}help** for information on how to update/delete existing information")
+            return
 
         # Abort the process if the channel does not exist within the guild
         if channelID not in channels:
@@ -153,32 +160,36 @@ class Moderation(commands.Cog):
     async def delete(self, ctx):
         """Delete the Existing Modlogs System"""
 
-        # Checking if the modlogs does not exist within the database
-        with db.connection() as conn:
-            # Get the guilds row from the guilds table
-            select_query = """SELECT * FROM guilds WHERE guildID = (?)"""
-            vals = ctx.guild.id,
-            with closing(conn.cursor()) as cursor:
+        # Setup pool
+        pool = await db.connection(db.loop)
+
+        # Setup up pool connection and cursor
+        async with pool.acquire() as conn:
+            async with conn.cursor() as cur:
+                # Get the guilds row from the guilds table
+                select_query = """SELECT * FROM guilds WHERE guildID = (%s)"""
+                vals = ctx.guild.id,
+
                 # Execute the SQL Query
-                cursor.execute(select_query, vals)
-                result = cursor.fetchone()
+                await cur.execute(select_query, vals)
+                result = await cur.fetchone()
 
-            # Throw error if the modlog channel already exists and then stop the function
-            if result[2] is None:
-                await ctx.send("Looks like this guild has not setup a **Modlogs Channel**" +
-                               f"\nPlease check **{ctx.prefix}help** for information on how to update/delete existing information")
-                return
+        # Throw error if the modlog channel already exists and then stop the function
+        if result[2] is None:
+            await ctx.send("Looks like this guild has not setup a **Modlogs Channel**" +
+                           f"\nPlease check **{ctx.prefix}help** for information on how to update/delete existing information")
+            return
 
-        # Update the row to get rid of modlogs
-        with db.connection() as connection:
-            # Update the existing prefix within the database
-            update_query = """UPDATE guilds SET modlogs = NULL WHERE guildID = (?)"""
-            update_vals = ctx.guild.id,
+        # Setup up pool connection and cursor
+        async with pool.acquire() as conn:
+            async with conn.cursor() as cur:
+                # Update the existing prefix within the database
+                update_query = """UPDATE guilds SET modlogs = NULL WHERE guildID = (%s)"""
+                update_vals = ctx.guild.id,
 
-            # Using the connection cursor
-            with closing(connection.cursor()) as cur:
                 # Execute the query
-                cur.execute(update_query, update_vals)
+                await cur.execute(update_query, update_vals)
+                await conn.commit()
 
         # Delete channel from cache
         remove_modlog_channel(str(ctx.guild.id))

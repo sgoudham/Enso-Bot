@@ -83,8 +83,8 @@ def enso_people():
     return ['hammy', 'hussein', 'inna', 'kate', 'calvin',
             'lukas', 'stitch', 'corona', 'ging', 'ash',
             'gria', 'lilu', 'ifrah', 'skye', 'chloe',
-            'connor', 'taz', 'ryder', 'ange', 'rin',
-            'izzy', 'david', 'clarity', 'angel', "studentjon"]
+            'connor', 'taz', 'ryder', 'rin', 'izzy',
+            'david', 'clarity', 'angel', "studentjon"]
 
 
 class Enso(commands.Cog):

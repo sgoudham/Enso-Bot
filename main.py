@@ -269,7 +269,7 @@ async def on_member_join(member):
         with db.connection() as conn:
 
             # Define the insert statement that will insert the user's information
-            insert_query = """INSERT INTO members (guildID, discordID) VALUES (?, ?)"""
+            insert_query = """INSERT IGNORE INTO members (guildID, discordID) VALUES (?, ?)"""
             vals = member.guild.id, member.id,
             with closing(conn.cursor()) as cursor:
                 # Execute the SQL Query

@@ -131,9 +131,9 @@ class Relationship(commands.Cog):
                         proposee = ctx.author.id, message_time, member.id, guild.id,
 
                         # Execute the SQL Query's
-                        cur.execute(update_query, proposer)
-                        cur.execute(update_query, proposee)
-                        conn.commit()
+                        await cur.execute(update_query, proposer)
+                        await cur.execute(update_query, proposee)
+                        await conn.commit()
                         print(cur.rowcount, "2 people have been married!")
 
                 # Congratulate them!
@@ -173,8 +173,8 @@ class Relationship(commands.Cog):
                 val = ctx.author.id, guild.id,
 
                 # Execute the SQL Query
-                cur.execute(select_query, val)
-                result = cur.fetchone()
+                await cur.execute(select_query, val)
+                result = await cur.fetchone()
                 married_user = result[1]
 
         # Make sure that the user cannot divorce themselves
@@ -222,9 +222,9 @@ class Relationship(commands.Cog):
                         divorcee = member.id, guild.id,
 
                         # Execute the SQL Query's
-                        cur.execute(update_query, divorcer)
-                        cur.execute(update_query, divorcee)
-                        conn.commit()
+                        await cur.execute(update_query, divorcer)
+                        await cur.execute(update_query, divorcee)
+                        await conn.commit()
                         print(cur.rowcount, "2 Members have been divorced :(!")
 
                 # Congratulate them!
@@ -277,8 +277,8 @@ class Relationship(commands.Cog):
                 val = member.id, guild.id,
 
                 # Execute the SQL Query
-                cur.execute(select_query, val)
-                result = cur.fetchone()
+                await cur.execute(select_query, val)
+                result = await cur.fetchone()
                 user = result[1]
                 marriage_date = result[2]
 

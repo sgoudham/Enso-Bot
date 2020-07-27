@@ -246,9 +246,8 @@ class Relationship(commands.Cog):
         except asyncio.TimeoutError as ex:
             print(ex)
 
-            await msg.delete()
             # Send out an error message if the user waited too long
-            await ctx.send("**(｡T ω T｡) They waited too long**")
+            await ctx.send("**(｡T ω T｡) {} waited too long**".format(member.mention))
 
     @command(name="marriageinfo", aliases=["minfo", "Minfo"])
     @cooldown(1, 1, BucketType.user)

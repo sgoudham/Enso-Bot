@@ -1,11 +1,9 @@
 import asyncio
 import datetime
 import string
-from contextlib import closing
 from typing import Optional
 
 import discord
-import mariadb
 from decouple import config
 from discord import Embed
 from discord.ext import commands, tasks
@@ -14,11 +12,11 @@ from discord.ext.commands import when_mentioned_or, is_owner, guild_only, has_pe
 import db
 import settings
 from cogs.help import HelpPaginator
+from db import connection2
 from settings import blank_space, enso_embedmod_colours, enso_guild_ID, enso_newpeople_ID, get_prefix_for_guild, \
     storage_prefix_for_guild, cache_prefix, del_cache_prefix, del_modlog_channel, cache_modlogs
 
 counter = 0
-
 # Getting the Bot token from Environment Variables
 API_TOKEN = config('DISCORD_TOKEN')
 
@@ -155,18 +153,20 @@ async def _help(ctx, *, command: Optional[str] = None):
 @client.command(name="reloaddb", hidden=True)
 @is_owner()
 async def reload_db(ctx):
-    pool = await db.connection2(db.loop)
+    # Setup pool
+    pool = await connection2(db.loop)
 
+    # Setup up pool connection and cursor
     async with pool.acquire() as conn:
         async with conn.cursor() as cur:
             # Define the insert statement that will insert the user's information
-            insert = "INSERT IGNORE INTO members (guildID, discordID) VALUES " + ", ".join(
-                map(lambda m: f"({ctx.guild.id}, {m.id})", ctx.guild.members))
+            insert = """INSERT INTO members (guildID, discordID) VALUES """ + ", ".join(
+                map(lambda m: f"({ctx.guild.id}, {m.id})",
+                    ctx.guild.members)) + """ ON DUPLICATE KEY UPDATE guildID = VALUES(guildID), discordID = VALUES(discordID)"""
 
-            try:  # Execute the query
-                await cur.execute(insert)
-            except Exception as e:
-                print(e)
+            # Execute the insert statement
+            await cur.execute(insert)
+            await conn.commit()
             print(cur.rowcount, f"Record(s) inserted successfully into Members from {ctx.guild.name}")
 
 
@@ -201,28 +201,32 @@ async def on_guild_join(guild):
     # Store default modlogs channel within cache
     cache_modlogs(str(guild.id), channel=None)
 
-    try:
-        # Set up connection to database
-        with db.connection() as conn:
+    # Setup pool
+    pool = await connection2(db.loop)
 
+    # Setup up pool connection and cursor
+    async with pool.acquire() as conn:
+        async with conn.cursor() as cur:
             # Define the insert statement for inserting the guild into the guilds table
-            insert_query = """INSERT IGNORE INTO guilds (guildID) VALUES (?)"""
+            insert_query = """INSERT INTO guilds (guildID) VALUES (%s) ON DUPLICATE KEY UPDATE guildID = VALUES(guildID)"""
             val = guild.id,
-            with closing(conn.cursor()) as cursor:
-                # Execute the query
-                cursor.execute(insert_query, val)
-                print(cursor.rowcount, f"Record inserted successfully into Guilds from {guild.name}")
 
+            # Execute the query
+            await cur.execute(insert_query, val)
+            await conn.commit()
+            print(cur.rowcount, f"Record(s) inserted successfully into Guilds from {guild.name}")
+
+    async with pool.acquire() as conn:
+        async with conn.cursor() as cur:
             # Define the insert statement that will insert the user's information
-            insert = "INSERT IGNORE INTO members (guildID, discordID) VALUES" + ", ".join(
-                map(lambda m: f"({guild.id}, {m.id})", guild.members))
-            with closing(conn.cursor()) as cursor:
-                # Execute the query
-                cursor.execute(insert)
-                print(cursor.rowcount, f"Record(s) inserted successfully into Members from {guild.name}")
+            insert = """INSERT INTO members (guildID, discordID) VALUES""" + ", ".join(
+                map(lambda m: f"({guild.id}, {m.id})",
+                    guild.members)) + """ ON DUPLICATE KEY UPDATE guildID = VALUES(guildID), discordID = VALUES(discordID)"""
 
-    except mariadb.Error as ex:
-        print("Parameterized Query Failed: {}".format(ex))
+            # Execute the query
+            await cur.execute(insert)
+            await conn.commit()
+            print(cur.rowcount, f"Record(s) inserted successfully into Members from {guild.name}")
 
 
 # Bot event for the bot leaving a guild, deleted all users stored in the database
@@ -234,28 +238,32 @@ async def on_guild_remove(guild):
     del_cache_prefix(str(guild.id))
     del_modlog_channel(str(guild.id))
 
-    try:
-        # Set up connection to database
-        with db.connection() as conn:
+    # Setup pool
+    pool = await connection2(db.loop)
 
+    # Setup pool connection and cursor
+    async with pool.acquire() as conn:
+        async with conn.cursor() as cur:
             # Delete the guild and prefix information as the bot leaves the server
-            delete_query = """DELETE FROM guilds WHERE guildID = (?)"""
+            delete_query = """DELETE FROM guilds WHERE guildID = %s"""
             val = guild.id,
-            with closing(conn.cursor()) as cursor:
-                # Execute the query
-                cursor.execute(delete_query, val)
-                print(cursor.rowcount, f"Record deleted successfully from Guild {guild.name}")
 
+            # Execute the query
+            await cur.execute(delete_query, val)
+            await conn.commit()
+            print(cur.rowcount, f"Record deleted successfully from Guild {guild.name}")
+
+    # Setup pool connection and cursor
+    async with pool.acquire() as conn:
+        async with conn.cursor() as cur:
             # Delete the record of the member as the bot leaves the server
-            delete_query = """DELETE FROM members WHERE guildID = (?)"""
+            delete_query = """DELETE FROM members WHERE guildID = %s"""
             vals = guild.id,
-            with closing(conn.cursor()) as cursor:
-                # Execute the SQL Query
-                cursor.execute(delete_query, vals)
-                print(cursor.rowcount, f"Record(s) deleted successfully from Members from {guild.name}")
 
-    except mariadb.Error as ex:
-        print("Parameterized Query Failed: {}".format(ex))
+            # Execute the query
+            await cur.execute(delete_query, vals)
+            await conn.commit()
+            print(cur.rowcount, f"Record(s) deleted successfully from Members from {guild.name}")
 
 
 # Bot event for new member joining, sending an embed introducing them to the server
@@ -264,21 +272,21 @@ async def on_member_join(member):
     # Get the guild
     guild = member.guild
 
-    try:
-        # Set up connection to database
-        with db.connection() as conn:
+    # Setup pool
+    pool = await db.connection2(db.loop)
 
+    # Setup pool connection and cursor
+    async with pool.acquire() as conn:
+        async with conn.cursor() as cur:
             # Define the insert statement that will insert the user's information
-            insert_query = """INSERT IGNORE INTO members (guildID, discordID) VALUES (?, ?)"""
+            insert_query = """INSERT INTO members (guildID, discordID) VALUES (%s, %s) 
+            ON DUPLICATE KEY UPDATE guildID = VALUES(guildID), discordID = VALUES(discordID)"""
             vals = member.guild.id, member.id,
-            with closing(conn.cursor()) as cursor:
-                # Execute the SQL Query
-                cursor.execute(insert_query, vals)
-                conn.commit()
-                print(cursor.rowcount, "Record inserted successfully into Members")
 
-    except mariadb.Error as ex:
-        print("Parameterized Query Failed: {}".format(ex))
+            # Execute the SQL Query
+            await cur.execute(insert_query, vals)
+            await conn.commit()
+            print(cur.rowcount, "Record(s) inserted successfully into Members")
 
     # Make sure the guild is Enso
     if guild.id != enso_guild_ID:

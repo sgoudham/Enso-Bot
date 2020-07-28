@@ -1,5 +1,5 @@
+import asyncio
 import random
-from contextlib import closing
 
 from discord import Colour
 
@@ -54,6 +54,28 @@ colour_list = [c for c in colors.values()]
 def rndColour():
     """Generate a random hex colour"""
     return Colour(random.randint(0, 0xFFFFFF))
+
+
+async def startup_cache_log():
+    """Store the modlogs/prefixes in cache from the database on startup"""
+
+    # Setup pool
+    pool = await db.connection(db.loop)
+
+    # Setup up pool connection and cursor
+    async with pool.acquire() as conn:
+        async with conn.cursor() as cur:
+            # Grab the prefix of the server from the database
+            select_query = """SELECT * FROM guilds"""
+
+            # Execute the query
+            await cur.execute(select_query)
+            results = await cur.fetchall()
+
+            # Store the guildids and modlog channels
+            for row in results:
+                cache_modlogs(row[0], row[2])
+                cache_prefix(row[0], row[1])
 
 
 # Store guildID's and modlog channel within a cached dictionary
@@ -118,19 +140,6 @@ def get_modlog_for_guild(guildid):
     return channel
 
 
-# Before initialising the cache. Store the prefixes from the database within the cache
-with db.startup_connection() as conn:
-    # Grab the prefix of the server from the database
-    select_query = """SELECT * FROM guilds"""
-    with closing(conn.cursor()) as cursor:
-        # Execute the query
-        cursor.execute(select_query)
-        results = cursor.fetchall()
-
-        # Store the guildids and modlog channels
-        for row in results:
-            cache_modlogs(row[0], row[2])
-
 # Storing the prefixes and guildID's in the cache
 cached_prefixes = {}
 
@@ -176,19 +185,6 @@ def get_prefix_for_guild(guildid):
     return "defaultPrefix"
 
 
-# Before initialising the cache. Store the prefixes from the database within the cache
-with db.startup_connection() as conn:
-    # Grab the prefix of the server from the database
-    select_query = """SELECT * FROM guilds"""
-    with closing(conn.cursor()) as cursor:
-        # Execute the query
-        cursor.execute(select_query)
-        results = cursor.fetchall()
-
-        # Store the guildids and prefixes within
-        for row in results:
-            cache_prefix(row[0], row[1])
-
 # Define repeated variables
 hammyMention = '<@154840866496839680>'
 hammyID = 154840866496839680
@@ -214,3 +210,8 @@ def extensions():
            'cogs.modmail', 'cogs.moderation']
 
     return ext
+
+
+# Run the async function to store everything in cache
+loop = asyncio.get_event_loop()
+loop.run_until_complete(startup_cache_log())

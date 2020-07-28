@@ -367,32 +367,37 @@ async def on_command_forbidden(ctx):
 # Async def for handling command bad argument error
 async def on_command_bad_argument(ctx):
     # Send an error message to the user telling them that the member specified could not be found
-    await ctx.send("**Uh oh! Couldn't find anyone to mention! Try again!**")
+    embed = Embed(description="**❌ Uh oh! Couldn't find anyone to mention! Try again! ❌**")
+    await ctx.send(embed=embed)
 
 
 # Async def for handling command not found error
 async def on_command_not_found(ctx):
     # Send an error message to the user telling them that the command doesn't exist
-    await ctx.send(f"Command Not Found! Please use **{ctx.prefix}help** to see all commands")
+    embed = Embed(description="Command Not Found! ❌ Please use **{}help** to see all commands".format(ctx.prefix))
+    await ctx.send(embed=embed)
 
 
 # Async def for handling cooldown error/permission errors
 async def on_command_cooldown(ctx, error):
     # Send an error message to the user telling them that the command is on cooldown
-    await ctx.send(f"That command is on cooldown. Try again in **{error.retry_after:,.2f}** seconds")
+    embed = Embed(description="That command is on cooldown. Try again in **{:,.2f}** seconds".format(error.retry_after))
+    await ctx.send(embed=embed)
 
 
 # Async def for handling permission errors
 async def on_command_permission(ctx):
     # Send an error message to the user saying that they don't have permission to use this command
-    await ctx.send("**Uh oh! You don't have permission to use this command! ❌**")
+    embed = Embed(description="**❌ Uh oh! You don't have permission to use this command! ❌**")
+    await ctx.send(embed=embed)
 
 
 async def on_command_missing_argument(ctx):
     # Send an error message to the user saying that an argument is missing
-    await ctx.send(
-        f"Required Argument(s) Missing!"
-        f"\nUse **{ctx.prefix}help** to find how to use **{ctx.command}**")
+    embed = Embed(description="Required Argument(s) Missing!"
+                              "\nUse **{}help** to find how to use **{}**".format(ctx.prefix,
+                                                                                  ctx.command))
+    await ctx.send(embed=embed)
 
 
 # Run the bot, allowing it to come online

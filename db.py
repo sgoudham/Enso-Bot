@@ -1,8 +1,6 @@
 import asyncio
-import sys
 
 import aiomysql
-import mariadb
 from decouple import config
 
 # Get password/host from .env
@@ -23,23 +21,6 @@ async def connection(loop):
     return pool
 
 
+# Make sure the connection is setup before the bot is ready
 loop = asyncio.get_event_loop()
 loop.run_until_complete(connection(loop))
-
-
-# Defining connection for when the bot isn't ready yet
-def startup_connection():
-    try:
-        conn = mariadb.connect(
-            user="hamothy",
-            password=password,
-            host=host,
-            port=3306,
-            database="enso"
-        )
-    except mariadb.Error as e:
-        print(f"Error connecting to MariaDB Platform: {e}")
-        sys.exit(1)
-
-    # Returning connection string
-    return conn

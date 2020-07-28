@@ -47,6 +47,7 @@ class Pages:
     def __init__(self, ctx, *, entries, per_page=6, show_entry_count=True):
 
         self.bot = ctx.bot
+        self.prefix = ctx.prefix
         self.entries = entries
         self.message = ctx.message
         self.channel = ctx.channel
@@ -186,7 +187,7 @@ class Pages:
     async def show_help(self):
         """shows this message"""
         messages = ['Welcome to the interactive paginator!\n']
-        messages.append('This interactively allows you to see pages of text by navigating with ' \
+        messages.append('This interactively allows you to see pages of text by navigating with '
                         'reactions. They are as follows:\n')
 
         for (emoji, func) in self.reaction_emojis:
@@ -300,7 +301,7 @@ import re
 # ?help command
 #   -> could be a subcommand
 
-_mention = re.compile(r'<@\!?([0-9]{1,19})>')
+_mention = re.compile(r'<@!?([0-9]{1,19})>')
 
 
 def cleanup_prefix(bot, prefix):
@@ -472,7 +473,7 @@ class HelpPaginator(Pages):
         self.embed.description = self.description
         self.embed.title = self.title
 
-        self.embed.set_footer(text=f'Use "{self.prefix}help command" for more info on a command.')
+        self.embed.set_footer(text=f'**{self.prefix}help** `command | module` For More Information!')
 
         signature = _command_signature
 

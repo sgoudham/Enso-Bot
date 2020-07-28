@@ -166,7 +166,7 @@ class Info(commands.Cog):
 
     @command(name="serverinfo", aliases=["guildinfo"])
     @guild_only()
-    @bot_has_permissions(ban_members=True, manage_guild=True)
+    @bot_has_permissions(ban_members=True, manage_guild=True, embed_links=True)
     @cooldown(1, 5, BucketType.user)
     async def server_info(self, ctx):
         """Guild Information! (Owner/Roles/Emojis etc)"""
@@ -255,8 +255,10 @@ class Info(commands.Cog):
         for name, value, inline in fields:
             embed.add_field(name=name, value=value, inline=inline)
 
-        # Send the embed to the channel that the command was triggered in
-        await ctx.send(embed=embed)
+        try:  # Send the embed to the channel that the command was triggered in
+            await ctx.send(embed=embed)
+        except Exception as e:
+            print(e)
 
     @command(name="channelinfo", aliases=["chinfo"])
     @cooldown(1, 5, BucketType.user)

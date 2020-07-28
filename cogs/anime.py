@@ -4,8 +4,7 @@ import string
 from typing import Optional
 
 from discord import Embed, Colour
-from discord.ext import commands
-from discord.ext.commands import bot_has_permissions
+from discord.ext.commands import bot_has_permissions, Cog, group
 
 from settings import colour_list
 
@@ -111,18 +110,18 @@ def husbandos():
     return ["kakashi", "tamaki"]
 
 
-class Anime(commands.Cog):
+class Anime(Cog):
     """Waifus and Husbandos!"""
 
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.Cog.listener()
+    @Cog.listener()
     async def on_ready(self):
         """Printing out that Cog is ready on startup"""
         print(f"{self.__class__.__name__} Cog has been loaded!\n-----")
 
-    @commands.group(invoke_without_command=True)
+    @group(invoke_without_command=True)
     @bot_has_permissions(embed_links=True)
     async def waifu(self, ctx, waifu: Optional[str] = None):
         """Shows a Waifu"""
@@ -155,7 +154,7 @@ class Anime(commands.Cog):
             embed = randomWaifu(ctx, waifus())
             await ctx.send(embed=embed)
 
-    @commands.group(invoke_without_command=True)
+    @group(invoke_without_command=True)
     @bot_has_permissions(embed_links=True)
     async def husbando(self, ctx, husbando: Optional[str] = None):
         """Shows a Husbando"""

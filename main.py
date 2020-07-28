@@ -354,7 +354,8 @@ async def on_bot_forbidden(ctx, args2):
     missing_perms = string.capwords(", ".join(args2.missing_perms).replace("_", " "))
 
     # Send an error message to the user notifying them of the permissions that are missing from the bot
-    await ctx.send(f"I need **{missing_perms}** permission(s) to execute this command!")
+    embed = Embed(description="I Need **{}** Permission(s) to Execute This Command! ❌".format(missing_perms))
+    await ctx.send(embed=embed)
 
 
 # Async def for handling command bad argument error

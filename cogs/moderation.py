@@ -368,6 +368,7 @@ class Moderation(Cog):
             pass
         # Send the embed to the modlogs channel
         else:
+
             # Get the modlogs channel
             modlogs_channel = self.bot.get_channel(int(guild))
 

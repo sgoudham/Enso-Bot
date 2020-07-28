@@ -402,9 +402,8 @@ async def on_command_missing_argument(ctx):
     await ctx.send(embed=embed)
 
 
-# Async def for handling permission errors
 async def on_not_owner(ctx):
-    # Send an error message to the user saying that they don't have permission to use this command
+    # Send an error message to the user saying that it's only for owners
     embed = Embed(description="**❌ Owner Only Command ❌**")
     await ctx.send(embed=embed)
 

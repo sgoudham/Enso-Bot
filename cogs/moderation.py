@@ -356,6 +356,30 @@ class Moderation(Cog):
 
             await modlogs_channel.send(embed=embed)
 
+    @Cog.listener()
+    async def on_member_join(self, member):
+        """Sending Members that have joined to the Modlogs Channel"""
+
+        # Get the guild within the cache
+        guild = get_modlog_for_guild(str(member.guild.id))
+
+        # When no modlogs channel is returned, do nothing
+        if guild is None:
+            pass
+        # Send the embed to the modlogs channel
+        else:
+            # Get the modlogs channel
+            modlogs_channel = self.bot.get_channel(int(guild))
+
+            embed = Embed(description="{} A.K.A {}".format(member.mention, member),
+                          colour=enso_embedmod_colours,
+                          timestamp=datetime.datetime.utcnow())
+            embed.set_author(name="Member Joined", icon_url=member.avatar_url)
+            embed.set_thumbnail(url=member.avatar_url)
+            embed.set_footer(text="ID: {}".format(member.id))
+
+            await modlogs_channel.send(embed=embed)
+
 
 def setup(bot):
     bot.add_cog(Moderation(bot))

@@ -6,7 +6,7 @@ from typing import Optional
 from discord import Member, Embed
 from discord.ext import commands
 from discord.ext.commands import command, guild_only, has_guild_permissions, bot_has_guild_permissions, Greedy, \
-    has_permissions, bot_has_permissions, cooldown, BucketType
+    has_permissions, bot_has_permissions, cooldown, BucketType, Cog
 
 import db
 from db import connection
@@ -57,13 +57,13 @@ async def kick_members(message, targets, reason):
             await message.channel.send("**User {} could not be Kicked!**".format(target.mention))
 
 
-class Moderation(commands.Cog):
+class Moderation(Cog):
     """Moderation Commands! (Kick/Ban/Mute etc)"""
 
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.Cog.listener()
+    @Cog.listener()
     async def on_ready(self):
         print(f"{self.__class__.__name__} Cog has been loaded\n-----")
 
@@ -305,7 +305,7 @@ class Moderation(commands.Cog):
 
             await ctx.send(f"Deleted **{len(deleted):,}** messages.", delete_after=5)
 
-    @commands.Cog.listener()
+    @Cog.listener()
     async def on_raw_bulk_message_delete(self, payload):
         """Sending Bulk Deleted Messages to Modlogs Channel"""
 
@@ -332,7 +332,7 @@ class Moderation(commands.Cog):
 
             await modlogs_channel.send(embed=embed)
 
-    @commands.Cog.listener()
+    @Cog.listener()
     async def on_member_remove(self, member):
         """Sending Members that have left to Modlogs Channel"""
 

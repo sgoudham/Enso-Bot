@@ -1,4 +1,4 @@
-import asyncio
+import datetime
 import datetime
 import string
 from typing import Optional
@@ -354,79 +354,44 @@ async def on_bot_forbidden(ctx, args2):
     missing_perms = string.capwords(", ".join(args2.missing_perms).replace("_", " "))
 
     # Send an error message to the user notifying them of the permissions that are missing from the bot
-    message = await ctx.send(f"I need **{missing_perms}** permission(s) to execute this command!")
-
-    # Let the user read the message for 5 seconds
-    await asyncio.sleep(10)
-    # Delete the message
-    await message.delete()
+    await ctx.send(f"I need **{missing_perms}** permission(s) to execute this command!")
 
 
 # Async def for handling command bad argument error
 async def on_command_forbidden(ctx):
     # Send an error message to the user telling them that the member specified could not be found
-    message = await ctx.send(f"**I don't have permissions to execute this command**")
-
-    # Let the user read the message for 10 seconds
-    await asyncio.sleep(10)
-    # Delete the message
-    await message.delete()
+    await ctx.send(f"**I don't have permissions to execute this command**")
 
 
 # Async def for handling command bad argument error
 async def on_command_bad_argument(ctx):
     # Send an error message to the user telling them that the member specified could not be found
-    message = await ctx.send("**Uh oh! Couldn't find anyone to mention! Try again!**")
-
-    # Let the user read the message for 10 seconds
-    await asyncio.sleep(10)
-    # Delete the message
-    await message.delete()
+    await ctx.send("**Uh oh! Couldn't find anyone to mention! Try again!**")
 
 
 # Async def for handling command not found error
 async def on_command_not_found(ctx):
     # Send an error message to the user telling them that the command doesn't exist
-    message = await ctx.send(f"Command Not Found! Please use **{ctx.prefix}help** to see all commands")
-
-    # Let the user read the message for 10 seconds
-    await asyncio.sleep(10)
-    # Delete the message
-    await message.delete()
+    await ctx.send(f"Command Not Found! Please use **{ctx.prefix}help** to see all commands")
 
 
 # Async def for handling cooldown error/permission errors
 async def on_command_cooldown(ctx, error):
     # Send an error message to the user telling them that the command is on cooldown
-    message = await ctx.send(f"That command is on cooldown. Try again in **{error.retry_after:,.2f}** seconds")
-
-    # Let the user read the message for 10 seconds
-    await asyncio.sleep(10)
-    # Delete the message
-    await message.delete()
+    await ctx.send(f"That command is on cooldown. Try again in **{error.retry_after:,.2f}** seconds")
 
 
 # Async def for handling permission errors
 async def on_command_permission(ctx):
     # Send an error message to the user saying that they don't have permission to use this command
-    message = await ctx.send("**Uh oh! You don't have permission to use this command!**")
-
-    # Let the user read the message for 5 seconds
-    await asyncio.sleep(5)
-    # Delete the message
-    await message.delete()
+    await ctx.send("**Uh oh! You don't have permission to use this command! ❌**")
 
 
 async def on_command_missing_argument(ctx):
     # Send an error message to the user saying that an argument is missing
-    message = await ctx.send(
+    await ctx.send(
         f"Required Argument(s) Missing!"
         f"\nUse **{ctx.prefix}help** to find how to use **{ctx.command}**")
-
-    # Let the user read the message for 5 seconds
-    await asyncio.sleep(5)
-    # Delete the message
-    await message.delete()
 
 
 # Run the bot, allowing it to come online

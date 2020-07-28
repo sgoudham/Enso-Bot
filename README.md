@@ -20,11 +20,15 @@
 > - [Hamothy#5619](https://discord.bio/p/hammy)
 >
 > I would also like to credit my amazing friend [byfok#1665](https://twitter.com/byfok) who beautifully 
-> crafted the design for Ensō~Chan. Please go give her a follow on twitter where she will be posting more often!
+> crafted the design for Ensō~Chan **(Shown Below)**. Please go give her a follow on twitter where she will be posting more often!
+
+<p align="center">
+  <img src="https://media.discordapp.net/attachments/683490529862090814/734900981854109827/Enso_reworked.png?width=329&height=658">
+</p>
 
 # Ensō Server 
 
-![alt text](https://media.discordapp.net/attachments/683490529862090814/715010931620446269/image1.jpg?width=256&height=256)
+![alt text](https://media.discordapp.net/attachments/683490529862090814/729814673502765184/image.gif?width=300&height=315)
 
 <b> <p> 
 A warm welcome from our small but growing community of Ensō. 

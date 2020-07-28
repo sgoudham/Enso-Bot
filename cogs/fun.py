@@ -11,7 +11,7 @@ from PIL import Image, ImageDraw, ImageFont
 from aiohttp import request
 from discord import Member, Colour, Embed
 from discord.ext import commands
-from discord.ext.commands import BucketType, cooldown, command, has_permissions
+from discord.ext.commands import BucketType, cooldown, command, has_permissions, Cog
 from discord.ext.commands import is_owner, bot_has_permissions
 from owotext import OwO
 
@@ -57,13 +57,13 @@ def generate_meme(image_path, top_text, bottom_text='', font_path='homies/impact
 
 
 # Set up the cog
-class Fun(commands.Cog):
+class Fun(Cog):
     """Fun Commands! (8ball, Doggo etc!)"""
 
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.Cog.listener()
+    @Cog.listener()
     async def on_ready(self):
         """Printing out that Cog is ready on startup"""
         print(f"{self.__class__.__name__} Cog has been loaded\n-----")

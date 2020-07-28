@@ -7,8 +7,7 @@ import discord
 import mariadb
 from discord import Embed
 from discord import File
-from discord.ext import commands
-from discord.ext.commands import bot_has_permissions, has_permissions
+from discord.ext.commands import bot_has_permissions, has_permissions, Cog, group
 
 import db
 from settings import enso_embedmod_colours, blank_space
@@ -144,19 +143,19 @@ def SendMsgToModMail(self, msg, author):
 
 
 # Set up the Cog
-class Modmail(commands.Cog):
+class Modmail(Cog):
     """Modmail System!"""
 
     def __init__(self, bot):
         self.bot = bot
         self.anon = None
 
-    @commands.Cog.listener()
+    @Cog.listener()
     async def on_ready(self):
         """Printing out that Cog is ready on startup"""
         print(f"{self.__class__.__name__} Cog has been loaded\n-----")
 
-    @commands.group(invoke_without_command=True, usage="`[argument...]`")
+    @group(invoke_without_command=True, usage="`[argument...]`")
     @has_permissions(manage_guild=True)
     @bot_has_permissions(administrator=True)
     async def modmail(self, ctx):
@@ -376,7 +375,7 @@ class Modmail(commands.Cog):
                        f"\nPlease do **{ctx.prefix}help** to find out how to set Modmail again!")
 
     # Setting up Listener to listen for reactions within the modmail channel created
-    @commands.Cog.listener()
+    @Cog.listener()
     async def on_raw_reaction_add(self, payload):
         # Don't count reactions that are made by the bot
         if payload.user_id == self.bot.user.id:

@@ -346,6 +346,8 @@ async def on_command_error(ctx, args2):
         await on_command_permission(ctx)
     elif isinstance(args2, commands.BotMissingPermissions):
         await on_bot_forbidden(ctx, args2)
+    elif isinstance(args2, commands.NotOwner):
+        await on_not_owner(ctx)
 
 
 # Async def for handling command bad argument error
@@ -397,6 +399,13 @@ async def on_command_missing_argument(ctx):
     embed = Embed(description="Required Argument(s) Missing!"
                               "\nUse **{}help** to find how to use **{}**".format(ctx.prefix,
                                                                                   ctx.command))
+    await ctx.send(embed=embed)
+
+
+# Async def for handling permission errors
+async def on_not_owner(ctx):
+    # Send an error message to the user saying that they don't have permission to use this command
+    embed = Embed(description="**❌ Owner Only Command ❌**")
     await ctx.send(embed=embed)
 
 

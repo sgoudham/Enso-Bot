@@ -14,7 +14,6 @@ anime = {"yumeko": "Jabami Yumeko",
          "maki": "Maki Oze",
          "kakashi": "Hatake Kakashi",
          "tamaki": "Tamaki Suoh",
-         "husk": "Husk"
          }
 
 

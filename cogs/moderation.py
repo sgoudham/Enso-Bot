@@ -279,15 +279,14 @@ class Moderation(Cog):
         # When an amount is specified and is between 0 and 100
         if amount:
             if 0 < amount <= 100:
-                with ctx.channel.typing():
 
-                    # Delete the message sent and then the amount specified
-                    # (Only messages sent within the last 14 days)
-                    await ctx.message.delete()
-                    deleted = await ctx.channel.purge(limit=amount,
-                                                      after=datetime.datetime.utcnow() - timedelta(days=14))
+                # Delete the message sent and then the amount specified
+                # (Only messages sent within the last 14 days)
+                await ctx.message.delete()
+                deleted = await ctx.channel.purge(limit=amount,
+                                                  after=datetime.datetime.utcnow() - timedelta(days=14))
 
-                    await ctx.send(f"Deleted **{len(deleted):,}** messages.", delete_after=5)
+                await ctx.send(f"Deleted **{len(deleted):,}** messages.", delete_after=5)
 
             # Send error if amount is not between 0 and 100
             else:

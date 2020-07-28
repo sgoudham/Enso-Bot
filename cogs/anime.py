@@ -43,8 +43,9 @@ def Abbrev(anime_msg):
     return new_msg
 
 
-# Function to return a random image of a waifu
 def randomWaifu(msg, waifu):
+    """Return Embed for Specific Waifu"""
+
     # Retrieve a random image of a waifu within the bot
     with open(f'images/AnimeImages/Waifus/{random.choice(waifu)}.txt') as file:
         array = file.readlines()
@@ -63,8 +64,9 @@ def randomWaifu(msg, waifu):
     return waifu_embed
 
 
-# Function to return a random image of a husbando
 def randomHusbando(msg, husbando):
+    """Display embed for Specific Husbando"""
+
     # Retrieve a random image of a husbando within the bot
     with open(f'images/AnimeImages/Husbandos/{random.choice(husbando)}.txt') as file:
         array = file.readlines()
@@ -83,8 +85,9 @@ def randomHusbando(msg, husbando):
     return husbando_embed
 
 
-# Function to allow modular code and sets up the embed for the anime images
 def displayAnimeImage(array, msg, name):
+    """Setup Embed for Specific Waifu/Husbando"""
+
     # Get the member and the userAvatar
     member, userAvatar = getMember(msg)
 
@@ -99,13 +102,13 @@ def displayAnimeImage(array, msg, name):
     return anime_embed
 
 
-# List of Waifu's
 def waifus():
+    """List of Waifu's"""
     return ["toga", "yumeko", "maki"]
 
 
-# List of Husbando's
 def husbandos():
+    """List of Husbando's"""
     return ["kakashi", "tamaki"]
 
 

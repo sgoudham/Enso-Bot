@@ -57,7 +57,7 @@ class Pages:
         if left_over:
             pages += 1
         self.maximum_pages = pages
-        self.embed = discord.Embed(colour=enso_embedmod_colours,  # any HEX color here
+        self.embed = discord.Embed(colour=enso_embedmod_colours,
                                    timestamp=datetime.datetime.utcnow())
         self.paginating = len(entries) > per_page
         self.show_entry_count = show_entry_count
@@ -473,7 +473,7 @@ class HelpPaginator(Pages):
         self.embed.description = self.description
         self.embed.title = self.title
 
-        self.embed.set_footer(text=f'**{self.prefix}help** `command | module` For More Information!')
+        self.embed.set_footer(text=f'"{self.prefix}help command | module" For More Information!')
 
         signature = _command_signature
 

@@ -2,8 +2,7 @@ import datetime
 import random
 
 from discord import Colour, Embed, Member
-from discord.ext import commands
-from discord.ext.commands import cooldown, command, BucketType, bot_has_permissions
+from discord.ext.commands import cooldown, command, BucketType, bot_has_permissions, Cog
 
 import db
 from settings import colour_list
@@ -20,13 +19,13 @@ def getMember(ctx):
 
 
 # Set up the Cog
-class Interactive(commands.Cog):
+class Interactive(Cog):
     """Interactive Commands! (E.G Kiss/Hug/Cuddle)"""
 
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.Cog.listener()
+    @Cog.listener()
     async def on_ready(self):
         """Printing out that Cog is ready on startup"""
         print(f"{self.__class__.__name__} Cog has been loaded\n-----")

@@ -4,9 +4,8 @@ from datetime import timedelta
 from typing import Optional
 
 from discord import Member, Embed
-from discord.ext import commands
 from discord.ext.commands import command, guild_only, has_guild_permissions, bot_has_guild_permissions, Greedy, \
-    has_permissions, bot_has_permissions, cooldown, BucketType, Cog
+    has_permissions, bot_has_permissions, cooldown, BucketType, Cog, group
 
 import db
 from db import connection
@@ -67,7 +66,7 @@ class Moderation(Cog):
     async def on_ready(self):
         print(f"{self.__class__.__name__} Cog has been loaded\n-----")
 
-    @commands.group(invoke_without_command=True, usage="`[argument...]`")
+    @group(invoke_without_command=True, usage="`[argument...]`")
     @has_permissions(manage_guild=True)
     @bot_has_permissions(administrator=True)
     @cooldown(1, 1, BucketType.user)

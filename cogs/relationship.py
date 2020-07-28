@@ -3,8 +3,7 @@ import datetime
 import random
 
 from discord import Member, Embed, Colour
-from discord.ext import commands
-from discord.ext.commands import BucketType, command, cooldown, bot_has_permissions
+from discord.ext.commands import BucketType, command, cooldown, bot_has_permissions, Cog
 
 import db
 from db import connection
@@ -44,13 +43,13 @@ def marriageInfo(target, marriedUser, marriedDate, currentDate, married):
 
 
 # Set up the Cog
-class Relationship(commands.Cog):
+class Relationship(Cog):
     """Marry/Divorce etc!"""
 
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.Cog.listener()
+    @Cog.listener()
     async def on_ready(self):
         """Printing out that Cog is ready on startup"""
         print(f"{self.__class__.__name__} Cog has been loaded\n-----")

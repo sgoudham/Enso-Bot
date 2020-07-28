@@ -360,6 +360,7 @@ class Fun(commands.Cog):
 
     @command(name="owo", aliases=["Owo", "OwO"])
     @cooldown(1, 1, BucketType.user)
+    @bot_has_permissions(manage_messages=True)
     async def owo(self, ctx, *, text):
         """Converts given text to 'OwO' format"""
 

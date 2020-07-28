@@ -307,7 +307,7 @@ class Moderation(commands.Cog):
 
     @commands.Cog.listener()
     async def on_raw_bulk_message_delete(self, payload):
-        """Storing Bulk Deleted Messages to Modlogs Channel"""
+        """Sending Bulk Deleted Messages to Modlogs Channel"""
 
         # Get the guild within the cache
         guild = get_modlog_for_guild(str(payload.guild_id))
@@ -318,6 +318,7 @@ class Moderation(commands.Cog):
         # Send the embed to the modlogs channel
         else:
 
+            # Get the modlogs channel and channel that the messages were deleted in
             modlogs_channel = self.bot.get_channel(int(guild))
             channel = self.bot.get_channel(payload.channel_id)
 
@@ -328,6 +329,31 @@ class Moderation(commands.Cog):
                 colour=enso_embedmod_colours,
                 timestamp=datetime.datetime.utcnow())
             embed.set_author(name=channel.guild.name, icon_url=channel.guild.icon_url)
+
+            await modlogs_channel.send(embed=embed)
+
+    @commands.Cog.listener()
+    async def on_member_remove(self, member):
+        """Sending Members that have left to Modlogs Channel"""
+
+        # Get the guild within the cache
+        guild = get_modlog_for_guild(str(member.guild.id))
+
+        # When no modlogs channel is returned, do nothing
+        if guild is None:
+            pass
+        # Send the embed to the modlogs channel
+        else:
+
+            # Get the modlogs channel
+            modlogs_channel = self.bot.get_channel(int(guild))
+
+            embed = Embed(description="{} A.K.A {}".format(member.mention, member),
+                          colour=enso_embedmod_colours,
+                          timestamp=datetime.datetime.utcnow())
+            embed.set_author(name="Member Left", icon_url=member.avatar_url)
+            embed.set_thumbnail(url=member.avatar_url)
+            embed.set_footer(text="ID: {}".format(member.id))
 
             await modlogs_channel.send(embed=embed)
 

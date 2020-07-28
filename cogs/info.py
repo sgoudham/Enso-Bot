@@ -166,7 +166,7 @@ class Info(commands.Cog):
 
     @command(name="serverinfo", aliases=["guildinfo"])
     @guild_only()
-    @bot_has_permissions(ban_members=True)
+    @bot_has_permissions(ban_members=True, manage_guild=True)
     @cooldown(1, 5, BucketType.user)
     async def server_info(self, ctx):
         """Guild Information! (Owner/Roles/Emojis etc)"""

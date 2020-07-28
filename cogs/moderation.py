@@ -374,6 +374,9 @@ class Moderation(Cog):
             embed = Embed(description="{} A.K.A {}".format(member.mention, member),
                           colour=enso_embedmod_colours,
                           timestamp=datetime.datetime.utcnow())
+            embed.add_field(name="Account Creation Date",
+                            value=member.created_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"),
+                            inline=False)
             embed.set_author(name="Member Joined", icon_url=member.avatar_url)
             embed.set_thumbnail(url=member.avatar_url)
             embed.set_footer(text="ID: {}".format(member.id))

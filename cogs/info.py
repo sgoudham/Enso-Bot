@@ -11,8 +11,7 @@ from typing import Optional
 from discord import Colour, Member
 from discord import Embed
 from discord import __version__ as discord_version
-from discord.ext import commands
-from discord.ext.commands import BucketType, cooldown, bot_has_permissions, guild_only
+from discord.ext.commands import BucketType, cooldown, bot_has_permissions, guild_only, Cog
 from discord.ext.commands import command
 from psutil import Process, virtual_memory
 
@@ -87,13 +86,13 @@ def lineCount():
            "Files: {}".format(code, comments, blank, total, file_amount)
 
 
-class Info(commands.Cog):
+class Info(Cog):
     """(User/Server/Bot etc) Information!"""
 
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.Cog.listener()
+    @Cog.listener()
     async def on_ready(self):
         """Printing out that Cog is ready on startup"""
         print(f"{self.__class__.__name__} Cog has been loaded\n-----")

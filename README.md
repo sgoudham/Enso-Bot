@@ -23,7 +23,7 @@
 > crafted the design for Ensō~Chan **(Shown Below)**. Please go give her a follow on twitter where she will be posting more often!
 
 <p align="center">
-  <img src="https://media.discordapp.net/attachments/683490529862090814/734900981854109827/Enso_reworked.png?width=329&height=658">
+  <img src="https://media.discordapp.net/attachments/683490529862090814/734900981854109827/Enso_reworked.png?width=225&height=450">
 </p>
 
 # Ensō Server 

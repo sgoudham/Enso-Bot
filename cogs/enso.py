@@ -7,7 +7,7 @@ from typing import Optional
 import discord
 from discord import Embed, Colour
 from discord.ext import commands
-from discord.ext.commands import cooldown, BucketType, command, is_owner, bot_has_permissions
+from discord.ext.commands import cooldown, BucketType, command, is_owner, bot_has_permissions, Cog
 
 from settings import colour_list, enso_guild_ID, enso_ensochancommands_Mention, blank_space, enso_embedmod_colours, \
     enso_verification_ID
@@ -87,13 +87,13 @@ def enso_people():
             'david', 'clarity', 'angel', "studentjon"]
 
 
-class Enso(commands.Cog):
+class Enso(Cog):
     """Commands for Ensō server"""
 
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.Cog.listener()
+    @Cog.listener()
     async def on_ready(self):
         """Printing out that Cog is ready on startup"""
         print(f"{self.__class__.__name__} Cog has been loaded\n-----")
@@ -336,7 +336,7 @@ class Enso(commands.Cog):
         await verif.edit(embed=embed)
 
     # Cog listener for enabling roles to be added to users when they react to the embedded message
-    @commands.Cog.listener()
+    @Cog.listener()
     async def on_raw_reaction_add(self, payload):
         # Get the guild
         guild = self.bot.get_guild(enso_guild_ID)
@@ -414,7 +414,7 @@ class Enso(commands.Cog):
                 print(f"{payload.member.name} Was Given Role {role}")"""
 
     # Cog listener for enabling roles to be removed from users when they unreact to the embedded messaged
-    @commands.Cog.listener()
+    @Cog.listener()
     async def on_raw_reaction_remove(self, payload):
 
         # If the message id equals the self roles message
@@ -470,19 +470,19 @@ class Enso(commands.Cog):
             inline=False)
         embed.add_field(
             name="\u200b",
-            value="🎥 : `Movie Nights`",
+            value="🎥 : **Movie Nights**",
             inline=False)
         embed.add_field(
             name="\u200b",
-            value="🎤 : `Karaoke Nights`",
+            value="🎤 : **Karaoke Nights**",
             inline=False)
         embed.add_field(
             name="\u200b",
-            value="🎧 : `Enso Bros Podcasts`",
+            value="🎧 : **Enso Bros Podcasts**",
             inline=False)
         embed.add_field(
             name="\u200b",
-            value="🎮 : `Game Nights`",
+            value="🎮 : **Game Nights**",
             inline=False)
 
         # Edit the Embed And Update it

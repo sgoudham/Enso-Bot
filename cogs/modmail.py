@@ -7,7 +7,7 @@ import discord
 import mariadb
 from discord import Embed
 from discord import File
-from discord.ext.commands import bot_has_permissions, has_permissions, Cog, group
+from discord.ext.commands import has_permissions, Cog, group, bot_has_permissions
 
 import db
 from settings import enso_embedmod_colours, blank_space
@@ -156,15 +156,15 @@ class Modmail(Cog):
         print(f"{self.__class__.__name__} Cog has been loaded\n-----")
 
     @group(invoke_without_command=True, usage="`[argument...]`")
-    @has_permissions(manage_guild=True)
-    @bot_has_permissions(administrator=True)
+    @has_permissions(administrator=True)
+    @bot_has_permissions(embed_links=True, add_reactions=True, manage_channels=True)
     async def modmail(self, ctx):
         """Setup/Update/Delete Modmail System"""
         pass
 
     @modmail.command()
-    @has_permissions(manage_guild=True)
-    @bot_has_permissions(administrator=True)
+    @has_permissions(administrator=True)
+    @bot_has_permissions(embed_links=True, add_reactions=True, manage_channels=True)
     async def setup(self, ctx, channelID: int):
         """
         Setup Modmail System
@@ -265,8 +265,8 @@ class Modmail(Cog):
             return
 
     @modmail.command()
-    @has_permissions(manage_guild=True)
-    @bot_has_permissions(administrator=True)
+    @has_permissions(administrator=True)
+    @bot_has_permissions(embed_links=True, add_reactions=True, manage_channels=True)
     async def update(self, ctx, channelID: int):
         """
         Update the Channel that the Modmail is logged to
@@ -327,8 +327,8 @@ class Modmail(Cog):
             return
 
     @modmail.command()
-    @has_permissions(manage_guild=True)
-    @bot_has_permissions(administrator=True)
+    @has_permissions(administrator=True)
+    @bot_has_permissions(embed_links=True, add_reactions=True, manage_channels=True)
     async def delete(self, ctx):
         """Delete the Entire Modmail System from the Guild"""
 

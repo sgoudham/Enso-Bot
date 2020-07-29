@@ -21,13 +21,6 @@ async def ban_members(message, targets, reason):
 
     """
 
-    # Get the channel of the modlog within the guild
-    modlog = get_modlog_for_guild(str(message.guild.id))
-    if modlog is None:
-        channel = message.channel
-    else:
-        channel = message.guild.get_channel(int(modlog))
-
     # With every member, ban them and send an embed confirming the ban
     # The embed will either be sent to the current channel or the modlogs channel
     for target in targets:
@@ -35,20 +28,31 @@ async def ban_members(message, targets, reason):
                 and not target.guild_permissions.administrator):
             await target.ban(reason=reason)
 
-            embed = Embed(title="Member Banned",
-                          colour=enso_embedmod_colours,
-                          timestamp=datetime.datetime.utcnow())
+            await message.delete()
+            embed = Embed(description="✅ **{}** Was Banned! ✅".format(target))
+            await message.channel.send(embed=embed)
 
-            embed.set_thumbnail(url=target.avatar_url)
+            # Get the channel of the modlog within the guild
+            modlog = get_modlog_for_guild(str(message.guild.id))
+            if modlog is None:
+                pass
+            else:
+                channel = message.guild.get_channel(int(modlog))
 
-            fields = [("Member", target.mention, False),
-                      ("Actioned by", message.author.mention, False),
-                      ("Reason", reason, False)]
+                embed = Embed(title="Member Banned",
+                              colour=enso_embedmod_colours,
+                              timestamp=datetime.datetime.utcnow())
 
-            for name, value, inline in fields:
-                embed.add_field(name=name, value=value, inline=inline)
+                embed.set_thumbnail(url=target.avatar_url)
 
-            await channel.send(embed=embed)
+                fields = [("Member", target.mention, False),
+                          ("Actioned by", message.author.mention, False),
+                          ("Reason", reason, False)]
+
+                for name, value, inline in fields:
+                    embed.add_field(name=name, value=value, inline=inline)
+
+                await channel.send(embed=embed)
 
         # Send error message if the User could not be banned
         else:
@@ -66,13 +70,6 @@ async def kick_members(message, targets, reason):
 
     """
 
-    # Get the channel of the modlog within the guild
-    modlog = get_modlog_for_guild(str(message.guild.id))
-    if modlog is None:
-        channel = message.channel
-    else:
-        channel = message.guild.get_channel(int(modlog))
-
     # With every member, kick them and send an embed confirming the kick
     # The embed will either be sent to the current channel or the modlogs channel
     for target in targets:
@@ -80,20 +77,31 @@ async def kick_members(message, targets, reason):
                 and not target.guild_permissions.administrator):
             await target.kick(reason=reason)
 
-            embed = Embed(title="Member Kicked",
-                          colour=enso_embedmod_colours,
-                          timestamp=datetime.datetime.utcnow())
+            await message.delete()
+            embed = Embed(description="✅ **{}** Was Kicked! ✅".format(target))
+            await message.channel.send(embed=embed)
 
-            embed.set_thumbnail(url=target.avatar_url)
+            # Get the channel of the modlog within the guild
+            modlog = get_modlog_for_guild(str(message.guild.id))
+            if modlog is None:
+                pass
+            else:
+                channel = message.guild.get_channel(int(modlog))
 
-            fields = [("Member", target.mention, False),
-                      ("Actioned by", message.author.mention, False),
-                      ("Reason", reason, False)]
+                embed = Embed(title="Member Kicked",
+                              colour=enso_embedmod_colours,
+                              timestamp=datetime.datetime.utcnow())
 
-            for name, value, inline in fields:
-                embed.add_field(name=name, value=value, inline=inline)
+                embed.set_thumbnail(url=target.avatar_url)
 
-            await channel.send(embed=embed)
+                fields = [("Member", target.mention, False),
+                          ("Actioned by", message.author.mention, False),
+                          ("Reason", reason, False)]
+
+                for name, value, inline in fields:
+                    embed.add_field(name=name, value=value, inline=inline)
+
+                await channel.send(embed=embed)
 
         # Send error message if the User could not be kicked
         else:

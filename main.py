@@ -123,7 +123,8 @@ async def restart(ctx):
     """Restart the Bot"""
 
     embed = Embed(
-        description="**Success Senpai! My Reboot Had No Problems** <a:ThumbsUp:737832825469796382>")
+        description="**Success Senpai! My Reboot Had No Problems** <a:ThumbsUp:737832825469796382>",
+        colour=enso_embedmod_colours)
     await ctx.send(embed=embed)
     await client.logout()
 

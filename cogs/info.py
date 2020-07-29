@@ -42,8 +42,9 @@ Perms = frozenset(
 )
 
 
-# Method to detect which permissions to filter out
 def DetectPermissions(message, fset):
+    """Filter out permissions that are not important"""
+
     # Split the message individual permissions
     message = message.split(",")
 
@@ -59,12 +60,13 @@ def lineCount():
     comments = 0
     blank = 0
     file_amount = 0
-    ENV = "venv"  # change this to your env folder dir
+    ENV = "venv"
 
     for path, _, files in os.walk("."):
         for name in files:
             file_dir = str(pathlib.PurePath(path, name))
-            if not name.endswith(".py") or ENV in file_dir:  # ignore env folder and not python files.
+            # Ignoring the venv directory
+            if not name.endswith(".py") or ENV in file_dir:
                 continue
             file_amount += 1
             with open(file_dir, "r", encoding="utf-8") as file:
@@ -117,6 +119,8 @@ class Info(Cog):
         # Store all the roles that the user has
         # (Skipping the first element as it's always going to be @everyone)
         role = f"{' '.join(map(str, (role.mention for role in member.roles[1:])))}"
+
+        # Accounting for the edge case where the user has no roles to be displayed
         if role == "":
             roles = "No Roles"
         else:
@@ -129,6 +133,8 @@ class Info(Cog):
 
         # Capitalise every word in the array and filter out the permissions that are defined within the frozenset
         permission = string.capwords("".join(map(str, DetectPermissions(perms, Perms))))
+
+        # Accounting for the edge case where the user has no key permissions to be displayed
         if permission == "":
             permissions = "No Key Permissions"
         else:

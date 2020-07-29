@@ -16,13 +16,11 @@ async def ban_members(message, targets, reason):
 
     Method to allow members to be banned
 
-    If no channel has been detected in the cache, it will send the embed
-    to the current channel that the user is in
+    2 embeds will be sent, one to the channel that the user is in
+    And if the user has the modlogs channel setup, an embed will be logged there
 
     """
 
-    # With every member, ban them and send an embed confirming the ban
-    # The embed will either be sent to the current channel or the modlogs channel
     for target in targets:
         if (message.guild.me.top_role.position > target.top_role.position
                 and not target.guild_permissions.administrator):
@@ -66,13 +64,11 @@ async def kick_members(message, targets, reason):
 
     Method to allow the kick member log to be sent to the modlog channel
 
-    If no channel has been detected in the cache, it will send the embed
-    to the current channel that the user is in
+    2 embeds will be sent, one to the channel that the user is in
+    And if the user has the modlogs channel setup, an embed will be logged there
 
     """
 
-    # With every member, kick them and send an embed confirming the kick
-    # The embed will either be sent to the current channel or the modlogs channel
     for target in targets:
         if (message.guild.me.top_role.position > target.top_role.position
                 and not target.guild_permissions.administrator):
@@ -329,6 +325,7 @@ class Moderation(Cog):
                               colour=enso_embedmod_colours)
                 await ctx.send(embed=embed)
             else:
+                
                 # Get the member and unban them
                 user = await self.bot.fetch_user(member)
                 await ctx.guild.unban(user, reason=reason)
@@ -338,6 +335,28 @@ class Moderation(Cog):
                 embed = Embed(description="✅ **{}** Was Unbanned! ✅".format(user),
                               colour=enso_embedmod_colours)
                 await ctx.send(embed=embed)
+
+                # Get the channel of the modlog within the guild
+                modlog = get_modlog_for_guild(str(ctx.guild.id))
+                if modlog is None:
+                    pass
+                else:
+                    channel = ctx.guild.get_channel(int(modlog))
+
+                    embed = Embed(title="Member Unbanned",
+                                  colour=enso_embedmod_colours,
+                                  timestamp=datetime.datetime.utcnow())
+
+                    embed.set_thumbnail(url=user.avatar_url)
+
+                    fields = [("Member", user, False),
+                              ("Actioned by", ctx.author.mention, False),
+                              ("Reason", reason, False)]
+
+                    for name, value, inline in fields:
+                        embed.add_field(name=name, value=value, inline=inline)
+
+                    await channel.send(embed=embed)
 
     @command(name="purge", aliases=["Purge"])
     @guild_only()

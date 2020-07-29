@@ -309,7 +309,7 @@ class Moderation(Cog):
     @has_guild_permissions(ban_members=True)
     @bot_has_guild_permissions(ban_members=True)
     @cooldown(1, 1, BucketType.user)
-    async def unban(self, ctx, members: Greedy[Member], *, reason: Optional[str] = "No Reason Given"):
+    async def unban(self, ctx, members: Greedy[int], *, reason: Optional[str] = "No Reason Given"):
         """
         Unban Member(s) from Server
         Multiple Members can be Unbanned At Once
@@ -320,7 +320,7 @@ class Moderation(Cog):
         ban_ids = list(map(lambda m: m.user.id, bans))
 
         for member in members:
-            if member.id not in ban_ids:
+            if member not in ban_ids:
                 embed = Embed(description="❌ **Member Is Not In Unban's List!** ❌",
                               colour=enso_embedmod_colours)
                 await ctx.send(embed=embed)

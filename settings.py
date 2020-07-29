@@ -3,9 +3,9 @@ import random
 
 from discord import Colour
 
-# Defining a list of colours
 import db
 
+# Defining a list of colours
 colors = {
     'DEFAULT': 0x000000,
     'WHITE': 0xFFFFFF,
@@ -78,6 +78,8 @@ async def startup_cache_log():
                 cache_prefix(row[0], row[1])
 
 
+# --------------------------------------------!ModLogs Section!---------------------------------------------------------
+
 # Store guildID's and modlog channel within a cached dictionary
 modlogs = {}
 
@@ -140,6 +142,9 @@ def get_modlog_for_guild(guildid):
     return channel
 
 
+# --------------------------------------------!End ModLogs Section!-----------------------------------------------------
+
+# --------------------------------------------!Prefixes Section!--------------------------------------------------------
 # Storing the prefixes and guildID's in the cache
 cached_prefixes = {}
 
@@ -185,6 +190,9 @@ def get_prefix_for_guild(guildid):
     return "defaultPrefix"
 
 
+# --------------------------------------------!End Prefixes Section!----------------------------------------------------
+
+# --------------------------------------------!Cogs/Set Values Section!-------------------------------------------------
 # Define repeated variables
 hammyMention = '<@154840866496839680>'
 hammyID = 154840866496839680
@@ -215,3 +223,5 @@ def extensions():
 # Run the async function to store everything in cache
 loop = asyncio.get_event_loop()
 loop.run_until_complete(startup_cache_log())
+
+# --------------------------------------------!End Cogs/Set Values Section!---------------------------------------------

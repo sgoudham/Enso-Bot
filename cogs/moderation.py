@@ -260,7 +260,7 @@ class Moderation(Cog):
             await ctx.send(embed=embed)
         # Throw error when user tries to kick themselves
         elif ctx.author in members:
-            embed = Embed(description="❌ You Can't Kick Yourself Baka! ❌")
+            embed = Embed(description="**❌ You Can't Kick Yourself Baka! ❌**")
             await ctx.send(embed=embed)
             return
         # As long as all members are valid
@@ -286,7 +286,7 @@ class Moderation(Cog):
             await ctx.send(embed=embed)
         # Throw error when user tries to kick themselves
         elif ctx.author in members:
-            embed = Embed(description="❌ You Can't Ban Yourself Baka! ❌")
+            embed = Embed(description="**❌ You Can't Ban Yourself Baka! ❌**")
             await ctx.send(embed=embed)
             return
         # As long as all members are valid

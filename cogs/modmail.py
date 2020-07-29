@@ -433,7 +433,8 @@ class Modmail(Cog):
             overwrites = {
                 guild.default_role: discord.PermissionOverwrite(read_messages=False, send_messages=False),
                 guild.me: discord.PermissionOverwrite(embed_links=True, read_messages=True, manage_messages=True,
-                                                      manage_channels=True, read_message_history=True),
+                                                      manage_channels=True, read_message_history=True,
+                                                      send_messages=True),
                 member: discord.PermissionOverwrite(read_messages=True, send_messages=True)
             }
 

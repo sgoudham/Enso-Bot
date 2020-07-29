@@ -28,7 +28,9 @@
 
 # Ensō Server 
 
-![alt text](https://media.discordapp.net/attachments/683490529862090814/729814673502765184/image.gif?width=300&height=315)
+<p align="center">
+    <img src="https://media.discordapp.net/attachments/683490529862090814/729814673502765184/image.gif?width=300&height=315" alt="Server Logo">
+</p>
 
 <b> <p> 
 A warm welcome from our small but growing community of Ensō. 

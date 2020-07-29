@@ -283,7 +283,7 @@ class Moderation(Cog):
     @has_guild_permissions(ban_members=True)
     @bot_has_guild_permissions(ban_members=True)
     @cooldown(1, 1, BucketType.user)
-    async def ban(self, ctx, members: Greedy[Member], *, reason: Optional[str] = "No reason provided."):
+    async def ban(self, ctx, members: Greedy[Member], *, reason: Optional[str] = "No Reason Given"):
         """
         Ban Member(s) from Server
         Multiple Members can be banned at once
@@ -309,23 +309,28 @@ class Moderation(Cog):
     @has_guild_permissions(ban_members=True)
     @bot_has_guild_permissions(ban_members=True)
     @cooldown(1, 1, BucketType.user)
-    async def unban(self, ctx, member: int, *, reason=None):
+    async def unban(self, ctx, member_id: Greedy[int], *, reason: Optional[str] = "No Reason Given"):
         """Unban Member from Server"""
 
-        # Check if reason has been given
-        if reason:
-            reason = reason
-        # Set default reason to None
-        else:
-            reason = "No Reason Given"
+        # Get the list of banned users from the server
+        bans = await ctx.guild.bans()
+        ban_ids = list(map(lambda m: m.user.id, bans))
 
-        # Get the member and unban them
-        member = await self.bot.fetch_user(member)
-        await ctx.guild.unban(member, reason=reason)
+        for members in member_id:
+            if members not in ban_ids:
+                embed = Embed(description="❌ **Member Is Not In Unban's List!** ❌",
+                              colour=enso_embedmod_colours)
+                await ctx.send(embed=embed)
+            else:
+                # Get the member and unban them
+                member = await self.bot.fetch_user(members)
+                await ctx.guild.unban(member, reason=reason)
 
-        # Confirm that the user has been unbanned
-        await ctx.send(f"{ctx.author.name} **unbanned** {member.name}"
-                       f"\n**Reason:** '{reason}'")
+                await ctx.message.delete()
+                # Send confirmation to the channel that the user is in
+                embed = Embed(description="✅ **{}** Was Unbanned! ✅".format(member),
+                              colour=enso_embedmod_colours)
+                await ctx.send(embed=embed)
 
     @command(name="purge", aliases=["Purge"])
     @guild_only()
@@ -367,22 +372,22 @@ class Moderation(Cog):
     async def on_raw_bulk_message_delete(self, payload):
         """Logging Bulk Message Deletion from Server"""
 
-        # Get the guild within the cache
-        guild = get_modlog_for_guild(str(payload.guild_id))
+        # Get the channel within the cache
+        channel = get_modlog_for_guild(str(payload.guild_id))
 
         # When no modlogs channel is returned, do nothing
-        if guild is None:
+        if channel is None:
             pass
         # Send the embed to the modlogs channel
         else:
 
             # Get the modlogs channel and channel that the messages were deleted in
-            modlogs_channel = self.bot.get_channel(int(guild))
-            channel = self.bot.get_channel(payload.channel_id)
+            modlogs_channel = self.bot.get_channel(int(channel))
+            deleted_msgs_channel = self.bot.get_channel(payload.channel_id)
 
             # Set up embed showing the messages deleted and what channel they were deleted in
             embed = Embed(
-                description="**Bulk Delete in {}, {} messages deleted**".format(channel.mention,
+                description="**Bulk Delete in {}, {} messages deleted**".format(deleted_msgs_channel.mention,
                                                                                 len(payload.message_ids)),
                 colour=enso_embedmod_colours,
                 timestamp=datetime.datetime.utcnow())
@@ -394,19 +399,19 @@ class Moderation(Cog):
     async def on_member_remove(self, member):
         """Log Member Leaves from Server"""
 
-        # Get the guild within the cache
-        guild = get_modlog_for_guild(str(member.guild.id))
+        # Get the channel within the cache
+        channel = get_modlog_for_guild(str(member.guild.id))
 
         # When no modlogs channel is returned, do nothing
-        if guild is None:
+        if channel is None:
             pass
         # Send the embed to the modlogs channel
         else:
 
             # Get the modlogs channel
-            modlogs_channel = self.bot.get_channel(int(guild))
+            modlogs_channel = self.bot.get_channel(int(channel))
 
-            embed = Embed(description="{} A.K.A {}".format(member.mention, member),
+            embed = Embed(description="**{}** A.K.A **{}**".format(member.mention, member),
                           colour=enso_embedmod_colours,
                           timestamp=datetime.datetime.utcnow())
             embed.set_author(name="Member Left", icon_url=member.avatar_url)
@@ -419,25 +424,49 @@ class Moderation(Cog):
     async def on_member_join(self, member):
         """Log Member Joins to Server"""
 
-        # Get the guild within the cache
-        guild = get_modlog_for_guild(str(member.guild.id))
+        # Get the channel within the cache
+        channel = get_modlog_for_guild(str(member.guild.id))
 
         # When no modlogs channel is returned, do nothing
-        if guild is None:
+        if channel is None:
             pass
         # Send the embed to the modlogs channel
         else:
 
             # Get the modlogs channel
-            modlogs_channel = self.bot.get_channel(int(guild))
+            modlogs_channel = self.bot.get_channel(int(channel))
 
-            embed = Embed(description="{} A.K.A {}".format(member.mention, member),
+            embed = Embed(description="**{}** A.K.A **{}**".format(member.mention, member),
                           colour=enso_embedmod_colours,
                           timestamp=datetime.datetime.utcnow())
             embed.add_field(name="Account Creation Date",
                             value=member.created_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"),
                             inline=False)
             embed.set_author(name="Member Joined", icon_url=member.avatar_url)
+            embed.set_thumbnail(url=member.avatar_url)
+            embed.set_footer(text="ID: {}".format(member.id))
+
+            await modlogs_channel.send(embed=embed)
+
+    @Cog.listener()
+    async def on_member_unban(self, guild, member):
+        """Log Member Unbans from Server"""
+
+        # Get the channel within the cache
+        channel = get_modlog_for_guild(str(guild.id))
+
+        # When no modlogs channel is returned, do nothing
+        if channel is None:
+            pass
+        # Send the embed to the modlogs channel
+        else:
+            # Get the modlogs channel
+            modlogs_channel = self.bot.get_channel(int(channel))
+
+            embed = Embed(description="**{}** Unbanned".format(member.mention, member),
+                          colour=enso_embedmod_colours,
+                          timestamp=datetime.datetime.utcnow())
+
             embed.set_thumbnail(url=member.avatar_url)
             embed.set_footer(text="ID: {}".format(member.id))
 

@@ -52,7 +52,7 @@ async def ban_members(message, targets, reason):
 
         # Send error message if the User could not be banned
         else:
-            embed = Embed(description="**User {} could not be Banned!**".format(target.mention))
+            embed = Embed(description="**{} Could Not Be Banned!**".format(target.mention))
             await message.channel.send(embed=embed)
 
 
@@ -97,7 +97,7 @@ async def kick_members(message, targets, reason):
 
         # Send error message if the User could not be kicked
         else:
-            embed = Embed(description="**User {} could not be Kicked!**".format(target.mention))
+            embed = Embed(description="**{} Could Not Be Kicked!**".format(target.mention))
             await message.channel.send(embed=embed)
 
 

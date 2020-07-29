@@ -29,7 +29,8 @@ async def ban_members(message, targets, reason):
             await target.ban(reason=reason)
 
             await message.delete()
-            embed = Embed(description="✅ **{}** Was Banned! ✅".format(target))
+            embed = Embed(description="✅ **{}** Was Banned! ✅".format(target),
+                          colour=enso_embedmod_colours)
             await message.channel.send(embed=embed)
 
             # Get the channel of the modlog within the guild
@@ -78,7 +79,8 @@ async def kick_members(message, targets, reason):
             await target.kick(reason=reason)
 
             await message.delete()
-            embed = Embed(description="✅ **{}** Was Kicked! ✅".format(target))
+            embed = Embed(description="✅ **{}** Was Kicked! ✅".format(target),
+                          colour=enso_embedmod_colours)
             await message.channel.send(embed=embed)
 
             # Get the channel of the modlog within the guild

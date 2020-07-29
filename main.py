@@ -123,7 +123,8 @@ async def leave(ctx):
 async def restart(ctx):
     """Restart the Bot"""
 
-    await ctx.send("**Success Senpai! Bot has been restarted**")
+    embed = Embed(description="**Success Senpai! My Reboot Had No Problems ｡ﾟ( ﾟ^∀^ﾟ)ﾟ｡**")
+    await ctx.send(embed=embed, delete_after=5.0)
     await client.logout()
 
 

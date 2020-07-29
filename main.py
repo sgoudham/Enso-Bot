@@ -196,10 +196,12 @@ async def change_prefix(ctx, new: Optional[str] = None):
         await ctx.send(f"**The current guild prefix is `{get_prefix_for_guild(str(ctx.guild.id))}`**")
 
 
-# Bot event for the bot joining a new guild, storing all users in the database
 @client.event
 async def on_guild_join(guild):
-    """Store users in a database when the bot has joined a new guild"""
+    """
+    Store users in a database
+    Store prefix/modlogs in the cache
+    """
 
     # Store default prefix within cache
     cache_prefix(str(guild.id), prefix="~")
@@ -234,10 +236,12 @@ async def on_guild_join(guild):
             print(cur.rowcount, f"Record(s) inserted successfully into Members from {guild.name}")
 
 
-# Bot event for the bot leaving a guild, deleted all users stored in the database
 @client.event
 async def on_guild_remove(guild):
-    """Remove users in the database for the guild"""
+    """
+    Remove users in the database for the guild
+    Remove the modlogs/guild from the cache
+    """
 
     # Delete the key - value pairs for the guild
     del_cache_prefix(str(guild.id))
@@ -271,9 +275,13 @@ async def on_guild_remove(guild):
             print(cur.rowcount, f"Record(s) deleted successfully from Members from {guild.name}")
 
 
-# Bot event for new member joining, sending an embed introducing them to the server
 @client.event
 async def on_member_join(member):
+    """
+    Bot event to insert new members into the database
+    In the Enso guild, it will send an introduction embed
+    """
+
     # Get the guild
     guild = member.guild
 
@@ -328,9 +336,10 @@ async def on_member_join(member):
     await new_people.send(embed=embed)
 
 
-# Bot Event for handling all errors within discord.commands
 @client.event
 async def on_command_error(ctx, args2):
+    """Event to detect and handle errors"""
+
     # if the user did not specify an user
     if isinstance(args2, commands.MissingRequiredArgument):
         await on_command_missing_argument(ctx)
@@ -348,6 +357,7 @@ async def on_command_error(ctx, args2):
         await on_command_permission(ctx)
     elif isinstance(args2, commands.BotMissingPermissions):
         await on_bot_forbidden(ctx, args2)
+    # if the user tries to invoke a command that is only for the owner
     elif isinstance(args2, commands.NotOwner):
         await on_not_owner(ctx)
 

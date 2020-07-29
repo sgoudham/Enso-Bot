@@ -304,31 +304,34 @@ class Moderation(Cog):
             # Send embed of the Banned member
             await ban_members(ctx.message, members, reason)
 
-    @command(name="unban", aliases=["Unban"], usage="`<member>` `[reason]`")
+    @command(name="unban", aliases=["Unban"], usage="`<member>...` `[reason]`")
     @guild_only()
     @has_guild_permissions(ban_members=True)
     @bot_has_guild_permissions(ban_members=True)
     @cooldown(1, 1, BucketType.user)
-    async def unban(self, ctx, member_id: Greedy[int], *, reason: Optional[str] = "No Reason Given"):
-        """Unban Member from Server"""
+    async def unban(self, ctx, members: Greedy[Member], *, reason: Optional[str] = "No Reason Given"):
+        """
+        Unban Member(s) from Server
+        Multiple Members can be Unbanned At Once
+        """
 
         # Get the list of banned users from the server
         bans = await ctx.guild.bans()
         ban_ids = list(map(lambda m: m.user.id, bans))
 
-        for members in member_id:
-            if members not in ban_ids:
+        for member in members:
+            if member.id not in ban_ids:
                 embed = Embed(description="❌ **Member Is Not In Unban's List!** ❌",
                               colour=enso_embedmod_colours)
                 await ctx.send(embed=embed)
             else:
                 # Get the member and unban them
-                member = await self.bot.fetch_user(members)
-                await ctx.guild.unban(member, reason=reason)
+                user = await self.bot.fetch_user(member)
+                await ctx.guild.unban(user, reason=reason)
 
                 await ctx.message.delete()
                 # Send confirmation to the channel that the user is in
-                embed = Embed(description="✅ **{}** Was Unbanned! ✅".format(member),
+                embed = Embed(description="✅ **{}** Was Unbanned! ✅".format(user),
                               colour=enso_embedmod_colours)
                 await ctx.send(embed=embed)
 
@@ -463,7 +466,7 @@ class Moderation(Cog):
             # Get the modlogs channel
             modlogs_channel = self.bot.get_channel(int(channel))
 
-            embed = Embed(description="**{}** Unbanned".format(member.mention, member),
+            embed = Embed(description="**{}** Unbanned".format(member),
                           colour=enso_embedmod_colours,
                           timestamp=datetime.datetime.utcnow())
 

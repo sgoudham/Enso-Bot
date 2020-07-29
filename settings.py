@@ -145,6 +145,7 @@ def get_modlog_for_guild(guildid):
 # --------------------------------------------!End ModLogs Section!-----------------------------------------------------
 
 # --------------------------------------------!Prefixes Section!--------------------------------------------------------
+
 # Storing the prefixes and guildID's in the cache
 cached_prefixes = {}
 
@@ -193,6 +194,7 @@ def get_prefix_for_guild(guildid):
 # --------------------------------------------!End Prefixes Section!----------------------------------------------------
 
 # --------------------------------------------!Cogs/Set Values Section!-------------------------------------------------
+
 # Define repeated variables
 hammyMention = '<@154840866496839680>'
 hammyID = 154840866496839680

@@ -44,7 +44,7 @@ class Pages:
         Our permissions for the channel.
     """
 
-    def __init__(self, ctx, *, entries, per_page=6, show_entry_count=True):
+    def __init__(self, ctx, *, entries, per_page=4, show_entry_count=True):
 
         self.bot = ctx.bot
         self.prefix = ctx.prefix
@@ -351,7 +351,7 @@ def _command_signature(cmd):
 
 
 class HelpPaginator(Pages):
-    def __init__(self, ctx, entries, *, per_page=6):
+    def __init__(self, ctx, entries, *, per_page=4):
         super().__init__(ctx, entries=entries, per_page=per_page)
         self.reaction_emojis.append(('\N{WHITE QUESTION MARK ORNAMENT}', self.show_bot_help))
         self.total = len(entries)
@@ -422,7 +422,7 @@ class HelpPaginator(Pages):
 
         entries = sorted(ctx.bot.commands, key=key)
         nested_pages = []
-        per_page = 6
+        per_page = 4
 
         # 0: (cog, desc, commands) (max len == 9)
         # 1: (cog, desc, commands) (max len == 9)

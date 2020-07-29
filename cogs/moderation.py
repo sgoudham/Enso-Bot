@@ -266,11 +266,13 @@ class Moderation(Cog):
         # When no members are entered. Throw an error
         if not len(members):
             embed = Embed(description="Not Correct Syntax!"
-                                      "\nUse **{}help** to find how to use **{}**".format(ctx.prefix, ctx.command))
+                                      "\nUse **{}help** to find how to use **{}**".format(ctx.prefix, ctx.command),
+                          colour=enso_embedmod_colours)
             await ctx.send(embed=embed)
         # Throw error when user tries to kick themselves
         elif ctx.author in members:
-            embed = Embed(description="**❌ You Can't Kick Yourself Baka! ❌**")
+            embed = Embed(description="**❌ You Can't Kick Yourself Baka! ❌**",
+                          colour=enso_embedmod_colours)
             await ctx.send(embed=embed)
             return
         # As long as all members are valid
@@ -292,11 +294,13 @@ class Moderation(Cog):
         # When no members are entered. Throw an error
         if not len(members):
             embed = Embed(description="Not Correct Syntax!"
-                                      "\nUse **{}help** to find how to use **{}**".format(ctx.prefix, ctx.command))
+                                      "\nUse **{}help** to find how to use **{}**".format(ctx.prefix, ctx.command),
+                          colour=enso_embedmod_colours)
             await ctx.send(embed=embed)
         # Throw error when user tries to kick themselves
         elif ctx.author in members:
-            embed = Embed(description="**❌ You Can't Ban Yourself Baka! ❌**")
+            embed = Embed(description="**❌ You Can't Ban Yourself Baka! ❌**",
+                          colour=enso_embedmod_colours)
             await ctx.send(embed=embed)
             return
         # As long as all members are valid

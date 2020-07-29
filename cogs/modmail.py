@@ -157,14 +157,18 @@ class Modmail(Cog):
 
     @group(invoke_without_command=True, usage="`[argument...]`")
     @has_permissions(administrator=True)
-    @bot_has_permissions(embed_links=True, add_reactions=True, manage_channels=True)
+    @bot_has_permissions(embed_links=True, read_messages=True, manage_messages=True,
+                         manage_channels=True, read_message_history=True,
+                         send_messages=True, attach_files=True)
     async def modmail(self, ctx):
         """Setup/Update/Delete Modmail System"""
         pass
 
     @modmail.command()
     @has_permissions(administrator=True)
-    @bot_has_permissions(embed_links=True, add_reactions=True, manage_channels=True)
+    @bot_has_permissions(embed_links=True, read_messages=True, manage_messages=True,
+                         manage_channels=True, read_message_history=True,
+                         send_messages=True, attach_files=True)
     async def setup(self, ctx, channelID: int):
         """
         Setup Modmail System
@@ -266,7 +270,9 @@ class Modmail(Cog):
 
     @modmail.command()
     @has_permissions(administrator=True)
-    @bot_has_permissions(embed_links=True, add_reactions=True, manage_channels=True)
+    @bot_has_permissions(embed_links=True, read_messages=True, manage_messages=True,
+                         manage_channels=True, read_message_history=True,
+                         send_messages=True, attach_files=True)
     async def update(self, ctx, channelID: int):
         """
         Update the Channel that the Modmail is logged to
@@ -328,7 +334,9 @@ class Modmail(Cog):
 
     @modmail.command()
     @has_permissions(administrator=True)
-    @bot_has_permissions(embed_links=True, add_reactions=True, manage_channels=True)
+    @bot_has_permissions(embed_links=True, read_messages=True, manage_messages=True,
+                         manage_channels=True, read_message_history=True,
+                         send_messages=True, attach_files=True)
     async def delete(self, ctx):
         """Delete the Entire Modmail System from the Guild"""
 

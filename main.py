@@ -124,7 +124,7 @@ async def restart(ctx):
     """Restart the Bot"""
 
     embed = Embed(
-        description="<a:ThumbsUp:737832825469796382> **Success Senpai! My Reboot Had No Problems ｡ﾟ( ﾟ^∀^ﾟ)ﾟ｡**")
+        description="**Success Senpai! My Reboot Had No Problems** <a:ThumbsUp:737832825469796382>")
     await ctx.send(embed=embed)
     await client.logout()
 

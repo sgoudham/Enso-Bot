@@ -6,7 +6,7 @@ from typing import Optional
 from discord import Embed
 from discord.ext.commands import bot_has_permissions, Cog, group
 
-from settings import rndColour
+from settings import rndColour, enso_embedmod_colours
 
 # Defining the full names of the waifu's/husbando's
 anime = {"yumeko": "Jabami Yumeko",
@@ -147,9 +147,12 @@ class Anime(Cog):
             except FileNotFoundError as e:
                 print(e)
 
-                # Send error message saying that the person isn't recognised
-                await ctx.send(f"Sorry! That waifu doesn't exist!"
-                               f"\nPlease do **{ctx.prefix}waifu list** to see the list of Waifu's")
+                # Send error message saying that the Waifu isn't recognised
+                embed = Embed(description="Sorry! That waifu doesn't exist!"
+                                          "\nPlease Do **{}waifu list** To View The List Of Waifu's Available"
+                              .format(ctx.prefix),
+                              colour=enso_embedmod_colours)
+                await ctx.send(embed=embed)
         else:
 
             # Get embed from randomWaifu() and send it to the channel
@@ -180,10 +183,12 @@ class Anime(Cog):
             except FileNotFoundError as e:
                 print(e)
 
-                # Send error message saying that the person isn't recognised
-                await ctx.send(
-                    f"Sorry! That husbando doesn't exist!"
-                    f"\nPlease do **{ctx.prefix}h list** to see the list of husbando's")
+                # Send error message saying that the Husbando isn't recognised
+                embed = Embed(description="Sorry! That Husbando Doesn't Exist!"
+                                          "\nPlease Do **{}husbando list** To View The List Of Husbando's Available"
+                              .format(ctx.prefix),
+                              colour=enso_embedmod_colours)
+                await ctx.send(embed=embed)
 
         else:
 
@@ -199,8 +204,10 @@ class Anime(Cog):
         waifu_list = string.capwords(', '.join(map(str, waifus())))
 
         # Tell the user to try the waifus in the array
-        await ctx.send(f"Try the waifu's listed below!"
-                       f"\n{waifu_list}")
+        embed = Embed(description="Try The Waifu's Listed Below!"
+                                  "\n**{}**".format(waifu_list),
+                      colour=enso_embedmod_colours)
+        await ctx.send(embed=embed)
 
     @husbando.command(name="list")
     async def hlist(self, ctx):
@@ -210,8 +217,11 @@ class Anime(Cog):
         husbando_list = string.capwords(', '.join(map(str, husbandos())))
 
         # Tell the user to try the husbando's in the array
-        await ctx.send(f"Try the husbando's listed below!"
-                       f"\n{husbando_list}")
+        embed = Embed(description="Try The Husbando's Listed Below!"
+                                  "\n**{}**".format(husbando_list),
+                      colour=enso_embedmod_colours)
+
+        await ctx.send(embed=embed)
 
 
 def setup(bot):

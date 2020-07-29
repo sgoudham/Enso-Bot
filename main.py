@@ -155,6 +155,8 @@ async def _help(ctx, *, command: Optional[str] = None):
 @client.command(name="reloaddb", hidden=True)
 @is_owner()
 async def reload_db(ctx):
+    """Reloads the database by inserting/updating all the records"""
+
     # Setup pool
     pool = await connection(db.loop)
 

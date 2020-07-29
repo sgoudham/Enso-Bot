@@ -258,7 +258,11 @@ class Moderation(Cog):
             embed = Embed(description="Not Correct Syntax!"
                                       "\nUse **{}help** to find how to use **{}**".format(ctx.prefix, ctx.command))
             await ctx.send(embed=embed)
-
+        # Throw error when user tries to kick themselves
+        elif ctx.author in members:
+            embed = Embed(description="❌ You Can't Kick Yourself Baka! ❌")
+            await ctx.send(embed=embed)
+            return
         # As long as all members are valid
         else:
             # Send embed of the kicked member
@@ -280,7 +284,11 @@ class Moderation(Cog):
             embed = Embed(description="Not Correct Syntax!"
                                       "\nUse **{}help** to find how to use **{}**".format(ctx.prefix, ctx.command))
             await ctx.send(embed=embed)
-
+        # Throw error when user tries to kick themselves
+        elif ctx.author in members:
+            embed = Embed(description="❌ You Can't Ban Yourself Baka! ❌")
+            await ctx.send(embed=embed)
+            return
         # As long as all members are valid
         else:
             # Send embed of the Banned member

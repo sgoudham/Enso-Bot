@@ -1,4 +1,3 @@
-import asyncio
 import datetime
 from datetime import timedelta
 from typing import Optional
@@ -10,6 +9,51 @@ from discord.ext.commands import command, guild_only, has_guild_permissions, bot
 import db
 from db import connection
 from settings import enso_embedmod_colours, get_modlog_for_guild, storage_modlog_for_guild, remove_modlog_channel
+
+
+async def ban_members(message, targets, reason):
+    """
+
+    Method to allow members to be banned
+
+    If no channel has been detected in the cache, it will send the embed
+    to the current channel that the user is in
+
+    """
+
+    # Get the channel of the modlog within the guild
+    modlog = get_modlog_for_guild(str(message.guild.id))
+    if modlog is None:
+        channel = message.channel
+    else:
+        channel = message.guild.get_channel(int(modlog))
+
+    # With every member, ban them and send an embed confirming the ban
+    # The embed will either be sent to the current channel or the modlogs channel
+    for target in targets:
+        if (message.guild.me.top_role.position > target.top_role.position
+                and not target.guild_permissions.administrator):
+            await target.ban(reason=reason)
+
+            embed = Embed(title="Member Banned",
+                          colour=enso_embedmod_colours,
+                          timestamp=datetime.datetime.utcnow())
+
+            embed.set_thumbnail(url=target.avatar_url)
+
+            fields = [("Member", target.mention, False),
+                      ("Actioned by", message.author.mention, False),
+                      ("Reason", reason, False)]
+
+            for name, value, inline in fields:
+                embed.add_field(name=name, value=value, inline=inline)
+
+            await channel.send(embed=embed)
+
+        # Send error message if the User could not be banned
+        else:
+            embed = Embed(description="**User {} could not be Banned!**".format(target.mention))
+            await message.channel.send(embed=embed)
 
 
 async def kick_members(message, targets, reason):
@@ -42,7 +86,7 @@ async def kick_members(message, targets, reason):
 
             embed.set_thumbnail(url=target.avatar_url)
 
-            fields = [("Member", f"{target.mention}", False),
+            fields = [("Member", target.mention, False),
                       ("Actioned by", message.author.mention, False),
                       ("Reason", reason, False)]
 
@@ -53,7 +97,8 @@ async def kick_members(message, targets, reason):
 
         # Send error message if the User could not be kicked
         else:
-            await message.channel.send("**User {} could not be Kicked!**".format(target.mention))
+            embed = Embed(description="**User {} could not be Kicked!**".format(target.mention))
+            await message.channel.send(embed=embed)
 
 
 class Moderation(Cog):
@@ -210,39 +255,36 @@ class Moderation(Cog):
 
         # When no members are entered. Throw an error
         if not len(members):
-            message = await ctx.send(
-                f"Not Correct Syntax!"
-                f"\nUse **{ctx.prefix}help** to find how to use **{ctx.command}**")
-
-            # Let the user read the message for 5 seconds
-            await asyncio.sleep(5)
-            # Delete the message
-            await message.delete()
+            embed = Embed(description="Not Correct Syntax!"
+                                      "\nUse **{}help** to find how to use **{}**".format(ctx.prefix, ctx.command))
+            await ctx.send(embed=embed)
 
         # As long as all members are valid
         else:
             # Send embed of the kicked member
             await kick_members(ctx.message, members, reason)
 
-    @command(name="ban", aliases=["Ban"], usage="`<member>` `[reason]`")
+    @command(name="ban", aliases=["Ban"], usage="`<member>...` `[reason]`")
     @guild_only()
     @has_guild_permissions(ban_members=True)
     @bot_has_guild_permissions(ban_members=True)
     @cooldown(1, 1, BucketType.user)
-    async def ban(self, ctx, member: Member, *, reason=None):
-        """Ban Members from Server"""
+    async def ban(self, ctx, members: Greedy[Member], *, reason: Optional[str] = "No reason provided."):
+        """
+        Ban Member(s) from Server
+        Multiple Members can be banned at once
+        """
 
-        # Check if reason has been given
-        if reason:
-            reason = reason
-        # Set default reason to None
+        # When no members are entered. Throw an error
+        if not len(members):
+            embed = Embed(description="Not Correct Syntax!"
+                                      "\nUse **{}help** to find how to use **{}**".format(ctx.prefix, ctx.command))
+            await ctx.send(embed=embed)
+
+        # As long as all members are valid
         else:
-            reason = "No Reason Given"
-
-        # Ban the user and send confirmation to the channel
-        await ctx.guild.ban(user=member, reason=reason)
-        await ctx.send(f"{ctx.author.name} **banned** {member.name}"
-                       f"\n**Reason:** '{reason}'")
+            # Send embed of the Banned member
+            await ban_members(ctx.message, members, reason)
 
     @command(name="unban", aliases=["Unban"], usage="`<member>` `[reason]`")
     @guild_only()
@@ -305,7 +347,7 @@ class Moderation(Cog):
 
     @Cog.listener()
     async def on_raw_bulk_message_delete(self, payload):
-        """Sending Bulk Deleted Messages to Modlogs Channel"""
+        """Logging Bulk Message Deletion from Server"""
 
         # Get the guild within the cache
         guild = get_modlog_for_guild(str(payload.guild_id))
@@ -332,7 +374,7 @@ class Moderation(Cog):
 
     @Cog.listener()
     async def on_member_remove(self, member):
-        """Sending Members that have left to Modlogs Channel"""
+        """Log Member Leaves from Server"""
 
         # Get the guild within the cache
         guild = get_modlog_for_guild(str(member.guild.id))
@@ -357,7 +399,7 @@ class Moderation(Cog):
 
     @Cog.listener()
     async def on_member_join(self, member):
-        """Sending Members that have joined to the Modlogs Channel"""
+        """Log Member Joins to Server"""
 
         # Get the guild within the cache
         guild = get_modlog_for_guild(str(member.guild.id))

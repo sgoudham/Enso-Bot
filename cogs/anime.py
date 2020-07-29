@@ -148,7 +148,7 @@ class Anime(Cog):
                 print(e)
 
                 # Send error message saying that the Waifu isn't recognised
-                embed = Embed(description="Sorry! That waifu doesn't exist!"
+                embed = Embed(description="Sorry! That Waifu Doesn't Exist!"
                                           "\nPlease Do **{}waifu list** To View The List Of Waifu's Available"
                               .format(ctx.prefix),
                               colour=enso_embedmod_colours)

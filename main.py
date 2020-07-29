@@ -358,7 +358,8 @@ async def on_bot_forbidden(ctx, args2):
     missing_perms = string.capwords(", ".join(args2.missing_perms).replace("_", " "))
 
     # Send an error message to the user notifying them of the permissions that are missing from the bot
-    embed = Embed(description="❌ I Need **{}** Permission(s) to Execute This Command! ❌".format(missing_perms))
+    embed = Embed(description="❌ I Need **{}** Permission(s) to Execute This Command! ❌".format(missing_perms),
+                  colour=enso_embedmod_colours)
     await ctx.send(embed=embed)
 
 
@@ -371,28 +372,32 @@ async def on_command_forbidden(ctx):
 # Async def for handling command bad argument error
 async def on_command_bad_argument(ctx):
     # Send an error message to the user telling them that the member specified could not be found
-    embed = Embed(description="**❌ Uh oh! Couldn't find anyone to mention! Try again! ❌**")
+    embed = Embed(description="**❌ Uh oh! Couldn't find anyone to mention! Try again! ❌**",
+                  colour=enso_embedmod_colours)
     await ctx.send(embed=embed)
 
 
 # Async def for handling command not found error
 async def on_command_not_found(ctx):
     # Send an error message to the user telling them that the command doesn't exist
-    embed = Embed(description="Command Not Found! ❌ Please use **{}help** to see all commands".format(ctx.prefix))
+    embed = Embed(description="Command Not Found! ❌ Please use **{}help** to see all commands".format(ctx.prefix),
+                  colour=enso_embedmod_colours)
     await ctx.send(embed=embed)
 
 
 # Async def for handling cooldown error/permission errors
 async def on_command_cooldown(ctx, error):
     # Send an error message to the user telling them that the command is on cooldown
-    embed = Embed(description="That command is on cooldown. Try again in **{:,.2f}** seconds".format(error.retry_after))
+    embed = Embed(description="That command is on cooldown. Try again in **{:,.2f}** seconds".format(error.retry_after),
+                  colour=enso_embedmod_colours)
     await ctx.send(embed=embed)
 
 
 # Async def for handling permission errors
 async def on_command_permission(ctx):
     # Send an error message to the user saying that they don't have permission to use this command
-    embed = Embed(description="**❌ Uh oh! You don't have permission to use this command! ❌**")
+    embed = Embed(description="**❌ Uh oh! You don't have permission to use this command! ❌**",
+                  colour=enso_embedmod_colours)
     await ctx.send(embed=embed)
 
 
@@ -400,13 +405,15 @@ async def on_command_missing_argument(ctx):
     # Send an error message to the user saying that an argument is missing
     embed = Embed(description="Required Argument(s) Missing!"
                               "\nUse **{}help** to find how to use **{}**".format(ctx.prefix,
-                                                                                  ctx.command))
+                                                                                  ctx.command),
+                  colour=enso_embedmod_colours)
     await ctx.send(embed=embed)
 
 
 async def on_not_owner(ctx):
     # Send an error message to the user saying that it's only for owners
-    embed = Embed(description="**❌ Owner Only Command ❌**")
+    embed = Embed(description="**❌ Owner Only Command ❌**",
+                  colour=enso_embedmod_colours)
     await ctx.send(embed=embed)
 
 

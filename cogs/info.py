@@ -79,7 +79,7 @@ def lineCount():
     # Adding up the total lines of code
     total = comments + blank + code
 
-    return "Code: {}\n " \
+    return "Code: {}\n" \
            "Commentary: {}\n" \
            "Blank: {}\n" \
            "Total: {}\n" \

@@ -98,7 +98,6 @@ change_status.start()
 @client.event
 async def on_ready():
     """Displaying if Bot is Ready"""
-
     print("UvU Senpaiii I'm weady")
 
 
@@ -172,7 +171,7 @@ async def reload_db(ctx):
             print(cur.rowcount, f"Record(s) inserted successfully into Members from {ctx.guild.name}")
 
             # Sending confirmation message
-            await ctx.send("**Database Reloaded Successfully for Guild {}**".format(ctx.guild.name))
+            await ctx.send("Database Reloaded Successfully for **{}**".format(ctx.guild.name))
 
 
 @client.command(name="prefix", aliases=["Prefix"])
@@ -354,7 +353,8 @@ async def on_command_error(ctx, args2):
         await on_command_bad_argument(ctx)
     # if the user does not the correct permissions to call a command
     elif isinstance(args2, commands.MissingPermissions):
-        await on_command_permission(ctx)
+        await on_command_permission(ctx, args2)
+    # if the bot is missing permissions needed
     elif isinstance(args2, commands.BotMissingPermissions):
         await on_bot_forbidden(ctx, args2)
     # if the user tries to invoke a command that is only for the owner
@@ -362,57 +362,55 @@ async def on_command_error(ctx, args2):
         await on_not_owner(ctx)
 
 
-# Async def for handling command bad argument error
 async def on_bot_forbidden(ctx, args2):
+    """Handles Missing Bot Permissions Errors"""
+
     # Convert list into string of the missing permissions
     missing_perms = string.capwords(", ".join(args2.missing_perms).replace("_", " "))
 
-    # Send an error message to the user notifying them of the permissions that are missing from the bot
     embed = Embed(description="❌ I Need **{}** Permission(s) to Execute This Command! ❌".format(missing_perms),
                   colour=enso_embedmod_colours)
     await ctx.send(embed=embed)
 
 
-# Async def for handling command bad argument error
-async def on_command_forbidden(ctx):
-    # Send an error message to the user telling them that the member specified could not be found
-    await ctx.send(f"**I don't have permissions to execute this command**")
-
-
-# Async def for handling command bad argument error
 async def on_command_bad_argument(ctx):
-    # Send an error message to the user telling them that the member specified could not be found
+    """Handles Bad Argument Errors (Argument can't be read properly)"""
+
     embed = Embed(description="**❌ Uh oh! Couldn't find anyone to mention! Try again! ❌**",
                   colour=enso_embedmod_colours)
     await ctx.send(embed=embed)
 
 
-# Async def for handling command not found error
 async def on_command_not_found(ctx):
-    # Send an error message to the user telling them that the command doesn't exist
+    """Handles the command not found error"""
+
     embed = Embed(description="Command Not Found! ❌ Please use **{}help** to see all commands".format(ctx.prefix),
                   colour=enso_embedmod_colours)
     await ctx.send(embed=embed)
 
 
-# Async def for handling cooldown error/permission errors
 async def on_command_cooldown(ctx, error):
-    # Send an error message to the user telling them that the command is on cooldown
+    """Handles Cooldown Errors"""
+
     embed = Embed(description="That command is on cooldown. Try again in **{:,.2f}** seconds".format(error.retry_after),
                   colour=enso_embedmod_colours)
     await ctx.send(embed=embed)
 
 
-# Async def for handling permission errors
-async def on_command_permission(ctx):
-    # Send an error message to the user saying that they don't have permission to use this command
-    embed = Embed(description="**❌ Uh oh! You don't have permission to use this command! ❌**",
+async def on_command_permission(ctx, args2):
+    """Handles User Missing Permissions Errors"""
+
+    # Convert list into string of the missing permissions
+    missing_perms = string.capwords(", ".join(args2.missing_perms).replace("_", " "))
+
+    embed = Embed(description="❌ Uh oh! You Need **{}** Permission(s) To Execute This Command! ❌".format(missing_perms),
                   colour=enso_embedmod_colours)
     await ctx.send(embed=embed)
 
 
 async def on_command_missing_argument(ctx):
-    # Send an error message to the user saying that an argument is missing
+    """Handles the missing argument error"""
+
     embed = Embed(description="Required Argument(s) Missing!"
                               "\nUse **{}help** to find how to use **{}**".format(ctx.prefix,
                                                                                   ctx.command),
@@ -421,7 +419,8 @@ async def on_command_missing_argument(ctx):
 
 
 async def on_not_owner(ctx):
-    # Send an error message to the user saying that it's only for owners
+    """Handles the error when the user is not the owner and tries to invoke owner only command"""
+
     embed = Embed(description="**❌ Owner Only Command ❌**",
                   colour=enso_embedmod_colours)
     await ctx.send(embed=embed)
@@ -510,6 +509,11 @@ async def someone(ctx):
     """"""Tags Someone Randomly in the Server""""""
 
     await ctx.send(random.choice(tuple(member.mention for member in ctx.guild.members if not member.bot)))
+    
+    # Async def for handling command bad argument error
+async def on_command_forbidden(ctx):
+    # Send an error message to the user telling them that the member specified could not be found
+    await ctx.send(f"**I don't have permissions to execute this command**")
     
     
 

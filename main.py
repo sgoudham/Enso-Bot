@@ -518,6 +518,23 @@ async def on_command_forbidden(ctx):
     # Send an error message to the user telling them that the member specified could not be found
     await ctx.send(f"**I don't have permissions to execute this command**")
     
+        if message.guild.id != enso_guild_ID:
+        return
+    else:
+        nicknames = ["Ensō's Face",
+                     "Ensō's Leg",
+                     "Ensō's Thighs",
+                     "Ensō's Hands",
+                     "Ensō's Feet",
+                     "Ensō's Hair",
+                     "Ensō's Backbone",
+                     "Ensō's Knees",
+                     "Ensō's Fingers",
+                     "Ensō's Stomach",
+                     "Ensō's Heart",
+                     "Ensō's Nose",
+                     ]
+        await message.author.edit(nick=random.choice(nicknames))
     
 
 """

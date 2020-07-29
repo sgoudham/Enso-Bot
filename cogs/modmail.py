@@ -431,7 +431,7 @@ class Modmail(Cog):
 
             # Setting up the channel permissions for the new channel that will be created
             overwrites = {
-                guild.default_role: discord.PermissionOverwrite(read_messages=False),
+                guild.default_role: discord.PermissionOverwrite(read_messages=False, send_messages=False),
                 guild.me: discord.PermissionOverwrite(embed_links=True, read_messages=True, manage_messages=True,
                                                       manage_channels=True, read_message_history=True),
                 member: discord.PermissionOverwrite(read_messages=True, send_messages=True)

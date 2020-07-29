@@ -203,6 +203,9 @@ class Info(Cog):
             # Display all the emojis in the server as it is less than 20
             emojis = " ".join(map(str, ctx.guild.emojis))
 
+        if emojis == "":
+            emojis = "No Emoji's Available"
+
         # Defining a dictionary of the statuses
         member_status = {
             "online": 0,

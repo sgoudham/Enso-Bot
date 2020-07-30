@@ -148,10 +148,10 @@ class Anime(Cog):
                 print(e)
 
                 # Send error message saying that the Waifu isn't recognised
-                embed = Embed(description="Sorry! That Waifu Doesn't Exist!"
-                                          "\nPlease Do **{}waifu list** To View The List Of Waifu's Available"
-                              .format(ctx.prefix),
-                              colour=enso_embedmod_colours)
+                embed = Embed(
+                    description="Sorry! That Waifu Doesn't Exist!"
+                                f"\nPlease Do **{ctx.prefix}waifu list** To View The List Of Waifu's Available",
+                    colour=enso_embedmod_colours)
                 await ctx.send(embed=embed)
         else:
 
@@ -184,10 +184,10 @@ class Anime(Cog):
                 print(e)
 
                 # Send error message saying that the Husbando isn't recognised
-                embed = Embed(description="Sorry! That Husbando Doesn't Exist!"
-                                          "\nPlease Do **{}husbando list** To View The List Of Husbando's Available"
-                              .format(ctx.prefix),
-                              colour=enso_embedmod_colours)
+                embed = Embed(
+                    description="Sorry! That Husbando Doesn't Exist!"
+                                f"\nPlease Do **{ctx.prefix}husbando list** To View The List Of Husbando's Available",
+                    colour=enso_embedmod_colours)
                 await ctx.send(embed=embed)
 
         else:

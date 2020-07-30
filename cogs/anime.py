@@ -205,7 +205,7 @@ class Anime(Cog):
 
         # Tell the user to try the waifus in the array
         embed = Embed(description="Try The Waifu's Listed Below!"
-                                  "\n**{}**".format(waifu_list),
+                                  f"\n**{waifu_list}**",
                       colour=enso_embedmod_colours)
         await ctx.send(embed=embed)
 
@@ -218,7 +218,7 @@ class Anime(Cog):
 
         # Tell the user to try the husbando's in the array
         embed = Embed(description="Try The Husbando's Listed Below!"
-                                  "\n**{}**".format(husbando_list),
+                                  f"\n**{husbando_list}**",
                       colour=enso_embedmod_colours)
 
         await ctx.send(embed=embed)

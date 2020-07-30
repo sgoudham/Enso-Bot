@@ -163,10 +163,10 @@ class Guild(Cog):
         """Setup/Update/Delete Modlogs System"""
         pass
 
-    @modlogs.command()
+    @modlogs.command(name="setup")
     @has_permissions(manage_guild=True)
     @bot_has_permissions(administrator=True)
-    async def setup(self, ctx, channelID: int):
+    async def mlsetup(self, ctx, channelID: int):
         """Setup a Channel for the Kick/Ban/Mute Actions to be Logged In"""
 
         # Retrieve a list of channel id's in the guild
@@ -201,10 +201,10 @@ class Guild(Cog):
             mod_log_setup = True
             await storage_modlog_for_guild(ctx, channelID, mod_log_setup)
 
-    @modlogs.command()
+    @modlogs.command(name="update")
     @has_permissions(manage_guild=True)
     @bot_has_permissions(administrator=True)
-    async def update(self, ctx, channelID: int):
+    async def mlupdate(self, ctx, channelID: int):
         """Change the Channel that your Modlogs are Sent to"""
 
         # Retrieve a list of channel id's in the guild
@@ -239,10 +239,10 @@ class Guild(Cog):
             mod_log_setup = False
             await storage_modlog_for_guild(ctx, channelID, mod_log_setup)
 
-    @modlogs.command()
+    @modlogs.command("delete")
     @has_permissions(manage_guild=True)
     @bot_has_permissions(administrator=True)
-    async def delete(self, ctx):
+    async def mldelete(self, ctx):
         """Delete the Existing Modlogs System"""
 
         # Setup pool
@@ -290,12 +290,12 @@ class Guild(Cog):
         """Setup/Update/Delete Modmail System"""
         pass
 
-    @modmail.command()
+    @modmail.command(name="setup")
     @has_permissions(administrator=True)
     @bot_has_permissions(embed_links=True, read_messages=True, manage_messages=True,
                          manage_channels=True, read_message_history=True,
                          send_messages=True, attach_files=True)
-    async def setup(self, ctx, channelID: int):
+    async def mmsetup(self, ctx, channelID: int):
         """
         Setup Modmail System
         Input the ID of the Channel where the Modmail will be sent
@@ -394,10 +394,10 @@ class Guild(Cog):
             await ctx.send("**Invalid Channel ID. Aborting Process...**")
             return
 
-    @modmail.command()
+    @modmail.command(name="update")
     @has_permissions(administrator=True)
     @bot_has_permissions(administrator=True)
-    async def update(self, ctx, channelID: int):
+    async def mmupdate(self, ctx, channelID: int):
         """
         Update the Channel that the Modmail is logged to
         Input the ID of the New Channel
@@ -456,10 +456,10 @@ class Guild(Cog):
             await ctx.send("**Invalid Channel ID. Aborting Process...**")
             return
 
-    @modmail.command()
+    @modmail.command(name="delete")
     @has_permissions(administrator=True)
     @bot_has_permissions(administrator=True)
-    async def delete(self, ctx):
+    async def mmdelete(self, ctx):
         """Delete the Entire Modmail System from the Guild"""
 
         # Setup pool

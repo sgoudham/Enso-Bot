@@ -13,7 +13,7 @@ import settings
 from cogs.help import HelpPaginator
 from db import connection
 from settings import blank_space, enso_embedmod_colours, enso_guild_ID, enso_newpeople_ID, get_prefix_for_guild, \
-    storage_prefix_for_guild, cache_prefix, del_cache_prefix, del_modlog_channel, cache_modlogs
+    storage_prefix_for_guild, cache, del_cache
 
 counter = 0
 
@@ -205,10 +205,8 @@ async def on_guild_join(guild):
     Store prefix/modlogs in the cache
     """
 
-    # Store default prefix within cache
-    cache_prefix(str(guild.id), prefix="~")
-    # Store default modlogs channel within cache
-    cache_modlogs(str(guild.id), channel=None)
+    # Store guildID, modlogs channel and prefix to cache
+    cache(str(guild.id), channel=None, prefix="~")
 
     # Setup pool
     pool = await connection(db.loop)
@@ -244,10 +242,8 @@ async def on_guild_remove(guild):
     Remove users in the database for the guild
     Remove the modlogs/guild from the cache
     """
-
     # Delete the key - value pairs for the guild
-    del_cache_prefix(str(guild.id))
-    del_modlog_channel(str(guild.id))
+    del_cache(str(guild.id))
 
     # Setup pool
     pool = await connection(db.loop)

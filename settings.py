@@ -56,6 +56,10 @@ def rndColour():
     return Colour(random.randint(0, 0xFFFFFF))
 
 
+# Setup Dict To Store Values
+enso_cache = {}
+
+
 async def startup_cache_log():
     """Store the modlogs/prefixes in cache from the database on startup"""
 
@@ -72,21 +76,32 @@ async def startup_cache_log():
             await cur.execute(select_query)
             results = await cur.fetchall()
 
-            # Store the guildids and modlog channels
+            # Store the guildID's, modlog channels and prefixes within cache
             for row in results:
-                cache_modlogs(row[0], row[2])
-                cache_prefix(row[0], row[1])
+                cache(guildid=row[0], channel=row[2], prefix=row[1])
+
+
+# Method to store the guildID, channel
+def cache(guildid, channel, prefix):
+    """Storing GuildID, Modlogs Channel and Prefix in Cache"""
+    enso_cache[guildid] = {"Modlogs": channel, "Prefix": prefix}
+
+
+def get_cache(guildid):
+    """Returning the cache"""
+    return enso_cache[guildid]
+
+
+def del_cache(guildid):
+    """Deleting the entry of the guild within the cache"""
+    del enso_cache[guildid]
 
 
 # --------------------------------------------!ModLogs Section!---------------------------------------------------------
 
-# Store guildID's and modlog channel within a cached dictionary
-modlogs = {}
-
-
 # Updating the modlog within the dict and database when the method is called
 async def storage_modlog_for_guild(ctx, channelID, setup):
-    modlogs[str(ctx.guild.id)] = channelID
+    enso_cache[str(ctx.guild.id)]["Modlogs"] = channelID
 
     # Setup pool
     pool = await db.connection(db.loop)
@@ -120,25 +135,25 @@ async def storage_modlog_for_guild(ctx, channelID, setup):
 
 # Method to store the cached modlog channels
 def cache_modlogs(guildid, channel):
-    modlogs[guildid] = channel
+    enso_cache[guildid]["Modlogs"] = channel
 
 
 # Deleting the key - value pair for guild/modlogs
 def del_modlog_channel(guildid):
-    if modlogs[guildid] is not None:
-        del modlogs[guildid]
+    if enso_cache[guildid]["Modlogs"] is not None:
+        del enso_cache[guildid]["Modlogs"]
     else:
         pass
 
 
 # Remove the value of modlog for the guild specified
 def remove_modlog_channel(guildid):
-    modlogs[guildid] = None
+    enso_cache[guildid]["Modlogs"] = None
 
 
 # Get the modlog channel of the guild that the user is in
 def get_modlog_for_guild(guildid):
-    channel = modlogs[guildid]
+    channel = enso_cache[guildid]["Modlogs"]
     return channel
 
 
@@ -146,13 +161,9 @@ def get_modlog_for_guild(guildid):
 
 # --------------------------------------------!Prefixes Section!--------------------------------------------------------
 
-# Storing the prefixes and guildID's in the cache
-cached_prefixes = {}
-
-
 # Updating the prefix within the dict and database when the method is called
 async def storage_prefix_for_guild(ctx, prefix):
-    cached_prefixes[str(ctx.guild.id)] = prefix
+    enso_cache[str(ctx.guild.id)]["Prefix"] = prefix
 
     # Setup pool
     pool = await db.connection(db.loop)
@@ -175,17 +186,17 @@ async def storage_prefix_for_guild(ctx, prefix):
 
 # Method to store the cached prefixes
 def cache_prefix(guildid, prefix):
-    cached_prefixes[guildid] = prefix
+    enso_cache[guildid]["Prefix"] = prefix
 
 
 # Deleting the key - value pair for guild
 def del_cache_prefix(guildid):
-    del cached_prefixes[guildid]
+    del enso_cache[guildid]["Prefix"]
 
 
 # Get the prefix of the guild that the user is in
 def get_prefix_for_guild(guildid):
-    prefix = cached_prefixes[guildid]
+    prefix = enso_cache[guildid]["Prefix"]
     if prefix is not None:
         return prefix
     return "defaultPrefix"

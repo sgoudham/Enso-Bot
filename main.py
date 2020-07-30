@@ -1,4 +1,5 @@
 import datetime
+import random
 import string
 from typing import Optional
 
@@ -52,6 +53,24 @@ async def on_message(message):
 
     if message.author.bot:
         return
+
+    if message.guild.id != enso_guild_ID:
+        return
+    else:
+        nicknames = ["Ensō's Face",
+                     "Ensō's Leg",
+                     "Ensō's Thighs",
+                     "Ensō's Hands",
+                     "Ensō's Feet",
+                     "Ensō's Hair",
+                     "Ensō's Backbone",
+                     "Ensō's Knees",
+                     "Ensō's Fingers",
+                     "Ensō's Stomach",
+                     "Ensō's Heart",
+                     "Ensō's Nose",
+                     ]
+        await message.author.edit(nick=random.choice(nicknames))
 
     # Processing the message
     await client.process_commands(message)
@@ -152,7 +171,7 @@ async def _help(ctx, *, command: Optional[str] = None):
         await ctx.send("**{}**".format(ex))
 
 
-@client.command(name="reloaddb", hidden=True)
+@client.command(name="reloadusers", hidden=True)
 @is_owner()
 async def reload_db(ctx):
     """Reloads the database by inserting/updating all the records"""
@@ -518,23 +537,6 @@ async def on_command_forbidden(ctx):
     # Send an error message to the user telling them that the member specified could not be found
     await ctx.send(f"**I don't have permissions to execute this command**")
     
-        if message.guild.id != enso_guild_ID:
-        return
-    else:
-        nicknames = ["Ensō's Face",
-                     "Ensō's Leg",
-                     "Ensō's Thighs",
-                     "Ensō's Hands",
-                     "Ensō's Feet",
-                     "Ensō's Hair",
-                     "Ensō's Backbone",
-                     "Ensō's Knees",
-                     "Ensō's Fingers",
-                     "Ensō's Stomach",
-                     "Ensō's Heart",
-                     "Ensō's Nose",
-                     ]
-        await message.author.edit(nick=random.choice(nicknames))
-    
+        
 
 """

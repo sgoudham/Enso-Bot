@@ -341,30 +341,6 @@ class Moderation(Cog):
 
             await modlogs_channel.send(embed=embed)
 
-    @Cog.listener()
-    async def on_member_unban(self, guild, member):
-        """Log Member Unbans from Server"""
-
-        # Get the channel within the cache
-        channel = get_modlog_for_guild(str(guild.id))
-
-        # When no modlogs channel is returned, do nothing
-        if channel is None:
-            pass
-        # Send the embed to the modlogs channel
-        else:
-            # Get the modlogs channel
-            modlogs_channel = self.bot.get_channel(int(channel))
-
-            embed = Embed(description="**{}** Unbanned".format(member),
-                          colour=enso_embedmod_colours,
-                          timestamp=datetime.datetime.utcnow())
-
-            embed.set_thumbnail(url=member.avatar_url)
-            embed.set_footer(text="ID: {}".format(member.id))
-
-            await modlogs_channel.send(embed=embed)
-
 
 def setup(bot):
     bot.add_cog(Moderation(bot))

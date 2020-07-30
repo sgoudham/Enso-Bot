@@ -284,7 +284,7 @@ class Moderation(Cog):
                                                                                 len(payload.message_ids)),
                 colour=enso_embedmod_colours,
                 timestamp=datetime.datetime.utcnow())
-            embed.set_author(name=channel.guild.name, icon_url=channel.guild.icon_url)
+            embed.set_author(name=deleted_msgs_channel.guild.name, icon_url=deleted_msgs_channel.guild.icon_url)
 
             await modlogs_channel.send(embed=embed)
 

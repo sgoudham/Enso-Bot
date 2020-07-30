@@ -10,7 +10,8 @@ from discord import File
 from discord.ext.commands import has_permissions, Cog, group, bot_has_permissions
 
 import db
-from settings import enso_embedmod_colours, blank_space
+from db import connection
+from settings import enso_embedmod_colours, blank_space, storage_modlog_for_guild, remove_modlog_channel
 
 
 # Method to ask the user if they want to be anonymous or not
@@ -143,7 +144,7 @@ def SendMsgToModMail(self, msg, author):
 
 
 # Set up the Cog
-class Modmail(Cog):
+class Guild(Cog):
     """Modmail System!"""
 
     def __init__(self, bot):
@@ -156,10 +157,135 @@ class Modmail(Cog):
         print(f"{self.__class__.__name__} Cog has been loaded\n-----")
 
     @group(invoke_without_command=True, usage="`[argument...]`")
+    @has_permissions(manage_guild=True)
+    @bot_has_permissions(administrator=True)
+    async def modlogs(self, ctx):
+        """Setup/Update/Delete Modlogs System"""
+        pass
+
+    @modlogs.command()
+    @has_permissions(manage_guild=True)
+    @bot_has_permissions(administrator=True)
+    async def setup(self, ctx, channelID: int):
+        """Setup a Channel for the Kick/Ban/Mute Actions to be Logged In"""
+
+        # Retrieve a list of channel id's in the guild
+        channels = [channel.id for channel in ctx.guild.channels]
+
+        # Setup pool
+        pool = await connection(db.loop)
+
+        # Setup pool connection and cursor
+        async with pool.acquire() as conn:
+            async with conn.cursor() as cur:
+                # Get the row of the guild
+                select_query = """SELECT * FROM guilds WHERE guildID = (%s)"""
+                val = ctx.guild.id,
+
+                # Execute the SQL Query
+                await cur.execute(select_query, val)
+                result = await cur.fetchone()
+
+        # Throw error if the modlog channel already exists and then stop the function
+        if result[2] is not None:
+            await ctx.send("Looks like this guild already has a **Modlogs Channel** set up!" +
+                           f"\nPlease check **{ctx.prefix}help** for information on how to update/delete existing information")
+            return
+
+        # Abort the process if the channel does not exist within the guild
+        if channelID not in channels:
+            await ctx.send("**Invalid ChannelID Detected... Aborting Process**")
+
+        else:
+            # Set up the modlogs channel within the guild
+            mod_log_setup = True
+            await storage_modlog_for_guild(ctx, channelID, mod_log_setup)
+
+    @modlogs.command()
+    @has_permissions(manage_guild=True)
+    @bot_has_permissions(administrator=True)
+    async def update(self, ctx, channelID: int):
+        """Change the Channel that your Modlogs are Sent to"""
+
+        # Retrieve a list of channel id's in the guild
+        channels = [channel.id for channel in ctx.guild.channels]
+
+        # Setup pool
+        pool = await connection(db.loop)
+
+        # Setup up pool connection and cursor
+        async with pool.acquire() as conn:
+            async with conn.cursor() as cur:
+                # Get the guilds row from the guilds table
+                select_query = """SELECT * FROM guilds WHERE guildID = (%s)"""
+                vals = ctx.guild.id,
+
+                # Execute the SQL Query
+                await cur.execute(select_query, vals)
+                result = await cur.fetchone()
+
+        # Throw error if the modlog channel already exists and then stop the function
+        if result[2] is None:
+            await ctx.send("Looks like this guild has not setup a **Modlogs Channel**" +
+                           f"\nPlease check **{ctx.prefix}help** for information on how to update/delete existing information")
+            return
+
+        # Abort the process if the channel does not exist within the guild
+        if channelID not in channels:
+            await ctx.send("**Invalid ChannelID Detected... Aborting Process**")
+
+        else:
+            # Update the modlog channel within the database and cache
+            mod_log_setup = False
+            await storage_modlog_for_guild(ctx, channelID, mod_log_setup)
+
+    @modlogs.command()
+    @has_permissions(manage_guild=True)
+    @bot_has_permissions(administrator=True)
+    async def delete(self, ctx):
+        """Delete the Existing Modlogs System"""
+
+        # Setup pool
+        pool = await connection(db.loop)
+
+        # Setup up pool connection and cursor
+        async with pool.acquire() as conn:
+            async with conn.cursor() as cur:
+                # Get the guilds row from the guilds table
+                select_query = """SELECT * FROM guilds WHERE guildID = (%s)"""
+                vals = ctx.guild.id,
+
+                # Execute the SQL Query
+                await cur.execute(select_query, vals)
+                result = await cur.fetchone()
+
+        # Throw error if the modlog channel already exists and then stop the function
+        if result[2] is None:
+            await ctx.send("Looks like this guild has not setup a **Modlogs Channel**" +
+                           f"\nPlease check **{ctx.prefix}help** for information on how to update/delete existing information")
+            return
+
+        # Setup up pool connection and cursor
+        async with pool.acquire() as conn:
+            async with conn.cursor() as cur:
+                # Update the existing prefix within the database
+                update_query = """UPDATE guilds SET modlogs = NULL WHERE guildID = (%s)"""
+                update_vals = ctx.guild.id,
+
+                # Execute the query
+                await cur.execute(update_query, update_vals)
+                await conn.commit()
+
+        # Delete channel from cache
+        remove_modlog_channel(str(ctx.guild.id))
+
+        # Sending confirmation message that the modmail system has been deleted
+        await ctx.send("**Modlogs System** successfully deleted!" +
+                       f"\nPlease do **{ctx.prefix}help** to find out how to set Modmail again!")
+
+    @group(invoke_without_command=True, usage="`[argument...]`")
     @has_permissions(administrator=True)
-    @bot_has_permissions(embed_links=True, read_messages=True, manage_messages=True,
-                         manage_channels=True, read_message_history=True,
-                         send_messages=True, attach_files=True)
+    @bot_has_permissions(administrator=True)
     async def modmail(self, ctx):
         """Setup/Update/Delete Modmail System"""
         pass
@@ -179,7 +305,7 @@ class Modmail(Cog):
         channels = [channel.id for channel in ctx.guild.channels]
 
         # Setup pool
-        pool = await db.connection(db.loop)
+        pool = await connection(db.loop)
 
         # Setup up pool connection and cursor
         async with pool.acquire() as conn:
@@ -270,9 +396,7 @@ class Modmail(Cog):
 
     @modmail.command()
     @has_permissions(administrator=True)
-    @bot_has_permissions(embed_links=True, read_messages=True, manage_messages=True,
-                         manage_channels=True, read_message_history=True,
-                         send_messages=True, attach_files=True)
+    @bot_has_permissions(administrator=True)
     async def update(self, ctx, channelID: int):
         """
         Update the Channel that the Modmail is logged to
@@ -283,7 +407,7 @@ class Modmail(Cog):
         channels = [channel.id for channel in ctx.guild.channels]
 
         # Setup pool
-        pool = await db.connection(db.loop)
+        pool = await connection(db.loop)
 
         # Setup up pool connection and cursor
         async with pool.acquire() as conn:
@@ -334,14 +458,12 @@ class Modmail(Cog):
 
     @modmail.command()
     @has_permissions(administrator=True)
-    @bot_has_permissions(embed_links=True, read_messages=True, manage_messages=True,
-                         manage_channels=True, read_message_history=True,
-                         send_messages=True, attach_files=True)
+    @bot_has_permissions(administrator=True)
     async def delete(self, ctx):
         """Delete the Entire Modmail System from the Guild"""
 
         # Setup pool
-        pool = await db.connection(db.loop)
+        pool = await connection(db.loop)
 
         # Setup up pool connection and cursor
         async with pool.acquire() as conn:
@@ -398,7 +520,7 @@ class Modmail(Cog):
         guildid = payload.guild_id
 
         # Setup pool
-        pool = await db.connection(db.loop)
+        pool = await connection(db.loop)
 
         # Setup up pool connection and cursor
         async with pool.acquire() as conn:
@@ -615,4 +737,4 @@ class Modmail(Cog):
 
 
 def setup(bot):
-    bot.add_cog(Modmail(bot))
+    bot.add_cog(Guild(bot))

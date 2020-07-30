@@ -2,11 +2,64 @@ import datetime
 from datetime import timedelta
 from typing import Optional
 
+import discord
 from discord import Member, Embed
 from discord.ext.commands import command, guild_only, has_guild_permissions, bot_has_guild_permissions, Greedy, \
     cooldown, BucketType, Cog
 
 from settings import enso_embedmod_colours, get_modlog_for_guild
+
+
+async def mute_members(message, targets, reason, muted):
+    """
+
+    Method to allow members to be muted
+
+    2 embeds will be sent, one to the channel that the user is in
+    And if the user has the modlogs channel setup, an embed will be logged there
+
+    """
+    for target in targets:
+        if (message.guild.me.top_role.position > target.top_role.position
+                and not target.guild_permissions.administrator):
+            try:
+                await target.edit(roles=[message.guild.default_role])
+                await target.add_roles(muted, reason=reason)
+
+                await message.delete()
+                # Send confirmation to the channel that the user is in
+                embed = Embed(description="✅ **{}** Was Muted! ✅".format(target),
+                              colour=enso_embedmod_colours)
+                await message.channel.send(embed=embed)
+
+                # Get the channel of the modlog within the guild
+                modlog = get_modlog_for_guild(str(message.guild.id))
+                if modlog is None:
+                    pass
+                else:
+                    channel = message.guild.get_channel(int(modlog))
+
+                    embed = Embed(title="Member Muted",
+                                  colour=enso_embedmod_colours,
+                                  timestamp=datetime.datetime.utcnow())
+
+                    embed.set_thumbnail(url=target.avatar_url)
+
+                    fields = [("Member", target.mention, False),
+                              ("Actioned by", message.author.mention, False),
+                              ("Reason", reason, False)]
+
+                    for name, value, inline in fields:
+                        embed.add_field(name=name, value=value, inline=inline)
+
+                    await channel.send(embed=embed)
+            except Exception as e:
+                print(e)
+
+        # Send error message if the User could not be muted
+        else:
+            embed = Embed(description="**{} Could Not Be Muted!**".format(target.mention))
+            await message.channel.send(embed=embed)
 
 
 async def ban_members(message, targets, reason):
@@ -260,6 +313,42 @@ class Moderation(Cog):
                                               after=datetime.datetime.utcnow() - timedelta(days=14))
 
             await ctx.send(f"Deleted **{len(deleted):,}** messages.", delete_after=5)
+
+    @command(name="mute", aliases=["Mute"])
+    @has_guild_permissions(manage_roles=True)
+    @bot_has_guild_permissions(manage_roles=True)
+    async def mute(self, ctx, members: Greedy[Member], *, reason: Optional[str] = "No Reason Given"):
+        """
+        Mute Member(s) from Server
+        Multiple Members can be Muted At Once
+        """
+
+        # When no members are entered. Throw an error
+        if not len(members):
+            embed = Embed(description="Not Correct Syntax!"
+                                      "\nUse **{}help** to find how to use **{}**".format(ctx.prefix, ctx.command),
+                          colour=enso_embedmod_colours)
+            await ctx.send(embed=embed)
+        # Throw error when user tries to mute themselves
+        elif ctx.author in members:
+            embed = Embed(description="**❌ You Can't Mute Yourself Baka! ❌**",
+                          colour=enso_embedmod_colours)
+            await ctx.send(embed=embed)
+            return
+        else:
+            role = discord.utils.get(ctx.guild.roles, name="Muted")
+            if role is None:
+                # Setting up the role permissions for the Muted Role
+                muted = await ctx.guild.create_role(name="Muted")
+                # Removes permission to send messages in all channels
+                for channel in ctx.guild.channels:
+                    await channel.set_permissions(muted, send_messages=False, read_messages=True)
+
+                # Send embed of the kicked member
+                await mute_members(ctx.message, members, reason, muted)
+            else:
+                # Send embed of the kicked member
+                await mute_members(ctx.message, members, reason, role)
 
     @Cog.listener()
     async def on_raw_bulk_message_delete(self, payload):

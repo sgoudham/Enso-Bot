@@ -56,6 +56,8 @@ def rndColour():
     return Colour(random.randint(0, 0xFFFFFF))
 
 
+# --------------------------------------------!Cache Section!-----------------------------------------------------------
+
 # Setup Dict To Store Values
 enso_cache = {}
 
@@ -96,6 +98,8 @@ def del_cache(guildid):
     """Deleting the entry of the guild within the cache"""
     del enso_cache[guildid]
 
+
+# --------------------------------------------!End Cache Section!-------------------------------------------------------
 
 # --------------------------------------------!ModLogs Section!---------------------------------------------------------
 

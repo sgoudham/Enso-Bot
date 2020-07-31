@@ -334,7 +334,7 @@ class Moderation(Cog):
                 # Send embed of the kicked member
                 await kick_members(ctx.message, members, reason)
 
-    @command(name="mute", aliases=["Mute"])
+    @command(name="mute", aliases=["Mute"], usage="`<member>...` `[reason]`")
     @has_guild_permissions(manage_roles=True)
     @bot_has_guild_permissions(manage_roles=True)
     async def mute(self, ctx, members: Greedy[Member], *, reason: Optional[str] = "No Reason Given"):
@@ -359,7 +359,7 @@ class Moderation(Cog):
                     # Send embed of the kicked member
                     await mute_members(ctx.message, members, reason, role)
 
-    @command(name="unmute", aliases=["Unmute"])
+    @command(name="unmute", aliases=["Unmute"], usage="`<member>...` `[reason]`")
     @has_guild_permissions(manage_roles=True)
     @bot_has_guild_permissions(manage_roles=True)
     async def unmute(self, ctx, members: Greedy[Member], *, reason: Optional[str] = "No Reason Given"):

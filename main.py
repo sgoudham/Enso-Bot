@@ -284,7 +284,7 @@ async def on_member_join(member):
     guild = member.guild
 
     # Setup pool
-    pool = await db.connection(db.loop)
+    pool = await connection(db.loop)
 
     # Setup pool connection and cursor
     async with pool.acquire() as conn:
@@ -356,6 +356,9 @@ async def on_command_error(ctx, args2):
     # if the bot is missing permissions needed
     elif isinstance(args2, commands.BotMissingPermissions):
         await on_bot_forbidden(ctx, args2)
+    # if the bot is forbidden from performing the command
+    elif isinstance(args2, commands.CommandInvokeError):
+        await on_command_forbidden(ctx)
     # if the user tries to invoke a command that is only for the owner
     elif isinstance(args2, commands.NotOwner):
         await on_not_owner(ctx)
@@ -368,6 +371,14 @@ async def on_bot_forbidden(ctx, args2):
     missing_perms = string.capwords(", ".join(args2.missing_perms).replace("_", " "))
 
     embed = Embed(description=f"❌ I Need **{missing_perms}** Permission(s) to Execute This Command! ❌",
+                  colour=enso_embedmod_colours)
+    await ctx.send(embed=embed)
+
+
+async def on_command_forbidden(ctx):
+    """Handles Forbidden Error"""
+
+    embed = Embed(description="**❌ I Don't Have Permissions To Execute This Command ❌**",
                   colour=enso_embedmod_colours)
     await ctx.send(embed=embed)
 
@@ -434,7 +445,7 @@ except discord.errors.LoginFailure as e:
  # Don't count messages that are taken in the dms
     if not isinstance(message.channel, DMChannel):
         # Using connection to the database
-        with db.connection() as conn:
+        with connection() as conn:
 
             # Make sure that mariaDB errors are handled properly
             try:
@@ -477,7 +488,7 @@ except discord.errors.LoginFailure as e:
         
         
  # Using database connection
-    with db.connection() as conn:
+    with connection() as conn:
         # Grab the guild and prefix information of the guild that the message was sent in
         select_query = """"""SELECT * FROM guilds WHERE guildID = (?)""""""
         select_val = ctx.guild.id,
@@ -508,10 +519,6 @@ async def someone(ctx):
 
     await ctx.send(random.choice(tuple(member.mention for member in ctx.guild.members if not member.bot)))
     
-    # Async def for handling command bad argument error
-async def on_command_forbidden(ctx):
-    # Send an error message to the user telling them that the member specified could not be found
-    await ctx.send(f"**I don't have permissions to execute this command**")
     
         if message.guild.id != enso_guild_ID:
         return

@@ -249,7 +249,7 @@ async def storeRoles(target, ctx, member):
     async with pool.acquire() as conn:
         async with conn.cursor() as cur:
             # Store the existing roles of the user within the database
-            update_query = """UPDATE members SET roles = (%s) WHERE guildID = (%s) AND discordID = (%s)"""
+            update_query = """UPDATE members SET mutedroles = (%s) WHERE guildID = (%s) AND discordID = (%s)"""
             update_vals = role_ids, ctx.guild.id, member.id
 
             # Execute the query
@@ -265,7 +265,7 @@ async def clearRoles(ctx, member, pool):
     async with pool.acquire() as conn:
         async with conn.cursor() as cur:
             # Clear the existing roles of the user from the database
-            update_query = """UPDATE members SET roles = NULL WHERE guildID = (%s) AND discordID = (%s)"""
+            update_query = """UPDATE members SET mutedroles = NULL WHERE guildID = (%s) AND discordID = (%s)"""
             update_vals = ctx.guild.id, member.id
 
             # Execute the query

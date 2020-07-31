@@ -399,7 +399,13 @@ class HelpPaginator(Pages):
                 else:
                     self.title = f"{command.qualified_name} | {aliases}"
             else:
-                self.title = f"{command.qualified_name} `{command.signature}`"
+                if command.usage:
+                    self.title = f"{command.qualified_name} | {command.signature}"
+                elif command.signature:
+                    self.title = f"{command.qualified_name} `{command.signature}`"
+                else:
+                    self.title = f"{command.qualified_name}"
+
         else:
             if command.aliases:
                 aliases = " | ".join(command.aliases)

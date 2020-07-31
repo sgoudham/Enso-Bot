@@ -7,7 +7,76 @@ from discord import Member, Embed
 from discord.ext.commands import command, guild_only, has_guild_permissions, bot_has_guild_permissions, Greedy, \
     cooldown, BucketType, Cog
 
-from settings import enso_embedmod_colours, get_modlog_for_guild
+import db
+from db import connection
+from settings import enso_embedmod_colours, get_modlog_for_guild, storeRoles, clearRoles
+
+
+async def ummute_members(message, targets, reason):
+    """
+
+    Method to allow members to be unmuted
+
+    2 embeds will be sent, one to the channel that the user is in
+    And if the user has the modlogs channel setup, an embed will be logged there
+
+    """
+
+    # Setup pool
+    pool = await connection(db.loop)
+
+    for target in targets:
+        if (message.guild.me.top_role.position > target.top_role.position
+                and not target.guild_permissions.administrator):
+
+            # Setup up pool connection and cursor
+            async with pool.acquire() as conn:
+                async with conn.cursor() as cur:
+                    # Store the existing roles of the user within the database
+                    select_query = """SELECT * FROM members WHERE guildID = (%s) AND discordID = (%s)"""
+                    select_vals = message.guild.id, target.id,
+
+                    # Execute the SQL Query
+                    await cur.execute(select_query, select_vals)
+                    result = await cur.fetchone()
+                    role_ids = result[4]
+
+            roles = [message.guild.get_role(int(id_)) for id_ in role_ids.split(", ") if len(id_)]
+
+            await clearRoles(ctx=message, member=target)
+            await target.edit(roles=roles)
+
+            # Send confirmation to the channel that the user is in
+            embed = Embed(description="✅ **{}** Was Unmuted! ✅".format(target),
+                          colour=enso_embedmod_colours)
+            await message.channel.send(embed=embed)
+
+            # Get the channel of the modlog within the guild
+            modlog = get_modlog_for_guild(str(message.guild.id))
+            if modlog is None:
+                pass
+            else:
+                channel = message.guild.get_channel(int(modlog))
+
+                embed = Embed(title="Member Muted",
+                              colour=enso_embedmod_colours,
+                              timestamp=datetime.datetime.utcnow())
+
+                embed.set_thumbnail(url=target.avatar_url)
+
+                fields = [("Member", target.mention, False),
+                          ("Actioned by", message.author.mention, False),
+                          ("Reason", reason, False)]
+
+                for name, value, inline in fields:
+                    embed.add_field(name=name, value=value, inline=inline)
+
+                await channel.send(embed=embed)
+
+        # Send error message if the User could not be muted
+        else:
+            embed = Embed(description="**{} Could Not Be Unmuted!**".format(target.mention))
+            await message.channel.send(embed=embed)
 
 
 async def mute_members(message, targets, reason, muted):
@@ -19,42 +88,43 @@ async def mute_members(message, targets, reason, muted):
     And if the user has the modlogs channel setup, an embed will be logged there
 
     """
+    await message.delete()
+
     for target in targets:
         if (message.guild.me.top_role.position > target.top_role.position
                 and not target.guild_permissions.administrator):
-            try:
-                await target.edit(roles=[message.guild.default_role])
-                await target.add_roles(muted, reason=reason)
 
-                await message.delete()
-                # Send confirmation to the channel that the user is in
-                embed = Embed(description="✅ **{}** Was Muted! ✅".format(target),
-                              colour=enso_embedmod_colours)
-                await message.channel.send(embed=embed)
+            # Store the current roles of the user within database
+            await storeRoles(target=target, ctx=message, member=target)
+            # Give the user the muted role
+            await target.edit(roles=[muted], reason=reason)
 
-                # Get the channel of the modlog within the guild
-                modlog = get_modlog_for_guild(str(message.guild.id))
-                if modlog is None:
-                    pass
-                else:
-                    channel = message.guild.get_channel(int(modlog))
+            # Send confirmation to the channel that the user is in
+            embed = Embed(description="✅ **{}** Was Muted! ✅".format(target),
+                          colour=enso_embedmod_colours)
+            await message.channel.send(embed=embed)
 
-                    embed = Embed(title="Member Muted",
-                                  colour=enso_embedmod_colours,
-                                  timestamp=datetime.datetime.utcnow())
+            # Get the channel of the modlog within the guild
+            modlog = get_modlog_for_guild(str(message.guild.id))
+            if modlog is None:
+                pass
+            else:
+                channel = message.guild.get_channel(int(modlog))
 
-                    embed.set_thumbnail(url=target.avatar_url)
+                embed = Embed(title="Member Muted",
+                              colour=enso_embedmod_colours,
+                              timestamp=datetime.datetime.utcnow())
 
-                    fields = [("Member", target.mention, False),
-                              ("Actioned by", message.author.mention, False),
-                              ("Reason", reason, False)]
+                embed.set_thumbnail(url=target.avatar_url)
 
-                    for name, value, inline in fields:
-                        embed.add_field(name=name, value=value, inline=inline)
+                fields = [("Member", target.mention, False),
+                          ("Actioned by", message.author.mention, False),
+                          ("Reason", reason, False)]
 
-                    await channel.send(embed=embed)
-            except Exception as e:
-                print(e)
+                for name, value, inline in fields:
+                    embed.add_field(name=name, value=value, inline=inline)
+
+                await channel.send(embed=embed)
 
         # Send error message if the User could not be muted
         else:
@@ -71,13 +141,13 @@ async def ban_members(message, targets, reason):
     And if the user has the modlogs channel setup, an embed will be logged there
 
     """
+    await message.delete()
 
     for target in targets:
         if (message.guild.me.top_role.position > target.top_role.position
                 and not target.guild_permissions.administrator):
             await target.ban(reason=reason)
 
-            await message.delete()
             embed = Embed(description="✅ **{}** Was Banned! ✅".format(target),
                           colour=enso_embedmod_colours)
             await message.channel.send(embed=embed)
@@ -119,13 +189,13 @@ async def kick_members(message, targets, reason):
     And if the user has the modlogs channel setup, an embed will be logged there
 
     """
+    await message.delete()
 
     for target in targets:
         if (message.guild.me.top_role.position > target.top_role.position
                 and not target.guild_permissions.administrator):
             await target.kick(reason=reason)
 
-            await message.delete()
             embed = Embed(description="✅ **{}** Was Kicked! ✅".format(target),
                           colour=enso_embedmod_colours)
             await message.channel.send(embed=embed)
@@ -190,11 +260,84 @@ class Moderation(Cog):
             embed = Embed(description="**❌ You Can't Kick Yourself Baka! ❌**",
                           colour=enso_embedmod_colours)
             await ctx.send(embed=embed)
-            return
         # As long as all members are valid
         else:
             # Send embed of the kicked member
             await kick_members(ctx.message, members, reason)
+
+    @command(name="mute", aliases=["Mute"])
+    @has_guild_permissions(manage_roles=True)
+    @bot_has_guild_permissions(manage_roles=True)
+    async def mute(self, ctx, members: Greedy[Member], *, reason: Optional[str] = "No Reason Given"):
+        """
+        Mute Member(s) from Server
+        Multiple Members can be Muted At Once
+        """
+
+        # When no members are entered. Throw an error
+        if not len(members):
+            embed = Embed(description="Not Correct Syntax!"
+                                      "\nUse **{}help** to find how to use **{}**".format(ctx.prefix, ctx.command),
+                          colour=enso_embedmod_colours)
+            await ctx.send(embed=embed)
+        # Throw error when user tries to mute themselves
+        elif ctx.author in members:
+            embed = Embed(description="**❌ You Can't Mute Yourself Baka! ❌**",
+                          colour=enso_embedmod_colours)
+            await ctx.send(embed=embed)
+        else:
+            role = discord.utils.get(ctx.guild.roles, name="Muted")
+            if role is None:
+                # Setting up the role permissions for the Muted Role
+                muted = await ctx.guild.create_role(name="Muted")
+                # Removes permission to send messages in all channels
+                for channel in ctx.guild.channels:
+                    await channel.set_permissions(muted, send_messages=False, read_messages=True)
+
+                # Send embed of the kicked member
+                await mute_members(ctx.message, members, reason, muted)
+            else:
+                # Send embed of the kicked member
+                await mute_members(ctx.message, members, reason, role)
+
+    @command(name="unmute", aliases=["Unmute"])
+    @has_guild_permissions(manage_roles=True)
+    @bot_has_guild_permissions(manage_roles=True)
+    async def unmute(self, ctx, members: Greedy[Member], *, reason: Optional[str] = "No Reason Given"):
+        """
+        Unmute Member(s) from Server
+        Multiple Members can be unmuted at once
+        """
+        unmute = False
+
+        # When no members are entered. Throw an error
+        if not len(members):
+            embed = Embed(description="Not Correct Syntax!"
+                                      "\nUse **{}help** to find how to use **{}**".format(ctx.prefix, ctx.command),
+                          colour=enso_embedmod_colours)
+            await ctx.send(embed=embed)
+
+        # Throw error when user tries to unmute themselves
+        elif ctx.author in members:
+            embed = Embed(description="**❌ You Can't Unmute Yourself Baka! ❌**",
+                          colour=enso_embedmod_colours)
+            await ctx.send(embed=embed)
+
+        role = discord.utils.get(ctx.guild.roles, name="Muted")
+        if role is None:
+            embed = Embed(description="**❌ No Muted Role Was Found! ❌**",
+                          colour=enso_embedmod_colours)
+            await ctx.send(embed=embed)
+        else:
+            await ctx.message.delete()
+            for member in members:
+                if role in member.roles:
+                    await ummute_members(ctx.message, members, reason)
+                    unmute = True
+                if role not in member.roles and unmute is False:
+                    embed = Embed(description=f"**❌ {member.mention} Is Not Muted! ❌**",
+                                  colour=enso_embedmod_colours)
+                    await ctx.send(embed=embed)
 
     @command(name="ban", aliases=["Ban"], usage="`<member>...` `[reason]`")
     @guild_only()
@@ -218,7 +361,6 @@ class Moderation(Cog):
             embed = Embed(description="**❌ You Can't Ban Yourself Baka! ❌**",
                           colour=enso_embedmod_colours)
             await ctx.send(embed=embed)
-            return
         # As long as all members are valid
         else:
             # Send embed of the Banned member
@@ -313,42 +455,6 @@ class Moderation(Cog):
                                               after=datetime.datetime.utcnow() - timedelta(days=14))
 
             await ctx.send(f"Deleted **{len(deleted):,}** messages.", delete_after=5)
-
-    @command(name="mute", aliases=["Mute"])
-    @has_guild_permissions(manage_roles=True)
-    @bot_has_guild_permissions(manage_roles=True)
-    async def mute(self, ctx, members: Greedy[Member], *, reason: Optional[str] = "No Reason Given"):
-        """
-        Mute Member(s) from Server
-        Multiple Members can be Muted At Once
-        """
-
-        # When no members are entered. Throw an error
-        if not len(members):
-            embed = Embed(description="Not Correct Syntax!"
-                                      "\nUse **{}help** to find how to use **{}**".format(ctx.prefix, ctx.command),
-                          colour=enso_embedmod_colours)
-            await ctx.send(embed=embed)
-        # Throw error when user tries to mute themselves
-        elif ctx.author in members:
-            embed = Embed(description="**❌ You Can't Mute Yourself Baka! ❌**",
-                          colour=enso_embedmod_colours)
-            await ctx.send(embed=embed)
-            return
-        else:
-            role = discord.utils.get(ctx.guild.roles, name="Muted")
-            if role is None:
-                # Setting up the role permissions for the Muted Role
-                muted = await ctx.guild.create_role(name="Muted")
-                # Removes permission to send messages in all channels
-                for channel in ctx.guild.channels:
-                    await channel.set_permissions(muted, send_messages=False, read_messages=True)
-
-                # Send embed of the kicked member
-                await mute_members(ctx.message, members, reason, muted)
-            else:
-                # Send embed of the kicked member
-                await mute_members(ctx.message, members, reason, role)
 
     @Cog.listener()
     async def on_raw_bulk_message_delete(self, payload):

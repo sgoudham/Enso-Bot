@@ -41,9 +41,10 @@ async def ummute_members(message, targets, reason):
                     result = await cur.fetchone()
                     role_ids = result[4]
 
-            roles = [message.guild.get_role(int(id_)) for id_ in role_ids.split(", ") if len(id_)]
+                roles = [message.guild.get_role(int(id_)) for id_ in role_ids.split(", ") if len(id_)]
 
-            await clearRoles(ctx=message, member=target)
+                await clearRoles(ctx=message, member=target, pool=pool)
+
             await target.edit(roles=roles)
 
             # Send confirmation to the channel that the user is in

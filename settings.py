@@ -258,11 +258,8 @@ async def storeRoles(target, ctx, member):
             print(cur.rowcount, f"{len(role_ids)} Roles Added For User {member} in {ctx.guild.name}")
 
 
-async def clearRoles(ctx, member):
+async def clearRoles(ctx, member, pool):
     """Clear the roles when the user has been unmuted"""
-
-    # Setup pool
-    pool = await connection(db.loop)
 
     # Setup up pool connection and cursor
     async with pool.acquire() as conn:

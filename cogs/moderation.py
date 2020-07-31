@@ -274,32 +274,32 @@ class Moderation(Cog):
         Mute Member(s) from Server
         Multiple Members can be Muted At Once
         """
-
-        # When no members are entered. Throw an error
-        if not len(members):
-            embed = Embed(description="Not Correct Syntax!"
-                                      "\nUse **{}help** to find how to use **{}**".format(ctx.prefix, ctx.command),
-                          colour=enso_embedmod_colours)
-            await ctx.send(embed=embed)
-        # Throw error when user tries to mute themselves
-        elif ctx.author in members:
-            embed = Embed(description="**❌ You Can't Mute Yourself Baka! ❌**",
-                          colour=enso_embedmod_colours)
-            await ctx.send(embed=embed)
-        else:
-            role = discord.utils.get(ctx.guild.roles, name="Muted")
-            if role is None:
-                # Setting up the role permissions for the Muted Role
-                muted = await ctx.guild.create_role(name="Muted")
-                # Removes permission to send messages in all channels
-                for channel in ctx.guild.channels:
-                    await channel.set_permissions(muted, send_messages=False, read_messages=True)
-
-                # Send embed of the kicked member
-                await mute_members(ctx.message, members, reason, muted)
+        with ctx.typing():
+            # When no members are entered. Throw an error
+            if not len(members):
+                embed = Embed(description="Not Correct Syntax!"
+                                          "\nUse **{}help** to find how to use **{}**".format(ctx.prefix, ctx.command),
+                              colour=enso_embedmod_colours)
+                await ctx.send(embed=embed)
+            # Throw error when user tries to mute themselves
+            elif ctx.author in members:
+                embed = Embed(description="**❌ You Can't Mute Yourself Baka! ❌**",
+                              colour=enso_embedmod_colours)
+                await ctx.send(embed=embed)
             else:
-                # Send embed of the kicked member
-                await mute_members(ctx.message, members, reason, role)
+                role = discord.utils.get(ctx.guild.roles, name="Muted")
+                if role is None:
+                    # Setting up the role permissions for the Muted Role
+                    muted = await ctx.guild.create_role(name="Muted")
+                    # Removes permission to send messages in all channels
+                    for channel in ctx.guild.channels:
+                        await channel.set_permissions(muted, send_messages=False, read_messages=True)
+
+                    # Send embed of the kicked member
+                    await mute_members(ctx.message, members, reason, muted)
+                else:
+                    # Send embed of the kicked member
+                    await mute_members(ctx.message, members, reason, role)
 
     @command(name="unmute", aliases=["Unmute"])
     @has_guild_permissions(manage_roles=True)
@@ -311,34 +311,36 @@ class Moderation(Cog):
         """
         unmute = False
 
-        # When no members are entered. Throw an error
-        if not len(members):
-            embed = Embed(description="Not Correct Syntax!"
-                                      "\nUse **{}help** to find how to use **{}**".format(ctx.prefix, ctx.command),
-                          colour=enso_embedmod_colours)
-            await ctx.send(embed=embed)
+        with ctx.typing():
 
-        # Throw error when user tries to unmute themselves
-        elif ctx.author in members:
-            embed = Embed(description="**❌ You Can't Unmute Yourself Baka! ❌**",
-                          colour=enso_embedmod_colours)
-            await ctx.send(embed=embed)
+            # When no members are entered. Throw an error
+            if not len(members):
+                embed = Embed(description="Not Correct Syntax!"
+                                          "\nUse **{}help** to find how to use **{}**".format(ctx.prefix, ctx.command),
+                              colour=enso_embedmod_colours)
+                await ctx.send(embed=embed)
 
-        role = discord.utils.get(ctx.guild.roles, name="Muted")
-        if role is None:
-            embed = Embed(description="**❌ No Muted Role Was Found! ❌**",
-                          colour=enso_embedmod_colours)
-            await ctx.send(embed=embed)
-        else:
-            await ctx.message.delete()
-            for member in members:
-                if role in member.roles:
-                    await ummute_members(ctx.message, members, reason)
-                    unmute = True
-                if role not in member.roles and unmute is False:
-                    embed = Embed(description=f"**❌ {member.mention} Is Not Muted! ❌**",
-                                  colour=enso_embedmod_colours)
-                    await ctx.send(embed=embed)
+            # Throw error when user tries to unmute themselves
+            elif ctx.author in members:
+                embed = Embed(description="**❌ You Can't Unmute Yourself Baka! ❌**",
+                              colour=enso_embedmod_colours)
+                await ctx.send(embed=embed)
+
+            role = discord.utils.get(ctx.guild.roles, name="Muted")
+            if role is None:
+                embed = Embed(description="**❌ No Muted Role Was Found! ❌**",
+                              colour=enso_embedmod_colours)
+                await ctx.send(embed=embed)
+            else:
+                await ctx.message.delete()
+                for member in members:
+                    if role in member.roles:
+                        await ummute_members(ctx.message, members, reason)
+                        unmute = True
+                    if role not in member.roles and unmute is False:
+                        embed = Embed(description=f"**❌ {member.mention} Is Not Muted! ❌**",
+                                      colour=enso_embedmod_colours)
+                        await ctx.send(embed=embed)
 
     @command(name="ban", aliases=["Ban"], usage="`<member>...` `[reason]`")
     @guild_only()

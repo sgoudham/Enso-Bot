@@ -41,8 +41,39 @@ Perms = frozenset(
     }
 )
 
+region = {
+    "eu-central": ":flag_eu: Central Europe",
+    "europe": ":flag_eu: Central Europe",
+    "singapore": ":flag_sg: Singapore",
+    "india": ":flag_in: India",
+    "japan": ":flag_jp: Japan",
+    "us-central": ":flag_us: U.S. Central",
+    "sydney": ":flag_au: Sydney",
+    "us-east": ":flag_us: U.S. East",
+    "us-south": ":flag_us: U.S. South",
+    "us-west": ":flag_us: U.S. West",
+    "eu-west": ":flag_eu: Western Europe",
+    "vip-us-east": ":flag_us: VIP U.S. East",
+    "london": ":flag_gb: London",
+    "amsterdam": ":flag_nl: Amsterdam",
+    "hongkong": ":flag_hk: Hong Kong",
+    "russia": ":flag_ru: Russia",
+    "southafrica": ":flag_za:  South Africa",
+    "brazil": ":flag_br: Brazil"
+}
 
-def DetectPermissions(message, fset):
+
+def getRegion(disc_region, region_dict):
+    """Return Nicer Looking Region String"""
+
+    for key in region_dict:
+        if key == disc_region:
+            return region_dict[key]
+        else:
+            pass
+
+
+def detectPermissions(message, fset):
     """Filter out permissions that are not important"""
 
     # Split the message individual permissions
@@ -132,7 +163,7 @@ class Info(Cog):
         perms = ",".join(map(lambda x: x[0].replace("_", " "), filtered))
 
         # Capitalise every word in the array and filter out the permissions that are defined within the frozenset
-        permission = string.capwords("".join(map(str, DetectPermissions(perms, Perms))))
+        permission = string.capwords("".join(map(str, detectPermissions(perms, Perms))))
 
         # Accounting for the edge case where the user has no key permissions to be displayed
         if permission == "":
@@ -239,7 +270,7 @@ class Info(Cog):
         # Define fields to be added into the embed
         fields = [("Owner", ctx.guild.owner.mention, True),
                   ("Created", ctx.guild.created_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"), False),
-                  ("Region", str(ctx.guild.region).capitalize(), False),
+                  ("Region", getRegion(str(ctx.guild.region), region), False),
                   ("Statuses", f"🟢 {statuses[0]} \n🟠 {statuses[1]} \n🔴 {statuses[2]} \n⚪ {statuses[3]}", False),
 
                   (f"Members ({len(ctx.guild.members)})",
@@ -345,7 +376,9 @@ class Info(Cog):
                                     len(self.bot.users)), True),
             ("Line Count", lineCount(), True),
             ("Bot Version", "1.7.2", False),
-            ("Language | Library", f"Python {python_version()} | Discord.py {discord_version}", False),
+            ("Language | Library",
+             f"<:python:661908544739737611> Python {python_version()} | <:discord:314003252830011395> Discord.py {discord_version}",
+             False),
             ("Uptime", frmt_uptime, False),
             ("Memory Usage", f"{mem_usage:,.2f} / {mem_total:,.2f} MiB ({mem_of_total:.2f}%)", False)]
 

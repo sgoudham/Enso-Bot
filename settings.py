@@ -255,7 +255,7 @@ async def storeRoles(target, ctx, member):
             # Execute the query
             await cur.execute(update_query, update_vals)
             await conn.commit()
-            print(cur.rowcount, f"{len(role_ids)} Roles Added For User {member} in {ctx.guild.name}")
+            print(cur.rowcount, f"Roles Added For User {member} in {ctx.guild.name}")
 
 
 async def clearRoles(ctx, member, pool):

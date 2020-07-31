@@ -274,10 +274,10 @@ class Moderation(Cog):
         Multiple Members can be Kicked at Once
         """
 
-        with ctx.typing():
-            if await check(ctx, members, action="Kick"):
-                return
+        if await check(ctx, members, action="Kick"):
+            return
 
+        with ctx.typing():
             # Send embed of the kicked member
             await kick_members(ctx.message, members, reason)
 
@@ -289,10 +289,11 @@ class Moderation(Cog):
         Mute Member(s) from Server
         Multiple Members can be Muted At Once
         """
-        with ctx.typing():
-            if await check(ctx, members, action="Mute"):
-                return
 
+        if await check(ctx, members, action="Mute"):
+            return
+
+        with ctx.typing():
             role = discord.utils.get(ctx.guild.roles, name="Muted")
             if role is None:
                 # Setting up the role permissions for the Muted Role
@@ -317,10 +318,10 @@ class Moderation(Cog):
         """
         unmute = False
 
-        with ctx.typing():
-            if await check(ctx, members, action="Unmute"):
-                return
+        if await check(ctx, members, action="Unmute"):
+            return
 
+        with ctx.typing():
             role = discord.utils.get(ctx.guild.roles, name="Muted")
             if role is None:
                 embed = Embed(description="**❌ No Muted Role Was Found! ❌**",
@@ -348,10 +349,10 @@ class Moderation(Cog):
         Multiple Members can be banned at once
         """
 
-        with ctx.typing():
-            if await check(ctx, members, action="Ban"):
-                return
+        if await check(ctx, members, action="Ban"):
+            return
 
+        with ctx.typing():
             # Send embed of the Banned member
             await ban_members(ctx.message, members, reason)
 

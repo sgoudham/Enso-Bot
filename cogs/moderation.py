@@ -398,7 +398,7 @@ class Moderation(Cog):
         Multiple Members can be banned at once
         """
 
-        if await check(ctx, members):
+        if not await check(ctx, members):
             with ctx.typing():
                 # Send embed of the Banned member
                 await ban_members(ctx.message, members, reason)

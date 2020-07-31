@@ -149,7 +149,7 @@ async def _help(ctx, *, command: Optional[str] = None):
 
         await p.paginate()
     except Exception as ex:
-        await ctx.send("**{}**".format(ex))
+        await ctx.send(f"**{ex}**")
 
 
 @client.command(name="reloadusers", hidden=True)
@@ -174,7 +174,7 @@ async def reload_db(ctx):
             print(cur.rowcount, f"Record(s) inserted successfully into Members from {ctx.guild.name}")
 
             # Sending confirmation message
-            await ctx.send("Database Reloaded Successfully for **{}**".format(ctx.guild.name))
+            await ctx.send(f"Database Reloaded Successfully for **{ctx.guild.name}**")
 
 
 @client.command(name="prefix", aliases=["Prefix"])
@@ -367,7 +367,7 @@ async def on_bot_forbidden(ctx, args2):
     # Convert list into string of the missing permissions
     missing_perms = string.capwords(", ".join(args2.missing_perms).replace("_", " "))
 
-    embed = Embed(description="❌ I Need **{}** Permission(s) to Execute This Command! ❌".format(missing_perms),
+    embed = Embed(description=f"❌ I Need **{missing_perms}** Permission(s) to Execute This Command! ❌",
                   colour=enso_embedmod_colours)
     await ctx.send(embed=embed)
 
@@ -383,7 +383,7 @@ async def on_command_bad_argument(ctx):
 async def on_command_not_found(ctx):
     """Handles the command not found error"""
 
-    embed = Embed(description="Command Not Found! ❌ Please use **{}help** to see all commands".format(ctx.prefix),
+    embed = Embed(description=f"Command Not Found! ❌ Please use **{ctx.prefix}help** to see all commands",
                   colour=enso_embedmod_colours)
     await ctx.send(embed=embed)
 
@@ -391,7 +391,7 @@ async def on_command_not_found(ctx):
 async def on_command_cooldown(ctx, error):
     """Handles Cooldown Errors"""
 
-    embed = Embed(description="That command is on cooldown. Try again in **{:,.2f}** seconds".format(error.retry_after),
+    embed = Embed(description=f"That command is on cooldown. Try again in **{error.retry_after:,.2f}** seconds",
                   colour=enso_embedmod_colours)
     await ctx.send(embed=embed)
 
@@ -402,7 +402,7 @@ async def on_command_permission(ctx, args2):
     # Convert list into string of the missing permissions
     missing_perms = string.capwords(", ".join(args2.missing_perms).replace("_", " "))
 
-    embed = Embed(description="❌ Uh oh! You Need **{}** Permission(s) To Execute This Command! ❌".format(missing_perms),
+    embed = Embed(description=f"❌ Uh oh! You Need **{missing_perms}** Permission(s) To Execute This Command! ❌",
                   colour=enso_embedmod_colours)
     await ctx.send(embed=embed)
 
@@ -411,8 +411,7 @@ async def on_command_missing_argument(ctx):
     """Handles the missing argument error"""
 
     embed = Embed(description="Required Argument(s) Missing!"
-                              "\nUse **{}help** to find how to use **{}**".format(ctx.prefix,
-                                                                                  ctx.command),
+                              f"\nUse **{ctx.prefix}help** to find how to use **{ctx.command}**",
                   colour=enso_embedmod_colours)
     await ctx.send(embed=embed)
 
@@ -473,7 +472,7 @@ except discord.errors.LoginFailure as e:
                 print(cursor.rowcount, "Record inserted successfully into Logs")
 
             except mariadb.Error as ex:
-                print("Parameterized Query Failed: {}".format(ex))
+                print("Parameterized Query Failed: {}"(ex))
                 
         
         

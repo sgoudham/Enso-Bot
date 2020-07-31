@@ -4,6 +4,7 @@ import random
 from discord import Colour
 
 import db
+from db import connection
 
 # Defining a list of colours
 colors = {
@@ -66,7 +67,7 @@ async def startup_cache_log():
     """Store the modlogs/prefixes in cache from the database on startup"""
 
     # Setup pool
-    pool = await db.connection(db.loop)
+    pool = await connection(db.loop)
 
     # Setup up pool connection and cursor
     async with pool.acquire() as conn:
@@ -108,7 +109,7 @@ async def storage_modlog_for_guild(ctx, channelID, setup):
     enso_cache[str(ctx.guild.id)]["Modlogs"] = channelID
 
     # Setup pool
-    pool = await db.connection(db.loop)
+    pool = await connection(db.loop)
 
     # Setup up pool connection and cursor
     async with pool.acquire() as conn:
@@ -170,7 +171,7 @@ async def storage_prefix_for_guild(ctx, prefix):
     enso_cache[str(ctx.guild.id)]["Prefix"] = prefix
 
     # Setup pool
-    pool = await db.connection(db.loop)
+    pool = await connection(db.loop)
 
     # Setup up pool connection and cursor
     async with pool.acquire() as conn:
@@ -235,6 +236,26 @@ def extensions():
            'cogs.guild', 'cogs.moderation']
 
     return ext
+
+
+async def storeRoles(target, ctx, member):
+    """Storing User Roles within Database"""
+    role_ids = ", ".join([str(r.id) for r in target.roles])
+
+    # Setup pool
+    pool = await connection(db.loop)
+
+    # Setup up pool connection and cursor
+    async with pool.acquire() as conn:
+        async with conn.cursor() as cur:
+            # Store the existing roles of the user within the database
+            update_query = """UPDATE members SET roles = (%s) WHERE guildID = (%s) AND discordID = (%s)"""
+            update_vals = role_ids, ctx.guild.id, member.id
+
+            # Execute the query
+            await cur.execute(update_query, update_vals)
+            await conn.commit()
+            print(cur.rowcount, f"Roles Added For User {member} in {ctx.guild.name}")
 
 
 # Run the async function to store everything in cache

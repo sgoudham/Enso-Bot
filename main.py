@@ -299,6 +299,34 @@ async def on_member_join(member):
             await conn.commit()
             print(cur.rowcount, "Record(s) inserted successfully into Members")
 
+        async with conn.cursor() as cur:
+            # Get the roles of the user from the database
+            select_query = """SELECT * FROM members WHERE guildID = (%s) AND discordID = (%s)"""
+            vals = member.guild.id, member.id,
+
+            # Execute the SQL Query
+            await cur.execute(select_query, vals)
+            result = await cur.fetchone()
+            role_ids = result[5]
+
+            if role_ids is not None:
+                # Get all the roles of the user before they were muted from the database
+                roles = [member.guild.get_role(int(id_)) for id_ in role_ids.split(", ") if len(id_)]
+                # Give the member their roles back
+                await member.edit(roles=roles)
+                print(f"Member {member} Had Their Roles Given Back In {member.guild.name}")
+            else:
+                pass
+
+            # Reset the roles entry for the database
+            update_query = """UPDATE members SET roles = NULL WHERE guildID = (%s) AND discordID = (%s)"""
+            update_vals = member.guild.id, member.id,
+
+            # Execute the query
+            await cur.execute(update_query, update_vals)
+            await conn.commit()
+            print(cur.rowcount, f"Roles Cleared For User {member} in {member.guild.name}")
+
     # Make sure the guild is Enso
     if guild.id != enso_guild_ID:
         return
@@ -332,6 +360,27 @@ async def on_member_join(member):
 
     # Send embed to #newpeople
     await new_people.send(embed=embed)
+
+
+@client.event
+async def on_member_remove(member):
+    """Storing User Roles within Database When User Leaves Guild"""
+    role_ids = ", ".join([str(r.id) for r in member.roles])
+
+    # Setup pool
+    pool = await connection(db.loop)
+
+    # Setup pool connection and cursor
+    async with pool.acquire() as conn:
+        async with conn.cursor() as cur:
+            # Define the insert statement that will insert the user's information
+            update_query = """UPDATE members SET roles = (%s) WHERE guildID = (%s) AND discordID = (%s)"""
+            vals = role_ids, member.guild.id, member.id,
+
+            # Execute the SQL Query
+            await cur.execute(update_query, vals)
+            await conn.commit()
+            print(cur.rowcount, "On Member Remove, Roles inserted successfully into Members")
 
 
 @client.event

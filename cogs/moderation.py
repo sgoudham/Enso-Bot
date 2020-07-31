@@ -12,6 +12,30 @@ from db import connection
 from settings import enso_embedmod_colours, get_modlog_for_guild, storeRoles, clearRoles
 
 
+async def check(ctx, members, action):
+    """
+    Check Function
+    
+    - Checks if all arguments are given
+    - Checks if user mentions themselves
+    
+    Error will be thrown in these two cases
+    """
+
+    if not len(members):
+        embed = Embed(description="Not Correct Syntax!"
+                                  f"\nUse **{ctx.prefix}help** to find how to use **{ctx.command}**",
+                      colour=enso_embedmod_colours)
+        await ctx.send(embed=embed)
+        return True
+
+    elif ctx.author in members:
+        embed = Embed(description=f"**❌ You Can't {action} Yourself Baka! ❌**",
+                      colour=enso_embedmod_colours)
+        await ctx.send(embed=embed)
+        return True
+
+
 async def ummute_members(message, targets, reason):
     """
 
@@ -59,7 +83,7 @@ async def ummute_members(message, targets, reason):
             else:
                 channel = message.guild.get_channel(int(modlog))
 
-                embed = Embed(title="Member Muted",
+                embed = Embed(title="Member Unmuted",
                               colour=enso_embedmod_colours,
                               timestamp=datetime.datetime.utcnow())
 
@@ -250,19 +274,10 @@ class Moderation(Cog):
         Multiple Members can be Kicked at Once
         """
 
-        # When no members are entered. Throw an error
-        if not len(members):
-            embed = Embed(description="Not Correct Syntax!"
-                                      "\nUse **{}help** to find how to use **{}**".format(ctx.prefix, ctx.command),
-                          colour=enso_embedmod_colours)
-            await ctx.send(embed=embed)
-        # Throw error when user tries to kick themselves
-        elif ctx.author in members:
-            embed = Embed(description="**❌ You Can't Kick Yourself Baka! ❌**",
-                          colour=enso_embedmod_colours)
-            await ctx.send(embed=embed)
-        # As long as all members are valid
-        else:
+        with ctx.typing():
+            if await check(ctx, members, action="Kick"):
+                return
+
             # Send embed of the kicked member
             await kick_members(ctx.message, members, reason)
 
@@ -275,31 +290,22 @@ class Moderation(Cog):
         Multiple Members can be Muted At Once
         """
         with ctx.typing():
-            # When no members are entered. Throw an error
-            if not len(members):
-                embed = Embed(description="Not Correct Syntax!"
-                                          "\nUse **{}help** to find how to use **{}**".format(ctx.prefix, ctx.command),
-                              colour=enso_embedmod_colours)
-                await ctx.send(embed=embed)
-            # Throw error when user tries to mute themselves
-            elif ctx.author in members:
-                embed = Embed(description="**❌ You Can't Mute Yourself Baka! ❌**",
-                              colour=enso_embedmod_colours)
-                await ctx.send(embed=embed)
-            else:
-                role = discord.utils.get(ctx.guild.roles, name="Muted")
-                if role is None:
-                    # Setting up the role permissions for the Muted Role
-                    muted = await ctx.guild.create_role(name="Muted")
-                    # Removes permission to send messages in all channels
-                    for channel in ctx.guild.channels:
-                        await channel.set_permissions(muted, send_messages=False, read_messages=True)
+            if await check(ctx, members, action="Mute"):
+                return
 
-                    # Send embed of the kicked member
-                    await mute_members(ctx.message, members, reason, muted)
-                else:
-                    # Send embed of the kicked member
-                    await mute_members(ctx.message, members, reason, role)
+            role = discord.utils.get(ctx.guild.roles, name="Muted")
+            if role is None:
+                # Setting up the role permissions for the Muted Role
+                muted = await ctx.guild.create_role(name="Muted")
+                # Removes permission to send messages in all channels
+                for channel in ctx.guild.channels:
+                    await channel.set_permissions(muted, send_messages=False, read_messages=True)
+
+                # Send embed of the kicked member
+                await mute_members(ctx.message, members, reason, muted)
+            else:
+                # Send embed of the kicked member
+                await mute_members(ctx.message, members, reason, role)
 
     @command(name="unmute", aliases=["Unmute"])
     @has_guild_permissions(manage_roles=True)
@@ -312,19 +318,8 @@ class Moderation(Cog):
         unmute = False
 
         with ctx.typing():
-
-            # When no members are entered. Throw an error
-            if not len(members):
-                embed = Embed(description="Not Correct Syntax!"
-                                          "\nUse **{}help** to find how to use **{}**".format(ctx.prefix, ctx.command),
-                              colour=enso_embedmod_colours)
-                await ctx.send(embed=embed)
-
-            # Throw error when user tries to unmute themselves
-            elif ctx.author in members:
-                embed = Embed(description="**❌ You Can't Unmute Yourself Baka! ❌**",
-                              colour=enso_embedmod_colours)
-                await ctx.send(embed=embed)
+            if await check(ctx, members, action="Unmute"):
+                return
 
             role = discord.utils.get(ctx.guild.roles, name="Muted")
             if role is None:
@@ -353,19 +348,10 @@ class Moderation(Cog):
         Multiple Members can be banned at once
         """
 
-        # When no members are entered. Throw an error
-        if not len(members):
-            embed = Embed(description="Not Correct Syntax!"
-                                      "\nUse **{}help** to find how to use **{}**".format(ctx.prefix, ctx.command),
-                          colour=enso_embedmod_colours)
-            await ctx.send(embed=embed)
-        # Throw error when user tries to kick themselves
-        elif ctx.author in members:
-            embed = Embed(description="**❌ You Can't Ban Yourself Baka! ❌**",
-                          colour=enso_embedmod_colours)
-            await ctx.send(embed=embed)
-        # As long as all members are valid
-        else:
+        with ctx.typing():
+            if await check(ctx, members, action="Ban"):
+                return
+
             # Send embed of the Banned member
             await ban_members(ctx.message, members, reason)
 

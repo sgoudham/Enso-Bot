@@ -255,7 +255,26 @@ async def storeRoles(target, ctx, member):
             # Execute the query
             await cur.execute(update_query, update_vals)
             await conn.commit()
-            print(cur.rowcount, f"Roles Added For User {member} in {ctx.guild.name}")
+            print(cur.rowcount, f"{len(role_ids)} Roles Added For User {member} in {ctx.guild.name}")
+
+
+async def clearRoles(ctx, member):
+    """Clear the roles when the user has been unmuted"""
+
+    # Setup pool
+    pool = await connection(db.loop)
+
+    # Setup up pool connection and cursor
+    async with pool.acquire() as conn:
+        async with conn.cursor() as cur:
+            # Clear the existing roles of the user from the database
+            update_query = """UPDATE members SET roles = NULL WHERE guildID = (%s) AND discordID = (%s)"""
+            update_vals = ctx.guild.id, member.id
+
+            # Execute the query
+            await cur.execute(update_query, update_vals)
+            await conn.commit()
+            print(cur.rowcount, f"Roles Cleared For User {member} in {ctx.guild.name}")
 
 
 # Run the async function to store everything in cache

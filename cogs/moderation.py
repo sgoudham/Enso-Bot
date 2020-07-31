@@ -56,7 +56,7 @@ async def ummute_members(message, targets, reason):
             # Setup up pool connection and cursor
             async with pool.acquire() as conn:
                 async with conn.cursor() as cur:
-                    # Store the existing roles of the user within the database
+                    # Get the roles of the user from the database
                     select_query = """SELECT * FROM members WHERE guildID = (%s) AND discordID = (%s)"""
                     select_vals = message.guild.id, target.id,
 

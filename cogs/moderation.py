@@ -12,7 +12,7 @@ from db import connection
 from settings import enso_embedmod_colours, get_modlog_for_guild, storeRoles, clearRoles
 
 
-async def check(ctx, members, action):
+async def check(ctx, members):
     """
     Check Function
     
@@ -30,7 +30,7 @@ async def check(ctx, members, action):
         return True
 
     elif ctx.author in members:
-        embed = Embed(description=f"**❌ You Can't {action} Yourself Baka! ❌**",
+        embed = Embed(description=f"**❌ Forbidden Action ❌**",
                       colour=enso_embedmod_colours)
         await ctx.send(embed=embed)
         return True
@@ -65,8 +65,10 @@ async def ummute_members(message, targets, reason):
                     result = await cur.fetchone()
                     role_ids = result[4]
 
+                # Get all the roles of the user before they were muted from the database
                 roles = [message.guild.get_role(int(id_)) for id_ in role_ids.split(", ") if len(id_)]
 
+                # Clear all the roles of the user
                 await clearRoles(ctx=message, member=target, pool=pool)
 
             await target.edit(roles=roles)
@@ -205,6 +207,59 @@ async def ban_members(message, targets, reason):
             await message.channel.send(embed=embed)
 
 
+async def unban_members(self, message, targets, reason):
+    """
+
+    Method to allow members to be unbanned
+
+    2 embeds will be sent, one to the channel that the user is in
+    And if the user has the modlogs channel setup, an embed will be logged there
+
+    """
+
+    # Get the list of banned users from the server
+    bans = await message.guild.bans()
+    ban_ids = list(map(lambda m: m.user.id, bans))
+
+    for target in targets:
+        if target not in ban_ids:
+            embed = Embed(description="❌ **Member Is Not In Unban's List!** ❌",
+                          colour=enso_embedmod_colours)
+            await message.channel.send(embed=embed)
+        else:
+
+            # Get the member and unban them
+            user = await self.bot.fetch_user(target)
+            await message.guild.unban(user, reason=reason)
+
+            # Send confirmation to the channel that the user is in
+            embed = Embed(description="✅ **{}** Was Unbanned! ✅".format(user),
+                          colour=enso_embedmod_colours)
+            await  message.channel.send(embed=embed)
+
+            # Get the channel of the modlog within the guild
+            modlog = get_modlog_for_guild(str(message.guild.id))
+            if modlog is None:
+                pass
+            else:
+                channel = message.guild.get_channel(int(modlog))
+
+                embed = Embed(title="Member Unbanned",
+                              colour=enso_embedmod_colours,
+                              timestamp=datetime.datetime.utcnow())
+
+                embed.set_thumbnail(url=user.avatar_url)
+
+                fields = [("Member", user, False),
+                          ("Actioned by", message.author.mention, False),
+                          ("Reason", reason, False)]
+
+                for name, value, inline in fields:
+                    embed.add_field(name=name, value=value, inline=inline)
+
+                await channel.send(embed=embed)
+
+
 async def kick_members(message, targets, reason):
     """
 
@@ -274,12 +329,10 @@ class Moderation(Cog):
         Multiple Members can be Kicked at Once
         """
 
-        if await check(ctx, members, action="Kick"):
-            return
-
-        with ctx.typing():
-            # Send embed of the kicked member
-            await kick_members(ctx.message, members, reason)
+        if not await check(ctx, members):
+            with ctx.typing():
+                # Send embed of the kicked member
+                await kick_members(ctx.message, members, reason)
 
     @command(name="mute", aliases=["Mute"])
     @has_guild_permissions(manage_roles=True)
@@ -290,23 +343,21 @@ class Moderation(Cog):
         Multiple Members can be Muted At Once
         """
 
-        if await check(ctx, members, action="Mute"):
-            return
+        if not await check(ctx, members):
+            with ctx.typing():
+                role = discord.utils.get(ctx.guild.roles, name="Muted")
+                if role is None:
+                    # Setting up the role permissions for the Muted Role
+                    muted = await ctx.guild.create_role(name="Muted")
+                    # Removes permission to send messages in all channels
+                    for channel in ctx.guild.channels:
+                        await channel.set_permissions(muted, send_messages=False, read_messages=True)
 
-        with ctx.typing():
-            role = discord.utils.get(ctx.guild.roles, name="Muted")
-            if role is None:
-                # Setting up the role permissions for the Muted Role
-                muted = await ctx.guild.create_role(name="Muted")
-                # Removes permission to send messages in all channels
-                for channel in ctx.guild.channels:
-                    await channel.set_permissions(muted, send_messages=False, read_messages=True)
-
-                # Send embed of the kicked member
-                await mute_members(ctx.message, members, reason, muted)
-            else:
-                # Send embed of the kicked member
-                await mute_members(ctx.message, members, reason, role)
+                    # Send embed of the kicked member
+                    await mute_members(ctx.message, members, reason, muted)
+                else:
+                    # Send embed of the kicked member
+                    await mute_members(ctx.message, members, reason, role)
 
     @command(name="unmute", aliases=["Unmute"])
     @has_guild_permissions(manage_roles=True)
@@ -318,25 +369,23 @@ class Moderation(Cog):
         """
         unmute = False
 
-        if await check(ctx, members, action="Unmute"):
-            return
-
-        with ctx.typing():
-            role = discord.utils.get(ctx.guild.roles, name="Muted")
-            if role is None:
-                embed = Embed(description="**❌ No Muted Role Was Found! ❌**",
-                              colour=enso_embedmod_colours)
-                await ctx.send(embed=embed)
-            else:
-                await ctx.message.delete()
-                for member in members:
-                    if role in member.roles:
-                        await ummute_members(ctx.message, members, reason)
-                        unmute = True
-                    if role not in member.roles and unmute is False:
-                        embed = Embed(description=f"**❌ {member.mention} Is Not Muted! ❌**",
-                                      colour=enso_embedmod_colours)
-                        await ctx.send(embed=embed)
+        if not await check(ctx, members):
+            with ctx.typing():
+                role = discord.utils.get(ctx.guild.roles, name="Muted")
+                if role is None:
+                    embed = Embed(description="**❌ No Muted Role Was Found! ❌**",
+                                  colour=enso_embedmod_colours)
+                    await ctx.send(embed=embed)
+                else:
+                    await ctx.message.delete()
+                    for member in members:
+                        if role in member.roles:
+                            await ummute_members(ctx.message, members, reason)
+                            unmute = True
+                        if role not in member.roles and unmute is False:
+                            embed = Embed(description=f"**❌ {member.mention} Is Not Muted! ❌**",
+                                          colour=enso_embedmod_colours)
+                            await ctx.send(embed=embed)
 
     @command(name="ban", aliases=["Ban"], usage="`<member>...` `[reason]`")
     @guild_only()
@@ -349,12 +398,10 @@ class Moderation(Cog):
         Multiple Members can be banned at once
         """
 
-        if await check(ctx, members, action="Ban"):
-            return
-
-        with ctx.typing():
-            # Send embed of the Banned member
-            await ban_members(ctx.message, members, reason)
+        if await check(ctx, members):
+            with ctx.typing():
+                # Send embed of the Banned member
+                await ban_members(ctx.message, members, reason)
 
     @command(name="unban", aliases=["Unban"], usage="`<member>...` `[reason]`")
     @guild_only()
@@ -366,49 +413,10 @@ class Moderation(Cog):
         Unban Member(s) from Server
         Multiple Members can be Unbanned At Once
         """
-
-        # Get the list of banned users from the server
-        bans = await ctx.guild.bans()
-        ban_ids = list(map(lambda m: m.user.id, bans))
-
-        for member in members:
-            if member not in ban_ids:
-                embed = Embed(description="❌ **Member Is Not In Unban's List!** ❌",
-                              colour=enso_embedmod_colours)
-                await ctx.send(embed=embed)
-            else:
-
-                # Get the member and unban them
-                user = await self.bot.fetch_user(member)
-                await ctx.guild.unban(user, reason=reason)
-
+        if not check(ctx, members):
+            with ctx.typing():
                 await ctx.message.delete()
-                # Send confirmation to the channel that the user is in
-                embed = Embed(description="✅ **{}** Was Unbanned! ✅".format(user),
-                              colour=enso_embedmod_colours)
-                await ctx.send(embed=embed)
-
-                # Get the channel of the modlog within the guild
-                modlog = get_modlog_for_guild(str(ctx.guild.id))
-                if modlog is None:
-                    pass
-                else:
-                    channel = ctx.guild.get_channel(int(modlog))
-
-                    embed = Embed(title="Member Unbanned",
-                                  colour=enso_embedmod_colours,
-                                  timestamp=datetime.datetime.utcnow())
-
-                    embed.set_thumbnail(url=user.avatar_url)
-
-                    fields = [("Member", user, False),
-                              ("Actioned by", ctx.author.mention, False),
-                              ("Reason", reason, False)]
-
-                    for name, value, inline in fields:
-                        embed.add_field(name=name, value=value, inline=inline)
-
-                    await channel.send(embed=embed)
+                await unban_members(self, ctx.message, members, reason)
 
     @command(name="purge", aliases=["Purge"])
     @guild_only()

@@ -190,7 +190,7 @@ async def ban_members(message, targets, reason):
 
                 embed.set_thumbnail(url=target.avatar_url)
 
-                fields = [("Member", target.mention, False),
+                fields = [("Member", target, False),
                           ("Actioned by", message.author.mention, False),
                           ("Reason", reason, False)]
 

@@ -203,7 +203,7 @@ def get_prefix_for_guild(guildid):
     prefix = enso_cache[guildid]["Prefix"]
     if prefix is not None:
         return prefix
-    return "defaultPrefix"
+    return "~"
 
 
 # --------------------------------------------!End Prefixes Section!----------------------------------------------------

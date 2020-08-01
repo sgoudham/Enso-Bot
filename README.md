@@ -5,13 +5,25 @@
 <h4> The features currently are as listed below: </h4>
 <ul>
 	<li>Moderation Commands! (Kick/Ban/Mute/Purge etc)</li>
-	<li>Modlogs System! (Logging Kicks/Bans/Mutes etc)</li>
 	<li>Marriage Commands! (Marry/Divorce etc)</li>
 	<li>Interactive Commands! (Kiss/Cuddle/Hug/Slap/Kill etc)</li>
 	<li>Information Commands! (Server/User/Channel etc)</li>
-  	<li>Fully Integrated Modmail System! (No Hassle Setup!)</li>
+    <li>Modlogs System! (Logging Kicks/Bans/Mutes/Purges etc)</li>
+  	<li>Fully Integrated Modmail System! (Sending Mail To Staff)</li>
   	<li>And many more commands!</li>
-</ul> 
+</ul>
+
+<br>
+
+- <b> Modmail System </b>
+> The modmail system allows for users to send modmail to the moderators of the server. 
+> Once it has been setup, the bot will used a ticket based system to create and delete channels 
+> for the user to send mail within.
+- <b> Modlogs System </b>
+> The modlogs system allows for the bot to log events happening to the server, this can include 
+> <b> kicks/bans/purges/mutes </b> events and I'm planning to add more soon.
+
+<br>
 
 <p> <b> With much more to come in the future! I hope this little bot can have a place in your heart! </b> </p>
 

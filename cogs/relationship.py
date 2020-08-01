@@ -5,8 +5,6 @@ import random
 from discord import Member, Embed, Colour
 from discord.ext.commands import BucketType, command, cooldown, bot_has_permissions, Cog
 
-import db
-from db import connection
 from settings import colour_list
 
 
@@ -62,7 +60,7 @@ class Relationship(Cog):
         # Getting the guild of the user
         guild = ctx.author.guild
         # Setup pool
-        pool = await connection(db.loop)
+        pool = self.bot.db
 
         # Setup pool connection and cursor
         async with pool.acquire() as conn:
@@ -118,7 +116,7 @@ class Relationship(Cog):
             if msg.content.lower() in ['y', 'yes', 'yea']:
 
                 # Setup pool
-                pool = await connection(db.loop)
+                pool = self.bot.db
 
                 # Setup pool connection and cursor
                 async with pool.acquire() as conn:
@@ -162,7 +160,7 @@ class Relationship(Cog):
         # Getting the guild of the user
         guild = ctx.author.guild
         # Setup pool
-        pool = await connection(db.loop)
+        pool = self.bot.db
 
         # Setup pool connection and cursor
         async with pool.acquire() as conn:
@@ -210,7 +208,7 @@ class Relationship(Cog):
             # if the person says yes
             if msg.content.lower() in ['y', 'yes', 'yea']:
                 # Setup pool
-                pool = await connection(db.loop)
+                pool = self.bot.db
 
                 # Setup pool connection and cursor
                 async with pool.acquire() as conn:
@@ -265,7 +263,7 @@ class Relationship(Cog):
         guild = member.guild
 
         # Setup pool
-        pool = await connection(db.loop)
+        pool = self.bot.db
 
         # Setup pool connection and cursor
         async with pool.acquire() as conn:

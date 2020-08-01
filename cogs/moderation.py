@@ -377,7 +377,7 @@ class Moderation(Cog):
                                   colour=enso_embedmod_colours)
                     await ctx.send(embed=embed)
                 else:
-                    await ctx.message.delete()
+
                     for member in members:
                         if role in member.roles:
                             await ummute_members(ctx.message, members, reason)
@@ -415,7 +415,6 @@ class Moderation(Cog):
         """
         if not await check(ctx, members):
             with ctx.typing():
-                await ctx.message.delete()
                 await unban_members(self, ctx.message, members, reason)
 
     @command(name="purge", aliases=["Purge"])
@@ -433,7 +432,7 @@ class Moderation(Cog):
 
                 # Delete the message sent and then the amount specified
                 # (Only messages sent within the last 14 days)
-                await ctx.message.delete()
+
                 deleted = await ctx.channel.purge(limit=amount,
                                                   after=datetime.datetime.utcnow() - timedelta(days=14))
 
@@ -448,7 +447,7 @@ class Moderation(Cog):
 
             # Delete the message sent and then the amount specified
             # (Only messages sent within the last 14 days)
-            await ctx.message.delete()
+
             deleted = await ctx.channel.purge(limit=50,
                                               after=datetime.datetime.utcnow() - timedelta(days=14))
 

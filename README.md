@@ -5,11 +5,11 @@
 <h4> The features currently are as listed below: </h4>
 <ul>
 	<li>Moderation Commands! (Kick/Ban/Mute/Purge etc)</li>
-	<li>Modlogs System! (To go hand in hand with Moderation Commands)</li>
+	<li>Modlogs System! (Logging Kicks/Bans/Mutes etc)</li>
 	<li>Marriage Commands! (Marry/Divorce etc)</li>
-	<li>Interactive Commands! (Kiss/Cuddle/Hug etc)</li>
+	<li>Interactive Commands! (Kiss/Cuddle/Hug/Slap/Kill etc)</li>
 	<li>Information Commands! (Server/User/Channel etc)</li>
-  	<li>Fully Integrated Modmail System!</li>
+  	<li>Fully Integrated Modmail System! (No Hassle Setup!)</li>
   	<li>And many more commands!</li>
 </ul> 
 
@@ -28,9 +28,7 @@
 
 # Ensō Server 
 
-<p align="center">
-    <img src="https://media.discordapp.net/attachments/683490529862090814/729814673502765184/image.gif?width=300&height=315" alt="Server Logo">
-</p>
+![Ensō Server Logo](https://media.discordapp.net/attachments/683490529862090814/729814673502765184/image.gif?width=300&height=315)
 
 <b> <p> 
 A warm welcome from our small but growing community of Ensō. 

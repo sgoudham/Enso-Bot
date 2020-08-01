@@ -4,7 +4,6 @@ import random
 from discord import Colour, Embed, Member
 from discord.ext.commands import cooldown, command, BucketType, bot_has_permissions, Cog
 
-import db
 from settings import colour_list
 
 
@@ -40,7 +39,7 @@ class Interactive(Cog):
         guild = ctx.author.guild
 
         # Setup pool
-        pool = await db.connection(db.loop)
+        pool = self.bot.db
 
         # Setup pool connection and cursor
         async with pool.acquire() as conn:
@@ -109,7 +108,7 @@ class Interactive(Cog):
         guild = ctx.author.guild
 
         # Setup pool
-        pool = await db.connection(db.loop)
+        pool = self.bot.db
 
         # Setup pool connection and cursor
         async with pool.acquire() as conn:

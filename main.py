@@ -2,20 +2,23 @@ import datetime
 import string
 from typing import Optional
 
+import aiomysql
 import discord
 from decouple import config
 from discord import Embed
 from discord.ext import commands, tasks
 from discord.ext.commands import when_mentioned_or, is_owner, guild_only, has_permissions
 
-import db
 import settings
 from cogs.help import HelpPaginator
-from db import connection
 from settings import blank_space, enso_embedmod_colours, enso_guild_ID, enso_newpeople_ID, get_prefix_for_guild, \
     storage_prefix_for_guild, cache, del_cache
 
 counter = 0
+
+# Get password/host from .env
+password = config('DB_PASS')
+host = config('DB_HOST')
 
 # Getting the Bot token from Environment Variables
 API_TOKEN = config('DISCORD_TOKEN')
@@ -40,6 +43,21 @@ client = commands.Bot(  # Create a new bot
     owner_id=154840866496839680,  # Your unique User ID
     version=get_version)  # Version number of Ensō~Chan
 client.remove_command("help")  # Remove default help command
+
+
+# Setting up connection using pool/aiomysql
+async def create_connection():
+    client.db = await aiomysql.create_pool(
+        host=host,
+        port=3306,
+        user="hamothy",
+        password=password,
+        db='enso',
+        loop=client.loop)
+
+
+# Make sure the connection is setup before the bot is ready
+client.loop.run_until_complete(create_connection())
 
 if __name__ == '__main__':
     for ext in settings.extensions():
@@ -158,7 +176,7 @@ async def reload_db(ctx):
     """Reloads the database by inserting/updating all the records"""
 
     # Setup pool
-    pool = await connection(db.loop)
+    pool = client.db
 
     # Setup up pool connection and cursor
     async with pool.acquire() as conn:
@@ -209,7 +227,7 @@ async def on_guild_join(guild):
     cache(str(guild.id), channel=None, prefix="~")
 
     # Setup pool
-    pool = await connection(db.loop)
+    pool = client.db
 
     # Setup up pool connection and cursor
     async with pool.acquire() as conn:
@@ -246,7 +264,7 @@ async def on_guild_remove(guild):
     del_cache(str(guild.id))
 
     # Setup pool
-    pool = await connection(db.loop)
+    pool = client.db
 
     # Setup pool connection and cursor
     async with pool.acquire() as conn:
@@ -284,7 +302,7 @@ async def on_member_join(member):
     guild = member.guild
 
     # Setup pool
-    pool = await connection(db.loop)
+    pool = client.db
 
     # Setup pool connection and cursor
     async with pool.acquire() as conn:
@@ -368,7 +386,7 @@ async def on_member_remove(member):
     role_ids = ", ".join([str(r.id) for r in member.roles])
 
     # Setup pool
-    pool = await connection(db.loop)
+    pool = client.db
 
     # Setup pool connection and cursor
     async with pool.acquire() as conn:

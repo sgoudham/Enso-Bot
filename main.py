@@ -380,7 +380,7 @@ async def on_member_remove(member):
             # Execute the SQL Query
             await cur.execute(update_query, vals)
             await conn.commit()
-            print(cur.rowcount, "On Member Remove, Roles inserted successfully into Members")
+            print(cur.rowcount, f"On Member Remove, Roles stored into {member.guild.name} into Members")
 
 
 @client.event

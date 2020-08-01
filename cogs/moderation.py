@@ -7,8 +7,6 @@ from discord import Member, Embed
 from discord.ext.commands import command, guild_only, has_guild_permissions, bot_has_guild_permissions, Greedy, \
     cooldown, BucketType, Cog
 
-import db
-from db import connection
 from settings import enso_embedmod_colours, get_modlog_for_guild, storeRoles, clearRoles
 
 
@@ -36,7 +34,7 @@ async def check(ctx, members):
         return True
 
 
-async def ummute_members(message, targets, reason):
+async def ummute_members(self, message, targets, reason):
     """
 
     Method to allow members to be unmuted
@@ -47,7 +45,7 @@ async def ummute_members(message, targets, reason):
     """
 
     # Setup pool
-    pool = await connection(db.loop)
+    pool = self.bot.db
 
     for target in targets:
         if (message.guild.me.top_role.position > target.top_role.position
@@ -378,7 +376,7 @@ class Moderation(Cog):
 
                     for member in members:
                         if role in member.roles:
-                            await ummute_members(ctx.message, members, reason)
+                            await ummute_members(self, ctx.message, members, reason)
                             unmute = True
                         if role not in member.roles and unmute is False:
                             embed = Embed(description=f"**❌ {member.mention} Is Not Muted! ❌**",

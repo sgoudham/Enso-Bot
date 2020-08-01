@@ -123,7 +123,7 @@ class Anime(Cog):
         """Printing out that Cog is ready on startup"""
         print(f"{self.__class__.__name__} Cog has been loaded!\n-----")
 
-    @group(invoke_without_command=True)
+    @group(invoke_without_command=True, aliases=["Waifu"])
     @bot_has_permissions(embed_links=True)
     async def waifu(self, ctx, waifu: Optional[str] = None):
         """Shows a Waifu"""
@@ -159,7 +159,7 @@ class Anime(Cog):
             embed = randomWaifu(ctx, waifus())
             await ctx.send(embed=embed)
 
-    @group(invoke_without_command=True)
+    @group(invoke_without_command=True, aliases=["Husbando"])
     @bot_has_permissions(embed_links=True)
     async def husbando(self, ctx, husbando: Optional[str] = None):
         """Shows a Husbando"""
@@ -196,7 +196,7 @@ class Anime(Cog):
             embed = randomHusbando(ctx, husbandos())
             await ctx.send(embed=embed)
 
-    @waifu.command(name="list")
+    @waifu.command(name="list", aliases=["List"])
     async def wlist(self, ctx):
         """Returns a list of Waifu's Available"""
 
@@ -209,7 +209,7 @@ class Anime(Cog):
                       colour=enso_embedmod_colours)
         await ctx.send(embed=embed)
 
-    @husbando.command(name="list")
+    @husbando.command(name="list", aliases=["List"])
     async def hlist(self, ctx):
         """Returns a list of Husbando's Available"""
 

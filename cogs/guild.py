@@ -9,8 +9,6 @@ from discord import Embed
 from discord import File
 from discord.ext.commands import has_permissions, Cog, group, bot_has_permissions
 
-import db
-from db import connection
 from settings import enso_embedmod_colours, blank_space, storage_modlog_for_guild, remove_modlog_channel
 
 
@@ -173,7 +171,7 @@ class Guild(Cog):
         channels = [channel.id for channel in ctx.guild.channels]
 
         # Setup pool
-        pool = await connection(db.loop)
+        pool = self.bot.db
 
         # Setup pool connection and cursor
         async with pool.acquire() as conn:
@@ -211,7 +209,7 @@ class Guild(Cog):
         channels = [channel.id for channel in ctx.guild.channels]
 
         # Setup pool
-        pool = await connection(db.loop)
+        pool = self.bot.db
 
         # Setup up pool connection and cursor
         async with pool.acquire() as conn:
@@ -246,7 +244,7 @@ class Guild(Cog):
         """Delete the Existing Modlogs System"""
 
         # Setup pool
-        pool = await connection(db.loop)
+        pool = self.bot.db
 
         # Setup up pool connection and cursor
         async with pool.acquire() as conn:
@@ -305,7 +303,7 @@ class Guild(Cog):
         channels = [channel.id for channel in ctx.guild.channels]
 
         # Setup pool
-        pool = await connection(db.loop)
+        pool = self.bot.db
 
         # Setup up pool connection and cursor
         async with pool.acquire() as conn:
@@ -407,7 +405,7 @@ class Guild(Cog):
         channels = [channel.id for channel in ctx.guild.channels]
 
         # Setup pool
-        pool = await connection(db.loop)
+        pool = self.bot.db
 
         # Setup up pool connection and cursor
         async with pool.acquire() as conn:
@@ -463,7 +461,7 @@ class Guild(Cog):
         """Delete the Entire Modmail System from the Guild"""
 
         # Setup pool
-        pool = await connection(db.loop)
+        pool = self.bot.db
 
         # Setup up pool connection and cursor
         async with pool.acquire() as conn:
@@ -520,7 +518,7 @@ class Guild(Cog):
         guildid = payload.guild_id
 
         # Setup pool
-        pool = await connection(db.loop)
+        pool = self.bot.db
 
         # Setup up pool connection and cursor
         async with pool.acquire() as conn:

@@ -115,7 +115,6 @@ async def mute_members(message, targets, reason, muted):
     And if the user has the modlogs channel setup, an embed will be logged there
 
     """
-    await message.delete()
 
     for target in targets:
         if (message.guild.me.top_role.position > target.top_role.position
@@ -168,7 +167,6 @@ async def ban_members(message, targets, reason):
     And if the user has the modlogs channel setup, an embed will be logged there
 
     """
-    await message.delete()
 
     for target in targets:
         if (message.guild.me.top_role.position > target.top_role.position

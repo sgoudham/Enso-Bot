@@ -197,7 +197,7 @@ class Guild(Cog):
         else:
             # Set up the modlogs channel within the guild
             mod_log_setup = True
-            await storage_modlog_for_guild(ctx, channelID, mod_log_setup)
+            await storage_modlog_for_guild(self.bot.db, ctx, channelID, mod_log_setup)
 
     @modlogs.command(name="update")
     @has_permissions(manage_guild=True)
@@ -235,7 +235,7 @@ class Guild(Cog):
         else:
             # Update the modlog channel within the database and cache
             mod_log_setup = False
-            await storage_modlog_for_guild(ctx, channelID, mod_log_setup)
+            await storage_modlog_for_guild(self.bot.db, ctx, channelID, mod_log_setup)
 
     @modlogs.command("delete")
     @has_permissions(manage_guild=True)

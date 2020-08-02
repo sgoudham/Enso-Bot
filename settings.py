@@ -1,12 +1,9 @@
-import asyncio
 import random
 
 from discord import Colour
 
-import db
-from db import connection
-
 # Defining a list of colours
+
 colors = {
     'DEFAULT': 0x000000,
     'WHITE': 0xFFFFFF,
@@ -63,27 +60,6 @@ def rndColour():
 enso_cache = {}
 
 
-async def startup_cache_log():
-    """Store the modlogs/prefixes in cache from the database on startup"""
-
-    # Setup pool
-    pool = await connection(db.loop)
-
-    # Setup up pool connection and cursor
-    async with pool.acquire() as conn:
-        async with conn.cursor() as cur:
-            # Grab the prefix of the server from the database
-            select_query = """SELECT * FROM guilds"""
-
-            # Execute the query
-            await cur.execute(select_query)
-            results = await cur.fetchall()
-
-            # Store the guildID's, modlog channels and prefixes within cache
-            for row in results:
-                cache(guildid=row[0], channel=row[2], prefix=row[1])
-
-
 # Method to store the guildID, channel
 def cache(guildid, channel, prefix):
     """Storing GuildID, Modlogs Channel and Prefix in Cache"""
@@ -105,11 +81,8 @@ def del_cache(guildid):
 # --------------------------------------------!ModLogs Section!---------------------------------------------------------
 
 # Updating the modlog within the dict and database when the method is called
-async def storage_modlog_for_guild(ctx, channelID, setup):
+async def storage_modlog_for_guild(pool, ctx, channelID, setup):
     enso_cache[str(ctx.guild.id)]["Modlogs"] = channelID
-
-    # Setup pool
-    pool = await connection(db.loop)
 
     # Setup up pool connection and cursor
     async with pool.acquire() as conn:
@@ -167,11 +140,8 @@ def get_modlog_for_guild(guildid):
 # --------------------------------------------!Prefixes Section!--------------------------------------------------------
 
 # Updating the prefix within the dict and database when the method is called
-async def storage_prefix_for_guild(ctx, prefix):
+async def storage_prefix_for_guild(pool, ctx, prefix):
     enso_cache[str(ctx.guild.id)]["Prefix"] = prefix
-
-    # Setup pool
-    pool = await connection(db.loop)
 
     # Setup up pool connection and cursor
     async with pool.acquire() as conn:
@@ -238,12 +208,9 @@ def extensions():
     return ext
 
 
-async def storeRoles(target, ctx, member):
+async def storeRoles(pool, target, ctx, member):
     """Storing User Roles within Database"""
     role_ids = ", ".join([str(r.id) for r in target.roles])
-
-    # Setup pool
-    pool = await connection(db.loop)
 
     # Setup up pool connection and cursor
     async with pool.acquire() as conn:
@@ -272,10 +239,5 @@ async def clearRoles(ctx, member, pool):
             await cur.execute(update_query, update_vals)
             await conn.commit()
             print(cur.rowcount, f"Roles Cleared For User {member} in {ctx.guild.name}")
-
-
-# Run the async function to store everything in cache
-loop = asyncio.get_event_loop()
-loop.run_until_complete(startup_cache_log())
 
 # --------------------------------------------!End Cogs/Set Values Section!---------------------------------------------

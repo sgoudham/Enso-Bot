@@ -104,7 +104,7 @@ async def ummute_members(self, message, targets, reason):
             await message.channel.send(embed=embed)
 
 
-async def mute_members(message, targets, reason, muted):
+async def mute_members(pool, message, targets, reason, muted):
     """
 
     Method to allow members to be muted
@@ -119,7 +119,7 @@ async def mute_members(message, targets, reason, muted):
                 and not target.guild_permissions.administrator):
 
             # Store the current roles of the user within database
-            await storeRoles(target=target, ctx=message, member=target)
+            await storeRoles(pool=pool, target=target, ctx=message, member=target)
             # Give the user the muted role
             await target.edit(roles=[muted], reason=reason)
 
@@ -350,10 +350,10 @@ class Moderation(Cog):
                         await channel.set_permissions(muted, send_messages=False, read_messages=True)
 
                     # Send embed of the kicked member
-                    await mute_members(ctx.message, members, reason, muted)
+                    await mute_members(self.bot.db, ctx.message, members, reason, muted)
                 else:
                     # Send embed of the kicked member
-                    await mute_members(ctx.message, members, reason, role)
+                    await mute_members(self.bot.db, ctx.message, members, reason, role)
 
     @command(name="unmute", aliases=["Unmute"], usage="`<member>...` `[reason]`")
     @has_guild_permissions(manage_roles=True)

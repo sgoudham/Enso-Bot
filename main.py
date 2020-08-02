@@ -56,23 +56,33 @@ async def create_connection():
         loop=client.loop)
 
 
+async def startup_cache_log():
+    """Store the modlogs/prefixes in cache from the database on startup"""
+    # Setup pool
+    pool = client.db
+
+    # Setup up pool connection and cursor
+    async with pool.acquire() as conn:
+        async with conn.cursor() as cur:
+            # Grab the prefix of the server from the database
+            select_query = """SELECT * FROM guilds"""
+
+            # Execute the query
+            await cur.execute(select_query)
+            results = await cur.fetchall()
+
+            # Store the guildID's, modlog channels and prefixes within cache
+            for row in results:
+                cache(guildid=row[0], channel=row[2], prefix=row[1])
+
+
 # Make sure the connection is setup before the bot is ready
 client.loop.run_until_complete(create_connection())
+client.loop.run_until_complete(startup_cache_log())
 
 if __name__ == '__main__':
     for ext in settings.extensions():
         client.load_extension(ext)
-
-
-@client.event
-async def on_message(message):
-    """Make sure bot messages are not tracked"""
-
-    if message.author.bot:
-        return
-
-    # Processing the message
-    await client.process_commands(message)
 
 
 @tasks.loop(seconds=120, reconnect=True)
@@ -111,6 +121,17 @@ async def change_status():
 
 # Start the background task
 change_status.start()
+
+
+@client.event
+async def on_message(message):
+    """Make sure bot messages are not tracked"""
+
+    if message.author.bot:
+        return
+
+    # Processing the message
+    await client.process_commands(message)
 
 
 @client.event
@@ -204,7 +225,7 @@ async def change_prefix(ctx, new: Optional[str] = None):
     # As long as a new prefix has been given and is less than 5 characters
     if new and len(new) <= 5:
         # Store the new prefix in the dictionary and update the database
-        await storage_prefix_for_guild(ctx, new)
+        await storage_prefix_for_guild(client.db, ctx, new)
 
     # Making sure that errors are handled if prefix is above 5 characters
     elif new and len(new) > 5:

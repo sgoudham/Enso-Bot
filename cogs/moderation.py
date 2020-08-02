@@ -429,7 +429,7 @@ class Moderation(Cog):
                 # Delete the message sent and then the amount specified
                 # (Only messages sent within the last 14 days)
 
-                deleted = await ctx.channel.purge(limit=amount,
+                deleted = await ctx.channel.purge(limit=amount + 1,
                                                   after=datetime.datetime.utcnow() - timedelta(days=14))
 
                 await ctx.send(f"Deleted **{len(deleted):,}** messages.", delete_after=5)
@@ -444,7 +444,7 @@ class Moderation(Cog):
             # Delete the message sent and then the amount specified
             # (Only messages sent within the last 14 days)
 
-            deleted = await ctx.channel.purge(limit=50,
+            deleted = await ctx.channel.purge(limit=51,
                                               after=datetime.datetime.utcnow() - timedelta(days=14))
 
             await ctx.send(f"Deleted **{len(deleted):,}** messages.", delete_after=5)

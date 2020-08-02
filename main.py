@@ -58,6 +58,7 @@ async def create_connection():
 
 async def startup_cache_log():
     """Store the modlogs/prefixes in cache from the database on startup"""
+    
     # Setup pool
     pool = client.db
 

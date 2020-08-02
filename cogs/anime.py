@@ -6,7 +6,7 @@ from typing import Optional
 from discord import Embed
 from discord.ext.commands import bot_has_permissions, Cog, group
 
-from settings import rndColour, enso_embedmod_colours
+from settings import rndColour, enso_embedmod_colours, waifus_dict
 
 # Defining the full names of the waifu's/husbando's
 anime = {"yumeko": "Jabami Yumeko",
@@ -127,6 +127,29 @@ class Anime(Cog):
     @bot_has_permissions(embed_links=True)
     async def waifu(self, ctx, waifu: Optional[str] = None):
         """Shows a Waifu"""
+
+        name = None
+        desc = None
+        url = None
+        likes = None
+        trash = None
+
+        for key in waifus_dict:
+            if waifu.lower() in key["data"]["name"].lower():
+                name = key["data"]["name"]
+                desc = key["data"]["description"]
+                url = key["data"]["display_picture"]
+                likes = key["data"]["likes"]
+                trash = key["data"]["trash"]
+                break
+
+        embed = Embed(title=name, description=desc,
+                      colour=rndColour(),
+                      timestamp=datetime.datetime.utcnow())
+        embed.set_image(url=url)
+        embed.set_footer(text=f"<a:biglove:739563551987073047> {likes} 💔 {trash}")
+
+        await ctx.send(embed=embed)
 
         if waifu:
             lcase_waifu = waifu.lower()

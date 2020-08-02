@@ -1,3 +1,4 @@
+import json
 import random
 
 from discord import Colour
@@ -77,6 +78,16 @@ def del_cache(guildid):
 
 
 # --------------------------------------------!End Cache Section!-------------------------------------------------------
+
+# --------------------------------------------!Waifu Cache Section!-----------------------------------------------------
+
+# Opening JSON file
+with open('waifusformatted.json') as json_file:
+    waifus_dict = json.load(json_file)
+
+
+# --------------------------------------------!End Waifu Cache Section!-------------------------------------------------
+
 
 # --------------------------------------------!ModLogs Section!---------------------------------------------------------
 
@@ -169,8 +180,10 @@ def del_cache_prefix(guildid):
     del enso_cache[guildid]["Prefix"]
 
 
-# Get the prefix of the guild that the user is in
+#
 def get_prefix_for_guild(guildid):
+    """Get the prefix of the guild that the user is in"""
+
     prefix = enso_cache[guildid]["Prefix"]
     if prefix is not None:
         return prefix
@@ -199,8 +212,9 @@ enso_newpeople_ID = 669771571337887765
 enso_modmail_ID = 728083016290926623
 
 
-# Returns a list of all the cogs
 def extensions():
+    """Returns a list of all the cogs"""
+
     ext = ['cogs.interactive', 'cogs.anime', 'cogs.relationship',
            'cogs.info', 'cogs.fun', 'cogs.enso',
            'cogs.guild', 'cogs.moderation']
@@ -210,6 +224,7 @@ def extensions():
 
 async def storeRoles(pool, target, ctx, member):
     """Storing User Roles within Database"""
+
     role_ids = ", ".join([str(r.id) for r in target.roles])
 
     # Setup up pool connection and cursor

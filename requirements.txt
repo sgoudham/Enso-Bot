@@ -1,10 +1,13 @@
 aiohttp==3.6.2
 aiomysql==0.0.20
+Animapy==1.5.3.1
 appdirs==1.4.4
 APScheduler==3.6.3
 asgiref==3.2.7
 async-timeout==3.0.1
 attrs==19.3.0
+beautifulsoup4==4.9.1
+bigjson==1.0.1
 certifi==2020.4.5.1
 cffi==1.14.0
 chardet==3.0.4
@@ -47,6 +50,7 @@ python-dotenv==0.13.0
 pytz==2020.1
 requests==2.23.0
 six==1.15.0
+soupsieve==2.0.1
 South==1.0.2
 sqlparse==0.3.1
 stevedore==3.2.0

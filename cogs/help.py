@@ -3,9 +3,11 @@
 
 import asyncio
 import datetime
+from typing import Optional
 
 import discord
 from discord import Embed, DMChannel
+from discord.ext import commands
 from discord.ext.commands import Cog, command
 
 from settings import enso_embedmod_colours, hammyMention, enso_feedback_ID
@@ -602,6 +604,56 @@ class Help(Cog):
 
     def __init__(self, bot):
         self.bot = bot
+
+    @command(name='help', aliases=["Help"])
+    async def _help(self, ctx, *, command: Optional[str] = None):
+        """Shows help about a command or the bot"""
+
+        try:
+            if command is None:
+                p = await HelpPaginator.from_bot(ctx)
+            else:
+                entity = ctx.bot.get_cog(command) or ctx.bot.get_command(command)
+
+                if entity is None:
+                    clean = command.replace('@', '@\u200b')
+                    return await ctx.send(f"**Command or Category '{clean}' Not Found.**")
+                elif isinstance(entity, commands.Command):
+                    p = await HelpPaginator.from_command(ctx, entity)
+                else:
+                    p = await HelpPaginator.from_cog(ctx, entity)
+
+            await p.paginate()
+        except Exception as ex:
+            await ctx.send(f"**{ex}**")
+
+    @command(name="support", aliases=["Support"])
+    async def support(self, ctx):
+        """Joining Support Server And Sending Feedback"""
+
+        embed = Embed(title="Support Server!",
+                      description=f"Do **{ctx.prefix}feedback** to send me feedback about the bot and/or report any issues "
+                                  f"that you are having!",
+                      url="https://discord.gg/SZ5nexg",
+                      colour=enso_embedmod_colours,
+                      timestamp=datetime.datetime.utcnow())
+        embed.set_thumbnail(url=ctx.bot.user.avatar_url)
+        embed.set_footer(text=f"Requested by {ctx.author}", icon_url='{}'.format(ctx.author.avatar_url))
+        fields = [("Developer", hammyMention, False),
+                  ("Data Collection",
+                   "\nData Stored:" +
+                   "\n- User ID" +
+                   "\n- Guild ID" +
+                   "\n\n If you wish to delete this data being stored about you. Follow steps outlined below:" +
+                   "\n\n1) **Enable Developer Mode**" +
+                   "\n2) Note down your **User ID** and the **Guild ID** (You must have left this guild or are planning to leave)" +
+                   f"\n3) Join support server and notify me or use **{ctx.prefix}feedback** to notify me", False)]
+
+        # Add fields to the embed
+        for name, value, inline in fields:
+            embed.add_field(name=name, value=value, inline=inline)
+
+        await ctx.send(embed=embed)
 
     @command(name="feedback", aliases=["Feedback"])
     async def feedback(self, ctx):

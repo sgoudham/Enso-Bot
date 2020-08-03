@@ -203,6 +203,7 @@ blank_space = "\u200b"
 enso_embedmod_colours = Colour(0x62167a)
 
 enso_ensochancommands_Mention = "<#721449922838134876>"
+enso_feedback_Mention = "<#739807803438268427>"
 
 enso_ensochancommands_ID = 721449922838134876
 enso_verification_ID = 728034083678060594

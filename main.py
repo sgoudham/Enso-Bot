@@ -53,7 +53,7 @@ client.remove_command("help")  # Remove default help command
 async def create_connection():
     client.db = await aiomysql.create_pool(
         host=host,
-        port=port,
+        port=int(port),
         user=user,
         password=password,
         db=db,
@@ -201,26 +201,29 @@ async def support(ctx):
     """Joining Support Server And Sending Feedback"""
 
     embed = Embed(title="Support Server!",
-                  description=f"Do {ctx.prefix}feedback to send me feedback about the bot and/or report any issues"
+                  description=f"Do **{ctx.prefix}feedback** to send me feedback about the bot and/or report any issues "
                               f"that you are having!",
                   url="https://discord.gg/SZ5nexg",
                   colour=enso_embedmod_colours,
                   timestamp=datetime.datetime.utcnow())
-    embed.set_thumbnail(url=ctx.bot.avatar_url)
+    embed.set_thumbnail(url=ctx.bot.user.avatar_url)
     embed.set_footer(text=f"Requested by {ctx.author}", icon_url='{}'.format(ctx.author.avatar_url))
     fields = [("Developer", hammyMention, False),
               ("Data Collection",
-               "Data Stored:"
-               "\n- User ID"
-               "\n- Guild ID"
-               "\n\n If you wish to delete this data being stored about you. Follow steps outlined below:"
-               "\n1) Enable Developer Mode"
-               "\n2) Note down your User ID and the Guild ID (You must have left this guild or are planning to leave)"
-               "\n3) Join support server and notify me or use the {ctx.prefix}feedback to notify me"), False]
+               "\nData Stored:" +
+               "\n- User ID" +
+               "\n- Guild ID" +
+               "\n\n If you wish to delete this data being stored about you. Follow steps outlined below:" +
+               "\n\n**1) Enable Developer Mode**" +
+               "\n2) Note down your **User ID** and the **Guild ID** (You must have left this guild or are planning to leave)" +
+               f"\n3) Join support server and notify me or use **{ctx.prefix}feedback** to notify me", False)]
 
-    # Add fields to the embed
-    for name, value, inline in fields:
-        embed.add_field(name=name, value=value, inline=inline)
+    try:
+        # Add fields to the embed
+        for name, value, inline in fields:
+            embed.add_field(name=name, value=value, inline=inline)
+    except Exception as e:
+        print(e)
 
     await ctx.send(embed=embed)
 

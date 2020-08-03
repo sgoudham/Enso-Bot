@@ -243,7 +243,6 @@ async def on_guild_join(guild):
             await conn.commit()
             print(cur.rowcount, f"Record(s) inserted successfully into Guilds from {guild.name}")
 
-    async with pool.acquire() as conn:
         async with conn.cursor() as cur:
             # Define the insert statement that will insert the user's information
             insert = """INSERT INTO members (guildID, discordID) VALUES""" + ", ".join(

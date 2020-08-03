@@ -554,3 +554,15 @@ class HelpPaginator(Pages):
             await self.show_current_page()
 
         self.bot.loop.create_task(go_back_to_current_page())
+
+
+# Set up the Cog
+class Help(Cog):
+    """Help Commands!"""
+
+    def __init__(self, bot):
+        self.bot = bot
+
+
+def setup(bot):
+    bot.add_cog(Help(bot))

@@ -375,7 +375,7 @@ class Info(Cog):
                                     len(self.bot.commands),
                                     len(self.bot.users)), True),
             ("Line Count", lineCount(), True),
-            ("Bot Version", "1.7.2", False),
+            ("Bot Version", self.bot.version, False),
             ("Language | Library",
              f"<:python:661908544739737611> Python {python_version()} | <:discord:314003252830011395> Discord.py {discord_version}",
              False),

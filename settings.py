@@ -203,7 +203,6 @@ blank_space = "\u200b"
 enso_embedmod_colours = Colour(0x62167a)
 
 enso_ensochancommands_Mention = "<#721449922838134876>"
-enso_feedback_Mention = "<#739807803438268427>"
 
 enso_ensochancommands_ID = 721449922838134876
 enso_verification_ID = 728034083678060594
@@ -211,6 +210,7 @@ enso_selfroles_ID = 722347423913213992
 enso_guild_ID = 663651584399507476
 enso_newpeople_ID = 669771571337887765
 enso_modmail_ID = 728083016290926623
+enso_feedback_ID = 739807803438268427
 
 
 def extensions():
@@ -218,7 +218,7 @@ def extensions():
 
     ext = ['cogs.interactive', 'cogs.anime', 'cogs.relationship',
            'cogs.info', 'cogs.fun', 'cogs.enso',
-           'cogs.guild', 'cogs.moderation']
+           'cogs.guild', 'cogs.moderation', "cogs.help"]
 
     return ext
 

@@ -5,9 +5,10 @@ import asyncio
 import datetime
 
 import discord
-from discord.ext.commands import Cog
+from discord import Embed, DMChannel
+from discord.ext.commands import Cog, command
 
-from settings import enso_embedmod_colours
+from settings import enso_embedmod_colours, hammyMention, enso_feedback_ID
 
 
 class CannotPaginate(Exception):
@@ -556,12 +557,97 @@ class HelpPaginator(Pages):
         self.bot.loop.create_task(go_back_to_current_page())
 
 
+# Method to actually allow the message to be sent to #mod-mail
+def SendMsgToModMail(message, author):
+    embed = Embed(title="Feedback!",
+                  colour=enso_embedmod_colours,
+                  timestamp=datetime.datetime.utcnow())
+
+    embed.set_thumbnail(url=author.avatar_url)
+    embed.set_footer(text=f"Send By {author}")
+
+    fields = [("Member", author.mention, False),
+              ("Message", message.content, False)]
+
+    for name, value, inline in fields:
+        embed.add_field(name=name, value=value, inline=inline)
+
+    return embed
+
+
+def MessageSentConfirmation():
+    ConfirmationEmbed = Embed(title="Thank you for your feedback!",
+                              description=f"**Message relayed to {hammyMention}**",
+                              colour=enso_embedmod_colours,
+                              timestamp=datetime.datetime.utcnow())
+    ConfirmationEmbed.set_footer(text=f"Thanks Once Again! ~ Hammy")
+
+    return ConfirmationEmbed
+
+
+def ErrorHandling(author):
+    ErrorHandlingEmbed = Embed(
+        title="Uh Oh! Please make sure the message is below **1024** characters!",
+        colour=enso_embedmod_colours,
+        timestamp=datetime.datetime.utcnow())
+
+    ErrorHandlingEmbed.set_footer(text=f"Sent To {author}")
+
+    return ErrorHandlingEmbed
+
+
 # Set up the Cog
 class Help(Cog):
     """Help Commands!"""
 
     def __init__(self, bot):
         self.bot = bot
+
+    @command(name="feedback", aliases=["Feedback"])
+    async def feedback(self, ctx):
+        """Sending Feedback to Support Server"""
+
+        channel = self.bot.get_channel(enso_feedback_ID)
+
+        embed = Embed(title="Provide Feedback!",
+                      description=f"Hiya! Please respond to this message with the feedback you want to provide!"
+                                  f"\n(You have 5 minutes to respond. Make sure it is a single message and under **1024** characters!)",
+                      url="https://discord.gg/SZ5nexg",
+                      colour=enso_embedmod_colours,
+                      timestamp=datetime.datetime.utcnow())
+        embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+
+        helper = await ctx.author.send(embed=embed)
+
+        def check(m):
+            return m.author == ctx.author and isinstance(m.channel, DMChannel)
+
+        try:
+            # Wait for the message from the mentioned user
+            msg = await ctx.bot.wait_for('message', check=check, timeout=5.0)
+
+            # Making sure that the message is below 50 characters and the message was sent in the channel
+            while len(msg.content) > 1024 and check(msg):
+                await ctx.author.send(embed=ErrorHandling(ctx.author))
+
+                # Wait for the message from the author again
+                msg = await ctx.bot.wait_for('message', check=check, timeout=5.0)
+
+            if len(msg.content) < 1024 and check(msg):
+                await ctx.author.send(embed=MessageSentConfirmation())
+
+                await channel.send(embed=SendMsgToModMail(msg, ctx.author))
+
+        except asyncio.TimeoutError:
+
+            embed = Embed(title="(｡T ω T｡) You waited too long",
+                          description=f"Do **{ctx.prefix}feedback** To Try Again!",
+                          colour=enso_embedmod_colours,
+                          timestamp=datetime.datetime.utcnow())
+            embed.set_footer(text=f"Sent To {ctx.author}", icon_url=ctx.author.avatar_url)
+
+            # Send out an error message if the user waited too long
+            await helper.edit(embed=embed)
 
 
 def setup(bot):

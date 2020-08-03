@@ -7,7 +7,7 @@ import discord
 from decouple import config
 from discord import Embed
 from discord.ext import commands, tasks
-from discord.ext.commands import when_mentioned_or, is_owner, guild_only, has_permissions
+from discord.ext.commands import when_mentioned_or, is_owner, guild_only, has_permissions, cooldown, BucketType
 
 import settings
 from cogs.help import HelpPaginator
@@ -196,6 +196,18 @@ async def _help(ctx, *, command: Optional[str] = None):
         await ctx.send(f"**{ex}**")
 
 
+@client.command(name="feedback", aliases=["Feedback"])
+@cooldown(1, 30, BucketType.user)
+async def feedback(ctx):
+    """Sending Feedback to Support Server"""
+
+    embed = Embed(title="Send Feedback!",
+                  description=f"",
+                  url="https://discord.gg/SZ5nexg",
+                  colour=enso_embedmod_colours,
+                  timestamp=datetime.datetime.utcnow())
+
+
 @client.command(name="support", aliases=["Support"])
 async def support(ctx):
     """Joining Support Server And Sending Feedback"""
@@ -214,7 +226,7 @@ async def support(ctx):
                "\n- User ID" +
                "\n- Guild ID" +
                "\n\n If you wish to delete this data being stored about you. Follow steps outlined below:" +
-               "\n\n**1) Enable Developer Mode**" +
+               "\n\n1) **Enable Developer Mode**" +
                "\n2) Note down your **User ID** and the **Guild ID** (You must have left this guild or are planning to leave)" +
                f"\n3) Join support server and notify me or use **{ctx.prefix}feedback** to notify me", False)]
 

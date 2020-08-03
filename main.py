@@ -14,18 +14,22 @@ from cogs.help import HelpPaginator
 from settings import blank_space, enso_embedmod_colours, enso_guild_ID, enso_newpeople_ID, get_prefix_for_guild, \
     storage_prefix_for_guild, cache, del_cache
 
+# Global counter for statuses
 counter = 0
 
-# Get password/host from .env
+# Get DB information from .env
 password = config('DB_PASS')
 host = config('DB_HOST')
+user = config('DB_USER')
+port = config('DB_PORT')
+db = config('DB_NAME')
 
 # Getting the Bot token from Environment Variables
 API_TOKEN = config('DISCORD_TOKEN')
 
 
-# Method to allow the commands to be used with mentioning the bot
 async def get_prefix(bot, message):
+    """Allow the commands to be used with mentioning the bot"""
     if message.guild is None:
         return "~"
     return when_mentioned_or(get_prefix_for_guild(str(message.guild.id)))(bot, message)
@@ -49,16 +53,16 @@ client.remove_command("help")  # Remove default help command
 async def create_connection():
     client.db = await aiomysql.create_pool(
         host=host,
-        port=3306,
-        user="hamothy",
+        port=port,
+        user=user,
         password=password,
-        db='enso',
+        db=db,
         loop=client.loop)
 
 
 async def startup_cache_log():
     """Store the modlogs/prefixes in cache from the database on startup"""
-    
+
     # Setup pool
     pool = client.db
 
@@ -190,6 +194,22 @@ async def _help(ctx, *, command: Optional[str] = None):
         await p.paginate()
     except Exception as ex:
         await ctx.send(f"**{ex}**")
+
+
+@client.command(name="support", aliases=["Support"])
+async def support(ctx):
+    """Shows how to join support server and how to send feedback"""
+
+    embed = Embed(title="Support Server!",
+                  description=f"Do {ctx.prefix}feedback to send me feedback about the bot and/or report any issues"
+                              f"that you are having!",
+                  url="https://discord.gg/SZ5nexg",
+                  colour=enso_embedmod_colours,
+                  timestamp=datetime.datetime.utcnow())
+    embed.set_thumbnail(url=ctx.bot.avatar_url)
+    embed.set_footer(text=f"Requested by {ctx.author}", icon_url='{}'.format(ctx.author.avatar_url))
+    fields = [("", "", True),
+              ]
 
 
 @client.command(name="reloadusers", hidden=True)

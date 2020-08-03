@@ -230,12 +230,9 @@ async def support(ctx):
                "\n2) Note down your **User ID** and the **Guild ID** (You must have left this guild or are planning to leave)" +
                f"\n3) Join support server and notify me or use **{ctx.prefix}feedback** to notify me", False)]
 
-    try:
-        # Add fields to the embed
-        for name, value, inline in fields:
-            embed.add_field(name=name, value=value, inline=inline)
-    except Exception as e:
-        print(e)
+    # Add fields to the embed
+    for name, value, inline in fields:
+        embed.add_field(name=name, value=value, inline=inline)
 
     await ctx.send(embed=embed)
 

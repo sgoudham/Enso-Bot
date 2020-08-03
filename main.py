@@ -7,12 +7,11 @@ import discord
 from decouple import config
 from discord import Embed
 from discord.ext import commands, tasks
-from discord.ext.commands import when_mentioned_or, is_owner, guild_only, has_permissions, cooldown, BucketType
+from discord.ext.commands import when_mentioned_or, is_owner, guild_only, has_permissions
 
 import settings
-from cogs.help import HelpPaginator
 from settings import blank_space, enso_embedmod_colours, enso_guild_ID, enso_newpeople_ID, get_prefix_for_guild, \
-    storage_prefix_for_guild, cache, del_cache, hammyMention
+    storage_prefix_for_guild, cache, del_cache
 
 # Global counter for statuses
 counter = 0
@@ -171,70 +170,6 @@ async def restart(ctx):
         colour=enso_embedmod_colours)
     await ctx.send(embed=embed)
     await client.logout()
-
-
-@client.command(name='help', aliases=["Help"])
-async def _help(ctx, *, command: Optional[str] = None):
-    """Shows help about a command or the bot"""
-
-    try:
-        if command is None:
-            p = await HelpPaginator.from_bot(ctx)
-        else:
-            entity = ctx.bot.get_cog(command) or ctx.bot.get_command(command)
-
-            if entity is None:
-                clean = command.replace('@', '@\u200b')
-                return await ctx.send(f"**Command or Category '{clean}' Not Found.**")
-            elif isinstance(entity, commands.Command):
-                p = await HelpPaginator.from_command(ctx, entity)
-            else:
-                p = await HelpPaginator.from_cog(ctx, entity)
-
-        await p.paginate()
-    except Exception as ex:
-        await ctx.send(f"**{ex}**")
-
-
-@client.command(name="feedback", aliases=["Feedback"])
-@cooldown(1, 30, BucketType.user)
-async def feedback(ctx):
-    """Sending Feedback to Support Server"""
-
-    embed = Embed(title="Send Feedback!",
-                  description=f"",
-                  url="https://discord.gg/SZ5nexg",
-                  colour=enso_embedmod_colours,
-                  timestamp=datetime.datetime.utcnow())
-
-
-@client.command(name="support", aliases=["Support"])
-async def support(ctx):
-    """Joining Support Server And Sending Feedback"""
-
-    embed = Embed(title="Support Server!",
-                  description=f"Do **{ctx.prefix}feedback** to send me feedback about the bot and/or report any issues "
-                              f"that you are having!",
-                  url="https://discord.gg/SZ5nexg",
-                  colour=enso_embedmod_colours,
-                  timestamp=datetime.datetime.utcnow())
-    embed.set_thumbnail(url=ctx.bot.user.avatar_url)
-    embed.set_footer(text=f"Requested by {ctx.author}", icon_url='{}'.format(ctx.author.avatar_url))
-    fields = [("Developer", hammyMention, False),
-              ("Data Collection",
-               "\nData Stored:" +
-               "\n- User ID" +
-               "\n- Guild ID" +
-               "\n\n If you wish to delete this data being stored about you. Follow steps outlined below:" +
-               "\n\n1) **Enable Developer Mode**" +
-               "\n2) Note down your **User ID** and the **Guild ID** (You must have left this guild or are planning to leave)" +
-               f"\n3) Join support server and notify me or use **{ctx.prefix}feedback** to notify me", False)]
-
-    # Add fields to the embed
-    for name, value, inline in fields:
-        embed.add_field(name=name, value=value, inline=inline)
-
-    await ctx.send(embed=embed)
 
 
 @client.command(name="reloadusers", hidden=True)

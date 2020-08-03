@@ -115,9 +115,6 @@ class Relationship(Cog):
             # if the person says yes
             if msg.content.lower() in ['y', 'yes', 'yea']:
 
-                # Setup pool
-                pool = self.bot.db
-
                 # Setup pool connection and cursor
                 async with pool.acquire() as conn:
                     async with conn.cursor() as cur:
@@ -207,8 +204,6 @@ class Relationship(Cog):
 
             # if the person says yes
             if msg.content.lower() in ['y', 'yes', 'yea']:
-                # Setup pool
-                pool = self.bot.db
 
                 # Setup pool connection and cursor
                 async with pool.acquire() as conn:

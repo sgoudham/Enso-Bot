@@ -279,8 +279,6 @@ async def on_guild_remove(guild):
             await conn.commit()
             print(cur.rowcount, f"Record deleted successfully from Guild {guild.name}")
 
-    # Setup pool connection and cursor
-    async with pool.acquire() as conn:
         async with conn.cursor() as cur:
             # Delete the record of the member as the bot leaves the server
             delete_query = """DELETE FROM members WHERE guildID = %s"""

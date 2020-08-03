@@ -606,17 +606,17 @@ class Help(Cog):
         self.bot = bot
 
     @command(name='help', aliases=["Help"])
-    async def _help(self, ctx, *, command: Optional[str] = None):
+    async def _help(self, ctx, *, cmd: Optional[str] = None):
         """Shows help about a command or the bot"""
 
         try:
-            if command is None:
+            if cmd is None:
                 p = await HelpPaginator.from_bot(ctx)
             else:
-                entity = ctx.bot.get_cog(command) or ctx.bot.get_command(command)
+                entity = ctx.bot.get_cog(cmd) or ctx.bot.get_command(cmd)
 
                 if entity is None:
-                    clean = command.replace('@', '@\u200b')
+                    clean = cmd.replace('@', '@\u200b')
                     return await ctx.send(f"**Command or Category '{clean}' Not Found.**")
                 elif isinstance(entity, commands.Command):
                     p = await HelpPaginator.from_command(ctx, entity)

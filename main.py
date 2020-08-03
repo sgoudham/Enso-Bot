@@ -12,7 +12,7 @@ from discord.ext.commands import when_mentioned_or, is_owner, guild_only, has_pe
 import settings
 from cogs.help import HelpPaginator
 from settings import blank_space, enso_embedmod_colours, enso_guild_ID, enso_newpeople_ID, get_prefix_for_guild, \
-    storage_prefix_for_guild, cache, del_cache
+    storage_prefix_for_guild, cache, del_cache, hammyMention
 
 # Global counter for statuses
 counter = 0
@@ -198,7 +198,7 @@ async def _help(ctx, *, command: Optional[str] = None):
 
 @client.command(name="support", aliases=["Support"])
 async def support(ctx):
-    """Shows how to join support server and how to send feedback"""
+    """Joining Support Server And Sending Feedback"""
 
     embed = Embed(title="Support Server!",
                   description=f"Do {ctx.prefix}feedback to send me feedback about the bot and/or report any issues"
@@ -208,8 +208,21 @@ async def support(ctx):
                   timestamp=datetime.datetime.utcnow())
     embed.set_thumbnail(url=ctx.bot.avatar_url)
     embed.set_footer(text=f"Requested by {ctx.author}", icon_url='{}'.format(ctx.author.avatar_url))
-    fields = [("", "", True),
-              ]
+    fields = [("Developer", hammyMention, False),
+              ("Data Collection",
+               "Data Stored:"
+               "\n- User ID"
+               "\n- Guild ID"
+               "\n\n If you wish to delete this data being stored about you. Follow steps outlined below:"
+               "\n1) Enable Developer Mode"
+               "\n2) Note down your User ID and the Guild ID (You must have left this guild or are planning to leave)"
+               "\n3) Join support server and notify me or use the {ctx.prefix}feedback to notify me"), False]
+
+    # Add fields to the embed
+    for name, value, inline in fields:
+        embed.add_field(name=name, value=value, inline=inline)
+
+    await ctx.send(embed=embed)
 
 
 @client.command(name="reloadusers", hidden=True)

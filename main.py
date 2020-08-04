@@ -171,7 +171,6 @@ async def restart(ctx):
     await ctx.send(embed=embed)
 
     await client.logout()
-    await client.loop.close()
 
 
 @client.command(name="reloadusers", hidden=True)

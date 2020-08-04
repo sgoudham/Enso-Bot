@@ -669,7 +669,7 @@ class Help(Cog):
 
         embed = Embed(title="Provide Feedback!",
                       description=f"Hiya! Please respond to this message with the feedback you want to provide!"
-                                  f"\n(You have 5 minutes to respond. Make sure it is a single message and under **1024** characters!)",
+                                  f"\n(You have **5 minutes** to respond. Make sure it is a **single message** and under **1024** characters!)",
                       url="https://discord.gg/SZ5nexg",
                       colour=enso_embedmod_colours,
                       timestamp=datetime.datetime.utcnow())
@@ -704,7 +704,7 @@ class Help(Cog):
         except asyncio.TimeoutError:
 
             embed = Embed(title="(｡T ω T｡) You waited too long",
-                          description=f"Do **{ctx.prefix}feedback** To Try Again!",
+                          description=f"Do **{ctx.prefix}feedback** to try again!",
                           colour=enso_embedmod_colours,
                           timestamp=datetime.datetime.utcnow())
             embed.set_footer(text=f"Sent To {ctx.author}", icon_url=ctx.author.avatar_url)

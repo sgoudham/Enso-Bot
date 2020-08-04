@@ -5,7 +5,7 @@ from typing import Optional
 import aiomysql
 import discord
 from decouple import config
-from discord import Embed
+from discord import Embed, HTTPException
 from discord.ext import commands, tasks
 from discord.ext.commands import when_mentioned_or, is_owner, guild_only, has_permissions
 
@@ -327,14 +327,17 @@ async def on_member_join(member):
             result = await cur.fetchone()
             role_ids = result[5]
 
-            if role_ids is not None:
-                # Get all the roles of the user before they were muted from the database
-                roles = [member.guild.get_role(int(id_)) for id_ in role_ids.split(", ") if len(id_)]
-                # Give the member their roles back
-                await member.edit(roles=roles)
-                print(f"Member {member} Had Their Roles Given Back In {member.guild.name}")
-            else:
-                pass
+            try:
+                if role_ids is not None:
+                    # Get all the roles of the user before they were muted from the database
+                    roles = [member.guild.get_role(int(id_)) for id_ in role_ids.split(", ") if len(id_)]
+                    # Give the member their roles back
+                    await member.edit(roles=roles)
+                    print(f"Member {member} Had Their Roles Given Back In {member.guild.name}")
+                else:
+                    pass
+            except HTTPException:
+                print(f"Roles Could Not Be Added To {member} in {member.guild.name}")
 
             # Reset the roles entry for the database
             update_query = """UPDATE members SET roles = NULL WHERE guildID = (%s) AND discordID = (%s)"""

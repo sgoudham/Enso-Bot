@@ -442,7 +442,10 @@ async def on_bot_forbidden(ctx, args2):
 
     embed = Embed(description=f"❌ I Need **{missing_perms}** Permission(s) to Execute This Command! ❌",
                   colour=enso_embedmod_colours)
-    await ctx.send(embed=embed)
+    try:
+        await ctx.send(embed=embed)
+    except Exception:
+        print("Error: Error Handling Message Could Not Be Sent")
 
 
 async def on_command_forbidden(ctx):
@@ -450,7 +453,10 @@ async def on_command_forbidden(ctx):
 
     embed = Embed(description="**❌ I Don't Have Permissions To Execute This Command ❌**",
                   colour=enso_embedmod_colours)
-    await ctx.send(embed=embed)
+    try:
+        await ctx.send(embed=embed)
+    except Exception:
+        print("Error: Error Handling Message Could Not Be Sent")
 
 
 async def on_command_bad_argument(ctx):
@@ -458,7 +464,10 @@ async def on_command_bad_argument(ctx):
 
     embed = Embed(description="**❌ Uh oh! Couldn't find anyone to mention! Try again! ❌**",
                   colour=enso_embedmod_colours)
-    await ctx.send(embed=embed)
+    try:
+        await ctx.send(embed=embed)
+    except Exception:
+        print("Error: Error Handling Message Could Not Be Sent")
 
 
 async def on_command_not_found(ctx):
@@ -474,7 +483,10 @@ async def on_command_cooldown(ctx, error):
 
     embed = Embed(description=f"That command is on cooldown. Try again in **{error.retry_after:,.2f}** seconds",
                   colour=enso_embedmod_colours)
-    await ctx.send(embed=embed)
+    try:
+        await ctx.send(embed=embed)
+    except Exception:
+        print("Error: Error Handling Message Could Not Be Sent")
 
 
 async def on_command_permission(ctx, args2):
@@ -485,7 +497,10 @@ async def on_command_permission(ctx, args2):
 
     embed = Embed(description=f"❌ Uh oh! You Need **{missing_perms}** Permission(s) To Execute This Command! ❌",
                   colour=enso_embedmod_colours)
-    await ctx.send(embed=embed)
+    try:
+        await ctx.send(embed=embed)
+    except Exception:
+        print("Error: Error Handling Message Could Not Be Sent")
 
 
 async def on_command_missing_argument(ctx):
@@ -494,7 +509,10 @@ async def on_command_missing_argument(ctx):
     embed = Embed(description="Required Argument(s) Missing!"
                               f"\nUse **{ctx.prefix}help** to find how to use **{ctx.command}**",
                   colour=enso_embedmod_colours)
-    await ctx.send(embed=embed)
+    try:
+        await ctx.send(embed=embed)
+    except Exception:
+        print("Error: Error Handling Message Could Not Be Sent")
 
 
 async def on_not_owner(ctx):
@@ -502,7 +520,10 @@ async def on_not_owner(ctx):
 
     embed = Embed(description="**❌ Owner Only Command ❌**",
                   colour=enso_embedmod_colours)
-    await ctx.send(embed=embed)
+    try:
+        await ctx.send(embed=embed)
+    except Exception:
+        print("Error: Error Handling Message Could Not Be Sent")
 
 
 # Run the bot, allowing it to come online

@@ -475,7 +475,10 @@ async def on_command_not_found(ctx):
 
     embed = Embed(description=f"Command Not Found! ❌ Please use **{ctx.prefix}help** to see all commands",
                   colour=enso_embedmod_colours)
-    await ctx.send(embed=embed)
+    try:
+        await ctx.send(embed=embed)
+    except Exception:
+        print("Error: Error Handling Message Could Not Be Sent")
 
 
 async def on_command_cooldown(ctx, error):

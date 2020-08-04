@@ -559,8 +559,9 @@ class HelpPaginator(Pages):
         self.bot.loop.create_task(go_back_to_current_page())
 
 
-# Method to actually allow the message to be sent to #mod-mail
-def SendMsgToModMail(message, author):
+def send_feedback(message, author):
+    """Preparing Embed to send to the support server"""
+
     embed = Embed(title="Feedback!",
                   colour=enso_embedmod_colours,
                   timestamp=datetime.datetime.utcnow())
@@ -577,7 +578,9 @@ def SendMsgToModMail(message, author):
     return embed
 
 
-def MessageSentConfirmation():
+def message_sent_confirmation():
+    """Preparing Embed to be sent to the user after the message has been received successfully"""
+
     ConfirmationEmbed = Embed(title="Thank you for your feedback!",
                               description=f"**Message relayed to {hammyMention}**",
                               colour=enso_embedmod_colours,
@@ -587,7 +590,9 @@ def MessageSentConfirmation():
     return ConfirmationEmbed
 
 
-def ErrorHandling(author):
+def error_handling(author):
+    """Preparing embed to send if the message is not suitable"""
+
     ErrorHandlingEmbed = Embed(
         title="Uh Oh! Please make sure the message is below **1024** characters!",
         colour=enso_embedmod_colours,
@@ -659,6 +664,7 @@ class Help(Cog):
     async def feedback(self, ctx):
         """Sending Feedback to Support Server"""
 
+        # Get the #feedback channel within the support server
         channel = self.bot.get_channel(enso_feedback_ID)
 
         embed = Embed(title="Provide Feedback!",
@@ -672,24 +678,29 @@ class Help(Cog):
         helper = await ctx.author.send(embed=embed)
 
         def check(m):
+            """Ensure that the feedback received is from the author's DMs"""
             return m.author == ctx.author and isinstance(m.channel, DMChannel)
 
         try:
-            # Wait for the message from the mentioned user
-            msg = await ctx.bot.wait_for('message', check=check, timeout=5.0)
+            # Wait for feedback from author
+            msg = await ctx.bot.wait_for('message', check=check, timeout=300.0)
 
-            # Making sure that the message is below 50 characters and the message was sent in the channel
+            # Make sure sure that the message is below 1024 characters
             while len(msg.content) > 1024 and check(msg):
-                await ctx.author.send(embed=ErrorHandling(ctx.author))
+                await ctx.author.send(embed=error_handling(ctx.author))
 
-                # Wait for the message from the author again
-                msg = await ctx.bot.wait_for('message', check=check, timeout=5.0)
+                # Wait for feedback again
+                msg = await ctx.bot.wait_for('message', check=check, timeout=300.0)
 
+            # Once message is below 1024 characters
+            # Send confirmation message to author to let them know feedback has been sent
+            # Send the feedback entered from the author into support server
             if len(msg.content) < 1024 and check(msg):
-                await ctx.author.send(embed=MessageSentConfirmation())
+                await ctx.author.send(embed=message_sent_confirmation())
 
-                await channel.send(embed=SendMsgToModMail(msg, ctx.author))
+                await channel.send(embed=send_feedback(msg, ctx.author))
 
+        # Edit current embed to show error that the feedback timed out
         except asyncio.TimeoutError:
 
             embed = Embed(title="(｡T ω T｡) You waited too long",

@@ -170,8 +170,8 @@ async def restart(ctx):
         colour=enso_embedmod_colours)
     await ctx.send(embed=embed)
 
-    await client.loop.close()
     await client.logout()
+    await client.loop.close()
 
 
 @client.command(name="reloadusers", hidden=True)

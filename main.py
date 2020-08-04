@@ -170,6 +170,8 @@ async def restart(ctx):
         colour=enso_embedmod_colours)
     await ctx.send(embed=embed)
 
+    client.db.terminate()
+    await client.db.wait_closed()
     await client.logout()
 
 

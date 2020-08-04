@@ -169,6 +169,8 @@ async def restart(ctx):
         description="**Success Senpai! My Reboot Had No Problems** <a:ThumbsUp:737832825469796382>",
         colour=enso_embedmod_colours)
     await ctx.send(embed=embed)
+
+    await client.close()
     await client.logout()
 
 
@@ -326,17 +328,14 @@ async def on_member_join(member):
             result = await cur.fetchone()
             role_ids = result[5]
 
-            try:
-                if role_ids is not None:
-                    # Get all the roles of the user before they were muted from the database
-                    roles = [member.guild.get_role(int(id_)) for id_ in role_ids.split(", ") if len(id_)]
-                    # Give the member their roles back
-                    await member.edit(roles=roles)
-                    print(f"Member {member} Had Their Roles Given Back In {member.guild.name}")
-                else:
-                    pass
-            except Exception:
-                print(f"Roles Could Not Be Added To {member} in {member.guild}")
+            if role_ids is not None:
+                # Get all the roles of the user before they were muted from the database
+                roles = [member.guild.get_role(int(id_)) for id_ in role_ids.split(", ") if len(id_)]
+                # Give the member their roles back
+                await member.edit(roles=roles)
+                print(f"Member {member} Had Their Roles Given Back In {member.guild.name}")
+            else:
+                pass
 
             # Reset the roles entry for the database
             update_query = """UPDATE members SET roles = NULL WHERE guildID = (%s) AND discordID = (%s)"""

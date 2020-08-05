@@ -282,14 +282,16 @@ class Guild(Cog):
                        f"\nPlease do **{ctx.prefix}help** to find out how to set Modmail again!")
 
     @group(invoke_without_command=True, usage="`[argument...]`")
-    @has_permissions(administrator=True)
     @bot_has_permissions(administrator=True)
     async def modmail(self, ctx):
-        """Setup/Update/Delete Modmail System"""
+        """
+        Show Current Modlogs Channel (If Setup)
+        Setup/Update/Delete Modmail System
+        """
         pass
 
     @modmail.command(name="setup")
-    @has_permissions(administrator=True)
+    @has_permissions(manage_guild=True)
     @bot_has_permissions(administrator=True)
     async def mmsetup(self, ctx, channelID: int):
         """
@@ -391,7 +393,7 @@ class Guild(Cog):
             return
 
     @modmail.command(name="update")
-    @has_permissions(administrator=True)
+    @has_permissions(manage_guild=True)
     @bot_has_permissions(administrator=True)
     async def mmupdate(self, ctx, channelID: int):
         """
@@ -453,7 +455,7 @@ class Guild(Cog):
             return
 
     @modmail.command(name="delete")
-    @has_permissions(administrator=True)
+    @has_permissions(manage_guild=True)
     @bot_has_permissions(administrator=True)
     async def mmdelete(self, ctx):
         """Delete the Entire Modmail System from the Guild"""

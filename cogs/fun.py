@@ -1,5 +1,6 @@
 import asyncio
 import datetime
+import os
 import random
 import string
 import textwrap
@@ -17,8 +18,12 @@ from owotext import OwO
 
 from settings import colour_list
 
+counter = 0
+
 
 def generate_meme(image_path, top_text, bottom_text='', font_path='homies/impact/Impacted.ttf', font_size=9):
+    global counter
+
     get_image = Image.open(image_path)
     draw = ImageDraw.Draw(get_image)
     image_width, image_height = get_image.size
@@ -53,7 +58,7 @@ def generate_meme(image_path, top_text, bottom_text='', font_path='homies/impact
         y += line_height
 
     # Save meme
-    get_image.save("AllMyHomiesHateMeme.jpg")
+    get_image.save(f"AllMyHomiesHateMeme{counter}.jpg")
 
 
 # Set up the cog
@@ -339,6 +344,9 @@ class Fun(Cog):
     async def homies(self, ctx, *, text):
         """Summoning the Homies"""
 
+        # Global counter for saving homies meme
+        global counter
+
         try:
             # Make sure the text entered is less than 20 characters
             if len(text) >= 20:
@@ -354,10 +362,18 @@ class Fun(Cog):
                 generate_meme('homies/AllMyHomies.jpg', top_text=top_text, bottom_text=bottom_text)
 
                 # Send the image file stored in the directory
-                await ctx.send(file=discord.File('AllMyHomiesHateMeme.jpg'))
+                await ctx.send(file=discord.File(f'AllMyHomiesHateMeme{counter}.jpg'))
 
-        except commands.BadArgument as e:
-            raise e
+                # Remove file after sending it and then increment the counter
+                path = f"AllMyHomiesHateMeme{counter}.jpg"
+                if os.path.exists(path):
+                    os.remove(path)
+                    counter += 1
+                else:
+                    print("The file does not exist")
+
+        except Exception as e:
+            print(e)
 
     @command(name="owo", aliases=["Owo", "OwO"])
     @cooldown(1, 1, BucketType.user)

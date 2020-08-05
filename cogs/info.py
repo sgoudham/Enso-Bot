@@ -400,9 +400,9 @@ class Info(Cog):
             member = ctx.author
 
         # Get the member avatar
-        userAvatar = member.avatar_url
+        userAvatar = str(member.avatar_url)
 
-        embed = Embed(title=f"Link To {member}'s Avatar",
+        embed = Embed(title=f"{member}'s Avatar",
                       url=userAvatar,
                       colour=enso_embedmod_colours,
                       timestamp=datetime.datetime.utcnow())

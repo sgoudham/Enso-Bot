@@ -300,7 +300,6 @@ class Info(Cog):
             print(e)
 
     @command(name="channelinfo", aliases=["chinfo"])
-    @cooldown(1, 5, BucketType.user)
     @guild_only()
     @bot_has_permissions(embed_links=True)
     async def channel_info(self, ctx):
@@ -334,9 +333,7 @@ class Info(Cog):
         await ctx.send(embed=embed)
 
     @command(name="about", aliases=["About"])
-    @guild_only()
     @bot_has_permissions(embed_links=True)
-    @cooldown(1, 5, BucketType.user)
     async def checking_bot_stats(self, ctx):
         """Bot Statistics! (CPU/Mem Usage etc)"""
 
@@ -361,6 +358,7 @@ class Info(Cog):
         frmt_uptime = '{:01} Hours, {:01} Minutes, {:01} Seconds'.format(int(uptime_hours), int(uptime_minutes),
                                                                          int(uptime_seconds))
 
+        # Grabbing total number of channels across all guilds in which the bot is present in
         channels = map(lambda m: len(m.channels), self.bot.guilds)
 
         # Setting up fields
@@ -387,6 +385,31 @@ class Info(Cog):
             stats.add_field(name=name, value=value, inline=inline)
 
         await ctx.send(embed=stats)
+
+    @command(name="avatar", aliases=["Avatar"])
+    @bot_has_permissions(embed_links=True)
+    async def get_user_avatar(self, ctx, member: Optional[Member] = None):
+        """
+        Displaying Member's Avatar
+        Member can be mentioned and their avatar will be displayed
+        """
+
+        if member:
+            member = member
+        else:
+            member = ctx.author
+
+        # Get the member avatar
+        userAvatar = member.avatar_url
+
+        embed = Embed(title=f"Link To {member}'s Avatar",
+                      url=userAvatar,
+                      colour=enso_embedmod_colours,
+                      timestamp=datetime.datetime.utcnow())
+        embed.set_image(url=userAvatar)
+        embed.set_footer(text=f"Requested by {ctx.author}", icon_url='{}'.format(ctx.author.avatar_url))
+
+        await ctx.send(embed=embed)
 
 
 def setup(bot):

@@ -1,4 +1,3 @@
-import asyncio
 import datetime
 import os
 import random
@@ -390,32 +389,6 @@ class Fun(Cog):
 
         # Send the text back
         await ctx.message.channel.send(owo)
-
-    @command(name="remindme", aliases=["Remindme", "rm"])
-    @cooldown(1, 1, BucketType.user)
-    async def remind_me(self, ctx, time: Optional[int] = None, *, text):
-        """Remind you in DMs"""
-
-        # Grab the author and store it in "author"
-        author = ctx.author
-
-        # If a value for time as been given
-        if time:
-
-            # Send a confirmation message
-            await ctx.send(f"{author.mention} I will remind you in {time} seconds with the message '{text}'")
-
-            # Sleep the thread for the amount of time specified by the user
-            await asyncio.sleep(float(time))
-
-            # Remind the user in the channel and then send message to user's dms
-            await ctx.send(f"I've reminded you in your dms! {ctx.author.mention}")
-            await author.send(text)
-
-        # else no time has been given
-        else:
-            # Instantly Send message to user's dms
-            await author.send(text)
 
 
 def setup(bot):

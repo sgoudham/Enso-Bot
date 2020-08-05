@@ -290,9 +290,7 @@ class Guild(Cog):
 
     @modmail.command(name="setup")
     @has_permissions(administrator=True)
-    @bot_has_permissions(embed_links=True, read_messages=True, manage_messages=True,
-                         manage_channels=True, read_message_history=True,
-                         send_messages=True, attach_files=True)
+    @bot_has_permissions(administrator=True)
     async def mmsetup(self, ctx, channelID: int):
         """
         Setup Modmail System

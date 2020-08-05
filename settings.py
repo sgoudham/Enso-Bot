@@ -1,4 +1,3 @@
-import json
 import random
 
 from discord import Colour
@@ -78,16 +77,6 @@ def del_cache(guildid):
 
 
 # --------------------------------------------!End Cache Section!-------------------------------------------------------
-
-# --------------------------------------------!Waifu Cache Section!-----------------------------------------------------
-
-# Opening JSON file
-with open('waifusformatted.json') as json_file:
-    waifus_dict = json.load(json_file)
-
-
-# --------------------------------------------!End Waifu Cache Section!-------------------------------------------------
-
 
 # --------------------------------------------!ModLogs Section!---------------------------------------------------------
 

@@ -337,8 +337,7 @@ class Info(Cog):
     async def checking_bot_stats(self, ctx):
         """Bot Statistics! (CPU/Mem Usage etc)"""
 
-        stats = Embed(title="Ensō~Chan Statistics",
-                      description="^^ Click To View My Github Code!",
+        stats = Embed(title="<:github:741000905364603010> Ensō~Chan v1.7.2 Statistics",
                       url="https://github.com/sgoudham/Enso-Bot",
                       colour=enso_embedmod_colours,
                       timestamp=datetime.datetime.utcnow())
@@ -355,8 +354,8 @@ class Info(Cog):
 
         uptime_hours, uptime_remainder = divmod(uptime.seconds, 3600)
         uptime_minutes, uptime_seconds = divmod(uptime_remainder, 60)
-        frmt_uptime = '{:01} Hours, {:01} Minutes, {:01} Seconds'.format(int(uptime_hours), int(uptime_minutes),
-                                                                         int(uptime_seconds))
+        frmt_uptime = '{:01} Hour(s), {:01} Minute(s), {:01} Second(s)'.format(int(uptime_hours), int(uptime_minutes),
+                                                                               int(uptime_seconds))
 
         # Grabbing total number of channels across all guilds in which the bot is present in
         channels = map(lambda m: len(m.channels), self.bot.guilds)
@@ -364,6 +363,19 @@ class Info(Cog):
         # Setting up fields
         fields = [
             ("Developer", hammyMention, False),
+
+            ("Language | Library",
+             f"<:python:661908544739737611> Python {python_version()} | <:discord:314003252830011395> Discord.py {discord_version}",
+             False),
+
+            ("<:discord:314003252830011395> Support Server",
+             "[Here!](https://discord.com/invite/SZ5nexg)", True),
+
+            ("<:invite:740998357643952139> Invite Link",
+             "[Here!](https://discord.bots.gg/bots/716701699145728094)", True),
+
+            ("❗ Current Prefix", ctx.prefix, True),
+
             ("Discord Stats",
              "Guilds: {}"
              "\nChannels: {}"
@@ -372,11 +384,8 @@ class Info(Cog):
              "\nUsers: {:,}".format(len(self.bot.guilds), sum(list(channels)), len(self.bot.emojis),
                                     len(self.bot.commands),
                                     len(self.bot.users)), True),
+
             ("Line Count", lineCount(), True),
-            ("Bot Version", "1.7.2", False),
-            ("Language | Library",
-             f"<:python:661908544739737611> Python {python_version()} | <:discord:314003252830011395> Discord.py {discord_version}",
-             False),
             ("Uptime", frmt_uptime, False),
             ("Memory Usage", f"{mem_usage:,.2f} / {mem_total:,.2f} MiB ({mem_of_total:.2f}%)", False)]
 

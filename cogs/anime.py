@@ -3,10 +3,14 @@ import random
 import string
 from typing import Optional
 
+import aiohttp
+from decouple import config
 from discord import Embed
 from discord.ext.commands import bot_has_permissions, Cog, group
 
 from settings import rndColour, enso_embedmod_colours
+
+my_waifu_list_auth = config('MYWAIFULIST_AUTH')
 
 # Defining the full names of the waifu's/husbando's
 anime = {"yumeko": "Jabami Yumeko",
@@ -125,61 +129,38 @@ class Anime(Cog):
 
     @group(invoke_without_command=True, aliases=["Waifu"])
     @bot_has_permissions(embed_links=True)
-    async def waifu(self, ctx, waifu: Optional[str] = None):
-        """Shows a Waifu"""
+    async def waifu(self, ctx, waifu2: Optional[str] = None):
+        """
+        Shows a Waifu
+        Waifu's are grabbed from mywaifulist.com
+        """
 
-        """name = None
-        desc = None
-        url = None
-        likes = None
-        trash = None
-
-        for key in waifus_dict:
-            if waifu.lower() in key["data"]["name"].lower():
-                name = key["data"]["name"]
-                desc = key["data"]["description"]
-                url = key["data"]["display_picture"]
-                likes = key["data"]["likes"]
-                trash = key["data"]["trash"]
-                break
-
-        embed = Embed(title=name, description=desc,
-                      colour=rndColour(),
-                      timestamp=datetime.datetime.utcnow())
-        embed.set_image(url=url)
-        embed.set_footer(text=f"<a:biglove:739563551987073047> {likes} 💔 {trash}")
-
-        await ctx.send(embed=embed)"""
-
-        if waifu:
-            lcase_waifu = waifu.lower()
-
-            try:
-
-                # Retrieve image of the waifu specified
-                with open(f'images/AnimeImages/Waifus/{lcase_waifu}.txt') as file:
-                    w_array = file.readlines()
-
-                # Get the full name of the waifu
-                full_name = Abbrev(lcase_waifu)
-
-                # Embed the image into a message and send it to the channel
-                embed = displayAnimeImage(w_array, ctx, full_name)
-                await ctx.send(embed=embed)
-
-            except FileNotFoundError as e:
-                print(e)
-
-                # Send error message saying that the Waifu isn't recognised
-                embed = Embed(
-                    description="Sorry! That Waifu Doesn't Exist!"
-                                f"\nPlease Do **{ctx.prefix}waifu list** To View The List Of Waifu's Available",
-                    colour=enso_embedmod_colours)
-                await ctx.send(embed=embed)
+        if waifu2:
+            pass
         else:
 
-            # Get embed from randomWaifu() and send it to the channel
-            embed = randomWaifu(ctx, waifus())
+            async with aiohttp.ClientSession() as session:
+                async with session.get(f"https://mywaifulist.moe/api/v1/meta/random",
+                                       headers={'apikey': my_waifu_list_auth}) as resp:
+                    if resp.status == 200:
+                        waifu_dict = await resp.json()
+                    else:
+                        await ctx.send("Something went wrong!")
+
+            waifu = waifu_dict["data"]
+            name = waifu["name"]
+            og_name = waifu["original_name"]
+            picture = waifu["display_picture"]
+            url = waifu["url"]
+            likes = waifu["likes"]
+            trash = waifu["trash"]
+
+            embed = Embed(title=name, description=og_name,
+                          colour=rndColour(),
+                          url=url)
+            embed.set_image(url=picture)
+            embed.set_footer(text=f"❤️ {likes} 🗑️ {trash} | Powered by MyWaifuList")
+
             await ctx.send(embed=embed)
 
     @group(invoke_without_command=True, aliases=["Husbando"])

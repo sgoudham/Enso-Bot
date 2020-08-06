@@ -2,6 +2,7 @@ import datetime
 import string
 from typing import Optional
 
+import aiohttp
 import aiomysql
 import discord
 from decouple import config
@@ -22,6 +23,7 @@ host = config('DB_HOST')
 user = config('DB_USER')
 port = config('DB_PORT')
 db = config('DB_NAME')
+disc_bots_gg_auth = config('DISCORD_BOTS_BOTS_AUTH')
 
 # Getting the Bot token from Environment Variables
 API_TOKEN = config('DISCORD_TOKEN')
@@ -89,13 +91,27 @@ if __name__ == '__main__':
         client.load_extension(ext)
 
 
-@tasks.loop(seconds=120, reconnect=True)
+async def post_bot_stats():
+    """Method To Update Guild Count On discord.bots.gg"""
+
+    async with aiohttp.ClientSession() as session:
+        await session.post(f"https://discord.bots.gg/api/v1/bots/{client.user.id}/stats",
+                           data={"guildCount": {len(client.guilds)},
+                                 "Content-Type": "application/json"},
+                           headers={'Authorization': disc_bots_gg_auth})
+        print("Guild Count Updated!")
+
+
+@tasks.loop(minutes=5, reconnect=True)
 async def change_status():
     """Creating Custom Statuses as a Background Task"""
 
     global counter
     # Waiting for the bot to ready
     await client.wait_until_ready()
+
+    # Update Guild Count on discord.bots.gg
+    await post_bot_stats()
 
     # Define array of statuses
     looping_statuses = [
@@ -121,9 +137,10 @@ async def change_status():
 
     # Display the next status in the loop
     await client.change_presence(activity=looping_statuses[counter])
+    print("Status Changed!")
 
 
-# Start the background task
+# Start the background task(s)
 change_status.start()
 
 
@@ -317,7 +334,7 @@ async def on_member_join(member):
             # Execute the SQL Query
             await cur.execute(insert_query, vals)
             await conn.commit()
-            print(cur.rowcount, "Record(s) inserted successfully into Members")
+            print(cur.rowcount, f"{member} Joined {member.guild.name}, Record Inserted Into Members")
 
         async with conn.cursor() as cur:
             # Get the roles of the user from the database
@@ -335,7 +352,7 @@ async def on_member_join(member):
                     roles = [member.guild.get_role(int(id_)) for id_ in role_ids.split(", ") if len(id_)]
                     # Give the member their roles back
                     await member.edit(roles=roles)
-                    print(f"Member {member} Had Their Roles Given Back In {member.guild.name}")
+                    print(f"{member} Had Their Roles Given Back In {member.guild.name}")
                 else:
                     pass
             except HTTPException:
@@ -348,7 +365,7 @@ async def on_member_join(member):
             # Execute the query
             await cur.execute(update_query, update_vals)
             await conn.commit()
-            print(cur.rowcount, f"Roles Cleared For User {member} in {member.guild.name}")
+            print(cur.rowcount, f"Roles Cleared For {member} in {member.guild.name}")
 
     # Make sure the guild is Enso
     if guild.id != enso_guild_ID:
@@ -403,7 +420,7 @@ async def on_member_remove(member):
             # Execute the SQL Query
             await cur.execute(update_query, vals)
             await conn.commit()
-            print(cur.rowcount, f"On Member Remove, Roles stored into {member.guild.name} into Members")
+            print(cur.rowcount, f"{member} Left {member.guild.name}, Roles stored into Members")
 
 
 @client.event
@@ -446,7 +463,7 @@ async def on_bot_forbidden(ctx, args2):
                   colour=enso_embedmod_colours)
     try:
         await ctx.send(embed=embed)
-    except Exception:
+    except HTTPException:
         print("Error: Error Handling Message Could Not Be Sent")
 
 
@@ -457,7 +474,7 @@ async def on_command_forbidden(ctx):
                   colour=enso_embedmod_colours)
     try:
         await ctx.send(embed=embed)
-    except Exception:
+    except HTTPException:
         print("Error: Error Handling Message Could Not Be Sent")
 
 
@@ -468,7 +485,7 @@ async def on_command_bad_argument(ctx):
                   colour=enso_embedmod_colours)
     try:
         await ctx.send(embed=embed)
-    except Exception:
+    except HTTPException:
         print("Error: Error Handling Message Could Not Be Sent")
 
 
@@ -479,7 +496,7 @@ async def on_command_not_found(ctx):
                   colour=enso_embedmod_colours)
     try:
         await ctx.send(embed=embed)
-    except Exception:
+    except HTTPException:
         print("Error: Error Handling Message Could Not Be Sent")
 
 
@@ -490,7 +507,7 @@ async def on_command_cooldown(ctx, error):
                   colour=enso_embedmod_colours)
     try:
         await ctx.send(embed=embed)
-    except Exception:
+    except HTTPException:
         print("Error: Error Handling Message Could Not Be Sent")
 
 
@@ -504,7 +521,7 @@ async def on_command_permission(ctx, args2):
                   colour=enso_embedmod_colours)
     try:
         await ctx.send(embed=embed)
-    except Exception:
+    except HTTPException:
         print("Error: Error Handling Message Could Not Be Sent")
 
 
@@ -516,7 +533,7 @@ async def on_command_missing_argument(ctx):
                   colour=enso_embedmod_colours)
     try:
         await ctx.send(embed=embed)
-    except Exception:
+    except HTTPException:
         print("Error: Error Handling Message Could Not Be Sent")
 
 
@@ -527,7 +544,7 @@ async def on_not_owner(ctx):
                   colour=enso_embedmod_colours)
     try:
         await ctx.send(embed=embed)
-    except Exception:
+    except HTTPException:
         print("Error: Error Handling Message Could Not Be Sent")
 
 

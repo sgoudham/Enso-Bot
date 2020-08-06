@@ -1,6 +1,5 @@
 import datetime
 import string
-from typing import Optional
 
 import aiohttp
 import aiomysql
@@ -8,11 +7,11 @@ import discord
 from decouple import config
 from discord import Embed, HTTPException
 from discord.ext import commands, tasks
-from discord.ext.commands import when_mentioned_or, is_owner, guild_only, has_permissions
+from discord.ext.commands import when_mentioned_or, is_owner
 
 import settings
 from settings import blank_space, enso_embedmod_colours, enso_guild_ID, enso_newpeople_ID, get_prefix_for_guild, \
-    storage_prefix_for_guild, cache, del_cache
+    cache, del_cache
 
 # Global counter for statuses
 counter = 0
@@ -99,10 +98,9 @@ async def post_bot_stats():
                            data={"guildCount": {len(client.guilds)},
                                  "Content-Type": "application/json"},
                            headers={'Authorization': disc_bots_gg_auth})
-        print("Guild Count Updated!")
 
 
-@tasks.loop(minutes=5, reconnect=True)
+@tasks.loop(minutes=10, reconnect=True)
 async def change_status():
     """Creating Custom Statuses as a Background Task"""
 
@@ -137,7 +135,6 @@ async def change_status():
 
     # Display the next status in the loop
     await client.change_presence(activity=looping_statuses[counter])
-    print("Status Changed!")
 
 
 # Start the background task(s)
@@ -215,27 +212,6 @@ async def reload_db(ctx):
 
             # Sending confirmation message
             await ctx.send(f"Database Reloaded Successfully for **{ctx.guild.name}**")
-
-
-@client.command(name="prefix", aliases=["Prefix"])
-@guild_only()
-@has_permissions(manage_guild=True)
-async def change_prefix(ctx, new: Optional[str] = None):
-    """View/Change Guild Prefix"""
-
-    # As long as a new prefix has been given and is less than 5 characters
-    if new and len(new) <= 5:
-        # Store the new prefix in the dictionary and update the database
-        await storage_prefix_for_guild(client.db, ctx, new)
-
-    # Making sure that errors are handled if prefix is above 5 characters
-    elif new and len(new) > 5:
-        await ctx.send("The guild prefix must be less than or equal to **5** characters!")
-
-    # if no prefix was provided
-    elif not new:
-        # Grab the current prefix for the guild within the cached dictionary
-        await ctx.send(f"**The current guild prefix is `{get_prefix_for_guild(str(ctx.guild.id))}`**")
 
 
 @client.event

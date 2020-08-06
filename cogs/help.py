@@ -8,9 +8,10 @@ from typing import Optional
 import discord
 from discord import Embed, DMChannel
 from discord.ext import commands
-from discord.ext.commands import Cog, command
+from discord.ext.commands import Cog, command, has_permissions, guild_only
 
-from settings import enso_embedmod_colours, hammyMention, enso_feedback_ID
+from settings import enso_embedmod_colours, hammyMention, enso_feedback_ID, storage_prefix_for_guild, \
+    get_prefix_for_guild
 
 
 class CannotPaginate(Exception):
@@ -631,6 +632,26 @@ class Help(Cog):
             await p.paginate()
         except Exception as ex:
             await ctx.send(f"**{ex}**")
+
+    @command(name="prefix", aliases=["Prefix"])
+    @guild_only()
+    @has_permissions(manage_guild=True)
+    async def change_prefix(self, ctx, new: Optional[str] = None):
+        """View/Change Guild Prefix"""
+
+        # As long as a new prefix has been given and is less than 5 characters
+        if new and len(new) <= 5:
+            # Store the new prefix in the dictionary and update the database
+            await storage_prefix_for_guild(self.bot.db, ctx, new)
+
+        # Making sure that errors are handled if prefix is above 5 characters
+        elif new and len(new) > 5:
+            await ctx.send("The guild prefix must be less than or equal to **5** characters!")
+
+        # if no prefix was provided
+        elif not new:
+            # Grab the current prefix for the guild within the cached dictionary
+            await ctx.send(f"**The current guild prefix is `{get_prefix_for_guild(str(ctx.guild.id))}`**")
 
     @command(name="support", aliases=["Support"])
     async def support(self, ctx):

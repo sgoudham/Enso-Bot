@@ -184,9 +184,12 @@ async def restart(ctx):
         colour=enso_embedmod_colours)
     await ctx.send(embed=embed)
 
-    client.db.terminate()
-    await client.db.wait_closed()
-    await client.logout()
+    try:
+        client.db.terminate()
+        await client.db.wait_closed()
+        await client.logout()
+    except Exception as e:
+        print(e)
 
 
 @client.command(name="reloadusers", hidden=True)

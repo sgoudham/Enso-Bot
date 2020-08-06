@@ -3,17 +3,27 @@ import datetime
 import os
 import random
 
+import aiomysql
 import discord
-import mariadb
 from discord import Embed
 from discord import File
 from discord.ext.commands import has_permissions, Cog, group, bot_has_permissions
 
-from settings import enso_embedmod_colours, blank_space, storage_modlog_for_guild, remove_modlog_channel
+from settings import enso_embedmod_colours, blank_space, storage_modlog_for_guild, remove_modlog_channel, \
+    get_modlog_for_guild
+
+
+async def generate_embed(ctx, desc):
+    """Generate New Error Embed"""
+
+    embed = Embed(description=desc,
+                  colour=enso_embedmod_colours)
+
+    await ctx.send(embed=embed)
 
 
 # Method to ask the user if they want to be anonymous or not
-def AnonOrNot(author):
+def anon_or_not(author):
     # Set up embed to let the user how to start sending modmail
     AnonModMailEmbed = Embed(title="**Want to send it Anonymously?**",
                              colour=enso_embedmod_colours,
@@ -39,7 +49,7 @@ def AnonOrNot(author):
 
 
 # Method to send an embed to to let the user know to type into chat
-def SendInstructions(author):
+def send_instructions(author):
     # Set up embed to let the user know that they have aborted the modmail
     SendModMailEmbed = Embed(title="**Please enter a message for it to be sent to the staff!**",
                              colour=enso_embedmod_colours,
@@ -59,7 +69,7 @@ def SendInstructions(author):
 
 
 # Method to let the user know that the message must be above 50 characters
-def ErrorHandling(author):
+def error_handling(author):
     # Set up embed to let the user know that the message must be above 50 characters
     ErrorHandlingEmbed = Embed(
         title="Uh Oh! Please make sure the message is above **50** and below **1024** characters!",
@@ -80,7 +90,7 @@ def ErrorHandling(author):
 
 
 # Method to send an embed into chat to let the user know that their mail has been sent successfully
-def MessageSentConfirmation(author):
+def message_sent_confirmation(author):
     # Set up embed to let the user know that they have sent the mail
     ConfirmationEmbed = Embed(title="**Message relayed to Staff!!**",
                               colour=enso_embedmod_colours,
@@ -100,34 +110,19 @@ def MessageSentConfirmation(author):
 
 
 # Method to actually allow the message to be sent to #mod-mail
-def SendMsgToModMail(self, msg, author):
+def send_modmail(self, msg, author):
+    embed = Embed(title="Modmail",
+                  colour=enso_embedmod_colours,
+                  timestamp=datetime.datetime.utcnow())
+
     if self.anon:
 
-        avatars = ["https://cdn.discordapp.com/embed/avatars/0.png",
-                   "https://cdn.discordapp.com/embed/avatars/1.png",
-                   "https://cdn.discordapp.com/embed/avatars/2.png",
-                   "https://cdn.discordapp.com/embed/avatars/3.png",
-                   "https://cdn.discordapp.com/embed/avatars/4.png"]
-
-        embed = Embed(title="Modmail",
-                      colour=enso_embedmod_colours,
-                      timestamp=datetime.datetime.utcnow())
-
-        embed.set_thumbnail(url=random.choice(avatars))
+        embed.set_thumbnail(url=random.choice(self.avatars))
         embed.set_footer(text=f"Sent By Anon Member")
 
         fields = [("Member", "Anon Member", False),
                   ("Message", msg.content, False)]
-
-        for name, value, inline in fields:
-            embed.add_field(name=name, value=value, inline=inline)
-
-        return embed
-
     else:
-        embed = Embed(title="Modmail",
-                      colour=enso_embedmod_colours,
-                      timestamp=datetime.datetime.utcnow())
 
         embed.set_thumbnail(url=author.avatar_url)
         embed.set_footer(text=f"Sent By {author}")
@@ -135,10 +130,10 @@ def SendMsgToModMail(self, msg, author):
         fields = [("Member", author, False),
                   ("Message", msg.content, False)]
 
-        for name, value, inline in fields:
-            embed.add_field(name=name, value=value, inline=inline)
+    for name, value, inline in fields:
+        embed.add_field(name=name, value=value, inline=inline)
 
-        return embed
+    return embed
 
 
 # Set up the Cog
@@ -148,6 +143,11 @@ class Guild(Cog):
     def __init__(self, bot):
         self.bot = bot
         self.anon = None
+        self.avatars = ["https://cdn.discordapp.com/embed/avatars/0.png",
+                        "https://cdn.discordapp.com/embed/avatars/1.png",
+                        "https://cdn.discordapp.com/embed/avatars/2.png",
+                        "https://cdn.discordapp.com/embed/avatars/3.png",
+                        "https://cdn.discordapp.com/embed/avatars/4.png"]
 
     @Cog.listener()
     async def on_ready(self):
@@ -158,8 +158,26 @@ class Guild(Cog):
     @has_permissions(manage_guild=True)
     @bot_has_permissions(administrator=True)
     async def modlogs(self, ctx):
-        """Setup/Update/Delete Modlogs System"""
-        pass
+        """
+        Show Current Modlogs Channel (If Setup)
+        """
+
+        ml_channel = get_modlog_for_guild(str(ctx.guild.id))
+
+        # Send current modlogs channel only if it is setup
+        # Send error if no modlogs channel has been setup
+        if ml_channel is not None:
+
+            # Get the modlog channel for the current guild
+            channel = ctx.guild.get_channel(int(ml_channel))
+
+            text = f"**The current modlogs channel is set to {channel.mention}**"
+            await generate_embed(ctx, text)
+        else:
+
+            text = "**Modlogs Channel** already set up!" \
+                   f"\nDo **{ctx.prefix}help modlogs** to find out more!"
+            await generate_embed(ctx, text)
 
     @modlogs.command(name="setup")
     @has_permissions(manage_guild=True)
@@ -186,13 +204,15 @@ class Guild(Cog):
 
         # Throw error if the modlog channel already exists and then stop the function
         if result[2] is not None:
-            await ctx.send("Looks like this guild already has a **Modlogs Channel** set up!" +
-                           f"\nPlease check **{ctx.prefix}help** for information on how to update/delete existing information")
+            text = "**Modlogs Channel** already set up!" \
+                   f"\nDo **{ctx.prefix}help modlogs** to find out more!"
+            await generate_embed(ctx, text)
             return
 
         # Abort the process if the channel does not exist within the guild
         if channelID not in channels:
-            await ctx.send("**Invalid ChannelID Detected... Aborting Process**")
+            text = "**Invalid ChannelID Detected... Aborting Process**"
+            await generate_embed(ctx, text)
 
         else:
             # Set up the modlogs channel within the guild
@@ -224,13 +244,14 @@ class Guild(Cog):
 
         # Throw error if the modlog channel already exists and then stop the function
         if result[2] is None:
-            await ctx.send("Looks like this guild has not setup a **Modlogs Channel**" +
-                           f"\nPlease check **{ctx.prefix}help** for information on how to update/delete existing information")
-            return
+            text = "**Modlogs Channel** not set up!" \
+                   f"\nDo **{ctx.prefix}help modlogs** to find out more!"
+            await generate_embed(ctx, text)
 
         # Abort the process if the channel does not exist within the guild
         if channelID not in channels:
-            await ctx.send("**Invalid ChannelID Detected... Aborting Process**")
+            text = "**Invalid ChannelID Detected... Aborting Process**"
+            await generate_embed(ctx, text)
 
         else:
             # Update the modlog channel within the database and cache
@@ -257,10 +278,11 @@ class Guild(Cog):
                 await cur.execute(select_query, vals)
                 result = await cur.fetchone()
 
-        # Throw error if the modlog channel already exists and then stop the function
+        # Throw error is modlogs error has not been setup before performing a delete action
         if result[2] is None:
-            await ctx.send("Looks like this guild has not setup a **Modlogs Channel**" +
-                           f"\nPlease check **{ctx.prefix}help** for information on how to update/delete existing information")
+            text = "**Modlogs Channel** not set up!" \
+                   f"\nDo **{ctx.prefix}help modlogs** to find out more!"
+            await generate_embed(ctx, text)
             return
 
         # Setup up pool connection and cursor
@@ -277,9 +299,11 @@ class Guild(Cog):
         # Delete channel from cache
         remove_modlog_channel(str(ctx.guild.id))
 
+        text = "**Modlogs System** successfully deleted!" \
+               f"\nDo **{ctx.prefix}help modlogs** to setup Modlogs again!"
+        await generate_embed(ctx, text)
         # Sending confirmation message that the modmail system has been deleted
-        await ctx.send("**Modlogs System** successfully deleted!" +
-                       f"\nPlease do **{ctx.prefix}help** to find out how to set Modmail again!")
+        await ctx.send()
 
     @group(invoke_without_command=True, usage="`[argument...]`")
     @bot_has_permissions(administrator=True)
@@ -318,8 +342,9 @@ class Guild(Cog):
 
         # Throw error if the guild already exists and then stop the function
         if result is not None:
-            await ctx.send("Looks like this guild already has a **Modmail System** set up!" +
-                           f"\nPlease check **{ctx.prefix}help** for information on how to update/delete existing information")
+            text = "**Modmail System** already set up!" \
+                   f"\nDo **{ctx.prefix}help modmail** to find out more!"
+            await generate_embed(ctx, text)
             return
 
         # As long as the channel exists within the guild
@@ -338,29 +363,25 @@ class Guild(Cog):
             # As long as the channel exists within the guild
             if int(msg.content) in channels:
 
+                desc = "React to this message if you want to send a message to the Staff Team!" \
+                       "\n\n**React with ✅**" \
+                       "\n\nWe encourage all suggestions/thoughts and opinions on the server!" \
+                       "\nAs long as it is **valid** criticism" \
+                       "\n**Purely negative feedback will not be considered**"
+
                 # Set up embed to let the user how to start sending modmail
                 ModMail = Embed(title="**Welcome to Modmail!**",
+                                description=desc,
                                 colour=enso_embedmod_colours,
                                 timestamp=datetime.datetime.utcnow())
 
                 ModMail.set_thumbnail(url=self.bot.user.avatar_url)
 
-                # Define fields to be inserted into the embed
-                fields = [
-                    ("React to this message if you want to send a message to the Staff Team!",
-                     "**React with ✅**", False),
-                    ("We encourage all suggestions/thoughts and opinions on the server!" +
-                     "\nAs long as it is **valid** criticism.",
-                     "**Purely negative feedback will not be considered**", False)]
-
-                # Add the fields to the embed
-                for name, value, inline in fields:
-                    ModMail.add_field(name=name, value=value, inline=inline)
-
                 try:
                     # Get the channel object from the channelID input by the user
                     channel = ctx.author.guild.get_channel(channelID)
                     modmailchannelID = await channel.send(embed=ModMail)
+
                     # Auto add the ✅ reaction
                     await modmailchannelID.add_reaction('✅')
 
@@ -375,21 +396,24 @@ class Guild(Cog):
                             await cur.execute(insert_query, vals)
                             await conn.commit()
 
-                        await ctx.send("Your **Modmail System** is now successfully set up!" +
-                                       f"\nPlease refer to **{ctx.prefix}help** for any information")
+                        text = "**Modmail System** is successfully set up!" \
+                               f"\nRefer to **{ctx.prefix}help modmail** for more information"
+                        await generate_embed(ctx, text)
                         return
 
-                except mariadb.IntegrityError as err:
-                    print(err)
-                    await ctx.send("Looks like this guild already has a **Modmail System** set up!" +
-                                   f"\nPlease check **{ctx.prefix}help** for information on how to update/delete existing information")
+                except aiomysql.IntegrityError:
+                    text = "**Modmail System** already set up!" \
+                           f"\nRefer to **{ctx.prefix}help modmail** for more information"
+                    await generate_embed(ctx, text)
             else:
                 # Send error message if the channel ID is not recognised
-                await ctx.send("**Invalid Channel ID. Aborting Process...**")
+                text = "**Invalid ChannelID Detected... Aborting Process**"
+                await generate_embed(ctx, text)
                 return
         else:
             # Send error message if the channel ID is not recognised
-            await ctx.send("**Invalid Channel ID. Aborting Process...**")
+            text = "**Invalid ChannelID Detected... Aborting Process**"
+            await generate_embed(ctx, text)
             return
 
     @modmail.command(name="update")
@@ -420,8 +444,9 @@ class Guild(Cog):
 
             # Throw error if the guild already exists and then stop the function
             if result is None:
-                await ctx.send("Looks like this guild does not have a **Modmail System** setup!" +
-                               f"\nPlease check **{ctx.prefix}help** for information on how to update/delete existing information")
+                text = "**Modmail System** not set up!" \
+                       f"\nDo **{ctx.prefix}help modmail** to find out more!"
+                await generate_embed(ctx, text)
                 return
 
         # As long as the channel exists within the guild
@@ -440,18 +465,20 @@ class Guild(Cog):
                         await cur.execute(update_query, vals)
                         await conn.commit()
 
-            except mariadb.Error as err:
-                print(err)
-                await ctx.send("**Looks like something went wrong during the update!**")
+            except aiomysql.Error:
+                text = "**Something Went Wrong! >:( Try Again Later!**"
+                await generate_embed(ctx, text)
 
             # Send confirmation that the channel has been updated
             channel = ctx.author.guild.get_channel(channelID)
-            await ctx.send(
-                f"**The channel has been updated! Your new modmail will be sent to** {channel.mention}")
+            text = "**Channel Updated**" \
+                   f"\nNew Modmail will be sent to {channel.mention}"
+            await generate_embed(ctx, text)
 
         else:
             # Send error message if the channel ID is not recognised
-            await ctx.send("**Invalid Channel ID. Aborting Process...**")
+            text = "**Invalid ChannelID Detected... Aborting Process**"
+            await generate_embed(ctx, text)
             return
 
     @modmail.command(name="delete")
@@ -474,33 +501,28 @@ class Guild(Cog):
                 await cur.execute(select_query, vals)
                 result = await cur.fetchone()
 
-            # Throw error if the guild already exists and then stop the function
+            # Throw error if modmail system does not exist already
             if result is None:
-                await ctx.send("Looks like this guild does not have a **Modmail System** setup!" +
-                               f"\nPlease check **{ctx.prefix}help** for information on how to update/delete existing information")
+                text = "**Modmail System** not set up!" \
+                       f"\nDo **{ctx.prefix}help modmail** to find out more!"
+                await generate_embed(ctx, text)
                 return
 
-        try:
+        # Setup up pool connection and cursor
+        async with pool.acquire() as conn:
+            async with conn.cursor() as cur:
+                # Define the delete statement to remove all information about the guild
+                delete_query = """DELETE FROM moderatormail WHERE guildID = (%s)"""
+                vals = ctx.author.guild.id,
 
-            # Setup up pool connection and cursor
-            async with pool.acquire() as conn:
-                async with conn.cursor() as cur:
-                    # Define the delete statement to remove all information about the guild
-                    delete_query = """DELETE FROM moderatormail WHERE guildID = (%s)"""
-                    vals = ctx.author.guild.id,
+                # Execute the SQL Query
+                await cur.execute(delete_query, vals)
+                await conn.commit()
 
-                    # Execute the SQL Query
-                    await cur.execute(delete_query, vals)
-                    await conn.commit()
-
-        except mariadb.Error as err:
-            print(err)
-            await ctx.send("**Looks like this guild has not set up the Modmail System yet!" +
-                           f"\nPlease do `{ctx.prefix}help` to find out how to set it up!**")
-
-        # Sending confirmation message that the modmail system has been deleted
-        await ctx.send("**Modmail System** successfully deleted!" +
-                       f"\nPlease do **{ctx.prefix}help** to find out how to set Modmail again!")
+            # Sending confirmation message that the modmail system has been deleted
+            text = "**Modmail System** successfully deleted!" \
+                   f"\nDo **{ctx.prefix}help modmail** to find out more!"
+            await generate_embed(ctx, text)
 
     # Setting up Listener to listen for reactions within the modmail channel created
     @Cog.listener()
@@ -578,7 +600,7 @@ class Guild(Cog):
             try:
 
                 # Send the embed if they want to remain anonymous or not
-                Anon_or_Not = await user_channel.send(embed=AnonOrNot(member))
+                Anon_or_Not = await user_channel.send(embed=anon_or_not(member))
                 # Add reactions to the message
                 await Anon_or_Not.add_reaction('✅')
                 await Anon_or_Not.add_reaction('❌')
@@ -602,7 +624,7 @@ class Guild(Cog):
                         await Anon_or_Not.delete()
 
                         # Tell the user to type their mail into the chat
-                        instructions = await user_channel.send(embed=SendInstructions(member))
+                        instructions = await user_channel.send(embed=send_instructions(member))
 
                         # Making sure that the reply is from the author
                         def check(m):
@@ -613,7 +635,7 @@ class Guild(Cog):
 
                         # Making sure that the message is below 50 characters and the message was sent in the channel
                         while len(msg.content) < 50 and msg.channel == user_channel:
-                            await user_channel.send(embed=ErrorHandling(member))
+                            await user_channel.send(embed=error_handling(member))
 
                             # Wait for the message from the author
                             msg = await self.bot.wait_for('message', check=check)
@@ -631,7 +653,7 @@ class Guild(Cog):
                                     print(f"{message.created_at} : {message.content}", file=f)
 
                             # Send the message to the modmail channel
-                            await modmail_channel.send(embed=SendMsgToModMail(self, msg, member),
+                            await modmail_channel.send(embed=send_modmail(self, msg, member),
                                                        file=File(fp=path))
 
                             # Removing file from the directory after it has been sent
@@ -641,7 +663,7 @@ class Guild(Cog):
                                 print("The file does not exist")
 
                             # Make sure the user knows that their message has been sent
-                            await user_channel.send(embed=MessageSentConfirmation(member))
+                            await user_channel.send(embed=message_sent_confirmation(member))
 
                             # Let the user read the message for 5 seconds
                             await asyncio.sleep(5)
@@ -662,7 +684,7 @@ class Guild(Cog):
                         await Anon_or_Not.delete()
 
                         # Tell the user to type their mail into the chat
-                        instructions = await user_channel.send(embed=SendInstructions(member))
+                        instructions = await user_channel.send(embed=send_instructions(member))
 
                         # Making sure that the reply is from the author
                         def check(m):
@@ -673,7 +695,7 @@ class Guild(Cog):
 
                         # Making sure that the message is below 50 characters and the message was sent in the channel
                         while len(msg.content) < 50 and msg.channel == user_channel:
-                            await user_channel.send(embed=ErrorHandling(member))
+                            await user_channel.send(embed=error_handling(member))
 
                             # Wait for the message from the author again
                             msg = await self.bot.wait_for('message', check=check, timeout=300)
@@ -690,7 +712,7 @@ class Guild(Cog):
                                     print(f"{message.created_at} : {message.content}", file=f)
 
                             # Send the message to the modmail channel
-                            await modmail_channel.send(embed=SendMsgToModMail(self, msg, member),
+                            await modmail_channel.send(embed=send_modmail(self, msg, member),
                                                        file=File(fp=path))
 
                             # Removing file from the directory after it has been sent
@@ -700,7 +722,7 @@ class Guild(Cog):
                                 print("The file does not exist")
 
                             # Make sure the user knows that their message has been sent
-                            await user_channel.send(embed=MessageSentConfirmation(member))
+                            await user_channel.send(embed=message_sent_confirmation(member))
 
                             # Let the user read the message for 5 seconds
                             await asyncio.sleep(5)

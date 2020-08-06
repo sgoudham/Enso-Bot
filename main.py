@@ -1,4 +1,5 @@
 import datetime
+import logging
 import string
 
 import aiohttp
@@ -12,6 +13,13 @@ from discord.ext.commands import when_mentioned_or, is_owner
 import settings
 from settings import blank_space, enso_embedmod_colours, enso_guild_ID, enso_newpeople_ID, get_prefix_for_guild, \
     cache, del_cache
+
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger('discord')
+logger.setLevel(logging.DEBUG)
+handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
+handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
+logger.addHandler(handler)
 
 # Global counter for statuses
 counter = 0

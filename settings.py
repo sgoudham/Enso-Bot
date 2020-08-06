@@ -159,17 +159,18 @@ async def storage_prefix_for_guild(pool, ctx, prefix):
             await ctx.send(f"**Guild prefix has been updated to `{prefix}`**")
 
 
-# Method to store the cached prefixes
 def cache_prefix(guildid, prefix):
+    """Storing prefixes for the guild"""
+
     enso_cache[guildid]["Prefix"] = prefix
 
 
-# Deleting the key - value pair for guild
 def del_cache_prefix(guildid):
+    """Deleting the key - value pair for guild"""
+
     del enso_cache[guildid]["Prefix"]
 
 
-#
 def get_prefix_for_guild(guildid):
     """Get the prefix of the guild that the user is in"""
 

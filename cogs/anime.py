@@ -254,7 +254,6 @@ class Anime(Cog):
                     else:
                         await ctx.send("Something went wrong!")
 
-            print(waifu_dict["data"])
             for waifu in waifu_dict["data"]:
                 if waifu["type"] in ["Waifu", "Husbando"]:
                     waifus_dict[waifu["name"]] = {}

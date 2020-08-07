@@ -6,6 +6,7 @@ from typing import Optional
 import aiohttp
 from decouple import config
 from discord import Embed
+from discord.ext import menus
 from discord.ext.commands import bot_has_permissions, Cog, group
 
 from settings import rndColour, enso_embedmod_colours
@@ -120,6 +121,103 @@ def store_waifus(waifus_dict, waifu, value):
     waifus_dict[waifu["name"]][value] = waifu[value]
 
 
+def embed_generator(waifus_dict):
+    embeds = []
+    for key in waifus_dict.values():
+        embed = Embed(title=key["name"], description=f"{key['original_name']} | {key['type']}",
+                      colour=rndColour(),
+                      url=key["url"])
+        embed.set_image(url=key["display_picture"])
+        embed.set_footer(text=f"❤️ {key['likes']} 🗑️ {key['trash']} | Powered by MyWaifuList")
+
+        embeds.append(embed)
+
+    return embeds
+
+
+def get_dict(waifus_dict):
+    return waifus_dict
+
+
+# Set up the Cog
+class HelpMenu(menus.Menu):
+    def __init__(self, i, waifu, bot):
+        super().__init__(timeout=125.0, delete_message_after=True)
+        self.waifus_dict = waifu
+        self.i = i
+        self.bot = bot
+
+    # Message to be sent on the initial command ~help
+    async def send_initial_message(self, ctx, channel):
+        # Set the first embed to the first element in the pages[]
+
+        initial = embed_generator(self.waifus_dict)[self.i]
+
+        # Send embed
+        return await channel.send(embed=initial)
+
+    # Reaction to allow user to go to the previous page in the embed
+    @menus.button('\N{LEFTWARDS BLACK ARROW}')
+    async def on_left_arrow(self, payload):
+
+        # Simple check to make sure that the reaction is performed by the user
+        def check(m):
+            return m.author == payload.member
+
+        # Do nothing if the check does not return true
+        if not check(self.ctx):
+            return
+        # Allow the page number to be decreased
+        else:
+
+            # Set self.i to (i - 1) remainder length of the array
+            self.i = (self.i - 1) % len(embed_generator(self.waifus_dict))
+            prev_page = embed_generator(self.waifus_dict)[self.i]
+
+            # Send the embed and remove the reaction of the user
+            await self.message.edit(embed=prev_page)
+            await self.message.remove_reaction("⬅", self.ctx.author)
+
+    # Reaction to allow user to go to the next page in the embed
+    @menus.button('\N{BLACK RIGHTWARDS ARROW}')
+    async def on_right_arrow(self, payload):
+
+        # Simple check to make sure that the reaction is performed by the user
+        def check(m):
+            return m.author == payload.member
+
+        # Do nothing if the check does not return true
+        if not check(self.ctx):
+            return
+        # Allow the page number to be increased
+        else:
+
+            # Set self.i to (i + 1) remainder length of the array
+            self.i = (self.i + 1) % len(embed_generator(self.waifus_dict))
+            next_page = embed_generator(self.waifus_dict)[self.i]
+
+            # Send the embed and remove the reaction of the user
+            await self.message.edit(embed=next_page)
+            await self.message.remove_reaction("➡", self.ctx.author)
+
+    @menus.button('\N{BLACK SQUARE FOR STOP}\ufe0f')
+    async def on_stop(self, payload):
+
+        # Simple check to make sure that the reaction is performed by the user
+        def check(m):
+            return m.author == payload.member
+
+        # Do nothing if the check does not return true
+        if not check(self.ctx):
+            return
+        # Allow the embed to be deleted
+        else:
+
+            # Delete the embed and stop the function from running
+            await self.message.delete()
+            self.stop()
+
+
 class Anime(Cog):
     """Waifus and Husbandos!"""
 
@@ -139,6 +237,9 @@ class Anime(Cog):
         Waifu's are grabbed from mywaifulist.com
         """
 
+        # Local Variable i to allow the index of the pages[] to be modified
+        i = 0
+
         if waifu2:
 
             waifus_dict = {}
@@ -155,11 +256,16 @@ class Anime(Cog):
 
             print(waifu_dict["data"])
             for waifu in waifu_dict["data"]:
-                waifus_dict[waifu["name"]] = {}
-                for value in waifu:
-                    store_waifus(waifus_dict, waifu, value)
+                if waifu["type"] in ["Waifu", "Husbando"]:
+                    waifus_dict[waifu["name"]] = {}
+                    for value in waifu:
+                        store_waifus(waifus_dict, waifu, value)
+                else:
+                    break
 
-            print(waifus_dict)
+            # Send the menu to the display
+            menu = HelpMenu(i, waifus_dict, self)
+            await menu.start(ctx)
 
             """
             name = waifu["name"]
@@ -169,12 +275,12 @@ class Anime(Cog):
             likes = waifu["likes"]
             trash = waifu["trash"]
 
-        embed = Embed(title=name, description=og_name,
-                      colour=rndColour(),
-                      url=url)
-        embed.set_image(url=picture)
-        embed.set_footer(text=f"❤️ {likes} 🗑️ {trash} | Powered by MyWaifuList")
-        """
+            embed = Embed(title=name, description=og_name,
+                          colour=rndColour(),
+                          url=url)
+            embed.set_image(url=picture)
+            embed.set_footer(text=f"❤️ {likes} 🗑️ {trash} | Powered by MyWaifuList")
+            """
 
         else:
 
@@ -195,7 +301,7 @@ class Anime(Cog):
             trash = waifu["trash"]
             type = waifu["type"]
 
-            embed = Embed(title=name, description=f"{og_name} ({type})",
+            embed = Embed(title=name, description=f"{og_name} | {type}",
                           colour=rndColour(),
                           url=url)
             embed.set_image(url=picture)

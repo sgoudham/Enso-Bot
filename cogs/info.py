@@ -8,7 +8,7 @@ from platform import python_version
 from time import time
 from typing import Optional
 
-from discord import Colour, Member
+from discord import Colour, Member, TextChannel
 from discord import Embed
 from discord import __version__ as discord_version
 from discord.ext.commands import BucketType, cooldown, bot_has_permissions, guild_only, Cog
@@ -137,12 +137,9 @@ class Info(Cog):
     async def user_info(self, ctx, member: Optional[Member] = None):
         """User Information! (Created At/Joined/Roles etc)"""
 
-        # If a member has been specified, set them as the user
-        if member:
-            member = member
-        # If no member has been specified, choose the author
-        else:
-            member = ctx.author
+        # Use member when mentioned
+        # Use author if no member is mentioned
+        member = ctx.author if not member else member
 
         # Get the member avatar
         userAvatar = member.avatar_url
@@ -302,11 +299,11 @@ class Info(Cog):
     @command(name="channelinfo", aliases=["chinfo"])
     @guild_only()
     @bot_has_permissions(embed_links=True)
-    async def channel_info(self, ctx):
+    async def channel_info(self, ctx, channel: Optional[TextChannel] = None):
         """Channel Statistics! (Category/Created At etc)"""
 
         # Get the channel that the user is in
-        channel = ctx.channel
+        channel = ctx.channel if not channel else channel
 
         # Set up Embed
         embed = Embed(title=f"Statistics For #{channel.name}",

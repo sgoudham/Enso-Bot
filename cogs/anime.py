@@ -142,7 +142,7 @@ def get_dict(waifus_dict):
 # Set up the Cog
 class HelpMenu(menus.Menu):
     def __init__(self, i, waifu, bot):
-        super().__init__(timeout=125.0, delete_message_after=True)
+        super().__init__(timeout=125.0, clear_reactions_after=True)
         self.waifus_dict = waifu
         self.i = i
         self.bot = bot

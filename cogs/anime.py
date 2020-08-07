@@ -121,7 +121,7 @@ def store_waifus(waifus_dict, waifu, value):
     waifus_dict[waifu["name"]][value] = waifu[value]
 
 
-def embed_generator(waifus_dict):
+def embed_generator(waifus_dict, i):
     embeds = []
     for key in waifus_dict.values():
         embed = Embed(title=key["name"], description=f"{key['original_name']} | {key['type']}",
@@ -145,13 +145,18 @@ class HelpMenu(menus.Menu):
         super().__init__(timeout=125.0, clear_reactions_after=True)
         self.waifus_dict = waifu
         self.i = i
+        self.length = embed_generator(self.waifus_dict, self.i)
         self.bot = bot
 
     # Message to be sent on the initial command ~help
     async def send_initial_message(self, ctx, channel):
         # Set the first embed to the first element in the pages[]
 
-        initial = embed_generator(self.waifus_dict)[self.i]
+        initial = embed_generator(self.waifus_dict, self.i)[self.i]
+
+        cur_page = self.i + 1
+        pages = len(self.length)
+        initial.set_author(name=f"Page {cur_page}/{pages}")
 
         # Send embed
         return await channel.send(embed=initial)
@@ -171,8 +176,12 @@ class HelpMenu(menus.Menu):
         else:
 
             # Set self.i to (i - 1) remainder length of the array
-            self.i = (self.i - 1) % len(embed_generator(self.waifus_dict))
-            prev_page = embed_generator(self.waifus_dict)[self.i]
+            self.i = (self.i - 1) % len(embed_generator(self.waifus_dict, self.i))
+            prev_page = embed_generator(self.waifus_dict, self.i)[self.i]
+
+            cur_page = self.i + 1
+            pages = len(self.length)
+            prev_page.set_author(name=f"Page {cur_page}/{pages}")
 
             # Send the embed and remove the reaction of the user
             await self.message.edit(embed=prev_page)
@@ -193,8 +202,12 @@ class HelpMenu(menus.Menu):
         else:
 
             # Set self.i to (i + 1) remainder length of the array
-            self.i = (self.i + 1) % len(embed_generator(self.waifus_dict))
-            next_page = embed_generator(self.waifus_dict)[self.i]
+            self.i = (self.i + 1) % len(embed_generator(self.waifus_dict, self.i))
+            next_page = embed_generator(self.waifus_dict, self.i)[self.i]
+
+            cur_page = self.i + 1
+            pages = len(self.length)
+            next_page.set_author(name=f"Page {cur_page}/{pages}")
 
             # Send the embed and remove the reaction of the user
             await self.message.edit(embed=next_page)

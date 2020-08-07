@@ -325,17 +325,24 @@ async def on_member_join(member):
             result = await cur.fetchone()
             role_ids = result[5]
 
-            try:
+            # Get Enso Chan
+            bot = guild.get_member(client.user.id)
+
+            # Check permissions of Enso
+            if bot.guild_permissions.manage_roles:
+
                 if role_ids is not None:
+
                     # Get all the roles of the user before they were muted from the database
                     roles = [member.guild.get_role(int(id_)) for id_ in role_ids.split(", ") if len(id_)]
+
                     # Give the member their roles back
                     await member.edit(roles=roles)
                     print(f"{member} Had Their Roles Given Back In {member.guild.name}")
                 else:
                     pass
-            except HTTPException:
-                print(f"Roles Could Not Be Added To {member} in {member.guild.name}")
+            else:
+                print(f"Insufficient Permissions to Add Roles to {member} in {member.guild.name}")
 
             # Reset the roles entry for the database
             update_query = """UPDATE members SET roles = NULL WHERE guildID = (%s) AND discordID = (%s)"""
@@ -347,38 +354,36 @@ async def on_member_join(member):
             print(cur.rowcount, f"Roles Cleared For {member} in {member.guild.name}")
 
     # Make sure the guild is Enso
-    if guild.id != enso_guild_ID:
-        return
+    if guild.id == enso_guild_ID:
+        # Set the channel id to "newpeople"
+        new_people = guild.get_channel(enso_newpeople_ID)
 
-    # Set the channel id to "newpeople"
-    new_people = guild.get_channel(enso_newpeople_ID)
+        # Set the enso server icon and the welcoming gif
+        server_icon = guild.icon_url
+        welcome_gif = "https://cdn.discordapp.com/attachments/669808733337157662/730186321913446521/NewPeople.gif"
 
-    # Set the enso server icon and the welcoming gif
-    server_icon = guild.icon_url
-    welcome_gif = "https://cdn.discordapp.com/attachments/669808733337157662/730186321913446521/NewPeople.gif"
+        # Set up embed for the #newpeople channel
+        embed = Embed(title="\n**Welcome To Ensō!**",
+                      colour=enso_embedmod_colours,
+                      timestamp=datetime.datetime.utcnow())
 
-    # Set up embed for the #newpeople channel
-    embed = Embed(title="\n**Welcome To Ensō!**",
-                  colour=enso_embedmod_colours,
-                  timestamp=datetime.datetime.utcnow())
+        embed.set_thumbnail(url=server_icon)
+        embed.set_image(url=welcome_gif)
+        embed.add_field(
+            name=blank_space,
+            value=f"Hello {member.mention}! We hope you enjoy your stay in this server! ",
+            inline=False)
+        embed.add_field(
+            name=blank_space,
+            value=f"Be sure to check out our <#669815048658747392> channel to read the rules and <#683490529862090814> channel to get caught up with any changes! ",
+            inline=False)
+        embed.add_field(
+            name=blank_space,
+            value=f"Last but not least, feel free to go into <#669775971297132556> to introduce yourself!",
+            inline=False)
 
-    embed.set_thumbnail(url=server_icon)
-    embed.set_image(url=welcome_gif)
-    embed.add_field(
-        name=blank_space,
-        value=f"Hello {member.mention}! We hope you enjoy your stay in this server! ",
-        inline=False)
-    embed.add_field(
-        name=blank_space,
-        value=f"Be sure to check out our <#669815048658747392> channel to read the rules and <#683490529862090814> channel to get caught up with any changes! ",
-        inline=False)
-    embed.add_field(
-        name=blank_space,
-        value=f"Last but not least, feel free to go into <#669775971297132556> to introduce yourself!",
-        inline=False)
-
-    # Send embed to #newpeople
-    await new_people.send(embed=embed)
+        # Send embed to #newpeople
+        await new_people.send(embed=embed)
 
 
 @client.event

@@ -367,7 +367,7 @@ class Guild(Cog):
                        "\n\n**React with ✅**" \
                        "\n\nWe encourage all suggestions/thoughts and opinions on the server!" \
                        "\nAs long as it is **valid** criticism" \
-                       "\n**Purely negative feedback will not be considered**"
+                       "\n\n**Purely negative feedback will not be considered**"
 
                 # Set up embed to let the user how to start sending modmail
                 ModMail = Embed(title="**Welcome to Modmail!**",

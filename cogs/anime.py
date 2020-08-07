@@ -116,6 +116,10 @@ def husbandos():
     return ["kakashi", "tamaki"]
 
 
+def store_waifus(waifus_dict, waifu, value):
+    waifus_dict[waifu["name"]][value] = waifu[value]
+
+
 class Anime(Cog):
     """Waifus and Husbandos!"""
 
@@ -131,12 +135,47 @@ class Anime(Cog):
     @bot_has_permissions(embed_links=True)
     async def waifu(self, ctx, waifu2: Optional[str] = None):
         """
-        Shows a Waifu
+        Shows a Waifu (UNDER CONSTRUCTION)
         Waifu's are grabbed from mywaifulist.com
         """
 
         if waifu2:
-            pass
+
+            waifus_dict = {}
+
+            async with aiohttp.ClientSession() as session:
+                async with session.post(f"https://mywaifulist.moe/api/v1/search/",
+                                        data={"term": waifu2,
+                                              'content-type': "application/json"},
+                                        headers={'apikey': my_waifu_list_auth}) as resp:
+                    if resp.status == 200:
+                        waifu_dict = await resp.json()
+                    else:
+                        await ctx.send("Something went wrong!")
+
+            print(waifu_dict["data"])
+            for waifu in waifu_dict["data"]:
+                waifus_dict[waifu["name"]] = {}
+                for value in waifu:
+                    store_waifus(waifus_dict, waifu, value)
+
+            print(waifus_dict)
+
+            """
+            name = waifu["name"]
+            og_name = waifu["original_name"]
+            picture = waifu["display_picture"]
+            url = waifu["url"]
+            likes = waifu["likes"]
+            trash = waifu["trash"]
+
+        embed = Embed(title=name, description=og_name,
+                      colour=rndColour(),
+                      url=url)
+        embed.set_image(url=picture)
+        embed.set_footer(text=f"❤️ {likes} 🗑️ {trash} | Powered by MyWaifuList")
+        """
+
         else:
 
             async with aiohttp.ClientSession() as session:
@@ -154,8 +193,9 @@ class Anime(Cog):
             url = waifu["url"]
             likes = waifu["likes"]
             trash = waifu["trash"]
+            type = waifu["type"]
 
-            embed = Embed(title=name, description=og_name,
+            embed = Embed(title=name, description=f"{og_name} ({type})",
                           colour=rndColour(),
                           url=url)
             embed.set_image(url=picture)

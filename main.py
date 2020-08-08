@@ -442,7 +442,7 @@ async def on_command_error(ctx, args2):
 async def send_error(ctx, bot, embed):
     """Sending error message to the user"""
 
-    if bot.guild_permissions.embed_links:
+    if bot.guild_permissions.send_messages and bot.guild_permissions.embed_links:
         await ctx.send(embed=embed)
     else:
         print("Error: Error Handling Message Could Not Be Sent")

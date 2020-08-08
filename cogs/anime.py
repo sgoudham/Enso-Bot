@@ -235,7 +235,7 @@ class Anime(Cog):
 
     @group(invoke_without_command=True, aliases=["Waifu"])
     @bot_has_permissions(embed_links=True)
-    async def waifu(self, ctx, waifu2: Optional[str] = None):
+    async def waifu(self, ctx, *, waifu2: Optional[str] = None):
         """
         Shows a Waifu (UNDER CONSTRUCTION)
         Waifu's are grabbed from mywaifulist.com

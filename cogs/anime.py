@@ -258,13 +258,18 @@ class Anime(Cog):
                     else:
                         await ctx.send("Something went wrong!")
 
-            for waifu in waifu_dict["data"]:
-                if waifu["type"] in ["Waifu", "Husbando"]:
-                    waifus_dict[waifu["name"]] = {}
-                    for value in waifu:
-                        store_waifus(waifus_dict, waifu, value)
-                else:
-                    break
+            if len(waifu_dict["data"]) > 0:
+                for waifu in waifu_dict["data"]:
+                    if waifu["type"] in ["Waifu", "Husbando"]:
+                        waifus_dict[waifu["name"]] = {}
+                        for value in waifu:
+                            store_waifus(waifus_dict, waifu, value)
+                    else:
+                        break
+            else:
+                embed = Embed(description="**Waifu Not Found!**",
+                              colour=enso_embedmod_colours)
+                await ctx.send(embed=embed)
 
             bot = ctx.guild.get_member(self.bot.user.id)
 

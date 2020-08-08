@@ -84,7 +84,7 @@ def enso_people():
             'lukas', 'stitch', 'corona', 'ging', 'ash',
             'gria', 'lilu', 'ifrah', 'skye', 'chloe',
             'connor', 'taz', 'ryder', 'rin', 'izzy',
-            'david', 'clarity', 'angel', "studentjon"]
+            'david', 'clarity', 'angel', "studentjon", "anton"]
 
 
 class Enso(Cog):

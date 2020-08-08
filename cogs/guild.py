@@ -1,6 +1,6 @@
 import asyncio
 import datetime
-import os
+import io
 import random
 
 import aiomysql
@@ -153,6 +153,12 @@ class Guild(Cog):
     async def on_ready(self):
         """Printing out that Cog is ready on startup"""
         print(f"{self.__class__.__name__} Cog has been loaded\n-----")
+
+    @group(invoke_without_command=True, usage="`[argument...]`")
+    @has_permissions(manage_guild=True)
+    @bot_has_permissions(administrator=True)
+    async def roles_persist(self, ctx):
+        pass
 
     @group(invoke_without_command=True, usage="`[argument...]`")
     @has_permissions(manage_guild=True)
@@ -366,8 +372,8 @@ class Guild(Cog):
                 desc = "React to this message if you want to send a message to the Staff Team!" \
                        "\n\n**React with ✅**" \
                        "\n\nWe encourage all suggestions/thoughts and opinions on the server!" \
-                       "\nAs long as it is **valid** criticism" \
-                       "\n\n**Purely negative feedback will not be considered**"
+                       "\nAs long as it is **valid** criticism." \
+                       "\n\n\n**Purely negative feedback will not be considered.**"
 
                 # Set up embed to let the user how to start sending modmail
                 ModMail = Embed(title="**Welcome to Modmail!**",
@@ -479,7 +485,6 @@ class Guild(Cog):
             # Send error message if the channel ID is not recognised
             text = "**Invalid ChannelID Detected... Aborting Process**"
             await generate_embed(ctx, text)
-            return
 
     @modmail.command(name="delete")
     @has_permissions(manage_guild=True)
@@ -587,10 +592,10 @@ class Guild(Cog):
             }
 
             # Saving this for later within when discord.py 1.4 comes out
-            # cat = await guild.create_category_channel(member.name, overwrites=overwrites, position=0)
+            # user_channel = await guild.create_category_channel("Member", overwrites=overwrites, position=7)
 
             # Create the text channel
-            user_channel = await guild.create_text_channel(member.name, overwrites=overwrites,
+            user_channel = await guild.create_text_channel("Member", overwrites=overwrites,
                                                            position=0)
 
             # Mention the user to make sure that they get pinged
@@ -617,6 +622,11 @@ class Guild(Cog):
                     print(ex)
                     return
                 else:
+
+                    # Making sure that the reply is from the author
+                    def check(m):
+                        return m.author == payload.member and user_channel.id == instructions.channel.id
+
                     if str(reaction.emoji) == "✅":
                         self.anon = True
 
@@ -625,10 +635,6 @@ class Guild(Cog):
 
                         # Tell the user to type their mail into the chat
                         instructions = await user_channel.send(embed=send_instructions(member))
-
-                        # Making sure that the reply is from the author
-                        def check(m):
-                            return m.author == payload.member and user_channel.id == instructions.channel.id
 
                         # Wait for the message from the author
                         msg = await self.bot.wait_for('message', check=check)
@@ -645,22 +651,17 @@ class Guild(Cog):
                             # Delete the previous embed
                             await instructions.delete()
 
-                            # Determine a path for the message logs to be stored
-                            path = "cogs/Anon.txt"
-                            with open(path, 'a+') as f:
-                                # Store the date and content of every message in the text file
-                                async for message in user_channel.history(limit=300):
-                                    print(f"{message.created_at} : {message.content}", file=f)
+                            # Store all text in the channel in a bytesio object
+                            text = ""
+                            async for message in user_channel.history(limit=300):
+                                text = "".join(f"{message.created_at} : {message.content}\n")
+                            text_bytes = str.encode(text)
+
+                            file = io.BytesIO(text_bytes)
 
                             # Send the message to the modmail channel
                             await modmail_channel.send(embed=send_modmail(self, msg, member),
-                                                       file=File(fp=path))
-
-                            # Removing file from the directory after it has been sent
-                            if os.path.exists(path):
-                                os.remove(path)
-                            else:
-                                print("The file does not exist")
+                                                       file=File(file, 'Anon.txt'))
 
                             # Make sure the user knows that their message has been sent
                             await user_channel.send(embed=message_sent_confirmation(member))
@@ -670,7 +671,6 @@ class Guild(Cog):
 
                             # Delete the channel and then stop the function
                             await user_channel.delete()
-                            return
 
                         # If the user types anywhere else, delete the channel
                         else:
@@ -686,10 +686,6 @@ class Guild(Cog):
                         # Tell the user to type their mail into the chat
                         instructions = await user_channel.send(embed=send_instructions(member))
 
-                        # Making sure that the reply is from the author
-                        def check(m):
-                            return m.author == payload.member and user_channel.id == instructions.channel.id
-
                         # Wait for the message from the author
                         msg = await self.bot.wait_for('message', check=check, timeout=300)
 
@@ -704,22 +700,17 @@ class Guild(Cog):
                             # Delete the previous embed
                             await instructions.delete()
 
-                            # Determine a path for the message logs to be stored
-                            path = "cogs/{}.txt".format(payload.member.name)
-                            with open(path, 'a+') as f:
-                                # Store the date and content of every message in the text file
-                                async for message in user_channel.history(limit=300):
-                                    print(f"{message.created_at} : {message.content}", file=f)
+                            # Store all text in the channel in a bytesio object
+                            text = ""
+                            async for message in user_channel.history(limit=300):
+                                text = "".join(f"{message.created_at} : {message.content}\n")
+                            text_bytes = str.encode(text)
+
+                            file = io.BytesIO(text_bytes)
 
                             # Send the message to the modmail channel
                             await modmail_channel.send(embed=send_modmail(self, msg, member),
-                                                       file=File(fp=path))
-
-                            # Removing file from the directory after it has been sent
-                            if os.path.exists(path):
-                                os.remove(path)
-                            else:
-                                print("The file does not exist")
+                                                       file=File(file, f'{member.name}.txt'))
 
                             # Make sure the user knows that their message has been sent
                             await user_channel.send(embed=message_sent_confirmation(member))
@@ -727,23 +718,15 @@ class Guild(Cog):
                             # Let the user read the message for 5 seconds
                             await asyncio.sleep(5)
 
-                            # Delete the channel and then stop the function
+                            # Delete the channel
                             await user_channel.delete()
-                            return
 
                         # If the user types anywhere else, delete the channel
                         else:
                             await user_channel.delete()
-                            return
 
             except Exception as ex:
                 print(ex)
-
-                # Removing file from the directory after it has been sent
-                if os.path.exists(path):
-                    os.remove(path)
-                else:
-                    print("The file does not exist")
 
                 # Send out an error message if the user waited too long
                 await user_channel.send(

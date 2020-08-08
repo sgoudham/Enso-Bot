@@ -7,7 +7,7 @@ from discord import Member, Embed
 from discord.ext.commands import command, guild_only, has_guild_permissions, bot_has_guild_permissions, Greedy, \
     cooldown, BucketType, Cog
 
-from settings import enso_embedmod_colours, get_modlog_for_guild, storeRoles, clearRoles
+from settings import enso_embedmod_colours, get_modlog_for_guild, storeRoles, clearRoles, get_roles_persist
 
 
 async def send_to_modlogs(message, target, reason, action):
@@ -134,6 +134,13 @@ async def mute_members(pool, message, targets, reason, muted):
             # Send confirmation to the channel that the user is in
             embed = Embed(description="✅ **{}** Was Muted! ✅".format(target),
                           colour=enso_embedmod_colours)
+            if get_roles_persist(str(message.guild.id)) == 0:
+                embed.add_field(name="**WARNING: ROLE PERSIST NOT ENABLED**",
+                                value="The bot **will not give** the roles back to the user if they leave the server."
+                                      "Allowing the user to bypass the Mute by leaving and rejoining."
+                                      f"Please enable Role Persist by doing **{message.prefix}rolepersist enable**",
+                                inline=True)
+
             await message.channel.send(embed=embed)
 
             await send_to_modlogs(message, target, reason, action="Muted")
@@ -269,7 +276,9 @@ class Moderation(Cog):
 
         if not await check(ctx, members):
             with ctx.typing():
+
                 role = discord.utils.get(ctx.guild.roles, name="Muted")
+
                 if role is None:
                     # Setting up the role permissions for the Muted Role
                     muted = await ctx.guild.create_role(name="Muted")

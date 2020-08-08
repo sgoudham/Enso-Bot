@@ -121,7 +121,7 @@ def store_waifus(waifus_dict, waifu, value):
     waifus_dict[waifu["name"]][value] = waifu[value]
 
 
-def embed_generator(waifus_dict, i):
+def embed_generator(waifus_dict):
     embeds = []
     for key in waifus_dict.values():
         embed = Embed(title=key["name"], description=f"{key['original_name']} | {key['type']}",
@@ -141,21 +141,22 @@ def get_dict(waifus_dict):
 
 # Set up the Cog
 class HelpMenu(menus.Menu):
-    def __init__(self, i, waifu, bot):
+    def __init__(self, i, waifu, bot, botter):
         super().__init__(timeout=125.0, clear_reactions_after=True)
         self.waifus_dict = waifu
         self.i = i
-        self.length = embed_generator(self.waifus_dict, self.i)
+        self.waifu = embed_generator(self.waifus_dict)
         self.bot = bot
+        self.botter = botter
 
     # Message to be sent on the initial command ~help
     async def send_initial_message(self, ctx, channel):
         # Set the first embed to the first element in the pages[]
 
-        initial = embed_generator(self.waifus_dict, self.i)[self.i]
+        initial = embed_generator(self.waifus_dict)[self.i]
 
         cur_page = self.i + 1
-        pages = len(self.length)
+        pages = len(self.waifu)
         initial.set_author(name=f"Page {cur_page}/{pages}")
 
         # Send embed
@@ -170,22 +171,19 @@ class HelpMenu(menus.Menu):
             return m.author == payload.member
 
         # Do nothing if the check does not return true
-        if not check(self.ctx):
-            return
-        # Allow the page number to be decreased
-        else:
-
+        if check(self.ctx):
             # Set self.i to (i - 1) remainder length of the array
-            self.i = (self.i - 1) % len(embed_generator(self.waifus_dict, self.i))
-            prev_page = embed_generator(self.waifus_dict, self.i)[self.i]
+            self.i = (self.i - 1) % len(embed_generator(self.waifus_dict))
+            prev_page = embed_generator(self.waifus_dict)[self.i]
 
             cur_page = self.i + 1
-            pages = len(self.length)
+            pages = len(self.waifu)
             prev_page.set_author(name=f"Page {cur_page}/{pages}")
 
             # Send the embed and remove the reaction of the user
             await self.message.edit(embed=prev_page)
-            await self.message.remove_reaction("⬅", self.ctx.author)
+            if self.botter.guild_permissions.manage_messages:
+                await self.message.remove_reaction("⬅", self.ctx.author)
 
     # Reaction to allow user to go to the next page in the embed
     @menus.button('\N{BLACK RIGHTWARDS ARROW}')
@@ -196,22 +194,19 @@ class HelpMenu(menus.Menu):
             return m.author == payload.member
 
         # Do nothing if the check does not return true
-        if not check(self.ctx):
-            return
-        # Allow the page number to be increased
-        else:
-
+        if check(self.ctx):
             # Set self.i to (i + 1) remainder length of the array
-            self.i = (self.i + 1) % len(embed_generator(self.waifus_dict, self.i))
-            next_page = embed_generator(self.waifus_dict, self.i)[self.i]
+            self.i = (self.i + 1) % len(embed_generator(self.waifus_dict))
+            next_page = embed_generator(self.waifus_dict)[self.i]
 
             cur_page = self.i + 1
-            pages = len(self.length)
+            pages = len(self.waifu)
             next_page.set_author(name=f"Page {cur_page}/{pages}")
 
             # Send the embed and remove the reaction of the user
             await self.message.edit(embed=next_page)
-            await self.message.remove_reaction("➡", self.ctx.author)
+            if self.botter.guild_permissions.manage_messages:
+                await self.message.remove_reaction("➡", self.ctx.author)
 
     @menus.button('\N{BLACK SQUARE FOR STOP}\ufe0f')
     async def on_stop(self, payload):
@@ -221,11 +216,7 @@ class HelpMenu(menus.Menu):
             return m.author == payload.member
 
         # Do nothing if the check does not return true
-        if not check(self.ctx):
-            return
-        # Allow the embed to be deleted
-        else:
-
+        if check(self.ctx):
             # Delete the embed and stop the function from running
             await self.message.delete()
             self.stop()
@@ -275,8 +266,10 @@ class Anime(Cog):
                 else:
                     break
 
+            bot = ctx.guild.get_member(self.bot.user.id)
+
             # Send the menu to the display
-            menu = HelpMenu(i, waifus_dict, self)
+            menu = HelpMenu(i, waifus_dict, self, bot)
             await menu.start(ctx)
 
             """

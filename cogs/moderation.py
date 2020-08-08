@@ -137,8 +137,8 @@ async def mute_members(pool, ctx, targets, reason, muted):
             if get_roles_persist(str(ctx.message.guild.id)) == 0:
                 embed.add_field(name="**WARNING: ROLE PERSIST NOT ENABLED**",
                                 value="The bot **will not give** the roles back to the user if they leave the server."
-                                      "Allowing the user to bypass the Mute by leaving and rejoining."
-                                      f"Please enable Role Persist by doing **{ctx.prefix}rolepersist enable**",
+                                      " Allowing the user to bypass the Mute by leaving and rejoining."
+                                      f"\nPlease enable Role Persist by doing **{ctx.prefix}rolepersist enable**",
                                 inline=True)
 
             await ctx.message.channel.send(embed=embed)

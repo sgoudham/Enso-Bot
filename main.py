@@ -5,7 +5,7 @@ import aiohttp
 import aiomysql
 import discord
 from decouple import config
-from discord import Embed, HTTPException
+from discord import Embed, Forbidden
 from discord.ext import commands, tasks
 from discord.ext.commands import when_mentioned_or, is_owner
 
@@ -411,33 +411,36 @@ async def on_member_remove(member):
 async def on_command_error(ctx, args2):
     """Event to detect and handle errors"""
 
+    # Get Enso Chan
+    bot = ctx.guild.get_member(client.user.id)
+
     # if the user did not specify an user
     if isinstance(args2, commands.MissingRequiredArgument):
-        await on_command_missing_argument(ctx)
+        await on_command_missing_argument(ctx, bot)
     # if the user has spammed a command and invoked a cooldown
     elif isinstance(args2, commands.CommandOnCooldown):
-        await on_command_cooldown(ctx, args2)
+        await on_command_cooldown(ctx, bot, args2)
     # if the user tries to access a command that isn't available
     elif isinstance(args2, commands.CommandNotFound):
-        await on_command_not_found(ctx)
+        await on_command_not_found(ctx, bot)
     # if the user provides an argument that isn't recognised
     elif isinstance(args2, commands.BadArgument):
-        await on_command_bad_argument(ctx)
+        await on_command_bad_argument(ctx, bot)
     # if the user does not the correct permissions to call a command
     elif isinstance(args2, commands.MissingPermissions):
-        await on_command_permission(ctx, args2)
+        await on_command_permission(ctx, bot, args2)
     # if the bot is missing permissions needed
     elif isinstance(args2, commands.BotMissingPermissions):
-        await on_bot_forbidden(ctx, args2)
+        await on_bot_forbidden(ctx, bot, args2)
     # if the bot is forbidden from performing the command
-    elif isinstance(args2, commands.CommandInvokeError):
-        await on_command_forbidden(ctx)
+    elif isinstance(args2, Forbidden):
+        await on_command_forbidden(ctx, bot)
     # if the user tries to invoke a command that is only for the owner
     elif isinstance(args2, commands.NotOwner):
-        await on_not_owner(ctx)
+        await on_not_owner(ctx, bot)
 
 
-async def on_bot_forbidden(ctx, args2):
+async def on_bot_forbidden(ctx, bot, args2):
     """Handles Missing Bot Permissions Errors"""
 
     # Convert list into string of the missing permissions
@@ -445,57 +448,62 @@ async def on_bot_forbidden(ctx, args2):
 
     embed = Embed(description=f"❌ I Need **{missing_perms}** Permission(s) to Execute This Command! ❌",
                   colour=enso_embedmod_colours)
-    try:
+
+    if bot.guild_permissions.send_messages:
         await ctx.send(embed=embed)
-    except HTTPException:
+    else:
         print("Error: Error Handling Message Could Not Be Sent")
 
 
-async def on_command_forbidden(ctx):
+async def on_command_forbidden(ctx, bot):
     """Handles Forbidden Error"""
 
     embed = Embed(description="**❌ I Don't Have Permissions To Execute This Command ❌**",
                   colour=enso_embedmod_colours)
-    try:
+
+    if bot.guild_permissions.send_messages:
         await ctx.send(embed=embed)
-    except HTTPException:
+    else:
         print("Error: Error Handling Message Could Not Be Sent")
 
 
-async def on_command_bad_argument(ctx):
+async def on_command_bad_argument(ctx, bot):
     """Handles Bad Argument Errors (Argument can't be read properly)"""
 
     embed = Embed(description="**❌ Uh oh! Couldn't find anyone to mention! Try again! ❌**",
                   colour=enso_embedmod_colours)
-    try:
+
+    if bot.guild_permissions.send_messages:
         await ctx.send(embed=embed)
-    except HTTPException:
+    else:
         print("Error: Error Handling Message Could Not Be Sent")
 
 
-async def on_command_not_found(ctx):
+async def on_command_not_found(ctx, bot):
     """Handles the command not found error"""
 
     embed = Embed(description=f"Command Not Found! ❌ Please use **{ctx.prefix}help** to see all commands",
                   colour=enso_embedmod_colours)
-    try:
+
+    if bot.guild_permissions.send_messages:
         await ctx.send(embed=embed)
-    except HTTPException:
+    else:
         print("Error: Error Handling Message Could Not Be Sent")
 
 
-async def on_command_cooldown(ctx, error):
+async def on_command_cooldown(ctx, bot, error):
     """Handles Cooldown Errors"""
 
     embed = Embed(description=f"That command is on cooldown. Try again in **{error.retry_after:,.2f}** seconds",
                   colour=enso_embedmod_colours)
-    try:
+
+    if bot.guild_permissions.send_messages:
         await ctx.send(embed=embed)
-    except HTTPException:
+    else:
         print("Error: Error Handling Message Could Not Be Sent")
 
 
-async def on_command_permission(ctx, args2):
+async def on_command_permission(ctx, bot, args2):
     """Handles User Missing Permissions Errors"""
 
     # Convert list into string of the missing permissions
@@ -503,32 +511,35 @@ async def on_command_permission(ctx, args2):
 
     embed = Embed(description=f"❌ Uh oh! You Need **{missing_perms}** Permission(s) To Execute This Command! ❌",
                   colour=enso_embedmod_colours)
-    try:
+
+    if bot.guild_permissions.send_messages:
         await ctx.send(embed=embed)
-    except HTTPException:
+    else:
         print("Error: Error Handling Message Could Not Be Sent")
 
 
-async def on_command_missing_argument(ctx):
+async def on_command_missing_argument(ctx, bot):
     """Handles the missing argument error"""
 
     embed = Embed(description="Required Argument(s) Missing!"
                               f"\nUse **{ctx.prefix}help** to find how to use **{ctx.command}**",
                   colour=enso_embedmod_colours)
-    try:
+
+    if bot.guild_permissions.send_messages:
         await ctx.send(embed=embed)
-    except HTTPException:
+    else:
         print("Error: Error Handling Message Could Not Be Sent")
 
 
-async def on_not_owner(ctx):
+async def on_not_owner(ctx, bot):
     """Handles the error when the user is not the owner and tries to invoke owner only command"""
 
     embed = Embed(description="**❌ Owner Only Command ❌**",
                   colour=enso_embedmod_colours)
-    try:
+
+    if bot.guild_permissions.send_messages:
         await ctx.send(embed=embed)
-    except HTTPException:
+    else:
         print("Error: Error Handling Message Could Not Be Sent")
 
 

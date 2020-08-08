@@ -61,10 +61,10 @@ def rndColour():
 enso_cache = {}
 
 
-def cache(guildid, channel, prefix):
+def cache(guildid, prefix, channel, rolespersist):
     """Storing GuildID, Modlogs Channel and Prefix in Cache"""
 
-    enso_cache[guildid] = {"Modlogs": channel, "Prefix": prefix}
+    enso_cache[guildid] = {"Modlogs": channel, "Prefix": prefix, "RolesPersist": rolespersist}
 
 
 def get_cache(guildid):
@@ -77,6 +77,12 @@ def del_cache(guildid):
     """Deleting the entry of the guild within the cache"""
 
     del enso_cache[guildid]
+
+
+def get_roles_persist(guildid):
+    """Returning rolespersist value of the guild"""
+
+    return enso_cache[guildid]["RolesPersist"]
 
 
 # --------------------------------------------!End Cache Section!-------------------------------------------------------

@@ -654,7 +654,7 @@ class Guild(Cog):
                             # Store all text in the channel in a bytesio object
                             text = ""
                             async for message in user_channel.history(limit=300):
-                                text = "".join(f"{message.created_at} : {message.content}\n")
+                                text += "".join(f"{message.created_at} : {message.content}\n")
                             text_bytes = str.encode(text)
 
                             file = io.BytesIO(text_bytes)

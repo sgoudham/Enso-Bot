@@ -112,7 +112,7 @@ async def ummute_members(self, message, targets, reason):
             await message.channel.send(embed=embed)
 
 
-async def mute_members(pool, message, targets, reason, muted):
+async def mute_members(pool, ctx, targets, reason, muted):
     """
 
     Method to allow members to be muted
@@ -123,32 +123,32 @@ async def mute_members(pool, message, targets, reason, muted):
     """
 
     for target in targets:
-        if (message.guild.me.top_role.position > target.top_role.position
+        if (ctx.message.guild.me.top_role.position > target.top_role.position
                 and not target.guild_permissions.administrator):
 
             # Store the current roles of the user within database
-            await storeRoles(pool=pool, target=target, ctx=message, member=target)
+            await storeRoles(pool=pool, target=target, ctx=ctx.message, member=target)
             # Give the user the muted role
             await target.edit(roles=[muted], reason=reason)
 
             # Send confirmation to the channel that the user is in
             embed = Embed(description="✅ **{}** Was Muted! ✅".format(target),
                           colour=enso_embedmod_colours)
-            if get_roles_persist(str(message.guild.id)) == 0:
+            if get_roles_persist(str(ctx.message.guild.id)) == 0:
                 embed.add_field(name="**WARNING: ROLE PERSIST NOT ENABLED**",
                                 value="The bot **will not give** the roles back to the user if they leave the server."
                                       "Allowing the user to bypass the Mute by leaving and rejoining."
-                                      f"Please enable Role Persist by doing **{message.guild.prefix}rolepersist enable**",
+                                      f"Please enable Role Persist by doing **{ctx.guild.prefix}rolepersist enable**",
                                 inline=True)
 
-            await message.channel.send(embed=embed)
+            await ctx.message.channel.send(embed=embed)
 
-            await send_to_modlogs(message, target, reason, action="Muted")
+            await send_to_modlogs(ctx.message, target, reason, action="Muted")
 
         # Send error message if the User could not be muted
         else:
             embed = Embed(description="**{} Could Not Be Muted!**".format(target.mention))
-            await message.channel.send(embed=embed)
+            await ctx.message.channel.send(embed=embed)
 
 
 async def ban_members(message, targets, reason):
@@ -287,10 +287,10 @@ class Moderation(Cog):
                         await channel.set_permissions(muted, send_messages=False, read_messages=True)
 
                     # Send embed of the kicked member
-                    await mute_members(self.bot.db, ctx.message, members, reason, muted)
+                    await mute_members(self.bot.db, ctx, members, reason, muted)
                 else:
                     # Send embed of the kicked member
-                    await mute_members(self.bot.db, ctx.message, members, reason, role)
+                    await mute_members(self.bot.db, ctx, members, reason, role)
 
     @command(name="unmute", aliases=["Unmute"], usage="`<member>...` `[reason]`")
     @has_guild_permissions(manage_roles=True)

@@ -249,7 +249,7 @@ class Anime(Cog):
             waifus_dict = {}
 
             async with aiohttp.ClientSession() as session:
-                async with session.post(f"https://mywaifulist.moe/api/v1/search/",
+                async with session.post(f"https://mywaifulist.moe/api/v1/search/beta/",
                                         data={"term": waifu2,
                                               'content-type': "application/json"},
                                         headers={'apikey': my_waifu_list_auth}) as resp:

@@ -11,7 +11,7 @@ from discord.ext.commands import when_mentioned_or, is_owner
 
 import settings
 from settings import blank_space, enso_embedmod_colours, enso_guild_ID, enso_newpeople_ID, get_prefix_for_guild, \
-    cache, del_cache
+    cache, del_cache, get_roles_persist
 
 # Global counter for statuses
 counter = 0
@@ -78,7 +78,7 @@ async def startup_cache_log():
 
             # Store the guildID's, modlog channels and prefixes within cache
             for row in results:
-                cache(guildid=row[0], channel=row[2], prefix=row[1])
+                cache(guildid=row[0], prefix=row[1], channel=row[2], rolespersist=row[3])
 
 
 # Make sure the connection is setup before the bot is ready
@@ -225,7 +225,7 @@ async def on_guild_join(guild):
     """
 
     # Store guildID, modlogs channel and prefix to cache
-    cache(str(guild.id), channel=None, prefix="~")
+    cache(str(guild.id), channel=None, prefix="~", rolespersist=0)
 
     # Setup pool
     pool = client.db
@@ -302,6 +302,8 @@ async def on_member_join(member):
     # Setup pool
     pool = client.db
 
+    role_persist = get_roles_persist(str(guild.id))
+
     # Setup pool connection and cursor
     async with pool.acquire() as conn:
         async with conn.cursor() as cur:
@@ -325,24 +327,21 @@ async def on_member_join(member):
             result = await cur.fetchone()
             role_ids = result[5]
 
-            # Get Enso Chan
-            bot = guild.get_member(client.user.id)
+            if role_persist == 1:
+                # Get Enso Chan
+                bot = guild.get_member(client.user.id)
 
-            # Check permissions of Enso
-            if bot.guild_permissions.manage_roles:
-
-                if role_ids is not None:
-
+                # Check permissions of Enso
+                if bot.guild_permissions.manage_roles and role_ids is not None:
                     # Get all the roles of the user before they were muted from the database
                     roles = [member.guild.get_role(int(id_)) for id_ in role_ids.split(", ") if len(id_)]
 
                     # Give the member their roles back
                     await member.edit(roles=roles)
                     print(f"{member} Had Their Roles Given Back In {member.guild.name}")
+
                 else:
-                    pass
-            else:
-                print(f"Insufficient Permissions to Add Roles to {member} in {member.guild.name}")
+                    print(f"Insufficient Permissions to Add Roles to {member} in {member.guild.name}")
 
             # Reset the roles entry for the database
             update_query = """UPDATE members SET roles = NULL WHERE guildID = (%s) AND discordID = (%s)"""
@@ -440,6 +439,15 @@ async def on_command_error(ctx, args2):
         await on_not_owner(ctx, bot)
 
 
+async def send_error(ctx, bot, embed):
+    """Sending error message to the user"""
+
+    if bot.guild_permissions.send_messages and bot.guild_permissions.embed_links:
+        await ctx.send(embed=embed)
+    else:
+        print("Error: Error Handling Message Could Not Be Sent")
+
+
 async def on_bot_forbidden(ctx, bot, args2):
     """Handles Missing Bot Permissions Errors"""
 
@@ -449,10 +457,7 @@ async def on_bot_forbidden(ctx, bot, args2):
     embed = Embed(description=f"❌ I Need **{missing_perms}** Permission(s) to Execute This Command! ❌",
                   colour=enso_embedmod_colours)
 
-    if bot.guild_permissions.send_messages:
-        await ctx.send(embed=embed)
-    else:
-        print("Error: Error Handling Message Could Not Be Sent")
+    await send_error(ctx, bot, embed)
 
 
 async def on_command_forbidden(ctx, bot):
@@ -461,10 +466,7 @@ async def on_command_forbidden(ctx, bot):
     embed = Embed(description="**❌ I Don't Have Permissions To Execute This Command ❌**",
                   colour=enso_embedmod_colours)
 
-    if bot.guild_permissions.send_messages:
-        await ctx.send(embed=embed)
-    else:
-        print("Error: Error Handling Message Could Not Be Sent")
+    await send_error(ctx, bot, embed)
 
 
 async def on_command_bad_argument(ctx, bot):
@@ -473,10 +475,7 @@ async def on_command_bad_argument(ctx, bot):
     embed = Embed(description="**❌ Uh oh! Couldn't find anyone to mention! Try again! ❌**",
                   colour=enso_embedmod_colours)
 
-    if bot.guild_permissions.send_messages:
-        await ctx.send(embed=embed)
-    else:
-        print("Error: Error Handling Message Could Not Be Sent")
+    await send_error(ctx, bot, embed)
 
 
 async def on_command_not_found(ctx, bot):
@@ -485,10 +484,7 @@ async def on_command_not_found(ctx, bot):
     embed = Embed(description=f"Command Not Found! ❌ Please use **{ctx.prefix}help** to see all commands",
                   colour=enso_embedmod_colours)
 
-    if bot.guild_permissions.send_messages:
-        await ctx.send(embed=embed)
-    else:
-        print("Error: Error Handling Message Could Not Be Sent")
+    await send_error(ctx, bot, embed)
 
 
 async def on_command_cooldown(ctx, bot, error):
@@ -497,10 +493,7 @@ async def on_command_cooldown(ctx, bot, error):
     embed = Embed(description=f"That command is on cooldown. Try again in **{error.retry_after:,.2f}** seconds",
                   colour=enso_embedmod_colours)
 
-    if bot.guild_permissions.send_messages:
-        await ctx.send(embed=embed)
-    else:
-        print("Error: Error Handling Message Could Not Be Sent")
+    await send_error(ctx, bot, embed)
 
 
 async def on_command_permission(ctx, bot, args2):
@@ -512,10 +505,7 @@ async def on_command_permission(ctx, bot, args2):
     embed = Embed(description=f"❌ Uh oh! You Need **{missing_perms}** Permission(s) To Execute This Command! ❌",
                   colour=enso_embedmod_colours)
 
-    if bot.guild_permissions.send_messages:
-        await ctx.send(embed=embed)
-    else:
-        print("Error: Error Handling Message Could Not Be Sent")
+    await send_error(ctx, bot, embed)
 
 
 async def on_command_missing_argument(ctx, bot):
@@ -525,10 +515,7 @@ async def on_command_missing_argument(ctx, bot):
                               f"\nUse **{ctx.prefix}help** to find how to use **{ctx.command}**",
                   colour=enso_embedmod_colours)
 
-    if bot.guild_permissions.send_messages:
-        await ctx.send(embed=embed)
-    else:
-        print("Error: Error Handling Message Could Not Be Sent")
+    await send_error(ctx, bot, embed)
 
 
 async def on_not_owner(ctx, bot):
@@ -537,10 +524,7 @@ async def on_not_owner(ctx, bot):
     embed = Embed(description="**❌ Owner Only Command ❌**",
                   colour=enso_embedmod_colours)
 
-    if bot.guild_permissions.send_messages:
-        await ctx.send(embed=embed)
-    else:
-        print("Error: Error Handling Message Could Not Be Sent")
+    await send_error(ctx, bot, embed)
 
 
 # Run the bot, allowing it to come online

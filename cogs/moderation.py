@@ -10,6 +10,34 @@ from discord.ext.commands import command, guild_only, has_guild_permissions, bot
 from settings import enso_embedmod_colours, get_modlog_for_guild, storeRoles, clearRoles
 
 
+async def send_to_modlogs(message, target, reason, action):
+    """
+    Function to send the moderation actions to modlogs channel
+    """
+
+    # Get the channel of the modlog within the guild
+    modlog = get_modlog_for_guild(str(message.guild.id))
+
+    if modlog is not None:
+
+        channel = message.guild.get_channel(int(modlog))
+
+        embed = Embed(title=f"Member {action}",
+                      colour=enso_embedmod_colours,
+                      timestamp=datetime.datetime.utcnow())
+
+        embed.set_thumbnail(url=target.avatar_url)
+
+        fields = [("Member", target.mention, False),
+                  ("Actioned by", message.author.mention, False),
+                  ("Reason", reason, False)]
+
+        for name, value, inline in fields:
+            embed.add_field(name=name, value=value, inline=inline)
+
+        await channel.send(embed=embed)
+
+
 async def check(ctx, members):
     """
     Check Function
@@ -76,27 +104,7 @@ async def ummute_members(self, message, targets, reason):
                           colour=enso_embedmod_colours)
             await message.channel.send(embed=embed)
 
-            # Get the channel of the modlog within the guild
-            modlog = get_modlog_for_guild(str(message.guild.id))
-            if modlog is None:
-                pass
-            else:
-                channel = message.guild.get_channel(int(modlog))
-
-                embed = Embed(title="Member Unmuted",
-                              colour=enso_embedmod_colours,
-                              timestamp=datetime.datetime.utcnow())
-
-                embed.set_thumbnail(url=target.avatar_url)
-
-                fields = [("Member", target.mention, False),
-                          ("Actioned by", message.author.mention, False),
-                          ("Reason", reason, False)]
-
-                for name, value, inline in fields:
-                    embed.add_field(name=name, value=value, inline=inline)
-
-                await channel.send(embed=embed)
+            await send_to_modlogs(message, target, reason, action="Unmuted")
 
         # Send error message if the User could not be muted
         else:
@@ -128,27 +136,7 @@ async def mute_members(pool, message, targets, reason, muted):
                           colour=enso_embedmod_colours)
             await message.channel.send(embed=embed)
 
-            # Get the channel of the modlog within the guild
-            modlog = get_modlog_for_guild(str(message.guild.id))
-            if modlog is None:
-                pass
-            else:
-                channel = message.guild.get_channel(int(modlog))
-
-                embed = Embed(title="Member Muted",
-                              colour=enso_embedmod_colours,
-                              timestamp=datetime.datetime.utcnow())
-
-                embed.set_thumbnail(url=target.avatar_url)
-
-                fields = [("Member", target.mention, False),
-                          ("Actioned by", message.author.mention, False),
-                          ("Reason", reason, False)]
-
-                for name, value, inline in fields:
-                    embed.add_field(name=name, value=value, inline=inline)
-
-                await channel.send(embed=embed)
+            await send_to_modlogs(message, target, reason, action="Muted")
 
         # Send error message if the User could not be muted
         else:
@@ -175,27 +163,7 @@ async def ban_members(message, targets, reason):
                           colour=enso_embedmod_colours)
             await message.channel.send(embed=embed)
 
-            # Get the channel of the modlog within the guild
-            modlog = get_modlog_for_guild(str(message.guild.id))
-            if modlog is None:
-                pass
-            else:
-                channel = message.guild.get_channel(int(modlog))
-
-                embed = Embed(title="Member Banned",
-                              colour=enso_embedmod_colours,
-                              timestamp=datetime.datetime.utcnow())
-
-                embed.set_thumbnail(url=target.avatar_url)
-
-                fields = [("Member", target, False),
-                          ("Actioned by", message.author.mention, False),
-                          ("Reason", reason, False)]
-
-                for name, value, inline in fields:
-                    embed.add_field(name=name, value=value, inline=inline)
-
-                await channel.send(embed=embed)
+            await send_to_modlogs(message, target, reason, action="Banned")
 
         # Send error message if the User could not be banned
         else:
@@ -233,27 +201,7 @@ async def unban_members(self, message, targets, reason):
                           colour=enso_embedmod_colours)
             await  message.channel.send(embed=embed)
 
-            # Get the channel of the modlog within the guild
-            modlog = get_modlog_for_guild(str(message.guild.id))
-            if modlog is None:
-                pass
-            else:
-                channel = message.guild.get_channel(int(modlog))
-
-                embed = Embed(title="Member Unbanned",
-                              colour=enso_embedmod_colours,
-                              timestamp=datetime.datetime.utcnow())
-
-                embed.set_thumbnail(url=user.avatar_url)
-
-                fields = [("Member", user, False),
-                          ("Actioned by", message.author.mention, False),
-                          ("Reason", reason, False)]
-
-                for name, value, inline in fields:
-                    embed.add_field(name=name, value=value, inline=inline)
-
-                await channel.send(embed=embed)
+            await send_to_modlogs(message, user, reason, action="Unbanned")
 
 
 async def kick_members(message, targets, reason):
@@ -276,27 +224,7 @@ async def kick_members(message, targets, reason):
                           colour=enso_embedmod_colours)
             await message.channel.send(embed=embed)
 
-            # Get the channel of the modlog within the guild
-            modlog = get_modlog_for_guild(str(message.guild.id))
-            if modlog is None:
-                pass
-            else:
-                channel = message.guild.get_channel(int(modlog))
-
-                embed = Embed(title="Member Kicked",
-                              colour=enso_embedmod_colours,
-                              timestamp=datetime.datetime.utcnow())
-
-                embed.set_thumbnail(url=target.avatar_url)
-
-                fields = [("Member", target.mention, False),
-                          ("Actioned by", message.author.mention, False),
-                          ("Reason", reason, False)]
-
-                for name, value, inline in fields:
-                    embed.add_field(name=name, value=value, inline=inline)
-
-                await channel.send(embed=embed)
+            await send_to_modlogs(message, target, reason, action="Kicked")
 
         # Send error message if the User could not be kicked
         else:
@@ -457,11 +385,7 @@ class Moderation(Cog):
         channel = get_modlog_for_guild(str(payload.guild_id))
 
         # When no modlogs channel is returned, do nothing
-        if channel is None:
-            pass
-        # Send the embed to the modlogs channel
-        else:
-
+        if channel is not None:
             # Get the modlogs channel and channel that the messages were deleted in
             modlogs_channel = self.bot.get_channel(int(channel))
             deleted_msgs_channel = self.bot.get_channel(payload.channel_id)
@@ -484,11 +408,7 @@ class Moderation(Cog):
         channel = get_modlog_for_guild(str(member.guild.id))
 
         # When no modlogs channel is returned, do nothing
-        if channel is None:
-            pass
-        # Send the embed to the modlogs channel
-        else:
-
+        if channel is not None:
             # Get the modlogs channel
             modlogs_channel = self.bot.get_channel(int(channel))
 
@@ -509,11 +429,7 @@ class Moderation(Cog):
         channel = get_modlog_for_guild(str(member.guild.id))
 
         # When no modlogs channel is returned, do nothing
-        if channel is None:
-            pass
-        # Send the embed to the modlogs channel
-        else:
-
+        if channel is not None:
             # Get the modlogs channel
             modlogs_channel = self.bot.get_channel(int(channel))
 
@@ -526,6 +442,48 @@ class Moderation(Cog):
             embed.set_author(name="Member Joined", icon_url=member.avatar_url)
             embed.set_thumbnail(url=member.avatar_url)
             embed.set_footer(text="ID: {}".format(member.id))
+
+            await modlogs_channel.send(embed=embed)
+
+    @Cog.listener()
+    async def on_member_ban(self, guild, user):
+        """Logs Member Bans to Server"""
+
+        # Get the channel within the cache
+        channel = get_modlog_for_guild(str(guild.id))
+
+        # When no modlogs channel is returned, do nothing
+        if channel is not None:
+            # Get the modlogs channel
+            modlogs_channel = self.bot.get_channel(int(channel))
+
+            embed = Embed(description=f"{user.mention} A.K.A **{user}**",
+                          colour=enso_embedmod_colours,
+                          timestamp=datetime.datetime.utcnow())
+            embed.set_author(name="Member Banned", icon_url=user.avatar_url)
+            embed.set_footer(text=f"ID: {user.id}")
+            embed.set_thumbnail(url=user.avatar_url)
+
+            await modlogs_channel.send(embed=embed)
+
+    @Cog.listener()
+    async def on_member_unban(self, guild, user):
+        """Logs Member Unbans to Server"""
+
+        # Get the channel within the cache
+        channel = get_modlog_for_guild(str(guild.id))
+
+        # When no modlogs channel is returned, do nothing
+        if channel is not None:
+            # Get the modlogs channel
+            modlogs_channel = self.bot.get_channel(int(channel))
+
+            embed = Embed(description=f"{user.mention} A.K.A **{user}**",
+                          colour=enso_embedmod_colours,
+                          timestamp=datetime.datetime.utcnow())
+            embed.set_author(name="Member Unbanned", icon_url=user.avatar_url)
+            embed.set_footer(text=f"ID: {user.id}")
+            embed.set_thumbnail(url=user.avatar_url)
 
             await modlogs_channel.send(embed=embed)
 

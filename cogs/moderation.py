@@ -194,7 +194,7 @@ async def unban_members(self, message, targets, reason):
 
     for target in targets:
         if target not in ban_ids:
-            embed = Embed(description="❌ **Member Is Not In Unban's List!** ❌",
+            embed = Embed(description="❌ **Member Is Not In Ban's List!** ❌",
                           colour=enso_embedmod_colours)
             await message.channel.send(embed=embed)
         else:

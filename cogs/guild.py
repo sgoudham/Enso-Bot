@@ -158,6 +158,7 @@ class Guild(Cog):
     @has_permissions(manage_guild=True)
     @bot_has_permissions(administrator=True)
     async def roles_persist(self, ctx):
+        """Role Persist! Keep user roles when they leave/join!"""
         pass
 
     @roles_persist.command(name="status")

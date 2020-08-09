@@ -144,15 +144,20 @@ class Info(Cog):
         # Get the member avatar
         userAvatar = member.avatar_url
 
-        # Store all the roles that the user has
-        # (Skipping the first element as it's always going to be @everyone)
-        role = f"{' '.join(map(str, (role.mention for role in member.roles[1:])))}"
+        # Check if user roles is greater than 20
+        if len(member.roles) > 20:
+            # Retrieve the length of the remaining roles
+            length = len(member.roles) - 20
+
+            # Store the first 20 roles in a string called "roles" (highest to lowest)
+            role = f"{' '.join(map(str, (role.mention for role in list(reversed(member.roles))[:20])))} and **{length}** more"
+
+        else:
+            # Display all roles as it is lower than 20
+            role = f"{' '.join(map(str, (role.mention for role in list(reversed(member.roles[1:])))))}"
 
         # Accounting for the edge case where the user has no roles to be displayed
-        if role == "":
-            roles = "No Roles"
-        else:
-            roles = role
+        roles = "No Roles" if role == "" else role
 
         # Returns the permissions that the user has within the guild
         filtered = filter(lambda x: x[1], member.guild_permissions)
@@ -163,10 +168,7 @@ class Info(Cog):
         permission = string.capwords("".join(map(str, detectPermissions(perms, Perms))))
 
         # Accounting for the edge case where the user has no key permissions to be displayed
-        if permission == "":
-            permissions = "No Key Permissions"
-        else:
-            permissions = permission
+        permissions = "No Key Permissions" if permission == "" else permission
 
         # Set up the embed to display everything about the user
         embed = Embed(
@@ -211,32 +213,34 @@ class Info(Cog):
         # Getting permissions of the bot within the channel
         perms = ctx.guild.me.permissions_in(ctx.message.channel)
 
+        # Retrieve the top role of the guild
+        top_role = ctx.guild.roles[-1]
+
         # Check if the amount of roles is above 20
         if len(ctx.guild.roles) > 20:
-            # Display the first 20 roles with a length specified telling the user how many roles were not shown
+            # Retrieve the length of the remaining roles
             length = len(ctx.guild.roles) - 20
 
-            # Store the first 20 roles in a string called "roles"
-            # (Skipping the first element as it's always going to be @everyone)
-            role_string = f"{' **|** '.join(map(str, (role.mention for role in list(reversed(ctx.guild.roles))[:20])))} and **{length}** more"
+            # Store the first 20 roles in a string called "roles" (highest to lowest)
+            role_string = f"{' '.join(map(str, (role.mention for role in list(reversed(ctx.guild.roles))[:20])))} and **{length}** more"
 
         else:
-
-            # Display all the roles in the server as it is less than 20 roles
-            role_string = f"{' **|** '.join(map(str, (role.mention for role in list(reversed(ctx.guild.roles[1:])))))}"
+            # Display all roles as it is lower than 20
+            role_string = f"{' '.join(map(str, (role.mention for role in list(reversed(ctx.guild.roles[1:])))))}"
 
         # Check if the list of emojis returned are greater than 20
         if len(ctx.guild.emojis) > 20:
             # Display the first 20 emojis with a length specified telling the user how many emojis were not shown
             length = len(ctx.guild.emojis) - 20
+
             # Store the first 20 emojis in a string
             emojis = f"{' '.join(map(str, ctx.guild.emojis[:20]))} and **{length}** more..."
+
         else:
             # Display all the emojis in the server as it is less than 20
             emojis = " ".join(map(str, ctx.guild.emojis))
 
-        if emojis == "":
-            emojis = "No Emoji's Available"
+        emojis = "No Emoji's Available" if emojis == "" else emojis
 
         # Defining a dictionary of the statuses
         member_status = {
@@ -269,8 +273,6 @@ class Info(Cog):
         # Get the list of invites created for the server
         invites = len(await ctx.guild.invites()) if perms.manage_guild else "N/A"
 
-        top_role = ctx.guild.roles[-1]
-
         # Define fields to be added into the embed
         fields = [("Owner", ctx.guild.owner.mention, True),
                   ("Created", ctx.guild.created_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"), False),
@@ -299,10 +301,7 @@ class Info(Cog):
         for name, value, inline in fields:
             embed.add_field(name=name, value=value, inline=inline)
 
-        try:  # Send the embed to the channel that the command was triggered in
-            await ctx.send(embed=embed)
-        except Exception as e:
-            print(e)
+        await ctx.send(embed=embed)
 
     @command(name="channelinfo", aliases=["chinfo"])
     @guild_only()
@@ -408,10 +407,8 @@ class Info(Cog):
         Member can be mentioned and their avatar will be displayed
         """
 
-        if member:
-            member = member
-        else:
-            member = ctx.author
+        # Get member mentioned or set to author
+        member = ctx.author if not member else member
 
         # Get the member avatar
         userAvatar = str(member.avatar_url)

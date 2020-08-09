@@ -85,6 +85,23 @@ def get_roles_persist(guildid):
     return enso_cache[guildid]["RolesPersist"]
 
 
+async def update_role_persist(guildid, value, pool):
+    """Update the rolepersist value of the guild (Enabled or Disabled)"""
+
+    enso_cache[guildid]["RolesPersist"] = value
+
+    # Setup up pool connection and cursor
+    async with pool.acquire() as conn:
+        async with conn.cursor() as cur:
+            # Update the existing prefix within the database
+            update_query = """UPDATE guilds SET rolespersist = (%s) WHERE guildID = (%s)"""
+            update_vals = value, guildid,
+
+            # Execute the query
+            await cur.execute(update_query, update_vals)
+            await conn.commit()
+
+
 # --------------------------------------------!End Cache Section!-------------------------------------------------------
 
 # --------------------------------------------!ModLogs Section!---------------------------------------------------------
@@ -97,7 +114,7 @@ async def storage_modlog_for_guild(pool, ctx, channelID, setup):
     # Setup up pool connection and cursor
     async with pool.acquire() as conn:
         async with conn.cursor() as cur:
-            # Update the existing prefix within the database
+            # Update the existing modlogs channel within the database
             update_query = """UPDATE guilds SET modlogs = (%s) WHERE guildID = (%s)"""
             update_vals = channelID, ctx.guild.id,
 
@@ -132,8 +149,6 @@ def del_modlog_channel(guildid):
 
     if enso_cache[guildid]["Modlogs"] is not None:
         del enso_cache[guildid]["Modlogs"]
-    else:
-        pass
 
 
 def remove_modlog_channel(guildid):

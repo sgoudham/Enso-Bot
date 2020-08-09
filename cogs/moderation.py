@@ -95,7 +95,7 @@ async def ummute_members(self, message, targets, reason):
                 roles = [message.guild.get_role(int(id_)) for id_ in role_ids.split(", ") if len(id_)]
 
                 # Clear all the roles of the user
-                await clearRoles(ctx=message, member=target, pool=pool)
+                await clearRoles(member=target, pool=pool)
 
             await target.edit(roles=roles)
 

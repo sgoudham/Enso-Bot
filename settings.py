@@ -246,7 +246,7 @@ async def storeRoles(pool, target, ctx, member):
             print(cur.rowcount, f"Roles Added For User {member} in {ctx.guild.name}")
 
 
-async def clearRoles(ctx, member, pool):
+async def clearRoles(member, pool):
     """Clear the roles when the user has been unmuted"""
 
     # Setup up pool connection and cursor
@@ -254,11 +254,11 @@ async def clearRoles(ctx, member, pool):
         async with conn.cursor() as cur:
             # Clear the existing roles of the user from the database
             update_query = """UPDATE members SET mutedroles = NULL WHERE guildID = (%s) AND discordID = (%s)"""
-            update_vals = ctx.guild.id, member.id
+            update_vals = member.guild.id, member.id
 
             # Execute the query
             await cur.execute(update_query, update_vals)
             await conn.commit()
-            print(cur.rowcount, f"Roles Cleared For User {member} in {ctx.guild.name}")
+            print(cur.rowcount, f"Roles Cleared For User {member} in {member.guild.name}")
 
 # --------------------------------------------!End Cogs/Set Values Section!---------------------------------------------

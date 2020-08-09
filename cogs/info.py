@@ -199,7 +199,7 @@ class Info(Cog):
 
     @command(name="serverinfo", aliases=["guildinfo"])
     @guild_only()
-    @bot_has_permissions(ban_members=True, manage_guild=True, embed_links=True)
+    @bot_has_permissions(embed_links=True)
     @cooldown(1, 5, BucketType.user)
     async def server_info(self, ctx):
         """Guild Information! (Owner/Roles/Emojis etc)"""
@@ -260,9 +260,10 @@ class Info(Cog):
         embed.set_footer(text=f"ID: {guild_id}", icon_url='{}'.format(guild_icon))
 
         # Get the list of banned users from the server
-        bans = len(await ctx.guild.bans())
+        bans = len(await ctx.guild.bans()) if ctx.guild.me.guild_permissions.ban_members else "N/A"
+
         # Get the list of invites created for the server
-        invites = len(await ctx.guild.invites())
+        invites = len(await ctx.guild.invites()) if ctx.guild.me.guild_permissions.manage_guild else "N/A"
 
         # Define fields to be added into the embed
         fields = [("Owner", ctx.guild.owner.mention, True),

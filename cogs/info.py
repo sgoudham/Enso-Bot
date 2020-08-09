@@ -218,7 +218,6 @@ class Info(Cog):
 
             # Store the first 20 roles in a string called "roles"
             # (Skipping the first element as it's always going to be @everyone)
-
             role_string = f"{' **|** '.join(map(str, (role.mention for role in list(reversed(ctx.guild.roles))[:20])))} and **{length}** more"
 
         else:

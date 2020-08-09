@@ -218,11 +218,13 @@ class Info(Cog):
 
             # Store the first 20 roles in a string called "roles"
             # (Skipping the first element as it's always going to be @everyone)
-            role_string = f"{' **<** '.join(map(str, (role.mention for role in ctx.guild.roles[1:20])))} and **{length}** more"
+
+            role_string = f"{' **|** '.join(map(str, (role.mention for role in list(reversed(ctx.guild.roles))[:20])))} and **{length}** more"
 
         else:
+
             # Display all the roles in the server as it is less than 20 roles
-            role_string = f"{' **<** '.join(map(str, (role.mention for role in ctx.guild.roles[:1])))}"
+            role_string = f"{' **|** '.join(map(str, (role.mention for role in list(reversed(ctx.guild.roles[1:])))))}"
 
         # Check if the list of emojis returned are greater than 20
         if len(ctx.guild.emojis) > 20:
@@ -268,6 +270,8 @@ class Info(Cog):
         # Get the list of invites created for the server
         invites = len(await ctx.guild.invites()) if perms.manage_guild else "N/A"
 
+        top_role = ctx.guild.roles[-1]
+
         # Define fields to be added into the embed
         fields = [("Owner", ctx.guild.owner.mention, True),
                   ("Created", ctx.guild.created_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"), False),
@@ -288,6 +292,7 @@ class Info(Cog):
                    f"Invites: {invites}" +
                    f"\nVerif Level: {ctx.guild.verification_level.name.capitalize()}" +
                    f"\nNitro Boosters: {len(ctx.guild.premium_subscribers)}", True),
+                  ("Top Role", top_role.mention, False),
                   (f"Roles ({len(ctx.guild.roles)})", role_string, True),
                   (f"Emojis ({len(ctx.guild.emojis)})", emojis, False)]
 

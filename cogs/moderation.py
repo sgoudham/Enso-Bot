@@ -123,32 +123,39 @@ async def mute_members(pool, ctx, targets, reason, muted):
     """
 
     for target in targets:
-        if (ctx.message.guild.me.top_role.position > target.top_role.position
-                and not target.guild_permissions.administrator):
-
-            # Store the current roles of the user within database
-            await storeRoles(pool=pool, target=target, ctx=ctx.message, member=target)
-            # Give the user the muted role
-            await target.edit(roles=[muted], reason=reason)
-
-            # Send confirmation to the channel that the user is in
-            embed = Embed(description="✅ **{}** Was Muted! ✅".format(target),
+        # When user is already muted, send error message
+        if muted in target.roles:
+            embed = Embed(description="**❌ User Is Already Muted! ❌**",
                           colour=enso_embedmod_colours)
-            if get_roles_persist(str(ctx.message.guild.id)) == 0:
-                embed.add_field(name="**WARNING: ROLE PERSIST NOT ENABLED**",
-                                value="The bot **will not give** the roles back to the user if they leave the server."
-                                      " Allowing the user to bypass the Mute by leaving and rejoining."
-                                      f"\nPlease enable Role Persist by doing **{ctx.prefix}rolepersist enable**",
-                                inline=True)
+            await ctx.send(embed=embed)
 
-            await ctx.message.channel.send(embed=embed)
-
-            await send_to_modlogs(ctx.message, target, reason, action="Muted")
-
-        # Send error message if the User could not be muted
         else:
-            embed = Embed(description="**{} Could Not Be Muted!**".format(target.mention))
-            await ctx.message.channel.send(embed=embed)
+            if (ctx.message.guild.me.top_role.position > target.top_role.position
+                    and not target.guild_permissions.administrator):
+
+                # Store the current roles of the user within database
+                await storeRoles(pool=pool, target=target, ctx=ctx.message, member=target)
+                # Give the user the muted role
+                await target.edit(roles=[muted], reason=reason)
+
+                # Send confirmation to the channel that the user is in
+                embed = Embed(description="✅ **{}** Was Muted! ✅".format(target),
+                              colour=enso_embedmod_colours)
+                if get_roles_persist(str(ctx.message.guild.id)) == 0:
+                    embed.add_field(name="**WARNING: ROLE PERSIST NOT ENABLED**",
+                                    value="The bot **will not give** the roles back to the user if they leave the server."
+                                          " Allowing the user to bypass the Mute by leaving and rejoining."
+                                          f"\nPlease enable Role Persist by doing **{ctx.prefix}rolepersist enable**",
+                                    inline=True)
+
+                await ctx.message.channel.send(embed=embed)
+
+                await send_to_modlogs(ctx.message, target, reason, action="Muted")
+
+            # Send error message if the User could not be muted
+            else:
+                embed = Embed(description="**{} Could Not Be Muted!**".format(target.mention))
+                await ctx.message.channel.send(embed=embed)
 
 
 async def ban_members(message, targets, reason):

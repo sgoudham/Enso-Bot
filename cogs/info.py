@@ -208,6 +208,9 @@ class Info(Cog):
         guild_icon = ctx.guild.icon_url
         guild_id = ctx.guild.id
 
+        # Getting permissions of the bot within the channel
+        perms = ctx.guild.me.permissions_in(ctx.message.channel)
+
         # Check if the amount of roles is above 20
         if len(ctx.guild.roles) > 20:
             # Display the first 20 roles with a length specified telling the user how many roles were not shown
@@ -219,7 +222,7 @@ class Info(Cog):
 
         else:
             # Display all the roles in the server as it is less than 20 roles
-            role_string = f"{' **<** '.join(map(str, (role.mention for role in ctx.guild.roles[1:])))}"
+            role_string = f"{' **<** '.join(map(str, (role.mention for role in ctx.guild.roles[:1])))}"
 
         # Check if the list of emojis returned are greater than 20
         if len(ctx.guild.emojis) > 20:
@@ -260,10 +263,10 @@ class Info(Cog):
         embed.set_footer(text=f"ID: {guild_id}", icon_url='{}'.format(guild_icon))
 
         # Get the list of banned users from the server
-        bans = len(await ctx.guild.bans()) if ctx.guild.me.guild_permissions.ban_members else "N/A"
+        bans = len(await ctx.guild.bans()) if perms.ban_members else "N/A"
 
         # Get the list of invites created for the server
-        invites = len(await ctx.guild.invites()) if ctx.guild.me.guild_permissions.manage_guild else "N/A"
+        invites = len(await ctx.guild.invites()) if perms.manage_guild else "N/A"
 
         # Define fields to be added into the embed
         fields = [("Owner", ctx.guild.owner.mention, True),

@@ -10,7 +10,7 @@ from discord import File
 from discord.ext.commands import has_permissions, Cog, group, bot_has_permissions
 
 from settings import enso_embedmod_colours, blank_space, storage_modlog_for_guild, remove_modlog_channel, \
-    get_modlog_for_guild
+    get_modlog_for_guild, get_roles_persist, update_role_persist
 
 
 async def generate_embed(ctx, desc):
@@ -154,13 +154,52 @@ class Guild(Cog):
         """Printing out that Cog is ready on startup"""
         print(f"{self.__class__.__name__} Cog has been loaded\n-----")
 
-    @group(invoke_without_command=True, usage="`[argument...]`")
+    @group(name="rolepersist", invoke_without_command=True, usage="`[argument...]`")
     @has_permissions(manage_guild=True)
     @bot_has_permissions(administrator=True)
     async def roles_persist(self, ctx):
         pass
 
-    @group(invoke_without_command=True, usage="`[argument...]`")
+    @roles_persist.command(name="status")
+    @has_permissions(manage_guild=True)
+    @bot_has_permissions(administrator=True)
+    async def rp_status(self, ctx):
+        """Showing the status of the role persist within the guild"""
+
+        if get_roles_persist(str(ctx.guild.id)) == 0:
+            await generate_embed(ctx, desc=f"**Role Persist is currently disabled within {ctx.guild}**")
+        else:
+            await generate_embed(ctx, desc=f"**Role Persist is currently enabled within {ctx.guild}**")
+
+    @roles_persist.command(name="enable")
+    @has_permissions(manage_guild=True)
+    @bot_has_permissions(administrator=True)
+    async def rp_enable(self, ctx):
+        """Enabling role persist within the guild"""
+
+        pool = self.bot.db
+
+        if get_roles_persist(str(ctx.guild.id)) == 0:
+            await update_role_persist(str(ctx.guild.id), value=1, pool=pool)
+            await generate_embed(ctx, desc=f"**Role Persist has been enabled within {ctx.guild}!**")
+        else:
+            await generate_embed(ctx, desc=f"**Role Persist is already enabled within {ctx.guild}!**")
+
+    @roles_persist.command(name="disable")
+    @has_permissions(manage_guild=True)
+    @bot_has_permissions(administrator=True)
+    async def rp_disable(self, ctx):
+        """Disabling role persist within the guild"""
+
+        pool = self.bot.db
+
+        if get_roles_persist(str(ctx.guild.id)) == 1:
+            await update_role_persist(str(ctx.guild.id), value=0, pool=pool)
+            await generate_embed(ctx, desc=f"**Role Persist has been disabled within {ctx.guild}!**")
+        else:
+            await generate_embed(ctx, desc=f"**Role Persist is already disabled within {ctx.guild}!**")
+
+    @group(name="modlogs", invoke_without_command=True, usage="`[argument...]`")
     @has_permissions(manage_guild=True)
     @bot_has_permissions(administrator=True)
     async def modlogs(self, ctx):

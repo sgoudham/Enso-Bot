@@ -246,7 +246,7 @@ def extensions():
 async def storeRoles(pool, target, ctx, member):
     """Storing User Roles within Database"""
 
-    role_ids = ", ".join([str(r.id) for r in target.roles if not r.managed])
+    role_ids = ", ".join([str(r.id) for r in target.roles])
 
     # Setup up pool connection and cursor
     async with pool.acquire() as conn:

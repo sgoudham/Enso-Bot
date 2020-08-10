@@ -248,16 +248,18 @@ class Anime(Cog):
         if waifu2:
 
             waifus_dict = {}
+            url = "https://mywaifulist.moe/api/v1/search/"
+            data = {"term": waifu2,
+                    'content-type': "application/json"}
+            headers = {'apikey': my_waifu_list_auth}
 
             # Searching API for waifu(s)
             async with aiohttp.ClientSession() as session:
-                async with session.post(f"https://mywaifulist.moe/api/v1/search/",
-                                        data={"term": waifu2,
-                                              'content-type': "application/json"},
-                                        headers={'apikey': my_waifu_list_auth}) as resp:
-                    # Store waifu(s) in a dict
+                async with session.post(url, data=data, headers=headers) as resp:
+                    # Store waifu's in dict when request is successful, else send an error
                     if resp.status == 200:
                         waifu_dict = await resp.json()
+
                     # Send error if something went wrong internally/while grabbing data from API
                     else:
                         await ctx.send("Something went wrong!")
@@ -316,6 +318,8 @@ class Anime(Cog):
                     if resp.status == 200:
                         waifu_dict = await resp.json()
                         waifu = waifu_dict["data"]
+
+                    # Send error if something went wrong internally/while grabbing data from API
                     else:
                         await ctx.send("Something went wrong!")
 

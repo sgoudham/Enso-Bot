@@ -234,7 +234,7 @@ class Anime(Cog):
         print(f"{self.__class__.__name__} Cog has been loaded!\n-----")
 
     @group(invoke_without_command=True, aliases=["Waifu"])
-    @bot_has_permissions(embed_links=True)
+    @bot_has_permissions(embed_links=True, add_reactions=True)
     async def waifu(self, ctx, *, waifu2: Optional[str] = None):
         """
         Shows a Waifu (UNDER CONSTRUCTION)
@@ -244,33 +244,44 @@ class Anime(Cog):
         # Local Variable i to allow the index of the pages[] to be modified
         i = 0
 
+        # When a waifu has been specified, retrieve waifu(s) matching the user input
         if waifu2:
 
             waifus_dict = {}
 
+            # Searching API for waifu(s)
             async with aiohttp.ClientSession() as session:
                 async with session.post(f"https://mywaifulist.moe/api/v1/search/",
                                         data={"term": waifu2,
                                               'content-type': "application/json"},
                                         headers={'apikey': my_waifu_list_auth}) as resp:
+                    # Store waifu(s) in a dict
                     if resp.status == 200:
                         waifu_dict = await resp.json()
+                    # Send error if something went wrong internally/while grabbing data from API
                     else:
                         await ctx.send("Something went wrong!")
 
+            # As long waifu's were returned from the GET request
+            # Store waifus in a dict
             if len(waifu_dict["data"]) > 0:
                 for waifu in waifu_dict["data"]:
+
+                    # Only store "Waifu's" and "Husbando's"
                     if waifu["type"] in ["Waifu", "Husbando"]:
                         waifus_dict[waifu["name"]] = {}
                         for value in waifu:
                             store_waifus(waifus_dict, waifu, value)
                     else:
                         break
+
+            # When no waifu has been retrieved, send error message to the user
             else:
                 embed = Embed(description="**Waifu Not Found!**",
                               colour=enso_embedmod_colours)
                 await ctx.send(embed=embed)
 
+            # Get the instance of the bot
             bot = ctx.guild.get_member(self.bot.user.id)
 
             # Send the menu to the display
@@ -294,24 +305,30 @@ class Anime(Cog):
 
         else:
 
+            # Set variables to retrieve data from the API
+            url = "https://mywaifulist.moe/api/v1/meta/random"
+            headers = {'apikey': my_waifu_list_auth}
+
+            # Retrieve a random waifu from the API
             async with aiohttp.ClientSession() as session:
-                async with session.get(f"https://mywaifulist.moe/api/v1/meta/random",
-                                       headers={'apikey': my_waifu_list_auth}) as resp:
+                async with session.get(url, headers=headers) as resp:
+                    # Store waifu's in dict when request is successful, else send an error
                     if resp.status == 200:
                         waifu_dict = await resp.json()
+                        waifu = waifu_dict["data"]
                     else:
                         await ctx.send("Something went wrong!")
 
-            waifu = waifu_dict["data"]
+            # Get all the data to be displayed in the embed
             name = waifu["name"]
             og_name = waifu["original_name"]
             picture = waifu["display_picture"]
             url = waifu["url"]
             likes = waifu["likes"]
             trash = waifu["trash"]
-            type = waifu["type"]
+            waifu_type = waifu["type"]
 
-            embed = Embed(title=name, description=f"{og_name} | {type}",
+            embed = Embed(title=name, description=f"{og_name} | {waifu_type}",
                           colour=rndColour(),
                           url=url)
             embed.set_image(url=picture)

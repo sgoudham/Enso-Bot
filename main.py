@@ -388,7 +388,7 @@ async def on_member_join(member):
 @client.event
 async def on_member_remove(member):
     """Storing User Roles within Database When User Leaves Guild"""
-    role_ids = ", ".join([str(r.id) for r in member.roles])
+    role_ids = ", ".join([str(r.id) for r in member.roles if not r.managed])
 
     # Setup pool
     pool = client.db

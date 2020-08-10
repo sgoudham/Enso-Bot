@@ -123,6 +123,7 @@ async def mute_members(pool, ctx, targets, reason, muted):
     """
 
     for target in targets:
+
         # When user is already muted, send error message
         if muted in target.roles:
             embed = Embed(description="**❌ User Is Already Muted! ❌**",
@@ -130,13 +131,18 @@ async def mute_members(pool, ctx, targets, reason, muted):
             await ctx.send(embed=embed)
 
         else:
+
+            # Store managed roles into the list of roles to be added to the user (including muted)
+            roles = [role for role in target.roles if role.managed]
+            roles.append(muted)
+
             if (ctx.message.guild.me.top_role.position > target.top_role.position
                     and not target.guild_permissions.administrator):
 
                 # Store the current roles of the user within database
                 await storeRoles(pool=pool, target=target, ctx=ctx.message, member=target)
-                # Give the user the muted role
-                await target.edit(roles=[muted], reason=reason)
+                # Give the user the muted role (and any integration roles if need be)
+                await target.edit(roles=roles, reason=reason)
 
                 # Send confirmation to the channel that the user is in
                 embed = Embed(description="✅ **{}** Was Muted! ✅".format(target),
@@ -154,7 +160,8 @@ async def mute_members(pool, ctx, targets, reason, muted):
 
             # Send error message if the User could not be muted
             else:
-                embed = Embed(description="**{} Could Not Be Muted!**".format(target.mention))
+                embed = Embed(description="**{} Could Not Be Muted!**".format(target.mention),
+                              colour=enso_embedmod_colours)
                 await ctx.message.channel.send(embed=embed)
 
 

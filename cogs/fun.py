@@ -1,4 +1,5 @@
 import datetime
+import io
 import os
 import random
 import string
@@ -7,6 +8,7 @@ import urllib.parse
 from typing import Optional
 
 import discord
+import pytesseract.pytesseract
 from PIL import Image, ImageDraw, ImageFont
 from aiohttp import request
 from discord import Member, Colour, Embed
@@ -15,7 +17,7 @@ from discord.ext.commands import BucketType, cooldown, command, has_permissions,
 from discord.ext.commands import is_owner, bot_has_permissions
 from owotext import OwO
 
-from settings import colour_list
+from settings import colour_list, enso_embedmod_colours
 
 counter = 0
 
@@ -389,6 +391,28 @@ class Fun(Cog):
 
         # Send the text back
         await ctx.message.channel.send(owo)
+
+    @command(name="text", aliases=["Text"])
+    @cooldown(1, 1, BucketType.user)
+    async def image_to_text(self, ctx):
+        """Display text from an image submitted"""
+
+        pytesseract.pytesseract.tesseract_cmd = r'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
+
+        if ctx.message.attachments:
+            for attachments in ctx.message.attachments:
+                attach = await attachments.read()
+
+                image = Image.open(io.BytesIO(attach))
+                text = pytesseract.image_to_string(image)
+
+                await ctx.send(text)
+
+
+        else:
+            embed = Embed(description="**Image Not Detected!**",
+                          colour=enso_embedmod_colours)
+            await ctx.send(embed=embed)
 
 
 def setup(bot):

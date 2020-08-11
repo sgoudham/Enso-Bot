@@ -57,7 +57,7 @@ def generate_meme(image_path, top_text, bottom_text='', font_path='homies/impact
         draw.text((x, y), line, fill='white', font=font)
         y += line_height
 
-    # Save meme
+    # Save meme as bytes
     file = io.BytesIO()
     get_image.save(file, format='PNG')
     file.seek(0)
@@ -363,7 +363,7 @@ class Fun(Cog):
             # Call the method to generate the image
             file = generate_meme('homies/AllMyHomies.jpg', top_text=top_text, bottom_text=bottom_text)
 
-            # Send the image file stored in the directory
+            # Send the bytes object as an image file
             await ctx.send(file=discord.File(file, "homies.png"))
 
     @command(name="owo", aliases=["Owo", "OwO"])

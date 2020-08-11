@@ -1,6 +1,5 @@
 import datetime
 import io
-import os
 import random
 import string
 import textwrap
@@ -59,7 +58,10 @@ def generate_meme(image_path, top_text, bottom_text='', font_path='homies/impact
         y += line_height
 
     # Save meme
-    get_image.save(f"AllMyHomiesHateMeme{counter}.jpg")
+    file = io.BytesIO()
+    get_image.save(file, format='PNG')
+    file.seek(0)
+    return file
 
 
 # Set up the cog
@@ -348,33 +350,21 @@ class Fun(Cog):
         # Global counter for saving homies meme
         global counter
 
-        try:
-            # Make sure the text entered is less than 20 characters
-            if len(text) >= 20:
-                await ctx.send("Please make sure the prompt is below **20** characters!")
-                return
-            else:
+        # Make sure the text entered is less than 20 characters
+        if len(text) >= 20:
+            await ctx.send("Please make sure the prompt is below **20** characters!")
+            return
+        else:
 
-                # Define the text to be drawn on the top and the bottom
-                top_text = f"Ayo fuck {text}"
-                bottom_text = f"All my homies hate {text}"
+            # Define the text to be drawn on the top and the bottom
+            top_text = f"Ayo fuck {text}"
+            bottom_text = f"All my homies hate {text}"
 
-                # Call the method to generate the image
-                generate_meme('homies/AllMyHomies.jpg', top_text=top_text, bottom_text=bottom_text)
+            # Call the method to generate the image
+            file = generate_meme('homies/AllMyHomies.jpg', top_text=top_text, bottom_text=bottom_text)
 
-                # Send the image file stored in the directory
-                await ctx.send(file=discord.File(f'AllMyHomiesHateMeme{counter}.jpg'))
-
-                # Remove file after sending it and then increment the counter
-                path = f"AllMyHomiesHateMeme{counter}.jpg"
-                if os.path.exists(path):
-                    os.remove(path)
-                    counter += 1
-                else:
-                    print("The file does not exist")
-
-        except Exception as e:
-            print(e)
+            # Send the image file stored in the directory
+            await ctx.send(file=discord.File(file, "homies.png"))
 
     @command(name="owo", aliases=["Owo", "OwO"])
     @cooldown(1, 1, BucketType.user)
@@ -407,7 +397,6 @@ class Fun(Cog):
                 text = pytesseract.image_to_string(image)
 
                 await ctx.send(text)
-
 
         else:
             embed = Embed(description="**Image Not Detected!**",

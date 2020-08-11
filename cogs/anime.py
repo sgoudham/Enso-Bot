@@ -1,6 +1,5 @@
 import datetime
 import random
-import string
 from typing import Optional
 
 import aiohttp
@@ -118,10 +117,14 @@ def husbandos():
 
 
 def store_waifus(waifus_dict, waifu, value):
+    """Method to store waifu's in the new dict"""
+
     waifus_dict[waifu["name"]][value] = waifu[value]
 
 
-def embed_generator(waifus_dict):
+def multiple_waifu_generator(waifus_dict):
+    """Method to generate embed of multiple waifu's"""
+
     embeds = []
     for key in waifus_dict.values():
         embed = Embed(title=key["name"], description=f"{key['original_name']} | {key['type']}",
@@ -135,8 +138,26 @@ def embed_generator(waifus_dict):
     return embeds
 
 
-def get_dict(waifus_dict):
-    return waifus_dict
+def single_waifu_generator(waifu):
+    """Method to generate embed of single waifu's"""
+
+    # Get all the data to be displayed in the embed
+    name = waifu["name"]
+    og_name = waifu["original_name"]
+    picture = waifu["display_picture"]
+    url = waifu["url"]
+    likes = waifu["likes"]
+    trash = waifu["trash"]
+    waifu_type = waifu["type"]
+
+    # Set up the embed
+    embed = Embed(title=name, description=f"{og_name} | {waifu_type}",
+                  colour=rndColour(),
+                  url=url)
+    embed.set_image(url=picture)
+    embed.set_footer(text=f"❤️ {likes} 🗑️ {trash} | Powered by MyWaifuList")
+
+    return embed
 
 
 # Set up the Cog
@@ -145,7 +166,7 @@ class HelpMenu(menus.Menu):
         super().__init__(timeout=125.0, clear_reactions_after=True)
         self.waifus_dict = waifu
         self.i = i
-        self.waifu = embed_generator(self.waifus_dict)
+        self.waifu = multiple_waifu_generator(self.waifus_dict)
         self.bot = bot
         self.botter = botter
 
@@ -153,7 +174,7 @@ class HelpMenu(menus.Menu):
     async def send_initial_message(self, ctx, channel):
         # Set the first embed to the first element in the pages[]
 
-        initial = embed_generator(self.waifus_dict)[self.i]
+        initial = multiple_waifu_generator(self.waifus_dict)[self.i]
 
         cur_page = self.i + 1
         pages = len(self.waifu)
@@ -173,8 +194,8 @@ class HelpMenu(menus.Menu):
         # Do nothing if the check does not return true
         if check(self.ctx):
             # Set self.i to (i - 1) remainder length of the array
-            self.i = (self.i - 1) % len(embed_generator(self.waifus_dict))
-            prev_page = embed_generator(self.waifus_dict)[self.i]
+            self.i = (self.i - 1) % len(multiple_waifu_generator(self.waifus_dict))
+            prev_page = multiple_waifu_generator(self.waifus_dict)[self.i]
 
             cur_page = self.i + 1
             pages = len(self.waifu)
@@ -196,8 +217,8 @@ class HelpMenu(menus.Menu):
         # Do nothing if the check does not return true
         if check(self.ctx):
             # Set self.i to (i + 1) remainder length of the array
-            self.i = (self.i + 1) % len(embed_generator(self.waifus_dict))
-            next_page = embed_generator(self.waifus_dict)[self.i]
+            self.i = (self.i + 1) % len(multiple_waifu_generator(self.waifus_dict))
+            next_page = multiple_waifu_generator(self.waifus_dict)[self.i]
 
             cur_page = self.i + 1
             pages = len(self.waifu)
@@ -233,7 +254,7 @@ class Anime(Cog):
         """Printing out that Cog is ready on startup"""
         print(f"{self.__class__.__name__} Cog has been loaded!\n-----")
 
-    @group(invoke_without_command=True, aliases=["Waifu"])
+    @group(name="waifu", invoke_without_command=True, aliases=["Waifu"])
     @bot_has_permissions(embed_links=True, add_reactions=True)
     async def waifu(self, ctx, *, waifu2: Optional[str] = None):
         """
@@ -290,21 +311,6 @@ class Anime(Cog):
             menu = HelpMenu(i, waifus_dict, self, bot)
             await menu.start(ctx)
 
-            """
-            name = waifu["name"]
-            og_name = waifu["original_name"]
-            picture = waifu["display_picture"]
-            url = waifu["url"]
-            likes = waifu["likes"]
-            trash = waifu["trash"]
-
-            embed = Embed(title=name, description=og_name,
-                          colour=rndColour(),
-                          url=url)
-            embed.set_image(url=picture)
-            embed.set_footer(text=f"❤️ {likes} 🗑️ {trash} | Powered by MyWaifuList")
-            """
-
         else:
 
             # Set variables to retrieve data from the API
@@ -323,86 +329,28 @@ class Anime(Cog):
                     else:
                         await ctx.send("Something went wrong!")
 
-            # Get all the data to be displayed in the embed
-            name = waifu["name"]
-            og_name = waifu["original_name"]
-            picture = waifu["display_picture"]
-            url = waifu["url"]
-            likes = waifu["likes"]
-            trash = waifu["trash"]
-            waifu_type = waifu["type"]
+            await ctx.send(embed=single_waifu_generator(waifu))
 
-            embed = Embed(title=name, description=f"{og_name} | {waifu_type}",
-                          colour=rndColour(),
-                          url=url)
-            embed.set_image(url=picture)
-            embed.set_footer(text=f"❤️ {likes} 🗑️ {trash} | Powered by MyWaifuList")
+    @waifu.command(name="daily", aliases=["Daily"])
+    async def daily_waifu(self, ctx):
+        """Returns the daily Waifu from MyWaifuList"""
 
-            await ctx.send(embed=embed)
+        url = "https://mywaifulist.moe/api/v1/meta/daily"
+        headers = {'apikey': my_waifu_list_auth}
 
-    @group(invoke_without_command=True, aliases=["Husbando"])
-    @bot_has_permissions(embed_links=True)
-    async def husbando(self, ctx, husbando: Optional[str] = None):
-        """Shows a Husbando"""
+        # Retrieve a random waifu from the API
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url, headers=headers) as resp:
+                # Store waifu's in dict when request is successful, else send an error
+                if resp.status == 200:
+                    waifu_dict = await resp.json()
+                    waifu = waifu_dict["data"]
 
-        if husbando:
-            # Get the lowercase
-            lcase_husbando = husbando.lower()
+                # Send error if something went wrong internally/while grabbing data from API
+                else:
+                    await ctx.send("Something went wrong!")
 
-            try:
-                # Retrieve image of the husbando specified
-                with open(f'images/AnimeImages/Husbandos/{lcase_husbando}.txt') as file:
-                    h_array = file.readlines()
-
-                # Get the full name of the husbando
-                full_name = Abbrev(lcase_husbando)
-
-                # Embed the image into a message and send it to the channel
-                embed = displayAnimeImage(h_array, ctx, full_name)
-                await ctx.send(embed=embed)
-
-            except FileNotFoundError as e:
-                print(e)
-
-                # Send error message saying that the Husbando isn't recognised
-                embed = Embed(
-                    description="Sorry! That Husbando Doesn't Exist!"
-                                f"\nPlease Do **{ctx.prefix}husbando list** To View The List Of Husbando's Available",
-                    colour=enso_embedmod_colours)
-                await ctx.send(embed=embed)
-
-        else:
-
-            # Get embed from randomHusbando() and send it to the channel
-            embed = randomHusbando(ctx, husbandos())
-            await ctx.send(embed=embed)
-
-    @waifu.command(name="list", aliases=["List"])
-    async def wlist(self, ctx):
-        """Returns a list of Waifu's Available"""
-
-        # Send the list of waifus in the bot to the channel
-        waifu_list = string.capwords(', '.join(map(str, waifus())))
-
-        # Tell the user to try the waifus in the array
-        embed = Embed(description="Try The Waifu's Listed Below!"
-                                  f"\n**{waifu_list}**",
-                      colour=enso_embedmod_colours)
-        await ctx.send(embed=embed)
-
-    @husbando.command(name="list", aliases=["List"])
-    async def hlist(self, ctx):
-        """Returns a list of Husbando's Available"""
-
-        # Send the list of waifus in the bot to the channel
-        husbando_list = string.capwords(', '.join(map(str, husbandos())))
-
-        # Tell the user to try the husbando's in the array
-        embed = Embed(description="Try The Husbando's Listed Below!"
-                                  f"\n**{husbando_list}**",
-                      colour=enso_embedmod_colours)
-
-        await ctx.send(embed=embed)
+        await ctx.send(embed=single_waifu_generator(waifu))
 
 
 def setup(bot):

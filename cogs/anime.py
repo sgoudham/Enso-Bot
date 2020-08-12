@@ -248,6 +248,7 @@ class Anime(Cog):
 
     def __init__(self, bot):
         self.bot = bot
+        self.headers = {'apikey': my_waifu_list_auth}
 
     @Cog.listener()
     async def on_ready(self):
@@ -272,11 +273,10 @@ class Anime(Cog):
             url = "https://mywaifulist.moe/api/v1/search/"
             data = {"term": waifu2,
                     'content-type': "application/json"}
-            headers = {'apikey': my_waifu_list_auth}
 
             # Searching API for waifu(s)
             async with aiohttp.ClientSession() as session:
-                async with session.post(url, data=data, headers=headers) as resp:
+                async with session.post(url, data=data, headers=self.headers) as resp:
                     # Store waifu's in dict when request is successful, else send an error
                     if resp.status == 200:
                         waifu_dict = await resp.json()
@@ -315,11 +315,10 @@ class Anime(Cog):
 
             # Set variables to retrieve data from the API
             url = "https://mywaifulist.moe/api/v1/meta/random"
-            headers = {'apikey': my_waifu_list_auth}
 
             # Retrieve a random waifu from the API
             async with aiohttp.ClientSession() as session:
-                async with session.get(url, headers=headers) as resp:
+                async with session.get(url, headers=self.headers) as resp:
                     # Store waifu's in dict when request is successful, else send an error
                     if resp.status == 200:
                         waifu_dict = await resp.json()
@@ -336,11 +335,10 @@ class Anime(Cog):
         """Returns the daily Waifu from MyWaifuList"""
 
         url = "https://mywaifulist.moe/api/v1/meta/daily"
-        headers = {'apikey': my_waifu_list_auth}
 
         # Retrieve a random waifu from the API
         async with aiohttp.ClientSession() as session:
-            async with session.get(url, headers=headers) as resp:
+            async with session.get(url, headers=self.headers) as resp:
                 # Store waifu's in dict when request is successful, else send an error
                 if resp.status == 200:
                     waifu_dict = await resp.json()

@@ -7,7 +7,8 @@ from discord import Member, Embed
 from discord.ext.commands import command, guild_only, has_guild_permissions, bot_has_guild_permissions, Greedy, \
     cooldown, BucketType, Cog
 
-from settings import enso_embedmod_colours, get_modlog_for_guild, storeRoles, clearRoles, get_roles_persist
+from settings import enso_embedmod_colours, get_modlog_for_guild, storeRoles, clearRoles, get_roles_persist, \
+    generate_embed
 
 
 async def send_to_modlogs(message, target, reason, action):
@@ -411,7 +412,7 @@ class Moderation(Cog):
 
             # Send error if amount is not between 0 and 100
             else:
-                await ctx.send("The amount provided is not between **0** and **100**")
+                await generate_embed(ctx, desc="The amount provided is not between **0** and **100**")
 
         # Delete the last 50 messages if no amount is given
         else:

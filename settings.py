@@ -1,6 +1,6 @@
 import random
 
-from discord import Colour
+from discord import Colour, Embed
 
 # Defining a list of colours
 
@@ -79,6 +79,11 @@ def del_cache(guildid):
     del enso_cache[guildid]
 
 
+# --------------------------------------------!End Cache Section!-------------------------------------------------------
+
+# --------------------------------------------!RolePersist Section!-----------------------------------------------------
+
+
 def get_roles_persist(guildid):
     """Returning rolespersist value of the guild"""
 
@@ -102,7 +107,7 @@ async def update_role_persist(guildid, value, pool):
             await conn.commit()
 
 
-# --------------------------------------------!End Cache Section!-------------------------------------------------------
+# --------------------------------------------!End RolePersist Section!-------------------------------------------------
 
 # --------------------------------------------!ModLogs Section!---------------------------------------------------------
 
@@ -241,6 +246,15 @@ def extensions():
            'cogs.guild', 'cogs.moderation', "cogs.help"]
 
     return ext
+
+
+async def generate_embed(ctx, desc):
+    """Generate Embed"""
+
+    embed = Embed(description=desc,
+                  colour=enso_embedmod_colours)
+
+    await ctx.send(embed=embed)
 
 
 async def storeRoles(pool, target, ctx, member):

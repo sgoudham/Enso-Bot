@@ -10,16 +10,7 @@ from discord import File
 from discord.ext.commands import has_permissions, Cog, group, bot_has_permissions
 
 from settings import enso_embedmod_colours, blank_space, storage_modlog_for_guild, remove_modlog_channel, \
-    get_modlog_for_guild, get_roles_persist, update_role_persist
-
-
-async def generate_embed(ctx, desc):
-    """Generate New Error Embed"""
-
-    embed = Embed(description=desc,
-                  colour=enso_embedmod_colours)
-
-    await ctx.send(embed=embed)
+    get_modlog_for_guild, get_roles_persist, update_role_persist, generate_embed
 
 
 # Method to ask the user if they want to be anonymous or not

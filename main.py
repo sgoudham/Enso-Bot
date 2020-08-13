@@ -98,6 +98,7 @@ async def post_bot_stats():
                            data={"guildCount": {len(client.guilds)},
                                  "Content-Type": "application/json"},
                            headers={'Authorization': disc_bots_gg_auth})
+        await session.close()
 
 
 @tasks.loop(minutes=10, reconnect=True)

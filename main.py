@@ -230,6 +230,9 @@ async def on_guild_join(guild):
     # Setup pool
     pool = client.db
 
+    # Grabbing the values to be inserted
+    records = ", ".join(map(lambda m: f"({guild.id}, {m.id})", guild.members))
+
     # Setup up pool connection and cursor
     async with pool.acquire() as conn:
         async with conn.cursor() as cur:
@@ -244,9 +247,8 @@ async def on_guild_join(guild):
 
         async with conn.cursor() as cur:
             # Define the insert statement that will insert the user's information
-            insert = """INSERT INTO members (guildID, discordID) VALUES""" + ", ".join(
-                map(lambda m: f"({guild.id}, {m.id})",
-                    guild.members)) + """ ON DUPLICATE KEY UPDATE guildID = VALUES(guildID), discordID = VALUES(discordID)"""
+            insert = f"""INSERT INTO members (guildID, discordID) VALUES {records} 
+                     ON DUPLICATE KEY UPDATE guildID = VALUES(guildID), discordID = VALUES(discordID)"""
 
             # Execute the query
             await cur.execute(insert)

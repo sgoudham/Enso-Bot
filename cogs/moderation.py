@@ -291,19 +291,27 @@ class Moderation(Cog):
         if not await check(ctx, members):
             with ctx.typing():
 
+                # Get muted role from the server
                 role = discord.utils.get(ctx.guild.roles, name="Muted")
 
+                # Create muted role when no muted role exists and mute member(s)
                 if role is None:
-                    # Setting up the role permissions for the Muted Role
                     muted = await ctx.guild.create_role(name="Muted")
-                    # Removes permission to send messages in all channels
-                    for channel in ctx.guild.channels:
-                        await channel.set_permissions(muted, send_messages=False, read_messages=True)
+                    for channel in ctx.guild.text_channels:
+                        await channel.set_permissions(muted, read_messages=False)
 
-                    # Send embed of the kicked member
                     await mute_members(self.bot.db, ctx, members, reason, muted)
+
+                # Make sure that the Muted Role has the correct permissions before muting member(s)
                 else:
-                    # Send embed of the kicked member
+
+                    for channel in ctx.guild.text_channels:
+                        perms = channel.overwrites_for(role)
+                        if perms.read_messages:
+                            perms.read_messages = False
+                            await channel.set_permissions(role, overwrite=perms)
+                            print(channel.name + "has been muted!")
+
                     await mute_members(self.bot.db, ctx, members, reason, role)
 
     @command(name="unmute", aliases=["Unmute"], usage="`<member>...` `[reason]`")
@@ -319,16 +327,19 @@ class Moderation(Cog):
         if not await check(ctx, members):
             with ctx.typing():
                 role = discord.utils.get(ctx.guild.roles, name="Muted")
+
                 if role is None:
                     embed = Embed(description="**❌ No Muted Role Was Found! ❌**",
                                   colour=enso_embedmod_colours)
                     await ctx.send(embed=embed)
+
                 else:
 
                     for member in members:
                         if role in member.roles:
                             await ummute_members(self, ctx.message, members, reason)
                             unmute = True
+
                         if role not in member.roles and unmute is False:
                             embed = Embed(description=f"**❌ {member.mention} Is Not Muted! ❌**",
                                           colour=enso_embedmod_colours)

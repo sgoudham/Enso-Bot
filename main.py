@@ -248,8 +248,8 @@ async def on_guild_join(guild):
 
         async with conn.cursor() as cur:
             # Define the insert statement that will insert the user's information
-            insert = f"""INSERT INTO members (guildID, discordID) VALUES {records} 
-                     ON DUPLICATE KEY UPDATE guildID = VALUES(guildID), discordID = VALUES(discordID)"""
+            insert = """INSERT INTO members (guildID, discordID) VALUES {}
+                     ON DUPLICATE KEY UPDATE guildID = VALUES(guildID), discordID = VALUES(discordID)""".format(records)
 
             # Execute the query
             await cur.execute(insert)

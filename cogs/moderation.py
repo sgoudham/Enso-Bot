@@ -370,7 +370,6 @@ class Moderation(Cog):
 
         if not await check(ctx, members):
             with ctx.typing():
-                # Send embed of the Banned member
                 await ban_members(ctx.message, members, reason)
 
     @command(name="unban", aliases=["Unban"], usage="`<member>...` `[reason]`")
@@ -393,8 +392,10 @@ class Moderation(Cog):
     @bot_has_guild_permissions(manage_messages=True, read_message_history=True)
     @cooldown(1, 1, BucketType.user)
     async def purge(self, ctx, amount: int = None):
-        """Purge Messages from Channel
-        (No Amount Will Default to 50 Messages Deleted)"""
+        """
+        Purge Messages from Channel
+        (No Amount Will Default to 50 Messages Deleted)
+        """
 
         # When an amount is specified and is between 0 and 100
         if amount:
@@ -402,11 +403,11 @@ class Moderation(Cog):
 
                 # Delete the message sent and then the amount specified
                 # (Only messages sent within the last 14 days)
-
-                deleted = await ctx.channel.purge(limit=amount + 1,
+                ctx.message.delete()
+                deleted = await ctx.channel.purge(limit=amount,
                                                   after=datetime.datetime.utcnow() - timedelta(days=14))
 
-                await ctx.send(f"Deleted **{(len(deleted)) - 1:,}** messages.", delete_after=5)
+                await ctx.send(f"Deleted **{deleted:,}** messages.", delete_after=5)
 
             # Send error if amount is not between 0 and 100
             else:
@@ -418,10 +419,11 @@ class Moderation(Cog):
             # Delete the message sent and then the amount specified
             # (Only messages sent within the last 14 days)
 
-            deleted = await ctx.channel.purge(limit=51,
+            ctx.message.delete()
+            deleted = await ctx.channel.purge(limit=50,
                                               after=datetime.datetime.utcnow() - timedelta(days=14))
 
-            await ctx.send(f"Deleted **{(len(deleted)) - 1:,}** messages.", delete_after=5)
+            await ctx.send(f"Deleted **{deleted:,}** messages.", delete_after=5)
 
     @Cog.listener()
     async def on_raw_bulk_message_delete(self, payload):

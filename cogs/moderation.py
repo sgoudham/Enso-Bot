@@ -306,23 +306,23 @@ class Moderation(Cog):
                 # Make sure that the Muted Role has the correct permissions before muting member(s)
                 else:
                     for channel in ctx.guild.channels:
-                        read_msg = None
-                        send_msg = None
-                        read_msg_history = None
                         perms = channel.overwrites_for(role)
+
+                        # Set the read_messages to True, only when the read_messages is False or None
                         if not perms.read_messages or perms.read_messages is None:
                             perms.read_messages = True
-                            read_msg = True
+
+                        # Set the send_messages to True, only when the send_messages is False or None
                         if perms.send_messages or perms.send_messages is None:
                             perms.send_messages = False
-                            send_msg = True
+
+                        # Set the read_message_history to True, only when the read_message_history is False or None
                         if perms.read_message_history or perms.read_message_history is None:
                             perms.read_message_history = False
-                            read_msg_history = True
 
-                        if read_msg or send_msg or read_msg_history:
+                        # Overwrite the permissions if any perms were changed
+                        if perms.read_messages or perms.send_messages or perms.read_message_history:
                             await channel.set_permissions(role, overwrite=perms)
-                            print(channel.name + "has been muted!")
 
                     await mute_members(self.bot.db, ctx, members, reason, role)
 

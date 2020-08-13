@@ -297,7 +297,7 @@ class Moderation(Cog):
                 # Create muted role when no muted role exists and mute member(s)
                 if role is None:
                     muted = await ctx.guild.create_role(name="Muted")
-                    for channel in ctx.guild.text_channels:
+                    for channel in ctx.guild.channels:
                         await channel.set_permissions(muted, read_messages=False)
 
                     await mute_members(self.bot.db, ctx, members, reason, muted)
@@ -305,7 +305,7 @@ class Moderation(Cog):
                 # Make sure that the Muted Role has the correct permissions before muting member(s)
                 else:
 
-                    for channel in ctx.guild.text_channels:
+                    for channel in ctx.guild.channels:
                         perms = channel.overwrites_for(role)
                         if perms.read_messages:
                             perms.read_messages = False

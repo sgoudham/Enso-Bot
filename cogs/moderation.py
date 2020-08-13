@@ -298,7 +298,8 @@ class Moderation(Cog):
                 if role is None:
                     muted = await ctx.guild.create_role(name="Muted")
                     for channel in ctx.guild.channels:
-                        await channel.set_permissions(muted, read_messages=False)
+                        await channel.set_permissions(muted, read_messages=True, send_messages=False,
+                                                      read_message_history=False)
 
                     await mute_members(self.bot.db, ctx, members, reason, muted)
 
@@ -307,10 +308,15 @@ class Moderation(Cog):
 
                     for channel in ctx.guild.channels:
                         perms = channel.overwrites_for(role)
-                        if perms.read_messages:
-                            perms.read_messages = False
-                            await channel.set_permissions(role, overwrite=perms)
-                            print(channel.name + "has been muted!")
+                        if not perms.read_messages:
+                            perms.read_messages = True
+                        elif perms.send_messages:
+                            perms.send_messages = False
+                        elif perms.read_message_history:
+                            perms.read_message_history = False
+
+                        await channel.set_permissions(role, overwrite=perms)
+                        print(channel.name + "has been muted!")
 
                     await mute_members(self.bot.db, ctx, members, reason, role)
 

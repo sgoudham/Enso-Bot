@@ -92,7 +92,7 @@ class Fun(Cog):
         """Printing out that Cog is ready on startup"""
         print(f"{self.__class__.__name__} Cog has been loaded\n-----")
 
-    @command(name="attack", aliases=['Attack'], hidden=True)
+    @command(name="attack", hidden=True)
     @is_owner()
     async def attack(self, ctx, member: Member):
         """Throw Insults at Members"""
@@ -132,7 +132,7 @@ class Fun(Cog):
         # Sending out a random insult from the array "responses"
         await ctx.send(random.choice(responses))
 
-    @command(name="comp", aliases=['Comp', 'Compliment'])
+    @command(name="comp")
     @cooldown(1, 1, BucketType.user)
     async def compliment(self, ctx, member: Member):
         """Give Compliments to Members"""
@@ -181,7 +181,7 @@ class Fun(Cog):
         # Sending out a random compliment from the array "responses"
         await ctx.send(random.choice(responses))
 
-    @command(name="flip", aliases=['Flip'])
+    @command(name="flip")
     @cooldown(1, 1, BucketType.user)
     async def flip(self, ctx):
         """Flip a Coin (Huge pp/Smol pp)"""
@@ -192,7 +192,7 @@ class Fun(Cog):
         # Send out one of the responses stored in the array
         await ctx.send(f"{ctx.author.mention} {random.choice(pp_array)}")
 
-    @command(name="dm", aliases=["DM", "dM"])
+    @command(name="dm")
     @is_owner()
     @has_permissions(administrator=True)
     async def dm(self, ctx, member: Member, *, text):
@@ -203,7 +203,7 @@ class Fun(Cog):
         # Delete the message sent instantly
         await ctx.message.delete()
 
-    @command(name="digby", aliases=["Digby"], hidden=True)
+    @command(name="digby", hidden=True)
     @cooldown(1, 1, BucketType.user)
     @bot_has_permissions(embed_links=True)
     async def digby(self, ctx):
@@ -236,7 +236,7 @@ class Fun(Cog):
         except FileNotFoundError as e:
             print(e)
 
-    @command(name="doggo", aliases=["Doggo"])
+    @command(name="doggo")
     @bot_has_permissions(embed_links=True)
     @cooldown(1, 1, BucketType.user)
     async def doggo(self, ctx, breed: Optional[str] = None):
@@ -332,7 +332,7 @@ class Fun(Cog):
                     await ctx.send(
                         f"Doggo Not Found! Please do **{ctx.prefix}doggo breeds** to see the full list of Doggos!")
 
-    @command(name="8ball", aliases=['8Ball'])
+    @command(name="8ball")
     @cooldown(1, 1, BucketType.user)
     async def _8ball(self, ctx, *, question):
         """8ball Responses!"""
@@ -357,7 +357,7 @@ class Fun(Cog):
         except commands.BadArgument as e:
             raise e
 
-    @command(name="homies", aliases=["Homies", "homie", "Homie"])
+    @command(name="homies")
     @cooldown(1, 10, BucketType.user)
     @bot_has_permissions(attach_files=True)
     async def homies(self, ctx, *, text):
@@ -382,7 +382,7 @@ class Fun(Cog):
             # Send the bytes object as an image file
             await ctx.send(file=discord.File(file, "homies.png"))
 
-    @command(name="owo", aliases=["Owo", "OwO"])
+    @command(name="owo")
     @cooldown(1, 1, BucketType.user)
     @bot_has_permissions(manage_messages=True)
     async def owo(self, ctx, *, text):
@@ -398,7 +398,7 @@ class Fun(Cog):
         # Send the text back
         await ctx.message.channel.send(owo)
 
-    @command(name="text", aliases=["Text"])
+    @command(name="text")
     @cooldown(1, 1, BucketType.user)
     async def image_to_text(self, ctx):
         """Display text from an image submitted"""

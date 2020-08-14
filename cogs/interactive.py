@@ -45,7 +45,7 @@ class Interactive(Cog):
         """Printing out that Cog is ready on startup"""
         print(f"{self.__class__.__name__} Cog has been loaded\n-----")
 
-    @command(name="kiss", aliases=["Kiss"])
+    @command(name="kiss")
     @bot_has_permissions(embed_links=True)
     @cooldown(1, 3, BucketType.user)
     async def kiss(self, ctx, member: Member):
@@ -114,7 +114,7 @@ class Interactive(Cog):
         except FileNotFoundError as e:
             print(e)
 
-    @command(name="cuddle", aliases=["Cuddle"])
+    @command(name="cuddle")
     @bot_has_permissions(embed_links=True)
     @cooldown(1, 3, BucketType.user)
     async def cuddle(self, ctx, member: Member):
@@ -183,7 +183,7 @@ class Interactive(Cog):
         except FileNotFoundError as e:
             print(e)
 
-    @command(name="kill", aliases=["Kill"])
+    @command(name="kill")
     @bot_has_permissions(embed_links=True)
     @cooldown(1, 3, BucketType.user)
     async def kill(self, ctx, member: Member):
@@ -219,7 +219,7 @@ class Interactive(Cog):
         except FileNotFoundError as e:
             print(e)
 
-    @command(name="slap", aliases=["Slap"])
+    @command(name="slap")
     @bot_has_permissions(embed_links=True)
     @cooldown(1, 3, BucketType.user)
     async def slap(self, ctx, member: Member):
@@ -255,7 +255,7 @@ class Interactive(Cog):
         except FileNotFoundError as e:
             print(e)
 
-    @command(name="pat", aliases=["Pat"])
+    @command(name="pat")
     @bot_has_permissions(embed_links=True)
     @cooldown(1, 3, BucketType.user)
     async def pat(self, ctx, member: Member):
@@ -291,7 +291,7 @@ class Interactive(Cog):
         except FileNotFoundError as e:
             print(e)
 
-    @command(name="lemon", aliases=["Lemon"])
+    @command(name="lemon")
     @bot_has_permissions(embed_links=True)
     @cooldown(1, 3, BucketType.user)
     async def lemon(self, ctx, member: Member):
@@ -326,7 +326,7 @@ class Interactive(Cog):
         except FileNotFoundError as e:
             print(e)
 
-    @command(name="choke", aliases=["Choke"])
+    @command(name="choke")
     @bot_has_permissions(embed_links=True)
     @cooldown(1, 3, BucketType.user)
     async def choke(self, ctx, member: Member):
@@ -361,7 +361,7 @@ class Interactive(Cog):
         except FileNotFoundError as e:
             print(e)
 
-    @command(name="hug", aliases=["Hug"])
+    @command(name="hug")
     @bot_has_permissions(embed_links=True)
     @cooldown(1, 3, BucketType.user)
     async def hug(self, ctx, member: Member):

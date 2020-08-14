@@ -146,7 +146,7 @@ class Info(Cog):
         """Printing out that Cog is ready on startup"""
         print(f"{self.__class__.__name__} Cog has been loaded\n-----")
 
-    @command(name="userinfo", aliases=["ui"])
+    @command(name="userinfo")
     @cooldown(1, 5, BucketType.user)
     @guild_only()
     @bot_has_permissions(embed_links=True)
@@ -352,7 +352,7 @@ class Info(Cog):
 
         await ctx.send(embed=embed)
 
-    @command(name="about", aliases=["About"])
+    @command(name="about")
     @bot_has_permissions(embed_links=True)
     async def checking_bot_stats(self, ctx):
         """Bot Statistics! (CPU/Mem Usage etc)"""
@@ -415,7 +415,7 @@ class Info(Cog):
 
         await ctx.send(embed=stats)
 
-    @command(name="avatar", aliases=["Avatar"])
+    @command(name="avatar")
     @bot_has_permissions(embed_links=True)
     async def get_user_avatar(self, ctx, member: Optional[Member] = None):
         """

@@ -114,7 +114,7 @@ class Enso(Cog):
         """Printing out that Cog is ready on startup"""
         print(f"{self.__class__.__name__} Cog has been loaded\n-----")
 
-    @commands.group(invoke_without_command=True)
+    @commands.group(invoke_without_command=True, case_insensitive=True)
     @bot_has_permissions(embed_links=True)
     async def enso(self, ctx, name: Optional[str] = None):
         """Shows Random Person from Ensō"""
@@ -184,7 +184,7 @@ class Enso(Cog):
         await ctx.send(f"Try the names listed below!"
                        f"\n{nice}")
 
-    @command(name="rules", aliases=["Rules"])
+    @command(name="rules")
     @cooldown(1, 5, BucketType.user)
     async def rules(self, ctx):
         """Ruleset for Ensō"""
@@ -279,7 +279,7 @@ class Enso(Cog):
         # Delete the message
         await message.delete()
 
-    @command(name="roles", aliases=["Roles"])
+    @command(name="roles")
     @cooldown(1, 5, BucketType.user)
     async def roles(self, ctx):
         """Leveled role/xp system for Ensō"""

@@ -68,7 +68,7 @@ class Relationship(Cog):
         """Printing out that Cog is ready on startup"""
         print(f"{self.__class__.__name__} Cog has been loaded\n-----")
 
-    @command(name="marry", aliases=["Marry"])
+    @command(name="marry")
     @cooldown(1, 1, BucketType.user)
     async def marry(self, ctx, member: Member):
         """Wed your Lover!"""
@@ -166,7 +166,7 @@ class Relationship(Cog):
             # Send out an error message if the user waited too long
             await ctx.send("**(｡T ω T｡) {} waited too long**".format(member.mention))
 
-    @command(name="divorce", aliases=["Divorce"])
+    @command(name="divorce")
     @cooldown(1, 1, BucketType.user)
     async def divorce(self, ctx, member: Member):
         """Divorce your Partner!"""
@@ -259,7 +259,7 @@ class Relationship(Cog):
             # Send out an error message if the user waited too long
             await ctx.send("**(｡T ω T｡) {} waited too long**".format(member.mention))
 
-    @command(name="marriageinfo", aliases=["minfo", "Minfo"])
+    @command(name="marriageinfo", aliases=["minfo"])
     @cooldown(1, 1, BucketType.user)
     @bot_has_permissions(embed_links=True)
     async def m_info(self, ctx, member: Member = None):

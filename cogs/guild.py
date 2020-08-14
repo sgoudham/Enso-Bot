@@ -161,7 +161,7 @@ class Guild(Cog):
         """Printing out that Cog is ready on startup"""
         print(f"{self.__class__.__name__} Cog has been loaded\n-----")
 
-    @group(name="rolepersist", invoke_without_command=True, usage="`[argument...]`")
+    @group(name="rolepersist", invoke_without_command=True, case_insensitive=True, usage="`[argument...]`")
     @has_permissions(manage_guild=True)
     @bot_has_permissions(administrator=True)
     async def roles_persist(self, ctx):
@@ -207,7 +207,7 @@ class Guild(Cog):
         else:
             await generate_embed(ctx, desc=f"**Role Persist is already disabled within {ctx.guild}!**")
 
-    @group(name="modlogs", invoke_without_command=True, usage="`[argument...]`")
+    @group(name="modlogs", invoke_without_command=True, case_insensitive=True, usage="`[argument...]`")
     @has_permissions(manage_guild=True)
     @bot_has_permissions(administrator=True)
     async def modlogs(self, ctx):
@@ -358,7 +358,7 @@ class Guild(Cog):
         # Sending confirmation message that the modmail system has been deleted
         await ctx.send()
 
-    @group(invoke_without_command=True, usage="`[argument...]`")
+    @group(name="modmail", invoke_without_command=True, case_insensitive=True, usage="`[argument...]`")
     @bot_has_permissions(administrator=True)
     async def modmail(self, ctx):
         """

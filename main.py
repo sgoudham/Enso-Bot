@@ -61,7 +61,8 @@ client = commands.Bot(  # Create a new bot
     command_prefix=get_prefix,  # Set the prefix
     description='All current available commands within Ensō~Chan',  # Set a description for the bot
     owner_id=154840866496839680,  # Your unique User ID
-    version=get_version)  # Version number of Ensō~Chan
+    version=get_version,
+    case_insensitive=True)  # Version number of Ensō~Chan
 client.remove_command("help")  # Remove default help command
 
 
@@ -175,14 +176,14 @@ async def on_ready():
     print("UvU Senpaiii I'm weady")
 
 
-@client.command(name="ping", aliases=["Ping"])
+@client.command(name="ping")
 async def _ping(ctx):
     """Latency of the Bot (ms)"""
 
     await ctx.send(f"Pong! `{round(client.latency * 1000)}ms`")
 
 
-@client.command(name="leave", aliases=["Leave"], hidden=True)
+@client.command(name="leave", hidden=True)
 @is_owner()
 async def leave(ctx):
     """Leaves the guild"""

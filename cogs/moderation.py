@@ -264,7 +264,7 @@ class Moderation(Cog):
     async def on_ready(self):
         print(f"{self.__class__.__name__} Cog has been loaded\n-----")
 
-    @command(name="kick", aliases=["Kick"], usage="`<member>...` `[reason]`")
+    @command(name="kick", usage="`<member>...` `[reason]`")
     @guild_only()
     @has_guild_permissions(kick_members=True)
     @bot_has_guild_permissions(kick_members=True)
@@ -280,7 +280,7 @@ class Moderation(Cog):
                 # Send embed of the kicked member
                 await kick_members(ctx.message, members, reason)
 
-    @command(name="mute", aliases=["Mute"], usage="`<member>...` `[reason]`")
+    @command(name="mute", usage="`<member>...` `[reason]`")
     @has_guild_permissions(manage_roles=True)
     @bot_has_guild_permissions(manage_roles=True)
     async def mute(self, ctx, members: Greedy[Member], *, reason: Optional[str] = "No Reason Given"):
@@ -327,7 +327,7 @@ class Moderation(Cog):
 
                     await mute_members(self.bot.db, ctx, members, reason, role)
 
-    @command(name="unmute", aliases=["Unmute"], usage="`<member>...` `[reason]`")
+    @command(name="unmute", usage="`<member>...` `[reason]`")
     @has_guild_permissions(manage_roles=True)
     @bot_has_guild_permissions(manage_roles=True)
     async def unmute(self, ctx, members: Greedy[Member], *, reason: Optional[str] = "No Reason Given"):
@@ -358,7 +358,7 @@ class Moderation(Cog):
                                           colour=enso_embedmod_colours)
                             await ctx.send(embed=embed)
 
-    @command(name="ban", aliases=["Ban"], usage="`<member>...` `[reason]`")
+    @command(name="ban", usage="`<member>...` `[reason]`")
     @guild_only()
     @has_guild_permissions(ban_members=True)
     @bot_has_guild_permissions(ban_members=True)
@@ -373,7 +373,7 @@ class Moderation(Cog):
             with ctx.typing():
                 await ban_members(ctx.message, members, reason)
 
-    @command(name="unban", aliases=["Unban"], usage="`<member>...` `[reason]`")
+    @command(name="unban", usage="`<member>...` `[reason]`")
     @guild_only()
     @has_guild_permissions(ban_members=True)
     @bot_has_guild_permissions(ban_members=True)
@@ -387,7 +387,7 @@ class Moderation(Cog):
             with ctx.typing():
                 await unban_members(self, ctx.message, members, reason)
 
-    @command(name="purge", aliases=["Purge"])
+    @command(name="purge")
     @guild_only()
     @has_guild_permissions(manage_messages=True)
     @bot_has_guild_permissions(manage_messages=True, read_message_history=True)

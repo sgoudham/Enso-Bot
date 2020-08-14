@@ -166,7 +166,7 @@ class Anime(Cog):
         """Printing out that Cog is ready on startup"""
         print(f"{self.__class__.__name__} Cog has been loaded!\n-----")
 
-    @group(name="waifu", invoke_without_command=True, aliases=["Waifu"])
+    @group(name="waifu", invoke_without_command=True)
     @bot_has_permissions(embed_links=True, add_reactions=True)
     async def waifu(self, ctx, *, waifu2: Optional[str] = None):
         """
@@ -241,7 +241,7 @@ class Anime(Cog):
 
             await ctx.send(embed=single_waifu_generator(waifu))
 
-    @waifu.command(name="daily", aliases=["Daily"])
+    @waifu.command(name="daily")
     async def daily_waifu(self, ctx):
         """Returns the daily Waifu from MyWaifuList"""
 

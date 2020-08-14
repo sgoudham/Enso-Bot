@@ -629,7 +629,7 @@ class Help(Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @command(name='help', aliases=["Help"], usage="`[command|cog]`")
+    @command(name='help', usage="`[command|cog]`")
     async def _help(self, ctx, *, cmd: Optional[str] = None):
         """Shows help about a command or the bot"""
 
@@ -651,7 +651,7 @@ class Help(Cog):
         except Exception as ex:
             await ctx.send(f"**{ex}**")
 
-    @command(name="prefix", aliases=["Prefix"])
+    @command(name="prefix")
     @guild_only()
     @has_permissions(manage_guild=True)
     async def change_prefix(self, ctx, new: Optional[str] = None):
@@ -671,7 +671,7 @@ class Help(Cog):
             # Grab the current prefix for the guild within the cached dictionary
             await ctx.send(f"**The current guild prefix is `{get_prefix_for_guild(str(ctx.guild.id))}`**")
 
-    @command(name="support", aliases=["Support"])
+    @command(name="support")
     async def support(self, ctx):
         """Joining Support Server And Sending Feedback"""
 
@@ -699,7 +699,7 @@ class Help(Cog):
 
         await ctx.send(embed=embed)
 
-    @command(name="feedback", aliases=["Feedback"])
+    @command(name="feedback")
     async def feedback(self, ctx):
         """Sending Feedback to Support Server"""
 

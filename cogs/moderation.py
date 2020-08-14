@@ -584,7 +584,7 @@ class Moderation(Cog):
 
                     await modlogs_channel.send(embed=embed)
 
-                elif len(old_roles) >= 1:
+                if len(old_roles) >= 1:
                     old_roles_string = ", ".join(r.name for r in old_roles)
 
                     if len(old_roles) == 1:

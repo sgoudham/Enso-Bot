@@ -592,7 +592,7 @@ class Moderation(Cog):
 
                     # Change the description of the embed depending on how many roles were removed
                     if len(old_roles) == 1:
-                        desc = f"**{after.mention} was removed from the role `{old_roles_string}`**"
+                        desc = f"**{after.mention} was removed from the role {old_roles_string}**"
                     else:
                         desc = f"**Roles Removed From {after.mention}\nRoles: {old_roles_string}**"
 

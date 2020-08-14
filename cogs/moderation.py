@@ -441,8 +441,8 @@ class Moderation(Cog):
 
             # Set up embed showing the messages deleted and what channel they were deleted in
             embed = Embed(
-                description="**Bulk Delete in {}, {} messages deleted**".format(deleted_msgs_channel.mention,
-                                                                                len(payload.message_ids)),
+                description="**Bulk Delete in {} | {} messages deleted**".format(deleted_msgs_channel.mention,
+                                                                                 len(payload.message_ids)),
                 colour=enso_embedmod_colours,
                 timestamp=datetime.datetime.utcnow())
             embed.set_author(name=deleted_msgs_channel.guild.name, icon_url=deleted_msgs_channel.guild.icon_url)
@@ -461,7 +461,7 @@ class Moderation(Cog):
             # Get the modlogs channel
             modlogs_channel = self.bot.get_channel(int(channel))
 
-            embed = Embed(description="**{}** A.K.A **{}**".format(member.mention, member),
+            embed = Embed(description="**{}** | **{}**".format(member.mention, member),
                           colour=enso_embedmod_colours,
                           timestamp=datetime.datetime.utcnow())
             embed.set_author(name="Member Left", icon_url=member.avatar_url)
@@ -482,7 +482,7 @@ class Moderation(Cog):
             # Get the modlogs channel
             modlogs_channel = self.bot.get_channel(int(channel))
 
-            embed = Embed(description="**{}** A.K.A **{}**".format(member.mention, member),
+            embed = Embed(description="**{}** | **{}**".format(member.mention, member),
                           colour=enso_embedmod_colours,
                           timestamp=datetime.datetime.utcnow())
             embed.add_field(name="Account Creation Date",
@@ -506,7 +506,7 @@ class Moderation(Cog):
             # Get the modlogs channel
             modlogs_channel = self.bot.get_channel(int(channel))
 
-            embed = Embed(description=f"{user.mention} A.K.A **{user}**",
+            embed = Embed(description=f"{user.mention} | **{user}**",
                           colour=enso_embedmod_colours,
                           timestamp=datetime.datetime.utcnow())
             embed.set_author(name="Member Banned", icon_url=user.avatar_url)
@@ -527,7 +527,7 @@ class Moderation(Cog):
             # Get the modlogs channel
             modlogs_channel = self.bot.get_channel(int(channel))
 
-            embed = Embed(description=f"{user.mention} A.K.A **{user}**",
+            embed = Embed(description=f"{user.mention} | **{user}**",
                           colour=enso_embedmod_colours,
                           timestamp=datetime.datetime.utcnow())
             embed.set_author(name="Member Unbanned", icon_url=user.avatar_url)
@@ -535,6 +535,71 @@ class Moderation(Cog):
             embed.set_thumbnail(url=user.avatar_url)
 
             await modlogs_channel.send(embed=embed)
+
+    @Cog.listener()
+    async def on_member_update(self, before, after):
+        """Logging Member Profile Updates"""
+
+        # Get the channel within the cache
+        channel = get_modlog_for_guild(str(after.guild.id))
+
+        # When no modlogs channel is returned, do nothing
+        if channel is not None:
+            # Get the modlogs channel
+            modlogs_channel = self.bot.get_channel(int(channel))
+
+            # Logging Nickname Updates
+            if before.nick != after.nick:
+                embed = Embed(description=f"{after.mention}'s **Nickname Changed**",
+                              colour=enso_embedmod_colours,
+                              timestamp=datetime.datetime.utcnow())
+                embed.set_author(name=after, icon_url=after.avatar_url)
+                embed.add_field(name="Nickname Before",
+                                value=before.nick, inline=False)
+                embed.add_field(name="Nickname After",
+                                value=after.nick, inline=False)
+                embed.set_footer(text=f"ID: {after.id}")
+
+                await modlogs_channel.send(embed=embed)
+
+            # Logging Role additions/removals from Members
+            if after.roles != before.roles:
+                new_roles = [roles for roles in after.roles if roles not in before.roles]
+                old_roles = [roles for roles in before.roles if roles not in after.roles]
+
+                if len(new_roles) >= 1:
+                    new_roles_string = ",".join(f"`{r.name}`" for r in new_roles)
+
+                    if len(new_roles) == 1:
+                        desc = f"**{after.mention} was given the role** `{new_roles_string}`"
+                    else:
+                        new_roles_string = ",".join(f"`{r.name}`" for r in new_roles)
+                        desc = f"**Roles Added To {after.mention}\nRoles:** {new_roles_string}"
+
+                    embed = Embed(description=desc,
+                                  colour=enso_embedmod_colours,
+                                  timestamp=datetime.datetime.utcnow())
+                    embed.set_author(name=after, icon_url=after.avatar_url)
+                    embed.set_footer(text=f"ID: {after.id}")
+
+                    await modlogs_channel.send(embed=embed)
+
+                elif len(old_roles) >= 1:
+                    old_roles_string = ", ".join(r.name for r in old_roles)
+
+                    if len(old_roles) == 1:
+                        desc = f"**{after.mention} was removed from the role `{old_roles_string}`**"
+                    else:
+                        old_roles_string = ",".join(f"`{r.name}`" for r in old_roles)
+                        desc = f"**Roles Removed From {after.mention}\nRoles: {old_roles_string}**"
+
+                    embed = Embed(description=desc,
+                                  colour=enso_embedmod_colours,
+                                  timestamp=datetime.datetime.utcnow())
+                    embed.set_author(name=after, icon_url=after.avatar_url)
+                    embed.set_footer(text=f"ID: {after.id}")
+
+                    await modlogs_channel.send(embed=embed)
 
 
 def setup(bot):

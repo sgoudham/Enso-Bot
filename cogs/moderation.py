@@ -567,37 +567,39 @@ class Moderation(Cog):
                 new_roles = [roles for roles in after.roles if roles not in before.roles]
                 old_roles = [roles for roles in before.roles if roles not in after.roles]
 
-                new_roles_string = ", ".join(f"`{r.name}`" for r in new_roles)
+                if len(new_roles) >= 1:
+                    new_roles_string = ", ".join(f"`{r.name}`" for r in new_roles)
 
-                if len(new_roles) == 1:
-                    desc = f"**{after.mention} was given the role** `{new_roles_string}`"
-                else:
-                    new_roles_string = ",".join(f"`{r.name}`" for r in new_roles)
-                    desc = f"**Roles Added To {after.mention}\nRoles:** {new_roles_string}"
+                    if len(new_roles) == 1:
+                        desc = f"**{after.mention} was given the role** `{new_roles_string}`"
+                    else:
+                        new_roles_string = ",".join(f"`{r.name}`" for r in new_roles)
+                        desc = f"**Roles Added To {after.mention}\nRoles:** {new_roles_string}"
 
-                embed = Embed(description=desc,
-                              colour=enso_embedmod_colours,
-                              timestamp=datetime.datetime.utcnow())
-                embed.set_author(name=after, icon_url=after.avatar_url)
-                embed.set_footer(text=f"ID: {after.id}")
+                    embed = Embed(description=desc,
+                                  colour=enso_embedmod_colours,
+                                  timestamp=datetime.datetime.utcnow())
+                    embed.set_author(name=after, icon_url=after.avatar_url)
+                    embed.set_footer(text=f"ID: {after.id}")
 
-                await modlogs_channel.send(embed=embed)
+                    await modlogs_channel.send(embed=embed)
 
-                old_roles_string = ", ".join(r.name for r in old_roles)
+                if len(old_roles) >= 1:
+                    old_roles_string = ", ".join(r.name for r in old_roles)
 
-                if len(old_roles) == 1:
-                    desc = f"**{after.mention} was removed from the role `{old_roles_string}`**"
-                else:
-                    old_roles_string = ",".join(f"`{r.name}`" for r in old_roles)
-                    desc = f"**Roles Removed From {after.mention}\nRoles: {old_roles_string}**"
+                    if len(old_roles) == 1:
+                        desc = f"**{after.mention} was removed from the role `{old_roles_string}`**"
+                    else:
+                        old_roles_string = ",".join(f"`{r.name}`" for r in old_roles)
+                        desc = f"**Roles Removed From {after.mention}\nRoles: {old_roles_string}**"
 
-                embed = Embed(description=desc,
-                              colour=enso_embedmod_colours,
-                              timestamp=datetime.datetime.utcnow())
-                embed.set_author(name=after, icon_url=after.avatar_url)
-                embed.set_footer(text=f"ID: {after.id}")
+                    embed = Embed(description=desc,
+                                  colour=enso_embedmod_colours,
+                                  timestamp=datetime.datetime.utcnow())
+                    embed.set_author(name=after, icon_url=after.avatar_url)
+                    embed.set_footer(text=f"ID: {after.id}")
 
-                await modlogs_channel.send(embed=embed)
+                    await modlogs_channel.send(embed=embed)
 
 
 def setup(bot):

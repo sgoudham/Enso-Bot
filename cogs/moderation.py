@@ -620,8 +620,9 @@ class Moderation(Cog):
             if before.content != after.content:
                 desc = f"**Message Edited Within** <#{after.channel.id}>\n[Jump To Message]({after.jump_url})"
 
-                before_value = f"{before.content[:500]} ..." if before.content >= 500 else before.content
-                after_value = f"{after.content[:500]} ..." if after.content >= 500 else after.content
+                # When the message context exceeds 500 characters, only display the first 500 characters in the logs
+                before_value = f"{before.content[:500]} ..." if len(before.content) >= 500 else before.content
+                after_value = f"{after.content[:500]} ..." if len(after.content) >= 500 else after.content
 
                 embed = Embed(description=desc,
                               colour=enso_embedmod_colours,

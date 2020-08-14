@@ -572,6 +572,7 @@ class Moderation(Cog):
                 if len(new_roles) >= 1:
                     new_roles_string = ", ".join(f"`{r.name}`" for r in new_roles)
 
+                    # Change the description of the embed depending on how many roles were added
                     if len(new_roles) == 1:
                         desc = f"**{after.mention} was given the role** `{new_roles_string}`"
                     else:
@@ -589,6 +590,7 @@ class Moderation(Cog):
                 if len(old_roles) >= 1:
                     old_roles_string = ", ".join(f"`{r.name}`" for r in old_roles)
 
+                    # Change the description of the embed depending on how many roles were removed
                     if len(old_roles) == 1:
                         desc = f"**{after.mention} was removed from the role `{old_roles_string}`**"
                     else:
@@ -616,7 +618,22 @@ class Moderation(Cog):
 
             # Logging Message Content Edits
             if before.content != after.content:
-                pass
+                desc = f"**Message Edited Within** <#{after.channel.id}>\n[Jump To Message]({after.jump_url})"
+
+                before_value = f"{before.content[:500]} ..." if before.content >= 500 else before.content
+                after_value = f"{after.content[:500]} ..." if after.content >= 500 else after.content
+
+                embed = Embed(description=desc,
+                              colour=enso_embedmod_colours,
+                              timestamp=datetime.datetime.utcnow())
+                embed.set_author(name=after.author, icon_url=after.author.avatar_url)
+                embed.add_field(name="Before",
+                                value=before_value, inline=False)
+                embed.add_field(name="After",
+                                value=after_value, inline=False)
+                embed.set_footer(text=f"ID: {after.author.id}")
+
+                await modlogs_channel.send(embed=embed)
 
 
 def setup(bot):

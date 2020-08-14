@@ -1,3 +1,19 @@
+# Ensō~Chan - A Multi Purpose Discord Bot That Has Everything Your Server Needs!
+# Copyright (C) 2020  Goudham Suresh
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <https://www.gnu.org/licenses/>.
+
 import asyncio
 import datetime
 import random
@@ -62,6 +78,11 @@ class Relationship(Cog):
         # Setup pool
         pool = self.bot.db
 
+        # Make sure that the user cannot marry themselves
+        if member.id == ctx.author.id:
+            await ctx.send("**Senpaii! ˭̡̞(◞⁎˃ᆺ˂)◞*✰ You can't possibly marry yourself!**")
+            return
+
         # Setup pool connection and cursor
         async with pool.acquire() as conn:
             async with conn.cursor() as author_cursor:
@@ -75,15 +96,11 @@ class Relationship(Cog):
                 author_result = await author_cursor.fetchone()
                 married_user = author_result[1]
 
-            # Make sure that the user cannot marry themselves
-            if member.id == ctx.author.id:
-                await ctx.send("**Senpaii! ˭̡̞(◞⁎˃ᆺ˂)◞*✰ You can't possibly marry yourself!**")
-                return
-            # Make sure that the person is not already married to someone else within the server
-            elif married_user is not None:
-                member = guild.get_member(int(married_user))
-                await ctx.send(f"**((╬◣﹏◢)) You're already married to {member.mention}!**")
-                return
+                # Make sure that the person is not already married to someone else within the server
+                if married_user is not None:
+                    member = guild.get_member(int(married_user))
+                    await ctx.send(f"**((╬◣﹏◢)) You're already married to {member.mention}!**")
+                    return
 
             # Set up new cursor for member row
             async with conn.cursor() as member_cursor:
@@ -92,10 +109,10 @@ class Relationship(Cog):
                 member_result = await member_cursor.fetchone()
                 target_user = member_result[1]
 
-            if target_user is not None:
-                member = guild.get_member(int(target_user))
-                await ctx.send(f"**Sorry! That user is already married to {member.mention}**")
-                return
+                if target_user is not None:
+                    member = guild.get_member(int(target_user))
+                    await ctx.send(f"**Sorry! That user is already married to {member.mention}**")
+                    return
 
         # Send a message to the channel mentioning the author and the person they want to wed.
         await ctx.send(f"{ctx.author.mention} **Proposes To** {member.mention}"
@@ -159,6 +176,11 @@ class Relationship(Cog):
         # Setup pool
         pool = self.bot.db
 
+        # Make sure that the user cannot divorce themselves
+        if member.id == ctx.author.id:
+            await ctx.send("**Senpaii! ˭̡̞(◞⁎˃ᆺ˂)◞*✰ You can't possibly divorce yourself!**")
+            return
+
         # Setup pool connection and cursor
         async with pool.acquire() as conn:
             async with conn.cursor() as cur:
@@ -171,20 +193,16 @@ class Relationship(Cog):
                 result = await cur.fetchone()
                 married_user = result[1]
 
-        # Make sure that the user cannot divorce themselves
-        if member.id == ctx.author.id:
-            await ctx.send("**Senpaii! ˭̡̞(◞⁎˃ᆺ˂)◞*✰ You can't possibly divorce yourself!**")
-            return
-        # Make sure that the person trying to divorce is actually married to the user
-        elif married_user is None:
-            await ctx.send(f"**((╬◣﹏◢)) You must be married in order to divorce someone! Baka!**")
-            return
-        # Make sure the person is married to the person that they're trying to divorce
-        elif married_user != str(member.id):
-            member = guild.get_member(int(married_user))
-            await ctx.send(f"**(ノ ゜口゜)ノ You can only divorce the person that you're married!"
-                           f"\n That person is {member.mention}**")
-            return
+                # Make sure that the person trying to divorce is actually married to the user
+                if married_user is None:
+                    await ctx.send(f"**((╬◣﹏◢)) You must be married in order to divorce someone! Baka!**")
+                    return
+                # Make sure the person is married to the person that they're trying to divorce
+                elif married_user != str(member.id):
+                    member = guild.get_member(int(married_user))
+                    await ctx.send(f"**(ノ ゜口゜)ノ You can only divorce the person that you're married!"
+                                   f"\n That person is {member.mention}**")
+                    return
 
         # Send a message to the channel mentioning the author and the person they want to wed.
         await ctx.send(
@@ -273,16 +291,16 @@ class Relationship(Cog):
                 user = result[1]
                 marriage_date = result[2]
 
-        # Set empty values for non-married users
-        if user is None:
-            married = False
-            marriedUser = ""
-            marriedDate = ""
-        # Set the member, date married and setting married status
-        else:
-            marriedUser = guild.get_member(int(user))
-            marriedDate = marriage_date
-            married = True
+                # Set empty values for non-married users
+                if user is None:
+                    married = False
+                    marriedUser = ""
+                    marriedDate = ""
+                # Set the member, date married and setting married status
+                else:
+                    marriedUser = guild.get_member(int(user))
+                    marriedDate = marriage_date
+                    married = True
 
         # Get the current date of the message sent by the user
         currentDate = ctx.message.created_at.strftime("%a, %b %d, %Y")

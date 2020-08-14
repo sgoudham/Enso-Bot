@@ -662,6 +662,24 @@ class Moderation(Cog):
     async def on_message_delete(self, message):
         """Logging Message Deletions (Within Cache)"""
 
+        # Get the channel within the cache
+        channel = get_modlog_for_guild(str(message.guild.id))
+
+        # When no modlogs channel is returned, do nothing
+        if channel is not None:
+            # Get the modlogs channel
+            modlogs_channel = self.bot.get_channel(int(channel))
+
+            desc = f"**Message Sent By {message.author.mention} Deleted In {message.channel.mention}" \
+                   f"\nMessage Content:** {message.content}"
+            embed = Embed(description=desc,
+                          colour=enso_embedmod_colours,
+                          timestamp=datetime.datetime.utcnow())
+            embed.set_author(name=message.author, icon_url=message.author.avatar_url)
+            embed.set_footer(text=f"Author ID: {message.author.id} | Message ID: {message.id}")
+
+            await modlogs_channel.send(embed=embed)
+
 
 def setup(bot):
     bot.add_cog(Moderation(bot))

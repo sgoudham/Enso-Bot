@@ -618,7 +618,7 @@ class Moderation(Cog):
 
             # Logging Message Content Edits
             # Not logging any message edits from bots
-            if before.content != after.content and after.author != after.author.bot:
+            if before.content != after.content and not after.author.bot:
                 desc = f"**Message Edited Within** <#{after.channel.id}>\n[Jump To Message]({after.jump_url})"
 
                 # When the message context exceeds 500 characters, only display the first 500 characters in the logs
@@ -666,7 +666,7 @@ class Moderation(Cog):
         channel = get_modlog_for_guild(str(message.guild.id))
 
         # When no modlogs channel is returned, do nothing
-        if channel is not None and not message.author != message.author.bot:
+        if channel is not None and not message.author.bot:
             # Get the modlogs channel
             modlogs_channel = self.bot.get_channel(int(channel))
 

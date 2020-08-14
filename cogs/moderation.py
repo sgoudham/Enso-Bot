@@ -649,7 +649,7 @@ class Moderation(Cog):
             # Get the modlogs channel
             modlogs_channel = self.bot.get_channel(int(channel))
 
-            desc = f"**Message Was Edited Within <#{payload.channel_id}>\nMessage Content Not Displayable**"
+            desc = f"**Message Edited Within <#{payload.channel_id}>\nMessage Content Not Displayable**"
             embed = Embed(description=desc,
                           colour=enso_embedmod_colours,
                           timestamp=datetime.datetime.utcnow())
@@ -666,12 +666,20 @@ class Moderation(Cog):
         channel = get_modlog_for_guild(str(message.guild.id))
 
         # When no modlogs channel is returned, do nothing
-        if channel is not None:
+        if channel is not None and not message.author != message.author.bot:
             # Get the modlogs channel
             modlogs_channel = self.bot.get_channel(int(channel))
 
-            desc = f"**Message Sent By {message.author.mention} Deleted In {message.channel.mention}" \
-                   f"\nMessage Content:** {message.content}"
+            if not message.attachments:
+                desc = f"**Message Sent By {message.author.mention} Deleted In {message.channel.mention}" \
+                       f"\nMessage Content:**\n{message.content}"
+            else:
+                attach_string = "".join(
+                    f"\n**Attachment Link(s):** [Here]({attach.proxy_url})"
+                    for attach in message.attachments)
+                desc = f"**Message Sent By {message.author.mention} Deleted In {message.channel.mention}" \
+                       f"\n\nMessage Content:**\n{message.content}{attach_string}"
+
             embed = Embed(description=desc,
                           colour=enso_embedmod_colours,
                           timestamp=datetime.datetime.utcnow())

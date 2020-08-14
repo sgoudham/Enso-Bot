@@ -564,9 +564,11 @@ class Moderation(Cog):
 
             # Logging Role additions/removals from Members
             if after.roles != before.roles:
+                # Retrieve the roles that were added/removed to/from the Member
                 new_roles = [roles for roles in after.roles if roles not in before.roles]
                 old_roles = [roles for roles in before.roles if roles not in after.roles]
 
+                # As long as roles were added to the Member, log the role(s) that were given
                 if len(new_roles) >= 1:
                     new_roles_string = ", ".join(f"`{r.name}`" for r in new_roles)
 
@@ -584,6 +586,7 @@ class Moderation(Cog):
 
                     await modlogs_channel.send(embed=embed)
 
+                # As long as roles were removed from the member, log the role(s) that were removed
                 if len(old_roles) >= 1:
                     old_roles_string = ", ".join(r.name for r in old_roles)
 
@@ -600,6 +603,22 @@ class Moderation(Cog):
                     embed.set_footer(text=f"ID: {after.id}")
 
                     await modlogs_channel.send(embed=embed)
+
+    @Cog.listener()
+    async def on_message_edit(self, before, after):
+        """Logging Member Message Updates"""
+
+        # Get the channel within the cache
+        channel = get_modlog_for_guild(str(after.guild.id))
+
+        # When no modlogs channel is returned, do nothing
+        if channel is not None:
+            # Get the modlogs channel
+            modlogs_channel = self.bot.get_channel(int(channel))
+
+            # Logging Message Content Edits
+            if before.content != after.content:
+                pass
 
 
 def setup(bot):

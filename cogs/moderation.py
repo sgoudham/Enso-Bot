@@ -574,7 +574,7 @@ class Moderation(Cog):
 
                     # Change the description of the embed depending on how many roles were added
                     if len(new_roles) == 1:
-                        desc = f"**{after.mention} was given the role** `{new_roles_string}`"
+                        desc = f"**{after.mention} was given the role** {new_roles_string}"
                     else:
                         desc = f"**Roles Added To {after.mention}\nRoles:** {new_roles_string}"
 

@@ -617,7 +617,8 @@ class Moderation(Cog):
             modlogs_channel = self.bot.get_channel(int(channel))
 
             # Logging Message Content Edits
-            if before.content != after.content:
+            # Not logging any message edits from bots
+            if before.content != after.content and after.author != after.author.bot:
                 desc = f"**Message Edited Within** <#{after.channel.id}>\n[Jump To Message]({after.jump_url})"
 
                 # When the message context exceeds 500 characters, only display the first 500 characters in the logs
@@ -635,6 +636,27 @@ class Moderation(Cog):
                 embed.set_footer(text=f"ID: {after.author.id}")
 
                 await modlogs_channel.send(embed=embed)
+
+    @Cog.listener()
+    async def on_raw_message_edit(self, payload):
+        """Logging Message Edits Not Stored Within Internal Cache"""
+
+        # Get the channel within the cache
+        channel = get_modlog_for_guild(str(payload.data["guild_id"]))
+
+        # Only log this message if the message does not exist within the internal cache and modlogs channel is set up
+        if channel is not None and not payload.cached_message:
+            # Get the modlogs channel
+            modlogs_channel = self.bot.get_channel(int(channel))
+
+            desc = f"**Message Was Edited Within <#{payload.channel_id}>\nMessage Content Not Displayable**"
+            embed = Embed(description=desc,
+                          colour=enso_embedmod_colours,
+                          timestamp=datetime.datetime.utcnow())
+            embed.set_author(name=modlogs_channel.guild.name, icon_url=modlogs_channel.guild.icon_url)
+            embed.set_footer(text=f"Message ID: {payload.message_id}")
+
+            await modlogs_channel.send(embed=embed)
 
 
 def setup(bot):

@@ -606,7 +606,7 @@ class Moderation(Cog):
 
     @Cog.listener()
     async def on_message_edit(self, before, after):
-        """Logging Member Message Updates"""
+        """Logging Message Edits (Within Cache)"""
 
         # Get the channel within the cache
         channel = get_modlog_for_guild(str(after.guild.id))
@@ -657,6 +657,10 @@ class Moderation(Cog):
             embed.set_footer(text=f"Message ID: {payload.message_id}")
 
             await modlogs_channel.send(embed=embed)
+
+    @Cog.listener()
+    async def on_message_delete(self, message):
+        """Logging Message Deletions (Within Cache)"""
 
 
 def setup(bot):

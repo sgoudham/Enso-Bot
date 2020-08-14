@@ -575,7 +575,6 @@ class Moderation(Cog):
                     if len(new_roles) == 1:
                         desc = f"**{after.mention} was given the role** `{new_roles_string}`"
                     else:
-                        new_roles_string = ",".join(f"`{r.name}`" for r in new_roles)
                         desc = f"**Roles Added To {after.mention}\nRoles:** {new_roles_string}"
 
                     embed = Embed(description=desc,
@@ -588,12 +587,11 @@ class Moderation(Cog):
 
                 # As long as roles were removed from the member, log the role(s) that were removed
                 if len(old_roles) >= 1:
-                    old_roles_string = ", ".join(r.name for r in old_roles)
+                    old_roles_string = ", ".join(f"`{r.name}`" for r in old_roles)
 
                     if len(old_roles) == 1:
                         desc = f"**{after.mention} was removed from the role `{old_roles_string}`**"
                     else:
-                        old_roles_string = ",".join(f"`{r.name}`" for r in old_roles)
                         desc = f"**Roles Removed From {after.mention}\nRoles: {old_roles_string}**"
 
                     embed = Embed(description=desc,

@@ -166,7 +166,7 @@ class Anime(Cog):
         """Printing out that Cog is ready on startup"""
         print(f"{self.__class__.__name__} Cog has been loaded!\n-----")
 
-    @group(name="waifu", invoke_without_command=True)
+    @group(name="waifu", invoke_without_command=True, case_insensitive=True)
     @bot_has_permissions(embed_links=True, add_reactions=True)
     async def waifu(self, ctx, *, waifu2: Optional[str] = None):
         """

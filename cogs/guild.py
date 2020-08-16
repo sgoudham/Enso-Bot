@@ -412,7 +412,7 @@ class Guild(Cog):
     @modmail.command(name="update")
     @has_permissions(manage_guild=True)
     @bot_has_permissions(administrator=True)
-    async def mmupdate(self, ctx, user_channel: TextChannel):
+    async def mmupdate(self, ctx, modmail_channel: TextChannel):
         """
         Update the Channel that the Modmail is logged to
         You can Mention or use the Channel ID
@@ -444,7 +444,7 @@ class Guild(Cog):
             async with conn.cursor() as cur:
                 # Define the update statement that will insert information about the modmail channel
                 update_query = """UPDATE moderatormail SET modmailChannelID = (%s) WHERE guildID = (%s)"""
-                vals = user_channel.id, ctx.guild.id
+                vals = modmail_channel.id, ctx.guild.id
 
                 # Execute the SQL Query
                 await cur.execute(update_query, vals)
@@ -452,7 +452,7 @@ class Guild(Cog):
 
         # Send confirmation that the channel has been updated
         text = "**Channel Updated**" \
-               f"\nNew Modmail will be sent to {user_channel.mention}"
+               f"\nNew Modmail will be sent to {modmail_channel.mention}"
         await self.bot.generate_embed(ctx, desc=text)
 
     @modmail.command(name="delete")

@@ -146,6 +146,12 @@ class Info(Cog):
         """Printing out that Cog is ready on startup"""
         print(f"{self.__class__.__name__} Cog has been loaded\n-----")
 
+    @command(name="ping")
+    async def ping(self, ctx):
+        """Latency of the Bot (ms)"""
+
+        await ctx.send(f"Pong! `{round(self.bot.latency * 1000)}ms`")
+
     @command(name="userinfo")
     @cooldown(1, 5, BucketType.user)
     @guild_only()

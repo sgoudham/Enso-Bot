@@ -211,7 +211,7 @@ class Fun(Cog):
                 colour=self.bot.random_colour(),
                 timestamp=datetime.datetime.utcnow())
             embed.set_image(url=random.choice(digby_array))
-            embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
+            embed.set_footer(text=f"Requested by {member}", icon_url=userAvatar)
 
             # Send the embedded message to the user
             await ctx.send(embed=embed)

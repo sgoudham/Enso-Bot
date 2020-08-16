@@ -679,7 +679,7 @@ class Help(Cog):
                       colour=self.bot.admin_colour,
                       timestamp=datetime.datetime.utcnow())
         embed.set_thumbnail(url=ctx.bot.user.avatar_url)
-        embed.set_footer(text=f"Requested by {ctx.author}", icon_url='{}'.format(ctx.author.avatar_url))
+        embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
         fields = [("Developer", f"{self.bot.hammyMention} | Hamothy#5619", False),
                   ("Data Collection",
                    "\nData Stored:" +

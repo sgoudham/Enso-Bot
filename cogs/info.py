@@ -434,7 +434,7 @@ class Info(Cog):
                       colour=self.bot.admin_colour,
                       timestamp=datetime.datetime.utcnow())
         embed.set_image(url=userAvatar)
-        embed.set_footer(text=f"Requested by {ctx.author}", icon_url='{}'.format(ctx.author.avatar_url))
+        embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
         await ctx.send(embed=embed)
 

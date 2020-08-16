@@ -26,18 +26,16 @@ import discord
 import pytesseract.pytesseract
 from PIL import Image, ImageDraw, ImageFont
 from aiohttp import request
-from discord import Member, Colour, Embed
+from discord import Member, Embed
 from discord.ext import commands
-from discord.ext.commands import BucketType, cooldown, command, has_permissions, Cog
+from discord.ext.commands import BucketType, cooldown, command, Cog
 from discord.ext.commands import is_owner, bot_has_permissions
 from owotext import OwO
-
-from settings import colour_list, enso_embedmod_colours
 
 counter = 0
 
 
-def generate_meme(image_path, top_text, bottom_text='', font_path='homies/impact/Impacted.ttf', font_size=9):
+def generate_meme(image_path, top_text, bottom_text='', font_path='images/homies/impact/Impacted.ttf', font_size=9):
     global counter
 
     get_image = Image.open(image_path)
@@ -192,17 +190,6 @@ class Fun(Cog):
         # Send out one of the responses stored in the array
         await ctx.send(f"{ctx.author.mention} {random.choice(pp_array)}")
 
-    @command(name="dm")
-    @is_owner()
-    @has_permissions(administrator=True)
-    async def dm(self, ctx, member: Member, *, text):
-        """DM users"""
-
-        # Send the message typed the mentioned user
-        await member.send(text)
-        # Delete the message sent instantly
-        await ctx.message.delete()
-
     @command(name="digby", hidden=True)
     @cooldown(1, 1, BucketType.user)
     @bot_has_permissions(embed_links=True)
@@ -225,7 +212,7 @@ class Fun(Cog):
             # Set up the embed to display a random image of digby
             embed = Embed(
                 title=f"**A cute picture of Digby!**",
-                colour=Colour(int(random.choice(colour_list))),
+                colour=self.bot.random_colour(),
                 timestamp=datetime.datetime.utcnow())
             embed.set_image(url=random.choice(digby_array))
             embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
@@ -274,7 +261,8 @@ class Fun(Cog):
                         doggo_string = string.capwords(", ".join(b_list))
 
                         # Tell the user to try the breeds listed below
-                        await ctx.send(f"Try the Breeds listed below!\n{doggo_string}")
+                        desc = f"Try the Breeds listed below!\n{doggo_string}"
+                        await self.bot.generate_embed(ctx, desc=desc)
 
             # If no breed has been specified
             else:
@@ -291,7 +279,7 @@ class Fun(Cog):
                         # Set up the embed for a doggo image
                         doggo_embed = Embed(
                             title=f"**It's a {lowercase_breed.capitalize()} Doggo!!** ",
-                            colour=Colour(random.choice(colour_list)),
+                            colour=self.bot.random_colour(),
                             timestamp=datetime.datetime.utcnow())
                         doggo_embed.set_image(url=image_link)
                         doggo_embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
@@ -302,8 +290,8 @@ class Fun(Cog):
                     else:
 
                         # Send error message that Doggo was not found!
-                        await ctx.send(
-                            "Doggo Not Found! Please do **~doggo `breeds`** to see the full list of Doggos!")
+                        desc = f"Doggo Not Found!\nPlease do **{ctx.prefix}doggo breeds** to see the full list of Doggos!"
+                        await self.bot.generate_embed(ctx, desc=desc)
         else:
 
             # Grab a random image of a doggo of any breed
@@ -318,7 +306,7 @@ class Fun(Cog):
                     # Set up the embed for a random doggo image
                     doggo_embed = Embed(
                         title=f"**Doggo!** ",
-                        colour=Colour(random.choice(colour_list)),
+                        colour=self.bot.random_colour(),
                         timestamp=datetime.datetime.utcnow())
                     doggo_embed.set_image(url=image_link)
                     doggo_embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
@@ -327,10 +315,9 @@ class Fun(Cog):
                     await ctx.send(embed=doggo_embed)
 
                 else:
-
                     # Send error message that Doggo was not found!
-                    await ctx.send(
-                        f"Doggo Not Found! Please do **{ctx.prefix}doggo breeds** to see the full list of Doggos!")
+                    desc = f"Doggo Not Found!\nPlease do **{ctx.prefix}doggo breeds** to see the full list of Doggos!"
+                    await self.bot.generate_embed(ctx, desc=desc)
 
     @command(name="8ball")
     @cooldown(1, 1, BucketType.user)
@@ -368,7 +355,7 @@ class Fun(Cog):
 
         # Make sure the text entered is less than 20 characters
         if len(text) >= 20:
-            await ctx.send("Please make sure the prompt is below **20** characters!")
+            await self.bot.generate_embed(ctx, desc="Please make sure the prompt is below **20** characters!")
             return
         else:
 
@@ -377,7 +364,7 @@ class Fun(Cog):
             bottom_text = f"All my homies hate {text}"
 
             # Call the method to generate the image
-            file = generate_meme('homies/AllMyHomies.jpg', top_text=top_text, bottom_text=bottom_text)
+            file = generate_meme('images/homies/AllMyHomies.jpg', top_text=top_text, bottom_text=bottom_text)
 
             # Send the bytes object as an image file
             await ctx.send(file=discord.File(file, "homies.png"))
@@ -415,9 +402,7 @@ class Fun(Cog):
                 await ctx.send(text)
 
         else:
-            embed = Embed(description="**Image Not Detected!**",
-                          colour=enso_embedmod_colours)
-            await ctx.send(embed=embed)
+            await self.bot.generate_embed(ctx, desc="**Image Not Detected!**")
 
 
 def setup(bot):

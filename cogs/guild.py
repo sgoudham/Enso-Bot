@@ -21,9 +21,9 @@ import random
 
 import aiomysql
 import discord
-from discord import Embed
+from discord import Embed, TextChannel
 from discord import File
-from discord.ext.commands import has_permissions, Cog, group, bot_has_permissions
+from discord.ext.commands import has_permissions, Cog, group, bot_has_permissions, BadArgument
 
 
 # Method to ask the user if they want to be anonymous or not
@@ -232,11 +232,8 @@ class Guild(Cog):
     @modlogs.command(name="setup")
     @has_permissions(manage_guild=True)
     @bot_has_permissions(administrator=True)
-    async def mlsetup(self, ctx, channelID: int):
+    async def mlsetup(self, ctx, user_channel: TextChannel):
         """Setup a Channel for the Kick/Ban/Mute Actions to be Logged In"""
-
-        # Retrieve a list of channel id's in the guild
-        channels = [channel.id for channel in ctx.guild.channels]
 
         # Setup pool
         pool = self.bot.db
@@ -259,24 +256,27 @@ class Guild(Cog):
             await self.bot.generate_embed(ctx, desc=text)
             return
 
-        # Abort the process if the channel does not exist within the guild
-        if channelID not in channels:
-            text = "**Invalid ChannelID Detected... Aborting Process**"
-            await self.bot.generate_embed(ctx, desc=text)
-
         else:
             # Set up the modlogs channel within the guild
             mod_log_setup = True
-            await self.bot.storage_modlog_for_guild(self.bot.db, ctx, channelID, mod_log_setup)
+            await self.bot.storage_modlog_for_guild(self.bot.db, ctx, user_channel.id, mod_log_setup)
+
+    @mlsetup.error
+    async def mlsetup_command_error(self, ctx, exc):
+        """Catching error if channel is not recognised"""
+
+        if isinstance(exc, BadArgument):
+            text = "**Channel Not Detected... Aborting Process**"
+            await self.bot.generate_embed(ctx, desc=text)
 
     @modlogs.command(name="update")
     @has_permissions(manage_guild=True)
     @bot_has_permissions(administrator=True)
-    async def mlupdate(self, ctx, channelID: int):
+    async def mlupdate(self, ctx, user_channel: TextChannel):
         """Change the Channel that your Modlogs are Sent to"""
 
         # Retrieve a list of channel id's in the guild
-        channels = [channel.id for channel in ctx.guild.channels]
+        channels = [channel for channel in ctx.guild.channels]
 
         # Setup pool
         pool = self.bot.db
@@ -299,14 +299,14 @@ class Guild(Cog):
             await self.bot.generate_embed(ctx, desc=text)
 
         # Abort the process if the channel does not exist within the guild
-        if channelID not in channels:
+        if user_channel not in channels:
             text = "**Invalid ChannelID Detected... Aborting Process**"
             await self.bot.generate_embed(ctx, desc=text)
 
         else:
             # Update the modlog channel within the database and cache
             mod_log_setup = False
-            await self.bot.storage_modlog_for_guild(self.bot.db, ctx, channelID, mod_log_setup)
+            await self.bot.storage_modlog_for_guild(self.bot.db, ctx, user_channel.id, mod_log_setup)
 
     @modlogs.command("delete")
     @has_permissions(manage_guild=True)
@@ -352,8 +352,6 @@ class Guild(Cog):
         text = "**Modlogs System** successfully deleted!" \
                f"\nDo **{ctx.prefix}help modlogs** to setup Modlogs again!"
         await self.bot.generate_embed(ctx, desc=text)
-        # Sending confirmation message that the modmail system has been deleted
-        await ctx.send()
 
     @group(name="modmail", invoke_without_command=True, case_insensitive=True, usage="`[argument...]`")
     @bot_has_permissions(administrator=True)

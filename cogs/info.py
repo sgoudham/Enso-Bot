@@ -125,11 +125,11 @@ def lineCount():
     # Adding up the total lines of code
     total = comments + blank + code
 
-    return "Code: {}\n" \
-           "Commentary: {}\n" \
-           "Blank: {}\n" \
-           "Total: {}\n" \
-           "Files: {}".format(code, comments, blank, total, file_amount)
+    return f"Code: {code}\n" \
+           f"Commentary: {comments}\n" \
+           f"Blank: {blank}\n" \
+           f"Total: {total}\n" \
+           f"Files: {file_amount}"
 
 
 class Info(Cog):

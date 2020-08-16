@@ -25,44 +25,43 @@ from discord import Embed, Colour
 from discord.ext import commands
 from discord.ext.commands import cooldown, BucketType, command, is_owner, bot_has_permissions, Cog
 
-from settings import colour_list, enso_guild_ID, enso_ensochancommands_Mention, blank_space, enso_embedmod_colours, \
-    enso_verification_ID
-
 """events = {
     "🎤": 722483603409469470,  # Karaoke Night
     "🎧": 696753950879383605,  # Enso Bros Podcast
     "🎥": 722482922518609990,  # Movie Night
     "🎮": 722493033882452078,  # Game Night
+    "<:xoxo:743564377864536204>": 744356592186687521,
     ":GameNight:": 722493033882452078,
     ":EnsoBros:": 696753950879383605,
     ":MovieNight:": 722482922518609990,
     ":Karaoke:": 722483603409469470
-}"""
+}
+"""
 
 
 # Error handling function to make sure that the commands only work in "enso-chan-commands"
-def error_function():
-    return f"**Sorry! I only work in {enso_ensochancommands_Mention}**"
+def error_function(self):
+    """Make sure that commands only work in "enso-chan-commands" in the server"""
+
+    return f"**Sorry! I only work in {self.bot.enso_ensochancommands_Mention}**"
 
 
-# Send a message to the channel that Enso~Chan has dm'ed them!
-def helpDm():
-    hamothyID = '<@&715412394968350756>'
+def helpDm(self):
+    """Returning message that Enso~Chan has dm'ed them"""
 
-    # Returning F String to send to the User
     return f"I've just pinged your dms UwU! <a:huh:676195228872474643> <a:huh:676195228872474643>" \
-           f"\nPlease ping my owner {hamothyID} for any issues/questions you have!"
+           f"\nPlease ping my owner {self.bot.hammy_role_ID} for any issues/questions you have!"
 
 
 # Method to retrieve information about the user and the guild
-def get_user_info(self, ctx):
+def get_user_info(ctx):
     # Allowing the bot to dm the user
     author = ctx.author
 
     # Define guild icon, enso bot icon and enso bot name
     guild_icon = ctx.guild.icon_url
-    enso_icon = self.bot.user.avatar_url
-    enso_name = self.bot.user.display_name
+    enso_icon = ctx.bot.user.avatar_url
+    enso_name = ctx.bot.user.display_name
 
     return author, guild_icon, enso_icon, enso_name
 
@@ -85,7 +84,7 @@ def displayServerImage(array, ctx, name):
     # Set embed up for the person requested by the user
     embed = Embed(
         title=f"**Look At What A Cutie {name.capitalize()} is! <a:huh:676195228872474643> <a:huh:676195228872474643> **",
-        colour=Colour(random.choice(colour_list)),
+        colour=ctx.bot.rnd_colour,
         timestamp=datetime.datetime.utcnow())
     embed.set_image(url=random.choice(array))
     embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
@@ -120,7 +119,7 @@ class Enso(Cog):
         """Shows Random Person from Ensō"""
 
         # Making sure this command only works in Enso
-        if not ctx.guild.id == enso_guild_ID:
+        if not ctx.guild.id == self.bot.enso_guild_ID:
             await ctx.send("**Sorry! That command is only for a certain guild!**")
             return
 
@@ -159,7 +158,7 @@ class Enso(Cog):
                 # Embed the image in a message and send it to the channel
                 embed = Embed(
                     title=f"Oh Look! A Cute Person <a:huh:676195228872474643> <a:huh:676195228872474643> ",
-                    colour=Colour(random.choice(colour_list)),
+                    colour=self.bot.random_colour(),
                     timestamp=datetime.datetime.utcnow())
                 embed.set_image(url=random.choice(array))
                 embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
@@ -167,7 +166,7 @@ class Enso(Cog):
                 await ctx.send(embed=embed)
         else:
 
-            message = await ctx.send(error_function())
+            message = await ctx.send(error_function(self))
 
             # Let the user read the message for 2.5 seconds
             await asyncio.sleep(2.5)
@@ -190,7 +189,7 @@ class Enso(Cog):
         """Ruleset for Ensō"""
 
         # Making sure this command only works in Enso
-        if not ctx.guild.id == enso_guild_ID:
+        if not ctx.guild.id == self.bot.enso_guild_ID:
             await ctx.send("**Sorry! That command is only for a certain guild!**")
             return
 
@@ -198,11 +197,11 @@ class Enso(Cog):
         izzyID = '<@397944038440828928>'
 
         # Get information about the user and the guild
-        author, guild_icon, enso_icon, enso_name = get_user_info(self, ctx)
+        author, guild_icon, enso_icon, enso_name = get_user_info(ctx)
 
         # Set up embed to list all the rules within the server
         embed = Embed(title="(っ◔◡◔)っ Ensō Rules",
-                      colour=enso_embedmod_colours,
+                      colour=self.bot.admin_colour,
                       description="ヽ(͡◕ ͜ʖ ͡◕)ﾉ Please respect the following rules that are going to be listed below ヽ(͡◕ ͜ʖ ͡◕)ﾉ",
                       timestamp=datetime.datetime.utcnow())
 
@@ -211,56 +210,56 @@ class Enso(Cog):
                          icon_url=enso_icon)
 
         fields = [
-            (blank_space,
+            (self.bot.blank_space,
              "**➳ Don't be overly toxic/purposely problematic** \n This one is pretty self explanatory, just treat others the way you want to be treated and you'll get along with everyone :)",
              False),
-            (blank_space,
+            (self.bot.blank_space,
              "**➳ Respect all admins and staff** \n They are enforcing these rules to help make and keep this server a fantastic place to hang out.",
              False),
-            (blank_space,
+            (self.bot.blank_space,
              "**➳ Keep content organized into their respective channels** \n For example. When connected to a voice channel, all messages relating to the discussion in voice-chat should be sent in #vc-chat",
              False),
-            (blank_space,
+            (self.bot.blank_space,
              "**➳ No advertising other servers** \nIt's disrespectful to do that and won't be tolerated in this server",
              False),
-            (blank_space,
+            (self.bot.blank_space,
              "**➳ No pornographic/adult/other NSFW material** \n This is a community server and not meant to share this kind of material. Try to stay around PG 13 as most of our users are between 13 - 16",
              False),
-            (blank_space,
+            (self.bot.blank_space,
              "**➳ Don't take insults too far** \n Poking fun at others is okay, just don't take it too far. Any disputes can be brought up to a staff member and they will handle it." +
              "\nIf you end up causing a problem or taking things into your in hands, you will be punished",
              False),
-            (blank_space,
+            (self.bot.blank_space,
              "**➳ Explicit Language** \n Swearing is perfectly fine as long as it's not in excess, with some exceptions of course." +
              "These exceptions being racial, sexual, and ethnic slurs",
              False),
-            (blank_space,
-             "**➳ Discord ToS** \n As well as following the rules we have set forth, please make sure to follow Discord's ToS https://discordapp.com/terms ",
+            (self.bot.blank_space,
+             "**➳ Discord ToS** \n As well as following the rules we have set forth, please make sure to follow [Discord's ToS](https://discordapp.com/terms)",
              False),
-            (blank_space,
+            (self.bot.blank_space,
              "```( ͡°ω ͡°) Disciplinary Actions ( ͡°ω ͡°)```", False),
-            (blank_space,
+            (self.bot.blank_space,
              "**➳ First Offense** \n Warning",
              True),
-            (blank_space,
+            (self.bot.blank_space,
              "**➳ Second Offense** \n1 hour mute",
              True),
-            (blank_space,
+            (self.bot.blank_space,
              "**➳ Third Offense** \n12 hour mute",
              True),
-            (blank_space,
+            (self.bot.blank_space,
              "**➳ Fourth Offense** \n24 hour mute",
              True),
-            (blank_space,
+            (self.bot.blank_space,
              "**➳Fifth Offense** \n Kicked from the server",
              True),
-            (blank_space,
+            (self.bot.blank_space,
              "**➳ Sixth Offense** \n Banned from the server",
              True),
-            (blank_space,
+            (self.bot.blank_space,
              "**➳ There are, of course, exceptions to these rules based on the severity of the offense Minor offenses will play out as described but major offenses will be dealt with at the discretion of the staff member involved.**",
              False),
-            (blank_space,
+            (self.bot.blank_space,
              f"**➳ Any disputes about a staff members choices or actions can be brought to myself, {ctx.message.author.mention} or my co-owner, {izzyID}**",
              False)]
 
@@ -272,7 +271,7 @@ class Enso(Cog):
         await author.send(embed=embed)
 
         # Send the helpDm() message to the channel that the user is in
-        message = await ctx.send(helpDm())
+        message = await ctx.send(helpDm(self))
 
         # Let the user read the message for 10 seconds
         await asyncio.sleep(10)
@@ -284,7 +283,7 @@ class Enso(Cog):
     async def roles(self, ctx):
         """Leveled role/xp system for Ensō"""
 
-        if not ctx.guild.id == enso_guild_ID:
+        if not ctx.guild.id == self.bot.enso_guild_ID:
             await ctx.send("**Sorry! That command is only for a certain guild!**")
             return
 
@@ -293,12 +292,12 @@ class Enso(Cog):
 
         # Setting up embedded message about the leveled roles system within the server
         embed = Embed(title="```So you wanna know how the leveled roles system works huh?```",
-                      colour=enso_embedmod_colours,
+                      colour=self.bot.admin_colour,
                       description="------------------------------------------------",
                       timestamp=datetime.datetime.utcnow())
 
         # Get information about the user and the guild
-        author, guild_icon, enso_icon, enso_name = get_user_info(self, ctx)
+        author, guild_icon, enso_icon, enso_name = get_user_info(ctx)
 
         embed.set_image(url=roles_image)
         embed.set_thumbnail(url=guild_icon)
@@ -320,7 +319,7 @@ class Enso(Cog):
         await author.send(embed=embed)
 
         # Send the helpDm() message to the channel that the user is in
-        message = await ctx.send(helpDm())
+        message = await ctx.send(helpDm(self))
 
         # Let the user read the message for 10 seconds
         await asyncio.sleep(10)
@@ -333,7 +332,7 @@ class Enso(Cog):
     async def verification(self, ctx):
         # Set up embed to let the user know that they have to react with ✅
         embed = Embed(title="**Verification**",
-                      colour=enso_embedmod_colours,
+                      colour=self.bot.admin_colour,
                       timestamp=datetime.datetime.utcnow())
 
         embed.set_thumbnail(url=ctx.guild.icon_url)
@@ -355,11 +354,11 @@ class Enso(Cog):
     @Cog.listener()
     async def on_raw_reaction_add(self, payload):
         # Get the guild
-        guild = self.bot.get_guild(enso_guild_ID)
+        guild = self.bot.get_guild(self.bot.enso_guild_ID)
         # Get the member
         member = guild.get_member(payload.user_id)
         # Getting the channel verification by setting it to #verification
-        channel = guild.get_channel(enso_verification_ID)
+        channel = guild.get_channel(self.bot.enso_verification_ID)
 
         # If the channel is #verification
         if payload.channel_id == channel.id:
@@ -421,13 +420,11 @@ class Enso(Cog):
                 # Print to me that the role has been added
                 print("done")
 
-        """# Make sure the reaction event doesn't count other channels
-                if not payload.channel_id == 722347423913213992:
-                    return
-
-                role = payload.member.guild.get_role(events.get(payload.emoji.name))
-                await payload.member.add_roles(role)
-                print(f"{payload.member.name} Was Given Role {role}")"""
+                """# Make sure the reaction event doesn't count other channels
+                if payload.channel_id == 722347423913213992:
+                    role = payload.member.guild.get_role(events.get(payload.emoji.name))
+                    await payload.member.add_roles(role)
+                    print(f"{payload.member.name} Was Given Role {role}")"""
 
     # Cog listener for enabling roles to be removed from users when they unreact to the embedded messaged
     @Cog.listener()
@@ -454,16 +451,14 @@ class Enso(Cog):
                 # Remove the role from the member
                 await member.remove_roles(role)
 
-        """# Make sure the reaction event doesn't count other channels 
-                if not payload.channel_id == 722347423913213992:
-                    return
-
-                guild = self.bot.get_guild(payload.guild_id)
-
-                member = guild.get_member(payload.user_id)
-                role = guild.get_role(events.get(payload.emoji.name))
-                await member.remove_roles(role)
-                print(f"{member.name} Was Removed from Role {role}")"""
+                """# Make sure the reaction event doesn't count other channels
+                if payload.channel_id == 722347423913213992:
+                    guild = self.bot.get_guild(payload.guild_id)
+    
+                    member = guild.get_member(payload.user_id)
+                    role = guild.get_role(events.get(payload.emoji.name))
+                    await member.remove_roles(role)
+                    print(f"{member.name} Was Removed from Role {role}")"""
 
     # Allowing people to get ping-able self roles
     @command(name="rolemenu", hidden=True)

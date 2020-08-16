@@ -53,7 +53,7 @@ class Bot(commands.Bot):
         self.owner_id = 154840866496839680,  # Your unique User ID
         self.case_insensitive = True  # Commands are now Case Insensitive
         self.admin_colour = Colour(0x62167a)  # Admin Embed Colour
-        self.version = "v1.7.2"  # Version number of Ensō~Chan
+        self.version = "v0.7.2"  # Version number of Ensō~Chan
         self.remove_command("help")  # Remove default help command
 
         # Define variables that are for Enso only

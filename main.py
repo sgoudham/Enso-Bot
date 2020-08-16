@@ -15,9 +15,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-from bot import Bot
-
 # Initiating Bot Object As Client
+from bot.__init__ import Bot
+
 client = Bot()
 # Run the bot
 client.run_bot()

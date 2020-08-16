@@ -7,24 +7,21 @@ from discord import Member, Embed, DMChannel
 from discord.ext.commands import command, guild_only, has_guild_permissions, bot_has_guild_permissions, Greedy, \
     cooldown, BucketType, Cog
 
-from settings import enso_embedmod_colours, get_modlog_for_guild, storeRoles, clearRoles, get_roles_persist, \
-    generate_embed
 
-
-async def send_to_modlogs(message, target, reason, action):
+async def send_to_modlogs(self, message, target, reason, action):
     """
     Function to send the moderation actions to modlogs channel
     """
 
     # Get the channel of the modlog within the guild
-    modlog = get_modlog_for_guild(str(message.guild.id))
+    modlog = self.bot.self.bot.get_modlog_for_guild(str(message.guild.id))
 
     if modlog is not None:
 
         channel = message.guild.get_channel(int(modlog))
 
         embed = Embed(title=f"Member {action}",
-                      colour=enso_embedmod_colours,
+                      colour=self.bot.admin_colour,
                       timestamp=datetime.datetime.utcnow())
 
         embed.set_thumbnail(url=target.avatar_url)
@@ -39,7 +36,7 @@ async def send_to_modlogs(message, target, reason, action):
         await channel.send(embed=embed)
 
 
-async def check(ctx, members):
+async def check(self, ctx, members):
     """
     Check Function
     
@@ -52,13 +49,13 @@ async def check(ctx, members):
     if not len(members):
         embed = Embed(description="Not Correct Syntax!"
                                   f"\nUse **{ctx.prefix}help** to find how to use **{ctx.command}**",
-                      colour=enso_embedmod_colours)
+                      colour=self.bot.admin_colour)
         await ctx.send(embed=embed)
         return True
 
     elif ctx.author in members:
         embed = Embed(description=f"**❌ Forbidden Action ❌**",
-                      colour=enso_embedmod_colours)
+                      colour=self.bot.admin_colour)
         await ctx.send(embed=embed)
         return True
 
@@ -96,16 +93,16 @@ async def ummute_members(self, message, targets, reason):
                 roles = [message.guild.get_role(int(id_)) for id_ in role_ids.split(", ") if len(id_)]
 
                 # Clear all the roles of the user
-                await clearRoles(member=target, pool=pool)
+                await self.bot.clearRoles(member=target, pool=pool)
 
             await target.edit(roles=roles)
 
             # Send confirmation to the channel that the user is in
             embed = Embed(description="✅ **{}** Was Unmuted! ✅".format(target),
-                          colour=enso_embedmod_colours)
+                          colour=self.bot.admin_colour)
             await message.channel.send(embed=embed)
 
-            await send_to_modlogs(message, target, reason, action="Unmuted")
+            await send_to_modlogs(self, message, target, reason, action="Unmuted")
 
         # Send error message if the User could not be muted
         else:
@@ -113,7 +110,7 @@ async def ummute_members(self, message, targets, reason):
             await message.channel.send(embed=embed)
 
 
-async def mute_members(pool, ctx, targets, reason, muted):
+async def mute_members(self, pool, ctx, targets, reason, muted):
     """
 
     Method to allow members to be muted
@@ -128,7 +125,7 @@ async def mute_members(pool, ctx, targets, reason, muted):
         # When user is already muted, send error message
         if muted in target.roles:
             embed = Embed(description="**❌ User Is Already Muted! ❌**",
-                          colour=enso_embedmod_colours)
+                          colour=self.bot.admin_colour)
             await ctx.send(embed=embed)
 
         else:
@@ -141,14 +138,14 @@ async def mute_members(pool, ctx, targets, reason, muted):
                     and not target.guild_permissions.administrator):
 
                 # Store the current roles of the user within database
-                await storeRoles(pool=pool, target=target, ctx=ctx.message, member=target)
+                await self.bot.storeRoles(pool=pool, target=target, ctx=ctx.message, member=target)
                 # Give the user the muted role (and any integration roles if need be)
                 await target.edit(roles=roles, reason=reason)
 
                 # Send confirmation to the channel that the user is in
                 embed = Embed(description="✅ **{}** Was Muted! ✅".format(target),
-                              colour=enso_embedmod_colours)
-                if get_roles_persist(str(ctx.message.guild.id)) == 0:
+                              colour=self.bot.admin_colour)
+                if self.bot.get_roles_persist(str(ctx.message.guild.id)) == 0:
                     embed.add_field(name="**WARNING: ROLE PERSIST NOT ENABLED**",
                                     value="The bot **will not give** the roles back to the user if they leave the server."
                                           "\nAllowing the user to bypass the Mute by leaving and rejoining."
@@ -157,16 +154,16 @@ async def mute_members(pool, ctx, targets, reason, muted):
 
                 await ctx.message.channel.send(embed=embed)
 
-                await send_to_modlogs(ctx.message, target, reason, action="Muted")
+                await send_to_modlogs(self, ctx.message, target, reason, action="Muted")
 
             # Send error message if the User could not be muted
             else:
                 embed = Embed(description="**{} Could Not Be Muted!**".format(target.mention),
-                              colour=enso_embedmod_colours)
+                              colour=self.bot.admin_colour)
                 await ctx.message.channel.send(embed=embed)
 
 
-async def ban_members(message, targets, reason):
+async def ban_members(self, message, targets, reason):
     """
 
     Method to allow members to be banned
@@ -182,10 +179,10 @@ async def ban_members(message, targets, reason):
             await target.ban(reason=reason)
 
             embed = Embed(description="✅ **{}** Was Banned! ✅".format(target),
-                          colour=enso_embedmod_colours)
+                          colour=self.bot.admin_colour)
             await message.channel.send(embed=embed)
 
-            await send_to_modlogs(message, target, reason, action="Banned")
+            await send_to_modlogs(self, message, target, reason, action="Banned")
 
         # Send error message if the User could not be banned
         else:
@@ -210,7 +207,7 @@ async def unban_members(self, message, targets, reason):
     for target in targets:
         if target not in ban_ids:
             embed = Embed(description="❌ **Member Is Not In Ban's List!** ❌",
-                          colour=enso_embedmod_colours)
+                          colour=self.bot.admin_colour)
             await message.channel.send(embed=embed)
         else:
 
@@ -220,13 +217,13 @@ async def unban_members(self, message, targets, reason):
 
             # Send confirmation to the channel that the user is in
             embed = Embed(description="✅ **{}** Was Unbanned! ✅".format(user),
-                          colour=enso_embedmod_colours)
+                          colour=self.bot.admin_colour)
             await  message.channel.send(embed=embed)
 
-            await send_to_modlogs(message, user, reason, action="Unbanned")
+            await send_to_modlogs(self, message, user, reason, action="Unbanned")
 
 
-async def kick_members(message, targets, reason):
+async def kick_members(self, message, targets, reason):
     """
 
     Method to allow the kick member log to be sent to the modlog channel
@@ -243,10 +240,10 @@ async def kick_members(message, targets, reason):
             await target.kick(reason=reason)
 
             embed = Embed(description="✅ **{}** Was Kicked! ✅".format(target),
-                          colour=enso_embedmod_colours)
+                          colour=self.bot.admin_colour)
             await message.channel.send(embed=embed)
 
-            await send_to_modlogs(message, target, reason, action="Kicked")
+            await send_to_modlogs(self, message, target, reason, action="Kicked")
 
         # Send error message if the User could not be kicked
         else:
@@ -275,10 +272,10 @@ class Moderation(Cog):
         Multiple Members can be Kicked at Once
         """
 
-        if not await check(ctx, members):
+        if not await check(self, ctx, members):
             with ctx.typing():
                 # Send embed of the kicked member
-                await kick_members(ctx.message, members, reason)
+                await kick_members(self, ctx.message, members, reason)
 
     @command(name="mute", usage="`<member>...` `[reason]`")
     @has_guild_permissions(manage_roles=True)
@@ -289,7 +286,7 @@ class Moderation(Cog):
         Multiple Members can be Muted At Once
         """
 
-        if not await check(ctx, members):
+        if not await check(self, ctx, members):
             with ctx.typing():
 
                 # Get muted role from the server
@@ -302,7 +299,7 @@ class Moderation(Cog):
                         await channel.set_permissions(muted, read_messages=True, send_messages=False,
                                                       read_message_history=False)
 
-                    await mute_members(self.bot.db, ctx, members, reason, muted)
+                    await mute_members(self, self.bot.db, ctx, members, reason, muted)
 
                 # Make sure that the Muted Role has the correct permissions before muting member(s)
                 else:
@@ -325,7 +322,7 @@ class Moderation(Cog):
                         if perms.read_messages or perms.send_messages or perms.read_message_history:
                             await channel.set_permissions(role, overwrite=perms)
 
-                    await mute_members(self.bot.db, ctx, members, reason, role)
+                    await mute_members(self, self.bot.db, ctx, members, reason, role)
 
     @command(name="unmute", usage="`<member>...` `[reason]`")
     @has_guild_permissions(manage_roles=True)
@@ -337,13 +334,13 @@ class Moderation(Cog):
         """
         unmute = False
 
-        if not await check(ctx, members):
+        if not await check(self, ctx, members):
             with ctx.typing():
                 role = discord.utils.get(ctx.guild.roles, name="Muted")
 
                 if role is None:
                     embed = Embed(description="**❌ No Muted Role Was Found! ❌**",
-                                  colour=enso_embedmod_colours)
+                                  colour=self.bot.admin_colour)
                     await ctx.send(embed=embed)
 
                 else:
@@ -355,7 +352,7 @@ class Moderation(Cog):
 
                         if role not in member.roles and unmute is False:
                             embed = Embed(description=f"**❌ {member.mention} Is Not Muted! ❌**",
-                                          colour=enso_embedmod_colours)
+                                          colour=self.bot.admin_colour)
                             await ctx.send(embed=embed)
 
     @command(name="ban", usage="`<member>...` `[reason]`")
@@ -369,9 +366,9 @@ class Moderation(Cog):
         Multiple Members can be banned at once
         """
 
-        if not await check(ctx, members):
+        if not await check(self, ctx, members):
             with ctx.typing():
-                await ban_members(ctx.message, members, reason)
+                await ban_members(self, ctx.message, members, reason)
 
     @command(name="unban", usage="`<member>...` `[reason]`")
     @guild_only()
@@ -383,7 +380,7 @@ class Moderation(Cog):
         Unban Member(s) from Server
         Multiple Members can be Unbanned At Once
         """
-        if not await check(ctx, members):
+        if not await check(self, ctx, members):
             with ctx.typing():
                 await unban_members(self, ctx.message, members, reason)
 
@@ -412,7 +409,7 @@ class Moderation(Cog):
 
             # Send error if amount is not between 0 and 100
             else:
-                await generate_embed(ctx, desc="The amount provided is not between **0** and **100**")
+                await self.bot.generate_embed(ctx, desc="The amount provided is not between **0** and **100**")
 
         # Delete the last 50 messages if no amount is given
         else:
@@ -431,7 +428,7 @@ class Moderation(Cog):
         """Logging Bulk Message Deletion from Server"""
 
         # Get the channel within the cache
-        channel = get_modlog_for_guild(str(payload.guild_id))
+        channel = self.bot.get_modlog_for_guild(str(payload.guild_id))
 
         # When no modlogs channel is returned, do nothing
         if channel is not None:
@@ -443,7 +440,7 @@ class Moderation(Cog):
             embed = Embed(
                 description="**Bulk Delete in {} | {} messages deleted**".format(deleted_msgs_channel.mention,
                                                                                  len(payload.message_ids)),
-                colour=enso_embedmod_colours,
+                colour=self.bot.admin_colour,
                 timestamp=datetime.datetime.utcnow())
             embed.set_author(name=deleted_msgs_channel.guild.name, icon_url=deleted_msgs_channel.guild.icon_url)
 
@@ -454,7 +451,7 @@ class Moderation(Cog):
         """Log Member Leaves from Server"""
 
         # Get the channel within the cache
-        channel = get_modlog_for_guild(str(member.guild.id))
+        channel = self.bot.get_modlog_for_guild(str(member.guild.id))
 
         # When no modlogs channel is returned, do nothing
         if channel is not None:
@@ -462,7 +459,7 @@ class Moderation(Cog):
             modlogs_channel = self.bot.get_channel(int(channel))
 
             embed = Embed(description="**{}** | **{}**".format(member.mention, member),
-                          colour=enso_embedmod_colours,
+                          colour=self.bot.admin_colour,
                           timestamp=datetime.datetime.utcnow())
             embed.set_author(name="Member Left", icon_url=member.avatar_url)
             embed.set_thumbnail(url=member.avatar_url)
@@ -475,7 +472,7 @@ class Moderation(Cog):
         """Log Member Joins to Server"""
 
         # Get the channel within the cache
-        channel = get_modlog_for_guild(str(member.guild.id))
+        channel = self.bot.get_modlog_for_guild(str(member.guild.id))
 
         # When no modlogs channel is returned, do nothing
         if channel is not None:
@@ -483,7 +480,7 @@ class Moderation(Cog):
             modlogs_channel = self.bot.get_channel(int(channel))
 
             embed = Embed(description="**{}** | **{}**".format(member.mention, member),
-                          colour=enso_embedmod_colours,
+                          colour=self.bot.admin_colour,
                           timestamp=datetime.datetime.utcnow())
             embed.add_field(name="Account Creation Date",
                             value=member.created_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"),
@@ -499,7 +496,7 @@ class Moderation(Cog):
         """Logs Member Bans to Server"""
 
         # Get the channel within the cache
-        channel = get_modlog_for_guild(str(guild.id))
+        channel = self.bot.get_modlog_for_guild(str(guild.id))
 
         # When no modlogs channel is returned, do nothing
         if channel is not None:
@@ -507,7 +504,7 @@ class Moderation(Cog):
             modlogs_channel = self.bot.get_channel(int(channel))
 
             embed = Embed(description=f"{user.mention} | **{user}**",
-                          colour=enso_embedmod_colours,
+                          colour=self.bot.admin_colour,
                           timestamp=datetime.datetime.utcnow())
             embed.set_author(name="Member Banned", icon_url=user.avatar_url)
             embed.set_footer(text=f"ID: {user.id}")
@@ -520,7 +517,7 @@ class Moderation(Cog):
         """Logs Member Unbans to Server"""
 
         # Get the channel within the cache
-        channel = get_modlog_for_guild(str(guild.id))
+        channel = self.bot.get_modlog_for_guild(str(guild.id))
 
         # When no modlogs channel is returned, do nothing
         if channel is not None:
@@ -528,7 +525,7 @@ class Moderation(Cog):
             modlogs_channel = self.bot.get_channel(int(channel))
 
             embed = Embed(description=f"{user.mention} | **{user}**",
-                          colour=enso_embedmod_colours,
+                          colour=self.bot.admin_colour,
                           timestamp=datetime.datetime.utcnow())
             embed.set_author(name="Member Unbanned", icon_url=user.avatar_url)
             embed.set_footer(text=f"ID: {user.id}")
@@ -541,7 +538,7 @@ class Moderation(Cog):
         """Logging Member Profile Updates"""
 
         # Get the channel within the cache
-        channel = get_modlog_for_guild(str(after.guild.id))
+        channel = self.bot.get_modlog_for_guild(str(after.guild.id))
 
         # When no modlogs channel is returned, do nothing
         if channel is not None:
@@ -551,7 +548,7 @@ class Moderation(Cog):
             # Logging Nickname Updates
             if before.nick != after.nick:
                 embed = Embed(description=f"**{after.mention}'s Nickname Changed**",
-                              colour=enso_embedmod_colours,
+                              colour=self.bot.admin_colour,
                               timestamp=datetime.datetime.utcnow())
                 embed.set_author(name=after, icon_url=after.avatar_url)
                 embed.add_field(name="Before",
@@ -579,7 +576,7 @@ class Moderation(Cog):
                         desc = f"**Roles Added To {after.mention}\nRoles: {new_roles_string}**"
 
                     embed = Embed(description=desc,
-                                  colour=enso_embedmod_colours,
+                                  colour=self.bot.admin_colour,
                                   timestamp=datetime.datetime.utcnow())
                     embed.set_author(name=after, icon_url=after.avatar_url)
                     embed.set_footer(text=f"ID: {after.id}")
@@ -597,7 +594,7 @@ class Moderation(Cog):
                         desc = f"**Roles Removed From {after.mention}\nRoles: {old_roles_string}**"
 
                     embed = Embed(description=desc,
-                                  colour=enso_embedmod_colours,
+                                  colour=self.bot.admin_colour,
                                   timestamp=datetime.datetime.utcnow())
                     embed.set_author(name=after, icon_url=after.avatar_url)
                     embed.set_footer(text=f"ID: {after.id}")
@@ -613,7 +610,7 @@ class Moderation(Cog):
         # Get the channel within the cache
         if not isinstance(msg_channel, DMChannel):
             # Get the channel within the cache
-            channel = get_modlog_for_guild(str(after.guild.id))
+            channel = self.bot.get_modlog_for_guild(str(after.guild.id))
         else:
             return
 
@@ -632,7 +629,7 @@ class Moderation(Cog):
                 after_value = f"{after.content[:500]} ..." if len(after.content) >= 500 else after.content
 
                 embed = Embed(description=desc,
-                              colour=enso_embedmod_colours,
+                              colour=self.bot.admin_colour,
                               timestamp=datetime.datetime.utcnow())
                 embed.set_author(name=after.author, icon_url=after.author.avatar_url)
                 embed.add_field(name="Before",
@@ -651,7 +648,7 @@ class Moderation(Cog):
 
         # Get the channel within the cache
         if not isinstance(msg_channel, DMChannel):
-            channel = get_modlog_for_guild(payload.data["guild_id"])
+            channel = self.bot.get_modlog_for_guild(payload.data["guild_id"])
         else:
             return
 
@@ -662,7 +659,7 @@ class Moderation(Cog):
 
             desc = f"**Message Edited Within <#{payload.channel_id}>\nMessage Content Not Displayable**"
             embed = Embed(description=desc,
-                          colour=enso_embedmod_colours,
+                          colour=self.bot.admin_colour,
                           timestamp=datetime.datetime.utcnow())
             embed.set_author(name=modlogs_channel.guild.name, icon_url=modlogs_channel.guild.icon_url)
             embed.set_footer(text=f"Message ID: {payload.message_id}")
@@ -674,7 +671,7 @@ class Moderation(Cog):
         """Logging Message Deletions (Within Cache)"""
 
         # Get the channel within the cache
-        channel = get_modlog_for_guild(str(message.guild.id))
+        channel = self.bot.get_modlog_for_guild(str(message.guild.id))
 
         # When no modlogs channel is returned, do nothing
         if channel is not None and not message.author.bot:
@@ -692,7 +689,7 @@ class Moderation(Cog):
                        f"\n\nMessage Content:**\n{message.content}{attach_string}"
 
             embed = Embed(description=desc,
-                          colour=enso_embedmod_colours,
+                          colour=self.bot.admin_colour,
                           timestamp=datetime.datetime.utcnow())
             embed.set_author(name=message.author, icon_url=message.author.avatar_url)
             embed.set_footer(text=f"Author ID: {message.author.id} | Message ID: {message.id}")

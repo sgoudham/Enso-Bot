@@ -196,7 +196,7 @@ class Info(Cog):
             timestamp=datetime.datetime.utcnow()
         )
         embed.set_thumbnail(url=userAvatar)
-        embed.set_footer(text=f"ID: {member.id}", icon_url='{}'.format(userAvatar))
+        embed.set_footer(text=f"ID: {member.id}", icon_url=userAvatar)
 
         # Define fields to be added into the embed
         embed_fields = [("Name", member.mention, True),
@@ -284,7 +284,7 @@ class Info(Cog):
                       colour=self.bot.random_colour(),
                       timestamp=datetime.datetime.utcnow())
         embed.set_thumbnail(url=guild_icon)
-        embed.set_footer(text=f"ID: {guild_id}", icon_url='{}'.format(guild_icon))
+        embed.set_footer(text=f"ID: {guild_id}", icon_url=guild_icon)
 
         # Get the list of banned users from the server
         bans = len(await ctx.guild.bans()) if perms.ban_members else "N/A"

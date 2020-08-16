@@ -278,7 +278,7 @@ class Fun(Cog):
                             colour=self.bot.random_colour(),
                             timestamp=datetime.datetime.utcnow())
                         doggo_embed.set_image(url=image_link)
-                        doggo_embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
+                        doggo_embed.set_footer(text=f"Requested by {member}", icon_url=userAvatar)
 
                         # Send the doggo image
                         await ctx.send(embed=doggo_embed)
@@ -305,7 +305,7 @@ class Fun(Cog):
                         colour=self.bot.random_colour(),
                         timestamp=datetime.datetime.utcnow())
                     doggo_embed.set_image(url=image_link)
-                    doggo_embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
+                    doggo_embed.set_footer(text=f"Requested by {member}", icon_url=userAvatar)
 
                     # Send random doggo image to the channel
                     await ctx.send(embed=doggo_embed)

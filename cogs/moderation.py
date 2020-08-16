@@ -3,7 +3,7 @@ from datetime import timedelta
 from typing import Optional
 
 import discord
-from discord import Member, Embed
+from discord import Member, Embed, DMChannel
 from discord.ext.commands import command, guild_only, has_guild_permissions, bot_has_guild_permissions, Greedy, \
     cooldown, BucketType, Cog
 
@@ -608,8 +608,14 @@ class Moderation(Cog):
     async def on_message_edit(self, before, after):
         """Logging Message Edits (Within Cache)"""
 
+        msg_channel = self.bot.get_channel(int(after.channel.id))
+
         # Get the channel within the cache
-        channel = get_modlog_for_guild(str(after.guild.id))
+        if not isinstance(msg_channel, DMChannel):
+            # Get the channel within the cache
+            channel = get_modlog_for_guild(str(after.guild.id))
+        else:
+            return
 
         # When no modlogs channel is returned, do nothing
         if channel is not None:
@@ -641,8 +647,13 @@ class Moderation(Cog):
     async def on_raw_message_edit(self, payload):
         """Logging Message Edits Not Stored Within Internal Cache"""
 
+        msg_channel = self.bot.get_channel(int(payload.data["channel_id"]))
+
         # Get the channel within the cache
-        channel = get_modlog_for_guild(str(payload.data["guild_id"]))
+        if not isinstance(msg_channel, DMChannel):
+            channel = get_modlog_for_guild(payload.data["guild_id"])
+        else:
+            return
 
         # Only log this message if the message does not exist within the internal cache and modlogs channel is set up
         if channel is not None and not payload.cached_message:

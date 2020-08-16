@@ -72,15 +72,6 @@ class Bot(commands.Bot):
 
         self.enso_cache = {}
 
-        def setup_cogs():
-            """Load cogs into the bot"""
-
-            cogs = [path.split("\\")[-1][:-3] for path in glob("./cogs/*.py")]
-            for ext in cogs:
-                self.load_extension(f"cogs.{ext}")
-
-        setup_cogs()
-
         async def create_connection():
             """Setting up connection using pool/aiomysql"""
 
@@ -164,12 +155,6 @@ class Bot(commands.Bot):
 
         # Start the background task(s)
         change_status.start()
-
-        # Run the bot, allowing it to come online
-        try:
-            self.run(API_TOKEN)
-        except discord.errors.LoginFailure as e:
-            print(e, "Login unsuccessful.")
 
     # --------------------------------------------!Cache Section!-------------------------------------------------------
 
@@ -356,7 +341,7 @@ class Bot(commands.Bot):
     @staticmethod
     async def on_ready():
         """Displaying if Bot is Ready"""
-        print("UvU Senpaiii I'm weady")
+        print("UvU Senpaiii I'm ready\n")
 
     async def on_guild_join(self, guild):
         """
@@ -543,3 +528,15 @@ class Bot(commands.Bot):
                 print(cur.rowcount, f"{member} Left {member.guild.name}, Roles stored into Members")
 
         # --------------------------------------------!End Events Section!----------------------------------------------
+
+    def setup(self):
+
+        cogs = [path.split("\\")[-1][:-3] for path in glob("./cogs/*.py")]
+        for ext in cogs:
+            self.load_extension(f"cogs.{ext}")
+
+        # Run the bot, allowing it to come online
+        try:
+            self.run(API_TOKEN)
+        except discord.errors.LoginFailure as e:
+            print(e, "Login unsuccessful.")

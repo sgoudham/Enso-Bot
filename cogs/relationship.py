@@ -77,7 +77,7 @@ class Relationship(Cog):
 
         # Make sure that the user cannot marry themselves
         if member.id == ctx.author.id:
-            await ctx.send("**Senpaii! ˭̡̞(◞⁎˃ᆺ˂)◞*✰ You can't possibly marry yourself!**")
+            await self.bot.generate_embed(ctx, desc="**Senpaii! ˭̡̞(◞⁎˃ᆺ˂)◞*✰ You can't possibly marry yourself!**")
             return
 
         # Setup pool connection and cursor
@@ -96,7 +96,7 @@ class Relationship(Cog):
                 # Make sure that the person is not already married to someone else within the server
                 if married_user is not None:
                     member = guild.get_member(int(married_user))
-                    await ctx.send(f"**((╬◣﹏◢)) You're already married to {member.mention}!**")
+                    await self.bot.generate_embed(ctx, desc=f"**((╬◣﹏◢)) You're already married to {member.mention}!**")
                     return
 
             # Set up new cursor for member row
@@ -108,13 +108,14 @@ class Relationship(Cog):
 
                 if target_user is not None:
                     member = guild.get_member(int(target_user))
-                    await ctx.send(f"**Sorry! That user is already married to {member.mention}**")
+                    await self.bot.generate_embed(ctx,
+                                                  desc=f"**Sorry! That user is already married to {member.mention}**")
                     return
 
         # Send a message to the channel mentioning the author and the person they want to wed.
-        await ctx.send(f"{ctx.author.mention} **Proposes To** {member.mention}"
-                       f"\n**Do you accept??**"
-                       f"\nRespond with [**Y**es/**N**o]")
+        await self.bot.generate_embed(ctx, desc=f"{ctx.author.mention} **Proposes To** {member.mention}"
+                                                f"\n**Do you accept??**"
+                                                f"\nRespond with [**Y**es/**N**o]")
 
         # A check that makes sure that the reply is not from the author
         # and that the reply is in the same channel as the proposal
@@ -145,23 +146,24 @@ class Relationship(Cog):
                         print(cur.rowcount, "2 people have been married!")
 
                 # Congratulate them!
-                await ctx.send(
-                    f"**Congratulations! ｡ﾟ( ﾟ^∀^ﾟ)ﾟ｡ {ctx.author.mention} and {member.mention} are now married to each other!**")
+                desc = f"**Congratulations! ｡ﾟ( ﾟ^∀^ﾟ)ﾟ｡ {ctx.author.mention} and {member.mention} are now married to each other!**"
+                await self.bot.generate_embed(ctx, desc=desc)
 
             # if the person says no
             elif msg.content.lower() in ['n', 'no', 'nah']:
 
                 # Try to console the person and wish them the best in their life
-                await ctx.send(f"**{ctx.author.mention} It's okay king. Pick up your crown and move on (◕‿◕✿)**")
+                desc = f"**{ctx.author.mention} It's okay king. Pick up your crown and move on (◕‿◕✿)**"
+                await self.bot.generate_embed(ctx, desc=desc)
             else:
                 # Abort the process as the message sent did not make sense
-                await ctx.send("**Senpaiiii! (｡╯︵╰｡) Speak English Please**")
+                await self.bot.generate_embed(ctx, desc="**Senpaiiii! (｡╯︵╰｡) Speak English Please**")
 
         except asyncio.TimeoutError as ex:
             print(ex)
 
             # Send out an error message if the user waited too long
-            await ctx.send("**(｡T ω T｡) {} waited too long**".format(member.mention))
+            await self.bot.generate_embed(ctx, desc=f"**(｡T ω T｡) {member.mention} waited too long**")
 
     @command(name="divorce")
     @cooldown(1, 1, BucketType.user)
@@ -175,7 +177,7 @@ class Relationship(Cog):
 
         # Make sure that the user cannot divorce themselves
         if member.id == ctx.author.id:
-            await ctx.send("**Senpaii! ˭̡̞(◞⁎˃ᆺ˂)◞*✰ You can't possibly divorce yourself!**")
+            await self.bot.generate_embed(ctx, desc="**Senpaii! ˭̡̞(◞⁎˃ᆺ˂)◞*✰ You can't possibly divorce yourself!**")
             return
 
         # Setup pool connection and cursor
@@ -192,20 +194,24 @@ class Relationship(Cog):
 
                 # Make sure that the person trying to divorce is actually married to the user
                 if married_user is None:
-                    await ctx.send(f"**((╬◣﹏◢)) You must be married in order to divorce someone! Baka!**")
+
+                    desc = "**((╬◣﹏◢)) You must be married in order to divorce someone! Baka!**"
+                    await self.bot.generate_embed(ctx, desc=desc)
                     return
+
                 # Make sure the person is married to the person that they're trying to divorce
                 elif married_user != str(member.id):
                     member = guild.get_member(int(married_user))
-                    await ctx.send(f"**(ノ ゜口゜)ノ You can only divorce the person that you're married!"
-                                   f"\n That person is {member.mention}**")
+
+                    desc = f"**(ノ ゜口゜)ノ You can only divorce the person that you're married!" \
+                           f"\n That person is {member.mention}**"
+                    await self.bot.generate_embed(ctx, desc=desc)
                     return
 
         # Send a message to the channel mentioning the author and the person they want to wed.
-        await ctx.send(
-            f"{ctx.author.mention} **Wishes to Divorce** {member.mention}"
-            f"\n**Are you willing to break this sacred bond?**"
-            f"\nRespond with [**Y**es/**N**o]")
+        await self.bot.generate_embed(ctx, desc=f"{ctx.author.mention} **Wishes to Divorce** {member.mention}"
+                                                f"\n**Are you willing to break this sacred bond?**"
+                                                f"\nRespond with [**Y**es/**N**o]")
 
         # A check that makes sure that the reply is not from the author
         # and that the reply is in the same channel as the proposal
@@ -235,26 +241,26 @@ class Relationship(Cog):
                         print(cur.rowcount, "2 Members have been divorced :(!")
 
                 # Congratulate them!
-                await ctx.send(
-                    f"**૮( ´⁰▱๋⁰ )ა {ctx.author.mention} and {member.mention} are now divorced."
-                    f"\nI hope you two can find happiness in life with other people**")
+                desc = f"**૮( ´⁰▱๋⁰ )ა {ctx.author.mention} and {member.mention} are now divorced." \
+                       f"\nI hope you two can find happiness in life with other people**"
+                await self.bot.generate_embed(ctx, desc=desc)
 
             # if the person says no
             elif msg.content.lower() in ['n', 'no', 'nah']:
 
                 # Try to console the person and wish them the best in their life
-                await ctx.send(
-                    f"**{ctx.author.mention} Sorry but you're gonna need {member.mention}'s consent to move forward with this!**")
+                desc = f"**Sorry {ctx.author.mention} but you're gonna need {member.mention}'s consent to move forward with this!**"
+                await self.bot.generate_embed(ctx, desc=desc)
 
             else:
                 # Abort the process as the message sent did not make sense
-                await ctx.send("**Senpaiiii! (｡╯︵╰｡) Speak English Please**")
+                await self.bot.generate_embed(ctx, desc="**Senpaiiii! (｡╯︵╰｡) Speak English Please**")
 
         except asyncio.TimeoutError as ex:
             print(ex)
 
             # Send out an error message if the user waited too long
-            await ctx.send("**(｡T ω T｡) {} waited too long**".format(member.mention))
+            await self.bot.generate_embed(ctx, desc=f"**(｡T ω T｡) {member.mention} waited too long**")
 
     @command(name="marriageinfo", aliases=["minfo"])
     @cooldown(1, 1, BucketType.user)
@@ -262,12 +268,8 @@ class Relationship(Cog):
     async def m_info(self, ctx, member: Member = None):
         """Marriage Information!"""
 
-        # If a target has been specified, set them as the user
-        if member:
-            member = member
-        # If no target has been specified, choose the author
-        else:
-            member = ctx.author
+        # Choose author if no other user has been mentioned
+        member = ctx.author if not member else member
 
         # Getting the guild of the user
         guild = member.guild

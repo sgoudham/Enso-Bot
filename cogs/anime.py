@@ -13,16 +13,13 @@
 
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
-
 from typing import Optional
 
 import aiohttp
 from decouple import config
 from discord import Embed
 from discord.ext import menus
-from discord.ext.commands import bot_has_permissions, Cog, group
-
-from settings import rndColour, enso_embedmod_colours
+from discord.ext.commands import Cog, group, bot_has_permissions
 
 my_waifu_list_auth = config('MYWAIFULIST_AUTH')
 
@@ -33,13 +30,13 @@ def store_waifus(waifus_dict, waifu, value):
     waifus_dict[waifu["name"]][value] = waifu[value]
 
 
-def multiple_waifu_generator(waifus_dict):
+def multiple_waifu_generator(self, bot):
     """Method to generate embed of multiple waifu's"""
 
     embeds = []
-    for key in waifus_dict.values():
+    for key in self.waifus_dict.values():
         embed = Embed(title=key["name"], description=f"{key['original_name']} | {key['type']}",
-                      colour=rndColour(),
+                      colour=bot.random_colour(),
                       url=key["url"])
         embed.set_image(url=key["display_picture"])
         embed.set_footer(text=f"❤️ {key['likes']} 🗑️ {key['trash']} | Powered by MyWaifuList")
@@ -49,7 +46,7 @@ def multiple_waifu_generator(waifus_dict):
     return embeds
 
 
-def single_waifu_generator(waifu):
+def single_waifu_generator(self, waifu):
     """Method to generate embed of single waifu's"""
 
     # Get all the data to be displayed in the embed
@@ -63,7 +60,7 @@ def single_waifu_generator(waifu):
 
     # Set up the embed
     embed = Embed(title=name, description=f"{og_name} | {waifu_type}",
-                  colour=rndColour(),
+                  colour=self.bot.random_colour(),
                   url=url)
     embed.set_image(url=picture)
     embed.set_footer(text=f"❤️ {likes} 🗑️ {trash} | Powered by MyWaifuList")
@@ -73,19 +70,19 @@ def single_waifu_generator(waifu):
 
 # Set up the Cog
 class HelpMenu(menus.Menu):
-    def __init__(self, i, waifu, bot, botter):
+    def __init__(self, i, waifu, bot, guild_bot):
         super().__init__(timeout=125.0, clear_reactions_after=True)
         self.waifus_dict = waifu
         self.i = i
-        self.waifu = multiple_waifu_generator(self.waifus_dict)
         self.bot = bot
-        self.botter = botter
+        self.waifu = multiple_waifu_generator(self, bot)
+        self.guild_bot = guild_bot
 
     # Message to be sent on the initial command ~help
     async def send_initial_message(self, ctx, channel):
         # Set the first embed to the first element in the pages[]
 
-        initial = multiple_waifu_generator(self.waifus_dict)[self.i]
+        initial = self.waifu[self.i]
 
         cur_page = self.i + 1
         pages = len(self.waifu)
@@ -105,8 +102,8 @@ class HelpMenu(menus.Menu):
         # Do nothing if the check does not return true
         if check(self.ctx):
             # Set self.i to (i - 1) remainder length of the array
-            self.i = (self.i - 1) % len(multiple_waifu_generator(self.waifus_dict))
-            prev_page = multiple_waifu_generator(self.waifus_dict)[self.i]
+            self.i = (self.i - 1) % len(self.waifu)
+            prev_page = self.waifu[self.i]
 
             cur_page = self.i + 1
             pages = len(self.waifu)
@@ -114,7 +111,7 @@ class HelpMenu(menus.Menu):
 
             # Send the embed and remove the reaction of the user
             await self.message.edit(embed=prev_page)
-            if self.botter.guild_permissions.manage_messages:
+            if self.guild_bot.guild_permissions.manage_messages:
                 await self.message.remove_reaction("⬅", self.ctx.author)
 
     # Reaction to allow user to go to the next page in the embed
@@ -128,8 +125,8 @@ class HelpMenu(menus.Menu):
         # Do nothing if the check does not return true
         if check(self.ctx):
             # Set self.i to (i + 1) remainder length of the array
-            self.i = (self.i + 1) % len(multiple_waifu_generator(self.waifus_dict))
-            next_page = multiple_waifu_generator(self.waifus_dict)[self.i]
+            self.i = (self.i + 1) % len(self.waifu)
+            next_page = self.waifu[self.i]
 
             cur_page = self.i + 1
             pages = len(self.waifu)
@@ -137,7 +134,7 @@ class HelpMenu(menus.Menu):
 
             # Send the embed and remove the reaction of the user
             await self.message.edit(embed=next_page)
-            if self.botter.guild_permissions.manage_messages:
+            if self.guild_bot.guild_permissions.manage_messages:
                 await self.message.remove_reaction("➡", self.ctx.author)
 
     @menus.button('\N{BLACK SQUARE FOR STOP}\ufe0f')
@@ -212,14 +209,14 @@ class Anime(Cog):
             # When no waifu has been retrieved, send error message to the user
             else:
                 embed = Embed(description="**Waifu Not Found!**",
-                              colour=enso_embedmod_colours)
+                              colour=self.bot.admin_colour)
                 await ctx.send(embed=embed)
 
             # Get the instance of the bot
             bot = ctx.guild.get_member(self.bot.user.id)
 
             # Send the menu to the display
-            menu = HelpMenu(i, waifus_dict, self, bot)
+            menu = HelpMenu(i, waifus_dict, self.bot, bot)
             await menu.start(ctx)
 
         else:
@@ -233,13 +230,13 @@ class Anime(Cog):
                     # Store waifu's in dict when request is successful, else send an error
                     if resp.status == 200:
                         waifu_dict = await resp.json()
-                        waifu = waifu_dict["data"]
+                        waifu3 = waifu_dict["data"]
 
                     # Send error if something went wrong internally/while grabbing data from API
                     else:
                         await ctx.send("Something went wrong!")
 
-            await ctx.send(embed=single_waifu_generator(waifu))
+            await ctx.send(embed=single_waifu_generator(self, waifu3))
 
     @waifu.command(name="daily")
     async def daily_waifu(self, ctx):
@@ -259,7 +256,7 @@ class Anime(Cog):
                 else:
                     await ctx.send("Something went wrong!")
 
-        await ctx.send(embed=single_waifu_generator(waifu))
+        await ctx.send(embed=single_waifu_generator(self, waifu))
 
 
 def setup(bot):

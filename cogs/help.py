@@ -28,9 +28,6 @@ from discord import Embed, DMChannel
 from discord.ext import commands
 from discord.ext.commands import Cog, command, has_permissions, guild_only
 
-from settings import enso_embedmod_colours, hammyMention, enso_feedback_ID, storage_prefix_for_guild, \
-    get_prefix_for_guild
-
 
 class CannotPaginate(Exception):
     pass
@@ -79,7 +76,7 @@ class Pages:
         if left_over:
             pages += 1
         self.maximum_pages = pages
-        self.embed = discord.Embed(colour=enso_embedmod_colours,
+        self.embed = discord.Embed(colour=self.bot.admin_colour,
                                    timestamp=datetime.datetime.utcnow())
         self.paginating = len(entries) > per_page
         self.show_entry_count = show_entry_count
@@ -208,9 +205,9 @@ class Pages:
 
     async def show_help(self):
         """shows this message"""
-        messages = ['Welcome to the interactive paginator!\n']
-        messages.append('This interactively allows you to see pages of text by navigating with '
-                        'reactions. They are as follows:\n')
+        messages = ['Welcome to the interactive paginator!\n',
+                    'This interactively allows you to see pages of text by navigating with '
+                    'reactions. They are as follows:\n']
 
         for (emoji, func) in self.reaction_emojis:
             messages.append(f'{emoji} {func.__doc__}')
@@ -578,17 +575,17 @@ class HelpPaginator(Pages):
         self.bot.loop.create_task(go_back_to_current_page())
 
 
-def send_feedback(message, author):
+def send_feedback(self, message, author):
     """Preparing Embed to send to the support server"""
 
     embed = Embed(title="Feedback!",
-                  colour=enso_embedmod_colours,
+                  colour=self.bot.admin_colour,
                   timestamp=datetime.datetime.utcnow())
 
     embed.set_thumbnail(url=author.avatar_url)
     embed.set_footer(text=f"Send By {author}")
 
-    fields = [("Member", author.mention, False),
+    fields = [("Member", f"{author.mention} | {author}", False),
               ("Message", message.content, False)]
 
     for name, value, inline in fields:
@@ -597,24 +594,24 @@ def send_feedback(message, author):
     return embed
 
 
-def message_sent_confirmation():
+def message_sent_confirmation(self):
     """Preparing Embed to be sent to the user after the message has been received successfully"""
 
     ConfirmationEmbed = Embed(title="Thank you for your feedback!",
-                              description=f"**Message relayed to {hammyMention}**",
-                              colour=enso_embedmod_colours,
+                              description=f"**Message relayed to {self.bot.hammyMention}**",
+                              colour=self.bot.admin_colour,
                               timestamp=datetime.datetime.utcnow())
     ConfirmationEmbed.set_footer(text=f"Thanks Once Again! ~ Hammy")
 
     return ConfirmationEmbed
 
 
-def error_handling(author):
+def error_handling(self, author):
     """Preparing embed to send if the message is not suitable"""
 
     ErrorHandlingEmbed = Embed(
         title="Uh Oh! Please make sure the message is below **1024** characters!",
-        colour=enso_embedmod_colours,
+        colour=self.bot.admin_colour,
         timestamp=datetime.datetime.utcnow())
 
     ErrorHandlingEmbed.set_footer(text=f"Sent To {author}")
@@ -660,7 +657,7 @@ class Help(Cog):
         # As long as a new prefix has been given and is less than 5 characters
         if new and len(new) <= 5:
             # Store the new prefix in the dictionary and update the database
-            await storage_prefix_for_guild(self.bot.db, ctx, new)
+            await self.bot.storage_prefix_for_guild(self.bot.db, ctx, new)
 
         # Making sure that errors are handled if prefix is above 5 characters
         elif new and len(new) > 5:
@@ -669,7 +666,7 @@ class Help(Cog):
         # if no prefix was provided
         elif not new:
             # Grab the current prefix for the guild within the cached dictionary
-            await ctx.send(f"**The current guild prefix is `{get_prefix_for_guild(str(ctx.guild.id))}`**")
+            await ctx.send(f"**The current guild prefix is `{self.bot.get_prefix_for_guild(str(ctx.guild.id))}`**")
 
     @command(name="support")
     async def support(self, ctx):
@@ -679,11 +676,11 @@ class Help(Cog):
                       description=f"Do **{ctx.prefix}feedback** to send me feedback about the bot and/or report any issues "
                                   f"that you are having!",
                       url="https://discord.gg/SZ5nexg",
-                      colour=enso_embedmod_colours,
+                      colour=self.bot.admin_colour,
                       timestamp=datetime.datetime.utcnow())
         embed.set_thumbnail(url=ctx.bot.user.avatar_url)
         embed.set_footer(text=f"Requested by {ctx.author}", icon_url='{}'.format(ctx.author.avatar_url))
-        fields = [("Developer", hammyMention, False),
+        fields = [("Developer", f"{self.bot.hammyMention} | Hamothy#5619", False),
                   ("Data Collection",
                    "\nData Stored:" +
                    "\n- User ID" +
@@ -704,13 +701,13 @@ class Help(Cog):
         """Sending Feedback to Support Server"""
 
         # Get the #feedback channel within the support server
-        channel = self.bot.get_channel(enso_feedback_ID)
+        channel = self.bot.get_channel(self.bot.enso_feedback_ID)
 
         embed = Embed(title="Provide Feedback!",
                       description=f"Hiya! Please respond to this message with the feedback you want to provide!"
                                   f"\n(You have **5 minutes** to respond. Make sure it is a **single message** and under **1024** characters!)",
                       url="https://discord.gg/SZ5nexg",
-                      colour=enso_embedmod_colours,
+                      colour=self.bot.admin_colour,
                       timestamp=datetime.datetime.utcnow())
         embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
@@ -726,7 +723,7 @@ class Help(Cog):
 
             # Make sure sure that the message is below 1024 characters
             while len(msg.content) > 1024 and check(msg):
-                await ctx.author.send(embed=error_handling(ctx.author))
+                await ctx.author.send(embed=error_handling(self, ctx.author))
 
                 # Wait for feedback again
                 msg = await ctx.bot.wait_for('message', check=check, timeout=300.0)
@@ -735,16 +732,16 @@ class Help(Cog):
             # Send confirmation message to author to let them know feedback has been sent
             # Send the feedback entered from the author into support server
             if len(msg.content) < 1024 and check(msg):
-                await ctx.author.send(embed=message_sent_confirmation())
+                await ctx.author.send(embed=message_sent_confirmation(self))
 
-                await channel.send(embed=send_feedback(msg, ctx.author))
+                await channel.send(embed=send_feedback(self, msg, ctx.author))
 
         # Edit current embed to show error that the feedback timed out
         except asyncio.TimeoutError:
 
             embed = Embed(title="(｡T ω T｡) You waited too long",
                           description=f"Do **{ctx.prefix}feedback** to try again!",
-                          colour=enso_embedmod_colours,
+                          colour=self.bot.admin_colour,
                           timestamp=datetime.datetime.utcnow())
             embed.set_footer(text=f"Sent To {ctx.author}", icon_url=ctx.author.avatar_url)
 

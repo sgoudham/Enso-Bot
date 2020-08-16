@@ -19,7 +19,7 @@ import discord
 
 from bot import Bot, API_TOKEN
 
-# Initiating Bot Instance
+# Initiating Bot Object As Client
 client = Bot()
 
 # Run the bot, allowing it to come online

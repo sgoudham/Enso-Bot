@@ -17,21 +17,18 @@
 import datetime
 import os
 import pathlib
-import random
 import string
 from asyncio.subprocess import Process
 from platform import python_version
 from time import time
 from typing import Optional
 
-from discord import Colour, Member, TextChannel
 from discord import Embed
+from discord import Member, TextChannel
 from discord import __version__ as discord_version
 from discord.ext.commands import BucketType, cooldown, bot_has_permissions, guild_only, Cog
 from discord.ext.commands import command
 from psutil import Process, virtual_memory
-
-from settings import colour_list, enso_embedmod_colours, hammyMention
 
 # Using forzenset
 # Permissions to filter through
@@ -195,7 +192,7 @@ class Info(Cog):
         # Set up the embed to display everything about the user
         embed = Embed(
             title=f"**User Information**",
-            colour=Colour(int(random.choice(colour_list))),
+            colour=self.bot.random_colour(),
             timestamp=datetime.datetime.utcnow()
         )
         embed.set_thumbnail(url=userAvatar)
@@ -284,7 +281,7 @@ class Info(Cog):
 
         # Set up embed to display all the server information
         embed = Embed(title="**Server Information**",
-                      colour=Colour(int(random.choice(colour_list))),
+                      colour=self.bot.random_colour(),
                       timestamp=datetime.datetime.utcnow())
         embed.set_thumbnail(url=guild_icon)
         embed.set_footer(text=f"ID: {guild_id}", icon_url='{}'.format(guild_icon))
@@ -338,7 +335,7 @@ class Info(Cog):
         embed = Embed(title=f"Statistics For #{channel.name}",
                       description=f"{'Category: {}'.format(channel.category.name) if channel.category else 'N/A'}",
                       timestamp=datetime.datetime.utcnow(),
-                      colur=Colour(int(random.choice(colour_list))))
+                      colur=self.bot.random_colour())
         embed.set_thumbnail(url=ctx.guild.icon_url)
         embed.set_footer(text=f"ID: {channel.id}")
 
@@ -365,7 +362,7 @@ class Info(Cog):
 
         stats = Embed(title="<:github:741000905364603010> Ensō~Chan v1.7.2 Statistics",
                       url="https://github.com/sgoudham/Enso-Bot",
-                      colour=enso_embedmod_colours,
+                      colour=self.bot.admin_colour,
                       timestamp=datetime.datetime.utcnow())
         stats.set_thumbnail(url=self.bot.user.avatar_url)
         stats.set_footer(text=f"Requested by {ctx.author}", icon_url='{}'.format(ctx.author.avatar_url))
@@ -388,7 +385,7 @@ class Info(Cog):
 
         # Setting up fields
         fields = [
-            ("Developer", hammyMention, False),
+            ("Developer", f"{self.bot.hammyMention} | Hamothy#5619", False),
 
             ("Language | Library",
              f"<:python:661908544739737611> Python {python_version()} | <:discord:314003252830011395> Discord.py {discord_version}",
@@ -437,7 +434,7 @@ class Info(Cog):
 
         embed = Embed(title=f"{member}'s Avatar",
                       url=userAvatar,
-                      colour=enso_embedmod_colours,
+                      colour=self.bot.admin_colour,
                       timestamp=datetime.datetime.utcnow())
         embed.set_image(url=userAvatar)
         embed.set_footer(text=f"Requested by {ctx.author}", icon_url='{}'.format(ctx.author.avatar_url))

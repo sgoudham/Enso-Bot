@@ -335,7 +335,7 @@ class Info(Cog):
         embed = Embed(title=f"Statistics For #{channel.name}",
                       description=f"{'Category: {}'.format(channel.category.name) if channel.category else 'N/A'}",
                       timestamp=datetime.datetime.utcnow(),
-                      colur=self.bot.random_colour())
+                      colour=self.bot.random_colour())
         embed.set_thumbnail(url=ctx.guild.icon_url)
         embed.set_footer(text=f"ID: {channel.id}")
 

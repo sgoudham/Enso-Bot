@@ -333,7 +333,7 @@ class Info(Cog):
 
         # Set up Embed
         embed = Embed(title=f"Statistics For #{channel.name}",
-                      description=f"{'Category: {}'.format(channel.category.name) if channel.category else 'N/A'}",
+                      description=f"{f'Category: {channel.category.name}' if channel.category else 'N/A'}",
                       timestamp=datetime.datetime.utcnow(),
                       colour=self.bot.random_colour())
         embed.set_thumbnail(url=ctx.guild.icon_url)
@@ -365,7 +365,7 @@ class Info(Cog):
                       colour=self.bot.admin_colour,
                       timestamp=datetime.datetime.utcnow())
         stats.set_thumbnail(url=self.bot.user.avatar_url)
-        stats.set_footer(text=f"Requested by {ctx.author}", icon_url='{}'.format(ctx.author.avatar_url))
+        stats.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
         # Grabbing technical statistics of the bot
         proc = Process()
@@ -377,8 +377,7 @@ class Info(Cog):
 
         uptime_hours, uptime_remainder = divmod(uptime.seconds, 3600)
         uptime_minutes, uptime_seconds = divmod(uptime_remainder, 60)
-        frmt_uptime = '{:01} Hour(s), {:01} Minute(s), {:01} Second(s)'.format(int(uptime_hours), int(uptime_minutes),
-                                                                               int(uptime_seconds))
+        frmt_uptime = f'{int(uptime_hours):01} Hour(s), {int(uptime_minutes):01} Minute(s), {int(uptime_seconds):01} Second(s)'
 
         # Grabbing total number of channels across all guilds in which the bot is present in
         channels = map(lambda m: len(m.channels), self.bot.guilds)
@@ -400,13 +399,11 @@ class Info(Cog):
             ("❗ Current Prefix", ctx.prefix, True),
 
             ("Discord Stats",
-             "Guilds: {}"
-             "\nChannels: {}"
-             "\nEmojis: {}"
-             "\nCommands: {}"
-             "\nUsers: {:,}".format(len(self.bot.guilds), sum(list(channels)), len(self.bot.emojis),
-                                    len(self.bot.commands),
-                                    len(self.bot.users)), True),
+             f"Guilds: {len(self.bot.guilds)}"
+             f"\nChannels: {sum(list(channels))}"
+             f"\nEmojis: {len(self.bot.emojis)}"
+             f"\nCommands: {len(self.bot.commands)}"
+             f"\nUsers: {len(self.bot.users):,}", True),
 
             ("Line Count", lineCount(), True),
             ("Uptime", frmt_uptime, False),

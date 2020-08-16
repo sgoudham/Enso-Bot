@@ -529,7 +529,7 @@ class Bot(commands.Bot):
 
         # --------------------------------------------!End Events Section!----------------------------------------------
 
-    def setup(self):
+    def run_bot(self):
 
         cogs = [path.split("\\")[-1][:-3] for path in glob("./cogs/*.py")]
         for ext in cogs:

@@ -19,4 +19,5 @@ from bot import Bot
 
 # Initiating Bot Object As Client
 client = Bot()
-client.setup()
+# Run the bot
+client.run_bot()

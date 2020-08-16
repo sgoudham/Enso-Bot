@@ -19,7 +19,6 @@ import datetime
 import io
 import random
 
-import aiomysql
 import discord
 from discord import Embed, TextChannel
 from discord import File
@@ -261,22 +260,11 @@ class Guild(Cog):
             mod_log_setup = True
             await self.bot.storage_modlog_for_guild(self.bot.db, ctx, user_channel.id, mod_log_setup)
 
-    @mlsetup.error
-    async def mlsetup_command_error(self, ctx, exc):
-        """Catching error if channel is not recognised"""
-
-        if isinstance(exc, BadArgument):
-            text = "**Channel Not Detected... Aborting Process**"
-            await self.bot.generate_embed(ctx, desc=text)
-
     @modlogs.command(name="update")
     @has_permissions(manage_guild=True)
     @bot_has_permissions(administrator=True)
     async def mlupdate(self, ctx, user_channel: TextChannel):
         """Change the Channel that your Modlogs are Sent to"""
-
-        # Retrieve a list of channel id's in the guild
-        channels = [channel for channel in ctx.guild.channels]
 
         # Setup pool
         pool = self.bot.db
@@ -296,11 +284,6 @@ class Guild(Cog):
         if result[2] is None:
             text = "**Modlogs Channel** not set up!" \
                    f"\nDo **{ctx.prefix}help modlogs** to find out more!"
-            await self.bot.generate_embed(ctx, desc=text)
-
-        # Abort the process if the channel does not exist within the guild
-        if user_channel not in channels:
-            text = "**Invalid ChannelID Detected... Aborting Process**"
             await self.bot.generate_embed(ctx, desc=text)
 
         else:
@@ -365,14 +348,12 @@ class Guild(Cog):
     @modmail.command(name="setup")
     @has_permissions(manage_guild=True)
     @bot_has_permissions(administrator=True)
-    async def mmsetup(self, ctx, channelID: int):
+    async def mmsetup(self, ctx, user_channel: TextChannel, modmail_channel: TextChannel):
         """
         Setup Modmail System
-        Input the ID of the Channel where the Modmail will be sent
+        First Argument: Input Channel(Mention or ID) where members can send modmail
+        Second Argument: Input Channel(Mention or ID) where the members mail should be sent
         """
-
-        # Retrieve a list of channel id's in the guild
-        channels = [channel.id for channel in ctx.guild.channels]
 
         # Setup pool
         pool = self.bot.db
@@ -382,7 +363,7 @@ class Guild(Cog):
             async with conn.cursor() as cur:
                 # Get the author's row from the Members Table
                 select_query = """SELECT * FROM moderatormail WHERE guildID = (%s)"""
-                val = ctx.author.guild.id,
+                val = ctx.guild.id,
 
                 # Execute the SQL Query
                 await cur.execute(select_query, val)
@@ -395,86 +376,47 @@ class Guild(Cog):
             await self.bot.generate_embed(ctx, desc=text)
             return
 
-        # As long as the channel exists within the guild
-        if channelID in channels:
+        desc = "React to this message if you want to send a message to the Staff Team!" \
+               "\n\n**React with ✅**" \
+               "\n\nWe encourage all suggestions/thoughts and opinions on the server!" \
+               "\nAs long as it is **valid** criticism." \
+               "\n\n\n**Purely negative feedback will not be considered.**"
 
-            # Ask for the channel ID that the modmail should be logged to
-            await ctx.send("**Please enter the ID of the channel you want your modmail to be sent**")
+        # Set up embed to let the user how to start sending modmail
+        ModMail = Embed(title="**Welcome to Modmail!**",
+                        description=desc,
+                        colour=self.bot.admin_colour,
+                        timestamp=datetime.datetime.utcnow())
+        ModMail.set_thumbnail(url=self.bot.user.avatar_url)
 
-            # Check the response is from the author and from the same channel as the previous message
-            def check(m):
-                return m.author == ctx.author and m.channel == ctx.channel
+        modmail_message = await user_channel.send(embed=ModMail)
 
-            # Wait for the message from the author
-            msg = await self.bot.wait_for('message', check=check)
+        # Auto add the ✅ reaction
+        await modmail_message.add_reaction('✅')
 
-            # As long as the channel exists within the guild
-            if int(msg.content) in channels:
+        # Setup up pool connection and cursor
+        async with pool.acquire() as conn:
+            async with conn.cursor() as cur:
+                # Define the insert statement that will insert information about the modmail channel
+                insert_query = """INSERT INTO moderatormail (guildID, channelID, messageID, modmailChannelID) VALUES (%s, %s, %s, %s)"""
+                vals = ctx.guild.id, user_channel.id, modmail_message.id, modmail_channel.id,
 
-                desc = "React to this message if you want to send a message to the Staff Team!" \
-                       "\n\n**React with ✅**" \
-                       "\n\nWe encourage all suggestions/thoughts and opinions on the server!" \
-                       "\nAs long as it is **valid** criticism." \
-                       "\n\n\n**Purely negative feedback will not be considered.**"
+                # Execute the SQL Query
+                await cur.execute(insert_query, vals)
+                await conn.commit()
 
-                # Set up embed to let the user how to start sending modmail
-                ModMail = Embed(title="**Welcome to Modmail!**",
-                                description=desc,
-                                colour=self.bot.admin_colour,
-                                timestamp=datetime.datetime.utcnow())
-
-                ModMail.set_thumbnail(url=self.bot.user.avatar_url)
-
-                try:
-                    # Get the channel object from the channelID input by the user
-                    channel = ctx.author.guild.get_channel(channelID)
-                    modmailchannelID = await channel.send(embed=ModMail)
-
-                    # Auto add the ✅ reaction
-                    await modmailchannelID.add_reaction('✅')
-
-                    # Setup up pool connection and cursor
-                    async with pool.acquire() as conn:
-                        async with conn.cursor() as cur:
-                            # Define the insert statement that will insert information about the modmail channel
-                            insert_query = """INSERT INTO moderatormail (guildID, channelID, messageID, modmailChannelID) VALUES (%s, %s, %s, %s)"""
-                            vals = ctx.author.guild.id, channelID, modmailchannelID.id, int(msg.content),
-
-                            # Execute the SQL Query
-                            await cur.execute(insert_query, vals)
-                            await conn.commit()
-
-                        text = "**Modmail System** is successfully set up!" \
-                               f"\nRefer to **{ctx.prefix}help modmail** for more information"
-                        await self.bot.generate_embed(ctx, desc=text)
-                        return
-
-                except aiomysql.IntegrityError:
-                    text = "**Modmail System** already set up!" \
-                           f"\nRefer to **{ctx.prefix}help modmail** for more information"
-                    await self.bot.generate_embed(ctx, desc=text)
-            else:
-                # Send error message if the channel ID is not recognised
-                text = "**Invalid ChannelID Detected... Aborting Process**"
-                await self.bot.generate_embed(ctx, desc=text)
-                return
-        else:
-            # Send error message if the channel ID is not recognised
-            text = "**Invalid ChannelID Detected... Aborting Process**"
+            text = "**Modmail System** is successfully set up!" \
+                   f"\nRefer to **{ctx.prefix}help modmail** for more information"
             await self.bot.generate_embed(ctx, desc=text)
-            return
 
     @modmail.command(name="update")
     @has_permissions(manage_guild=True)
     @bot_has_permissions(administrator=True)
-    async def mmupdate(self, ctx, channelID: int):
+    async def mmupdate(self, ctx, user_channel: TextChannel):
         """
         Update the Channel that the Modmail is logged to
-        Input the ID of the New Channel
+        You can Mention or use the Channel ID
         """
-
-        # Retrieve a list of channel id's in the guild
-        channels = [channel.id for channel in ctx.guild.channels]
 
         # Setup pool
         pool = self.bot.db
@@ -484,7 +426,7 @@ class Guild(Cog):
             async with conn.cursor() as cur:
                 # Get the author's row from the Members Table
                 select_query = """SELECT * FROM moderatormail WHERE guildID = (%s)"""
-                vals = ctx.author.guild.id,
+                vals = ctx.guild.id,
 
                 # Execute the SQL Query
                 await cur.execute(select_query, vals)
@@ -497,36 +439,21 @@ class Guild(Cog):
                 await self.bot.generate_embed(ctx, desc=text)
                 return
 
-        # As long as the channel exists within the guild
-        if channelID in channels:
+        # Setup up pool connection and cursor
+        async with pool.acquire() as conn:
+            async with conn.cursor() as cur:
+                # Define the update statement that will insert information about the modmail channel
+                update_query = """UPDATE moderatormail SET modmailChannelID = (%s) WHERE guildID = (%s)"""
+                vals = user_channel.id, ctx.guild.id
 
-            try:
+                # Execute the SQL Query
+                await cur.execute(update_query, vals)
+                await conn.commit()
 
-                # Setup up pool connection and cursor
-                async with pool.acquire() as conn:
-                    async with conn.cursor() as cur:
-                        # Define the update statement that will insert information about the modmail channel
-                        update_query = """UPDATE moderatormail SET modmailChannelID = (%s) WHERE guildID = (%s)"""
-                        vals = channelID, ctx.author.guild.id
-
-                        # Execute the SQL Query
-                        await cur.execute(update_query, vals)
-                        await conn.commit()
-
-            except aiomysql.Error:
-                text = "**Something Went Wrong! >:( Try Again Later!**"
-                await self.bot.generate_embed(ctx, desc=text)
-
-            # Send confirmation that the channel has been updated
-            channel = ctx.author.guild.get_channel(channelID)
-            text = "**Channel Updated**" \
-                   f"\nNew Modmail will be sent to {channel.mention}"
-            await self.bot.generate_embed(ctx, desc=text)
-
-        else:
-            # Send error message if the channel ID is not recognised
-            text = "**Invalid ChannelID Detected... Aborting Process**"
-            await self.bot.generate_embed(ctx, desc=text)
+        # Send confirmation that the channel has been updated
+        text = "**Channel Updated**" \
+               f"\nNew Modmail will be sent to {user_channel.mention}"
+        await self.bot.generate_embed(ctx, desc=text)
 
     @modmail.command(name="delete")
     @has_permissions(manage_guild=True)
@@ -733,6 +660,17 @@ class Guild(Cog):
 
                 await asyncio.sleep(5)
                 await user_channel.delete()
+
+    @mlsetup.error
+    @mlupdate.error
+    @mmsetup.error
+    @mmupdate.error
+    async def mlsetup_command_error(self, ctx, exc):
+        """Catching error if channel is not recognised"""
+
+        if isinstance(exc, BadArgument):
+            text = "**Channel Not Detected... Aborting Process**"
+            await self.bot.generate_embed(ctx, desc=text)
 
 
 def setup(bot):

@@ -173,7 +173,7 @@ class Interactive(Cog):
                 colour=self.bot.random_colour(),
                 timestamp=datetime.datetime.utcnow())
             embed.set_image(url=random.choice(cuddling_array))
-            embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
+            embed.set_footer(text=f"Requested by {member}", icon_url=userAvatar)
 
             # Send the embedded message to the user
             await ctx.send(embed=embed)
@@ -209,7 +209,7 @@ class Interactive(Cog):
                 colour=self.bot.random_colour(),
                 timestamp=datetime.datetime.utcnow())
             embed.set_image(url=random.choice(killing_array))
-            embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
+            embed.set_footer(text=f"Requested by {member}", icon_url=userAvatar)
 
             # Send the embedded message to the user
             await ctx.send(embed=embed)
@@ -245,7 +245,7 @@ class Interactive(Cog):
                 colour=self.bot.random_colour(),
                 timestamp=datetime.datetime.utcnow())
             embed.set_image(url=random.choice(slapping_array))
-            embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
+            embed.set_footer(text=f"Requested by {member}", icon_url=userAvatar)
 
             # Send the embedded message to the user
             await ctx.send(embed=embed)
@@ -281,7 +281,7 @@ class Interactive(Cog):
                 colour=self.bot.random_colour(),
                 timestamp=datetime.datetime.utcnow())
             embed.set_image(url=random.choice(patting_array))
-            embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
+            embed.set_footer(text=f"Requested by {member}", icon_url=userAvatar)
 
             # Send the embedded message to the user
             await ctx.send(embed=embed)
@@ -316,7 +316,7 @@ class Interactive(Cog):
                 colour=self.bot.random_colour(),
                 timestamp=datetime.datetime.utcnow())
             embed.set_image(url=random.choice(lemon_array))
-            embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
+            embed.set_footer(text=f"Requested by {member}", icon_url=userAvatar)
 
             # Send the embedded message to the user
             await ctx.send(embed=embed)
@@ -351,7 +351,7 @@ class Interactive(Cog):
                 colour=self.bot.random_colour(),
                 timestamp=datetime.datetime.utcnow())
             embed.set_image(url=random.choice(choking_array))
-            embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
+            embed.set_footer(text=f"Requested by {member}", icon_url=userAvatar)
 
             # Send the embedded message to the user
             await ctx.send(embed=embed)
@@ -387,7 +387,7 @@ class Interactive(Cog):
                 colour=self.bot.random_colour(),
                 timestamp=datetime.datetime.utcnow())
             embed.set_image(url=random.choice(hugging_array))
-            embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
+            embed.set_footer(text=f"Requested by {member}", icon_url=userAvatar)
 
             # Send the embedded message to the user
             await ctx.send(embed=embed)

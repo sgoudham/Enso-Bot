@@ -32,12 +32,8 @@ from discord.ext.commands import BucketType, cooldown, command, Cog
 from discord.ext.commands import is_owner, bot_has_permissions
 from owotext import OwO
 
-counter = 0
-
 
 def generate_meme(image_path, top_text, bottom_text='', font_path='images/homies/impact/Impacted.ttf', font_size=9):
-    global counter
-
     get_image = Image.open(image_path)
     draw = ImageDraw.Draw(get_image)
     image_width, image_height = get_image.size
@@ -350,9 +346,6 @@ class Fun(Cog):
     async def homies(self, ctx, *, text):
         """Summoning the Homies"""
 
-        # Global counter for saving homies meme
-        global counter
-
         # Make sure the text entered is less than 20 characters
         if len(text) >= 20:
             await self.bot.generate_embed(ctx, desc="Please make sure the prompt is below **20** characters!")
@@ -385,7 +378,7 @@ class Fun(Cog):
         # Send the text back
         await ctx.message.channel.send(owo)
 
-    @command(name="text")
+    @command(name="text", hidden=True)
     @cooldown(1, 1, BucketType.user)
     async def image_to_text(self, ctx):
         """Display text from an image submitted"""

@@ -87,7 +87,7 @@ def displayServerImage(array, ctx, name):
         colour=ctx.bot.rnd_colour,
         timestamp=datetime.datetime.utcnow())
     embed.set_image(url=random.choice(array))
-    embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
+    embed.set_footer(text=f"Requested by {member}", icon_url=userAvatar)
 
     return embed
 
@@ -161,7 +161,7 @@ class Enso(Cog):
                     colour=self.bot.random_colour(),
                     timestamp=datetime.datetime.utcnow())
                 embed.set_image(url=random.choice(array))
-                embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
+                embed.set_footer(text=f"Requested by {member}", icon_url=userAvatar)
 
                 await ctx.send(embed=embed)
         else:

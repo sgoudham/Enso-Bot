@@ -1,4 +1,4 @@
-from discord import Embed, Member
+from discord import Member
 from discord.ext.commands import Cog, command, is_owner
 
 
@@ -23,7 +23,7 @@ class Owner(Cog):
     async def leave(self, ctx):
         """Leaves the guild"""
 
-        await ctx.send("**Leaving the guild... Bye Bye uvu**")
+        await self.bot.generate_embed(ctx, desc="**Leaving the guild... Bye Bye uvu**")
         await ctx.guild.leave()
 
     @command(name="restart", hidden=True)
@@ -31,10 +31,8 @@ class Owner(Cog):
     async def restart(self, ctx):
         """Restart the Bot"""
 
-        embed = Embed(
-            description="**Success Senpai! My Reboot Had No Problems** <a:ThumbsUp:737832825469796382>",
-            colour=self.bot.admin_colour)
-        await ctx.send(embed=embed)
+        self.bot.generate_embed(ctx, desc="**Success Senpai!"
+                                          "\nMy Reboot Had No Problems** <a:ThumbsUp:737832825469796382>")
 
         self.bot.db.terminate()
         await self.bot.db.wait_closed()

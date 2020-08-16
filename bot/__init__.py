@@ -165,6 +165,12 @@ class Bot(commands.Bot):
         # Start the background task(s)
         change_status.start()
 
+        # Run the bot, allowing it to come online
+        try:
+            self.run(API_TOKEN)
+        except discord.errors.LoginFailure as e:
+            print(e, "Login unsuccessful.")
+
     # --------------------------------------------!Cache Section!-------------------------------------------------------
 
     def store_cache(self, guildid, prefix, channel, rolespersist):
@@ -536,4 +542,4 @@ class Bot(commands.Bot):
                 await conn.commit()
                 print(cur.rowcount, f"{member} Left {member.guild.name}, Roles stored into Members")
 
-    # --------------------------------------------!End Events Section!--------------------------------------------------
+        # --------------------------------------------!End Events Section!----------------------------------------------

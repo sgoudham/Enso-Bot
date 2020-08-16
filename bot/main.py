@@ -15,15 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-import discord
-
-from bot import Bot, API_TOKEN
+from bot import Bot
 
 # Initiating Bot Object As Client
 client = Bot()
-
-# Run the bot, allowing it to come online
-try:
-    client.run(API_TOKEN)
-except discord.errors.LoginFailure as e:
-    print("Login unsuccessful.")

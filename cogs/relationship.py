@@ -16,16 +16,13 @@
 
 import asyncio
 import datetime
-import random
 
-from discord import Member, Embed, Colour
+from discord import Member, Embed
 from discord.ext.commands import BucketType, command, cooldown, bot_has_permissions, Cog
-
-from settings import colour_list
 
 
 # Sets up the embed for the marriage info
-def marriageInfo(target, marriedUser, marriedDate, currentDate, married):
+def marriageInfo(self, target, marriedUser, marriedDate, currentDate, married):
     # Make sure that non-users can still use the marriage
     if not married:
         # Set up the fields for the embed
@@ -45,7 +42,7 @@ def marriageInfo(target, marriedUser, marriedDate, currentDate, married):
 
     # Set the title, colour, timestamp and thumbnail
     embed = Embed(title=f"{target.name}'s Marriage Information",
-                  colour=Colour(int(random.choice(colour_list))),
+                  colour=self.bot.random_colour(),
                   timestamp=datetime.datetime.utcnow())
     embed.set_thumbnail(url=target.avatar_url)
 
@@ -306,7 +303,7 @@ class Relationship(Cog):
         currentDate = ctx.message.created_at.strftime("%a, %b %d, %Y")
 
         # Get the marriage info embed and then send it to the display
-        embed = marriageInfo(member, marriedUser, marriedDate, currentDate, married)
+        embed = marriageInfo(self, member, marriedUser, marriedDate, currentDate, married)
         await ctx.send(embed=embed)
 
 

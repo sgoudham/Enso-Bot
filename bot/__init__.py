@@ -24,9 +24,6 @@ from discord import Colour, Embed
 from discord.ext import commands, tasks
 from discord.ext.commands import when_mentioned_or
 
-# Global counter for statuses
-from settings import cache
-
 counter = 0
 
 # Get DB information from .env
@@ -56,7 +53,7 @@ class Bot(commands.Bot):
         self.owner_id = 154840866496839680,  # Your unique User ID
         self.case_insensitive = True  # Commands are now Case Insensitive
         self.admin_colour = Colour(0x62167a)  # Admin Embed Colour
-        self.version = "v1.7.2",  # Version number of Ensō~Chan
+        self.version = "v1.7.2"  # Version number of Ensō~Chan
         self.remove_command("help")  # Remove default help command
 
         # Define variables that are for Enso only
@@ -113,7 +110,6 @@ class Bot(commands.Bot):
 
                     # Store the guildID's, modlog channels and prefixes within cache
                     for row in results:
-                        cache(guildid=row[0], prefix=row[1], channel=row[2], rolespersist=row[3])
                         self.enso_cache[row[0]] = {"Prefix": row[1], "Modlogs": row[2], "RolesPersist": row[3]}
 
         # Make sure the connection is setup before the bot is ready
@@ -130,7 +126,7 @@ class Bot(commands.Bot):
                                    headers={'Authorization': disc_bots_gg_auth})
                 await session.close()
 
-        @tasks.loop(minutes=10.0, reconnect=True)
+        @tasks.loop(minutes=10, reconnect=True)
         async def change_status():
             """Creating Custom Statuses as a Background Task"""
 
@@ -234,23 +230,13 @@ class Bot(commands.Bot):
 
         if setup:
             # Send confirmation that modmail channel has been setup
-            await ctx.send("Your **Modlogs Channel** is now successfully set up!" +
+            await ctx.send("**Modlogs Channel** successfully setup in <#{channelID}>" +
                            f"\nPlease refer to **{ctx.prefix}help** for any information")
         else:
             # Let the user know that the guild modlogs channel has been updated
             channel = ctx.guild.get_channel(channelID)
-            await ctx.send(f"Modlog Channel for **{ctx.guild.name}** has been updated to {channel.mention}")
-
-    def cache_modlogs(self, guildid, channel):
-        """Store the cached modlog channels"""
-
-        self.enso_cache[guildid]["Modlogs"] = channel
-
-    def del_modlog_channel(self, guildid):
-        """Deleting the key - value pair for guild/modlogs"""
-
-        if self.enso_cache[guildid]["Modlogs"] is not None:
-            del self.enso_cache[guildid]["Modlogs"]
+            await self.generate_embed(ctx,
+                                      desc=f"Modlog Channel for **{ctx.guild.name}** has been updated to {channel.mention}")
 
     def remove_modlog_channel(self, guildid):
         """Remove the value of modlog for the guild specified"""
@@ -285,17 +271,7 @@ class Bot(commands.Bot):
                 print(cur.rowcount, f"Guild prefix has been updated for guild {ctx.guild.name}")
 
                 # Let the user know that the guild prefix has been updated
-                await ctx.send(f"**Guild prefix has been updated to `{prefix}`**")
-
-    def cache_prefix(self, guildid, prefix):
-        """Storing prefixes for the guild"""
-
-        self.enso_cache[guildid]["Prefix"] = prefix
-
-    def del_cache_prefix(self, guildid):
-        """Deleting the key - value pair for guild"""
-
-        del self.enso_cache[guildid]["Prefix"]
+                await self.generate_embed(ctx, desc=f"**Guild prefix has been updated to `{prefix}`**")
 
     def get_prefix_for_guild(self, guildid):
         """Get the prefix of the guild that the user is in"""
@@ -371,7 +347,8 @@ class Bot(commands.Bot):
         # Processing the message
         await self.process_commands(message)
 
-    async def on_ready(self):
+    @staticmethod
+    async def on_ready():
         """Displaying if Bot is Ready"""
         print("UvU Senpaiii I'm weady")
 

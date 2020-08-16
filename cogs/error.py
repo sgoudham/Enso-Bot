@@ -124,6 +124,9 @@ class Errors(Cog):
         # Get permissions for the bot within
         perms = ctx.guild.me.permissions_in(ctx.message.channel)
 
+        # Ignore global event handler if command already has error handler event
+        if hasattr(ctx.command, "on_error"): return
+
         # if the user did not specify an user
         if isinstance(args2, commands.MissingRequiredArgument):
             await on_command_missing_argument(ctx, perms)

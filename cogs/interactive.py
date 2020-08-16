@@ -17,10 +17,8 @@
 import datetime
 import random
 
-from discord import Colour, Embed, Member
+from discord import Embed, Member
 from discord.ext.commands import cooldown, command, BucketType, bot_has_permissions, Cog
-
-from settings import colour_list
 
 
 # Gets the member and user avatar
@@ -103,7 +101,7 @@ class Interactive(Cog):
             # Set up the embed to display a random kissing gif
             embed = Embed(
                 title=title,
-                colour=Colour(int(random.choice(colour_list))),
+                colour=self.bot.random_colour(),
                 timestamp=datetime.datetime.utcnow())
             embed.set_image(url=random.choice(kissing_array))
             embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
@@ -172,7 +170,7 @@ class Interactive(Cog):
             # Set up the embed to display a random cuddling gif
             embed = Embed(
                 title=title,
-                colour=Colour(int(random.choice(colour_list))),
+                colour=self.bot.random_colour(),
                 timestamp=datetime.datetime.utcnow())
             embed.set_image(url=random.choice(cuddling_array))
             embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
@@ -208,7 +206,7 @@ class Interactive(Cog):
             # Set up the embed to display a random killing gif
             embed = Embed(
                 title=title,
-                colour=Colour(int(random.choice(colour_list))),
+                colour=self.bot.random_colour(),
                 timestamp=datetime.datetime.utcnow())
             embed.set_image(url=random.choice(killing_array))
             embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
@@ -244,7 +242,7 @@ class Interactive(Cog):
             # Set up the embed to display a random slapping gif
             embed = Embed(
                 title=title,
-                colour=Colour(int(random.choice(colour_list))),
+                colour=self.bot.random_colour(),
                 timestamp=datetime.datetime.utcnow())
             embed.set_image(url=random.choice(slapping_array))
             embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
@@ -280,7 +278,7 @@ class Interactive(Cog):
             # Set up the embed to display a random patting gif
             embed = Embed(
                 title=title,
-                colour=Colour(int(random.choice(colour_list))),
+                colour=self.bot.random_colour(),
                 timestamp=datetime.datetime.utcnow())
             embed.set_image(url=random.choice(patting_array))
             embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
@@ -315,7 +313,7 @@ class Interactive(Cog):
             # Set up the embed to display a random lemon gif
             embed = Embed(
                 title=title,
-                colour=Colour(int(random.choice(colour_list))),
+                colour=self.bot.random_colour(),
                 timestamp=datetime.datetime.utcnow())
             embed.set_image(url=random.choice(lemon_array))
             embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
@@ -350,7 +348,7 @@ class Interactive(Cog):
             # Set up the embed to display a random choking gif
             embed = Embed(
                 title=title,
-                colour=Colour(int(random.choice(colour_list))),
+                colour=self.bot.random_colour(),
                 timestamp=datetime.datetime.utcnow())
             embed.set_image(url=random.choice(choking_array))
             embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))
@@ -386,7 +384,7 @@ class Interactive(Cog):
             # Set up the embed to display a random hugging gif
             embed = Embed(
                 title=title,
-                colour=Colour(int(random.choice(colour_list))),
+                colour=self.bot.random_colour(),
                 timestamp=datetime.datetime.utcnow())
             embed.set_image(url=random.choice(hugging_array))
             embed.set_footer(text=f"Requested by {member}", icon_url='{}'.format(userAvatar))

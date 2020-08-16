@@ -13,10 +13,10 @@ class Owner(Cog):
     async def dm(self, ctx, member: Member, *, text):
         """DM users"""
 
-        # Send the message typed the mentioned user
-        await member.send(text)
         # Delete the message sent instantly
         await ctx.message.delete()
+        # Send the message typed the mentioned user
+        await member.send(text)
 
     @command(name="leave", hidden=True)
     @is_owner()

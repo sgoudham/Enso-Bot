@@ -360,40 +360,31 @@ class Enso(Cog):
         # Getting the channel verification by setting it to #verification
         channel = guild.get_channel(self.bot.enso_verification_ID)
 
-        # If the channel is #verification
-        if payload.channel_id == channel.id:
+        # If the channel is #verification and If the member is not a user, do nothing
+        if not payload.member.bot and payload.channel_id == channel.id:
 
-            # A check that makes sure that the reaction is done by the bot
-            def check(m):
-                return m == self.bot.user
+            # Get the 'Lucid' role and then give it to the user
+            lucid = discord.utils.get(guild.roles, name='Lucid')
+            not_verified = discord.utils.get(guild.roles, name='Not Verified')
 
-            # If the member is not a user, do nothing
-            if check(payload.member):
-                return
-            else:
+            # if the emoji that was reacted is the tick mark.
+            if payload.emoji.name == "✅":
+                await member.remove_roles(not_verified)
+                await member.add_roles(lucid)
 
-                # Get the 'Lucid' role and then give it to the user
-                lucid = discord.utils.get(guild.roles, name='Lucid')
-                not_verified = discord.utils.get(guild.roles, name='Not Verified')
+                # Set hamothyID equal to my id in discord
+                hamothyID = '<@&715412394968350756>'
 
-                # if the emoji that was reacted is the tick mark.
-                if payload.emoji.name == "✅":
-                    await member.remove_roles(not_verified)
-                    await member.add_roles(lucid)
+                # Set the channel id to "general"
+                general = guild.get_channel(663651584399507481)
 
-                    # Set hamothyID equal to my id in discord
-                    hamothyID = '<@&715412394968350756>'
+                # String for welcoming people in the #general channel
+                general_welcome = f"Welcome to the server! {member.mention} I hope you enjoy your stay here <a:huh:676195228872474643> <a:huh:676195228872474643> " \
+                                  f"\nPlease go into <#722347423913213992> to choose some ping-able roles for events! " \
+                                  f"\nPlease ping {hamothyID} for any questions about the server and of course, the other staff members!"
 
-                    # Set the channel id to "general"
-                    general = guild.get_channel(663651584399507481)
-
-                    # String for welcoming people in the #general channel
-                    general_welcome = f"Welcome to the server! {member.mention} I hope you enjoy your stay here <a:huh:676195228872474643> <a:huh:676195228872474643> " \
-                                      f"\nPlease go into <#722347423913213992> to choose some ping-able roles for events! " \
-                                      f"\nPlease ping {hamothyID} for any questions about the server and of course, the other staff members!"
-
-                    # Send welcome message to #general
-                    await general.send(general_welcome)
+                # Send welcome message to #general
+                await general.send(general_welcome)
 
         # If the message id equals the self roles message
         if payload.message_id == 722514840559812649:

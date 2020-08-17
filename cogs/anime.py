@@ -14,8 +14,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-from typing import Optional
-
 import aiohttp
 from decouple import config
 from discord import Embed
@@ -166,7 +164,7 @@ class Anime(Cog):
 
     @group(name="waifu", invoke_without_command=True, case_insensitive=True)
     @bot_has_permissions(embed_links=True, add_reactions=True)
-    async def waifu(self, ctx, *, waifu2: Optional[str] = None):
+    async def waifu(self, ctx, *, name: str):
         """
         Shows a Waifu (UNDER CONSTRUCTION)
         Waifu's are grabbed from mywaifulist.com
@@ -175,48 +173,47 @@ class Anime(Cog):
         # Local Variable i to allow the index of the pages[] to be modified
         i = 0
 
-        # When a waifu has been specified, retrieve waifu(s) matching the user input
-        if waifu2:
+        waifus_dict = {}
+        url = "https://mywaifulist.moe/api/v1/search/"
+        data = {"term": name,
+                'content-type': "application/json"}
 
-            waifus_dict = {}
-            url = "https://mywaifulist.moe/api/v1/search/"
-            data = {"term": waifu2,
-                    'content-type': "application/json"}
+        # Searching API for waifu(s)
+        async with aiohttp.ClientSession() as session:
+            async with session.post(url, data=data, headers=self.headers) as resp:
+                # Store waifu's in dict when request is successful, else send an error
+                if resp.status == 200:
+                    waifu_dict = await resp.json()
 
-            # Searching API for waifu(s)
-            async with aiohttp.ClientSession() as session:
-                async with session.post(url, data=data, headers=self.headers) as resp:
-                    # Store waifu's in dict when request is successful, else send an error
-                    if resp.status == 200:
-                        waifu_dict = await resp.json()
+                # Send error if something went wrong internally/while grabbing data from API
+                else:
+                    await self.bot.generate_embed(ctx, desc="**Something went wrong!**")
 
-                    # Send error if something went wrong internally/while grabbing data from API
-                    else:
-                        await self.bot.generate_embed(ctx, desc="**Something went wrong!**")
+        # As long waifu's were returned from the GET request
+        # Store waifus in a dict
+        if len(waifu_dict["data"]) > 0:
+            for waifu in waifu_dict["data"]:
 
-            # As long waifu's were returned from the GET request
-            # Store waifus in a dict
-            if len(waifu_dict["data"]) > 0:
-                for waifu in waifu_dict["data"]:
+                # Only store "Waifu's" and "Husbando's"
+                if waifu["type"] in ["Waifu", "Husbando"]:
+                    waifus_dict[waifu["name"]] = {}
+                    for value in waifu:
+                        store_waifus(waifus_dict, waifu, value)
 
-                    # Only store "Waifu's" and "Husbando's"
-                    if waifu["type"] in ["Waifu", "Husbando"]:
-                        waifus_dict[waifu["name"]] = {}
-                        for value in waifu:
-                            store_waifus(waifus_dict, waifu, value)
-                    else:
-                        break
+                else:
+                    break
 
-            # When no waifu has been retrieved, send error message to the user
-            else:
-                await self.bot.generate_embed(ctx, desc="**Waifu Not Found!**")
+        # When no waifu has been retrieved, send error message to the user
+        else:
 
-            # Get the instance of the bot
-            bot = ctx.guild.get_member(self.bot.user.id)
+            await self.bot.generate_embed(ctx, desc="**Waifu Not Found!**")
 
-            # Send the menu to the display
-            menu = HelpMenu(i, waifus_dict, self.bot, bot)
-            await menu.start(ctx)
+        # Get the instance of the bot
+        bot = ctx.guild.get_member(self.bot.user.id)
+
+        # Send the menu to the display
+        menu = HelpMenu(i, waifus_dict, self.bot, bot)
+        await menu.start(ctx)
 
     @waifu.command(name="daily")
     async def daily_waifu(self, ctx):

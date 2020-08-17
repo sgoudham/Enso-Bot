@@ -373,11 +373,13 @@ class Enso(Cog):
             else:
 
                 # Get the 'Lucid' role and then give it to the user
-                role = discord.utils.get(guild.roles, name='Lucid')
+                lucid = discord.utils.get(guild.roles, name='Lucid')
+                not_verified = discord.utils.get(guild.roles, name='Not Verified')
 
                 # if the emoji that was reacted is the tick mark.
                 if payload.emoji.name == "✅":
-                    await member.add_roles(role)
+                    await member.remove_roles(not_verified)
+                    await member.add_roles(lucid)
 
                     # Set hamothyID equal to my id in discord
                     hamothyID = '<@&715412394968350756>'

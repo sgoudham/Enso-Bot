@@ -16,16 +16,14 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 # Initiating Bot Object As Client
-from glob import glob
 
 from bot.__init__ import Bot
 
 client = Bot()
 
-if __name__ == "__main__":
-    cogs = [path.split("\\")[-1][:-3] for path in glob("./cogs/*.py")]
-    for ext in cogs:
-        client.load_extension(f"cogs.{ext}")
+if __name__ == '__main__':
+    for ext in client.extensions():
+        client.load_extension(ext)
 
 # Run the bot
 client.run_bot()

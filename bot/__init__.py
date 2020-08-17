@@ -536,3 +536,11 @@ class Bot(commands.Bot):
             self.run(API_TOKEN)
         except discord.errors.LoginFailure as e:
             print(e, "Login unsuccessful.")
+
+    # Returns a list of all the cogs
+    def extensions(self):
+        ext = ['cogs.interactive', 'cogs.anime', 'cogs.relationship',
+               'cogs.help', 'cogs.info', 'cogs.guild', 'cogs.fun', "cogs.error",
+               'cogs.enso', 'cogs.owner', 'cogs.moderation']
+
+        return ext

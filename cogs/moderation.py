@@ -297,32 +297,11 @@ class Moderation(Cog):
                 if role is None:
                     muted = await ctx.guild.create_role(name="Muted")
                     for channel in ctx.guild.channels:
-                        await channel.set_permissions(muted, read_messages=True, send_messages=False,
-                                                      read_message_history=False)
+                        await channel.set_permissions(muted, read_messages=False)
 
                     await mute_members(self, ctx, members, reason, muted)
-
-                # Make sure that the Muted Role has the correct permissions before muting member(s)
+                    
                 else:
-                    for channel in ctx.guild.channels:
-                        perms = channel.overwrites_for(role)
-
-                        # Set the read_messages to True, only when the read_messages is False or None
-                        if not perms.read_messages or perms.read_messages is None:
-                            perms.read_messages = True
-
-                        # Set the send_messages to True, only when the send_messages is False or None
-                        if perms.send_messages or perms.send_messages is None:
-                            perms.send_messages = False
-
-                        # Set the read_message_history to True, only when the read_message_history is False or None
-                        if perms.read_message_history or perms.read_message_history is None:
-                            perms.read_message_history = False
-
-                        # Overwrite the permissions if any perms were changed
-                        if perms.read_messages or perms.send_messages or perms.read_message_history:
-                            await channel.set_permissions(role, overwrite=perms)
-
                     await mute_members(self, ctx, members, reason, role)
 
     @command(name="unmute", usage="`<member>...` `[reason]`")

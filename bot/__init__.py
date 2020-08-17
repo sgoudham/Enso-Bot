@@ -10,7 +10,11 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <https://www.gnu.org/licenses/>.
+
 import datetime
+import logging
 import os
 import random
 
@@ -22,8 +26,11 @@ from discord import Colour, Embed
 from discord.ext import commands, tasks
 from discord.ext.commands import when_mentioned_or
 
-# You should have received a copy of the GNU General Public License
-# along with this program. If not, see <https://www.gnu.org/licenses/>.
+logger = logging.getLogger('discord')
+logger.setLevel(logging.DEBUG)
+handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
+handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
+logger.addHandler(handler)
 
 counter = 0
 
@@ -421,6 +428,8 @@ class Bot(commands.Bot):
         In the Enso guild, it will send an introduction embed
         """
 
+        if member.bot: return
+
         # Get the guild
         guild = member.guild
 
@@ -511,6 +520,9 @@ class Bot(commands.Bot):
 
     async def on_member_remove(self, member):
         """Storing User Roles within Database When User Leaves Guild"""
+
+        if member.bot: return
+
         role_ids = ", ".join([str(r.id) for r in member.roles if not r.managed])
 
         # Setup pool

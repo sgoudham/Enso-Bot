@@ -587,6 +587,8 @@ class Guild(Cog):
                 try:
                     # Wait for the user to add a reaction
                     reaction, user = await self.bot.wait_for('reaction_add', check=emoji_check, timeout=60.0)
+
+                # Delete channel if user does not react within 60 seconds
                 except asyncio.TimeoutError as ex:
                     print(ex)
                     await user_channel.delete()

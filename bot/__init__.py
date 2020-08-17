@@ -221,8 +221,8 @@ class Bot(commands.Bot):
 
         if setup:
             # Send confirmation that modmail channel has been setup
-            await ctx.send(f"**Modlogs Channel** successfully setup in <#{channelID}>" +
-                           f"\nPlease refer to **{ctx.prefix}help** for any information")
+            await self.bot.generate_embed(ctx, desc=f"**Modlogs Channel** successfully setup in <#{channelID}>" +
+                                                    f"\nPlease refer to **{ctx.prefix}help** for any information")
         else:
             # Let the user know that the guild modlogs channel has been updated
             channel = ctx.guild.get_channel(channelID)

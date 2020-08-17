@@ -12,9 +12,6 @@
 # GNU General Public License for more details.
 import datetime
 import random
-# You should have received a copy of the GNU General Public License
-# along with this program. If not, see <https://www.gnu.org/licenses/>.
-from glob import glob
 
 import aiohttp
 import aiomysql
@@ -23,6 +20,9 @@ from decouple import config
 from discord import Colour, Embed
 from discord.ext import commands, tasks
 from discord.ext.commands import when_mentioned_or
+
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 counter = 0
 
@@ -530,10 +530,6 @@ class Bot(commands.Bot):
         # --------------------------------------------!End Events Section!----------------------------------------------
 
     def run_bot(self):
-
-        cogs = [path.split("\\")[-1][:-3] for path in glob("./cogs/*.py")]
-        for ext in cogs:
-            self.load_extension(f"cogs.{ext}")
 
         # Run the bot, allowing it to come online
         try:

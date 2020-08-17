@@ -614,7 +614,7 @@ class Guild(Cog):
                     msg = await self.bot.wait_for('message', check=check)
 
                     # Making sure that the message is below 50 characters and the message was sent in the channel
-                    while len(msg.content) < 50 and msg.channel == user_channel:
+                    while len(msg.content) <= 50 and msg.channel == user_channel:
                         await user_channel.send(embed=error_handling(self, member))
 
                         # Wait for the message from the author

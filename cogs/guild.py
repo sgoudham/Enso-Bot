@@ -139,6 +139,24 @@ def send_modmail(self, msg, author):
     return embed
 
 
+async def wait_for_msg(self, check, user_channel):
+    """
+    Method to check if the user actually types in a message
+    If not, delete the channel
+    """
+
+    try:
+        # Wait for the message from the author
+        mod_message = await self.bot.wait_for('message', check=check, timeout=300.0)
+
+    # Delete channel if user does not send a message within 5 minutes
+    except asyncio.TimeoutError:
+        await user_channel.delete()
+        return None
+    else:
+        return mod_message
+
+
 # Set up the Cog
 class Guild(Cog):
     """Modmail System!"""
@@ -498,17 +516,14 @@ class Guild(Cog):
                    f"\nDo **{ctx.prefix}help modmail** to find out more!"
             await self.bot.generate_embed(ctx, desc=text)
 
-    # Setting up Listener to listen for reactions within the modmail channel created
     @Cog.listener()
     async def on_raw_reaction_add(self, payload):
-        # Don't count reactions that are made by the bot
-        if payload.user_id == self.bot.user.id:
-            return
+        """Listen for reactions for modmail channel"""
 
+        # Don't count reactions that are made by the bot
         # Don't count other reactions other than ✅ and ❌
-        elif payload.user_id:
-            if str(payload.emoji) not in ['✅', '❌']:
-                return
+        if payload.member.bot or str(payload.emoji) not in ['✅', '❌']:
+            return
 
         # Find a role corresponding to the Emoji name.
         guildid = payload.guild_id
@@ -527,15 +542,15 @@ class Guild(Cog):
                 await cur.execute(select_query, val)
                 result = await cur.fetchone()
 
-            # Adding error handling
-            if result is None:
-                return
+                # Adding error handling
+                if result is None:
+                    return
 
-            # Define variables
-            guild_id = int(result[0])
-            channel_id = int(result[1])
-            message_id = int(result[2])
-            modmail_channel_id = int(result[3])
+                # Define variables
+                guild_id = int(result[0])
+                channel_id = int(result[1])
+                message_id = int(result[2])
+                modmail_channel_id = int(result[3])
 
         # Bunch of checks to make sure it has the right guild, channel, message and reaction
         if payload.guild_id == guild_id and payload.channel_id == channel_id and payload.message_id == message_id and payload.emoji.name == "✅":
@@ -583,7 +598,6 @@ class Guild(Cog):
                 def emoji_check(reaction, user):
                     return user == member and str(reaction.emoji) in ['✅', '❌']
 
-                # Surround with try/except to catch any exceptions that may occur
                 try:
                     # Wait for the user to add a reaction
                     reaction, user = await self.bot.wait_for('reaction_add', check=emoji_check, timeout=60.0)
@@ -598,6 +612,7 @@ class Guild(Cog):
                     def check(m):
                         return m.author == payload.member and user_channel.id == instructions.channel.id
 
+                    # Checking if user wants to be Anonymous or not
                     if str(reaction.emoji) == "✅":
                         self.anon = True
 
@@ -610,15 +625,16 @@ class Guild(Cog):
                     # Tell the user to type their mail into the chat
                     instructions = await user_channel.send(embed=send_instructions(self, member))
 
-                    # Wait for the message from the author
-                    msg = await self.bot.wait_for('message', check=check)
+                    msg = await wait_for_msg(self, check, user_channel)
+                    if msg is None: return
 
                     # Making sure that the message is below 50 characters and the message was sent in the channel
                     while len(msg.content) <= 50 and msg.channel == user_channel:
                         await user_channel.send(embed=error_handling(self, member))
 
                         # Wait for the message from the author
-                        msg = await self.bot.wait_for('message', check=check)
+                        msg = await wait_for_msg(self, check, user_channel)
+                        if msg is None: return
 
                     # As long as the message is above 50 characters and in the correct channel
                     if len(msg.content) > 50 and msg.channel == user_channel:
@@ -632,7 +648,6 @@ class Guild(Cog):
                         text_bytes = str.encode(text)
 
                         file = io.BytesIO(text_bytes)
-
                         file_name = "Anon.txt" if self.anon else f"{member.name}.txt"
 
                         # Send the message to the modmail channel

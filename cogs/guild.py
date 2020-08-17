@@ -586,10 +586,10 @@ class Guild(Cog):
                 # Surround with try/except to catch any exceptions that may occur
                 try:
                     # Wait for the user to add a reaction
-                    reaction, user = await self.bot.wait_for('reaction_add', check=emoji_check)
-                except Exception as ex:
+                    reaction, user = await self.bot.wait_for('reaction_add', check=emoji_check, timeout=60.0)
+                except asyncio.TimeoutError as ex:
                     print(ex)
-                    return
+                    await user_channel.delete()
                 else:
 
                     # Making sure that the reply is from the author

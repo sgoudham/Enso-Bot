@@ -47,8 +47,8 @@ class Owner(Cog):
     async def restart(self, ctx):
         """Restart the Bot"""
 
-        self.bot.generate_embed(ctx, desc="**Success Senpai!"
-                                          "\nMy Reboot Had No Problems** <a:ThumbsUp:737832825469796382>")
+        await self.bot.generate_embed(ctx, desc="**Success Senpai!"
+                                                "\nMy Reboot Had No Problems** <a:ThumbsUp:737832825469796382>")
 
         self.bot.db.terminate()
         await self.bot.db.wait_closed()

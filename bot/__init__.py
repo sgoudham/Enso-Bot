@@ -11,6 +11,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 import datetime
+import os
 import random
 
 import aiohttp
@@ -529,18 +530,15 @@ class Bot(commands.Bot):
 
         # --------------------------------------------!End Events Section!----------------------------------------------
 
-    def run_bot(self):
+    def Run(self):
+        """Load the cogs and then run the bot"""
+
+        for file in os.listdir(f'.{os.sep}cogs'):
+            if file.endswith('.py'):
+                self.load_extension(f"cogs.{file[:-3]}")
 
         # Run the bot, allowing it to come online
         try:
             self.run(API_TOKEN)
         except discord.errors.LoginFailure as e:
             print(e, "Login unsuccessful.")
-
-    # Returns a list of all the cogs
-    def extensions(self):
-        ext = ['cogs.interactive', 'cogs.anime', 'cogs.relationship',
-               'cogs.help', 'cogs.info', 'cogs.guild', 'cogs.fun', "cogs.error",
-               'cogs.enso', 'cogs.owner', 'cogs.moderation']
-
-        return ext

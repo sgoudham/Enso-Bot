@@ -13,6 +13,7 @@
 
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
+
 from typing import Optional
 
 import aiohttp
@@ -191,7 +192,7 @@ class Anime(Cog):
 
                     # Send error if something went wrong internally/while grabbing data from API
                     else:
-                        await ctx.send("Something went wrong!")
+                        await self.bot.generate_embed(ctx, desc="**Something went wrong!**")
 
             # As long waifu's were returned from the GET request
             # Store waifus in a dict
@@ -208,9 +209,7 @@ class Anime(Cog):
 
             # When no waifu has been retrieved, send error message to the user
             else:
-                embed = Embed(description="**Waifu Not Found!**",
-                              colour=self.bot.admin_colour)
-                await ctx.send(embed=embed)
+                await self.bot.generate_embed(ctx, desc="**Waifu Not Found!**")
 
             # Get the instance of the bot
             bot = ctx.guild.get_member(self.bot.user.id)
@@ -219,28 +218,9 @@ class Anime(Cog):
             menu = HelpMenu(i, waifus_dict, self.bot, bot)
             await menu.start(ctx)
 
-        else:
-
-            # Set variables to retrieve data from the API
-            url = "https://mywaifulist.moe/api/v1/meta/random"
-
-            # Retrieve a random waifu from the API
-            async with aiohttp.ClientSession() as session:
-                async with session.get(url, headers=self.headers) as resp:
-                    # Store waifu's in dict when request is successful, else send an error
-                    if resp.status == 200:
-                        waifu_dict = await resp.json()
-                        waifu3 = waifu_dict["data"]
-
-                    # Send error if something went wrong internally/while grabbing data from API
-                    else:
-                        await ctx.send("Something went wrong!")
-
-            await ctx.send(embed=single_waifu_generator(self, waifu3))
-
     @waifu.command(name="daily")
     async def daily_waifu(self, ctx):
-        """Returns the daily Waifu from MyWaifuList"""
+        """Returns the Daily Waifu from MyWaifuList"""
 
         url = "https://mywaifulist.moe/api/v1/meta/daily"
 
@@ -257,6 +237,27 @@ class Anime(Cog):
                     await ctx.send("Something went wrong!")
 
         await ctx.send(embed=single_waifu_generator(self, waifu))
+
+    @waifu.command(name="random", aliases=["rnd"])
+    async def random_waifu(self, ctx):
+        """Returning a Random Waifu from MyWaifuList"""
+
+        # Set variables to retrieve data from the API
+        url = "https://mywaifulist.moe/api/v1/meta/random"
+
+        # Retrieve a random waifu from the API
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url, headers=self.headers) as resp:
+                # Store waifu's in dict when request is successful, else send an error
+                if resp.status == 200:
+                    waifu_dict = await resp.json()
+                    waifu3 = waifu_dict["data"]
+
+                # Send error if something went wrong internally/while grabbing data from API
+                else:
+                    await self.bot.generate_embed(ctx, desc="**Something went wrong!**")
+
+        await ctx.send(embed=single_waifu_generator(self, waifu3))
 
 
 def setup(bot):

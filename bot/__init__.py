@@ -50,7 +50,7 @@ class Bot(commands.Bot):
         super().__init__(command_prefix=get_prefix, **options)
         self.db = None
         self.description = 'All current available commands within Ensō~Chan',  # Set a description for the bot
-        self.owner_id = 154840866496839680,  # Your unique User ID
+        self.owner_id = 154840866496839680  # Your unique User ID
         self.case_insensitive = True  # Commands are now Case Insensitive
         self.admin_colour = Colour(0x62167a)  # Admin Embed Colour
         self.version = "v0.7.2"  # Version number of Ensō~Chan

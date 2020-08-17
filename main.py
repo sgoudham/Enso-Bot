@@ -18,5 +18,6 @@
 from bot import Bot
 
 # Initiating Bot Object As Client
+client = Bot()
 # Run the bot
-client = Bot().Run()
+client.execute()

@@ -542,7 +542,7 @@ class Bot(commands.Bot):
 
         # --------------------------------------------!End Events Section!----------------------------------------------
 
-    def Run(self):
+    def execute(self):
         """Load the cogs and then run the bot"""
 
         for file in os.listdir(f'.{os.sep}cogs'):

@@ -625,6 +625,7 @@ class Guild(Cog):
                     # Tell the user to type their mail into the chat
                     instructions = await user_channel.send(embed=send_instructions(self, member))
 
+                    # Wait for the message from the author
                     msg = await wait_for_msg(self, check, user_channel)
                     if msg is None: return
 

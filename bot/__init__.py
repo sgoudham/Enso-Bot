@@ -236,17 +236,17 @@ class Bot(commands.Bot):
 
     # --------------------------------------------!ModLogs Section!-----------------------------------------------------
 
-    async def storage_modlog_for_guild(self, pool, ctx, channelID, setup):
+    async def storage_modlog_for_guild(self, pool, ctx, channel_id, setup):
         """Updating the modlog within the dict and database"""
 
-        self.enso_cache[str(ctx.guild.id)]["modlogs"] = channelID
+        self.enso_cache[str(ctx.guild.id)]["modlogs"] = channel_id
 
         # Setup up pool connection and cursor
         async with pool.acquire() as conn:
             async with conn.cursor() as cur:
                 # Update the existing modlogs channel within the database
                 update_query = """UPDATE guilds SET modlogs = (%s) WHERE guildID = (%s)"""
-                update_vals = channelID, ctx.guild.id,
+                update_vals = channel_id, ctx.guild.id,
 
                 # Execute the query
                 await cur.execute(update_query, update_vals)
@@ -260,11 +260,11 @@ class Bot(commands.Bot):
 
         if setup:
             # Send confirmation that modmail channel has been setup
-            await self.bot.generate_embed(ctx, desc=f"**Modlogs Channel** successfully setup in <#{channelID}>" +
+            await self.bot.generate_embed(ctx, desc=f"**Modlogs Channel** successfully setup in <#{channel_id}>" +
                                                     f"\nPlease refer to **{ctx.prefix}help** for any information")
         else:
             # Let the user know that the guild modlogs channel has been updated
-            channel = ctx.guild.get_channel(channelID)
+            channel = ctx.guild.get_channel(channel_id)
             await self.generate_embed(ctx,
                                       desc=f"Modlog Channel for **{ctx.guild.name}** has been updated to {channel.mention}")
 

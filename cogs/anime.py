@@ -216,6 +216,7 @@ class Anime(Cog):
         await menu.start(ctx)
 
     @waifu.command(name="daily")
+    @bot_has_permissions(embed_links=True)
     async def daily_waifu(self, ctx):
         """Returns the Daily Waifu from MyWaifuList"""
 
@@ -236,6 +237,7 @@ class Anime(Cog):
         await ctx.send(embed=single_waifu_generator(self, waifu))
 
     @waifu.command(name="random", aliases=["rnd"])
+    @bot_has_permissions(embed_links=True)
     async def random_waifu(self, ctx):
         """Returning a Random Waifu from MyWaifuList"""
 

@@ -26,6 +26,8 @@ from discord import Colour, Embed
 from discord.ext import commands, tasks
 from discord.ext.commands import when_mentioned_or
 
+from bot.libs.cache import MyCoolCache
+
 logger = logging.getLogger('discord')
 logger.setLevel(logging.DEBUG)
 handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
@@ -79,6 +81,35 @@ class Bot(commands.Bot):
         self.enso_feedback_ID = 739807803438268427
 
         self.enso_cache = {}
+        self.member_cache = MyCoolCache(1000)
+
+        async def check_cache(member_id, guild_id):
+
+            pool = self.db
+
+            # If the key is within the cache already
+            if (member_id, guild_id) in self.member_cache.cache:
+                return self.member_cache.cache[member_id, guild_id]
+
+            else:
+                # fetch data from database
+                # Setup pool connection and cursor
+                async with pool.acquire() as conn:
+                    async with conn.cursor() as author_cursor:
+                        # Get the author's/members row from the Members Table
+                        select_query = """SELECT * FROM members WHERE discordID = (%s) and guildID = (%s)"""
+                        member_val = member_id, guild_id,
+
+                        # Execute The SQL Query
+                        await author_cursor.execute(select_query, member_val)
+                        result = await author_cursor.fetchone()
+
+                # Store it in cache
+                dict_items = {"married": result[1],
+                              "marriage_date": result[2],
+                              "muted_roles": result[4],
+                              "roles": result[5]}
+                self.member_cache.store_cache([member_id, guild_id], dict_items)
 
         async def create_connection():
             """Setting up connection using pool/aiomysql"""
@@ -109,7 +140,7 @@ class Bot(commands.Bot):
 
                     # Store the guildID's, modlog channels and prefixes within cache
                     for row in results:
-                        self.enso_cache[row[0]] = {"Prefix": row[1], "Modlogs": row[2], "RolesPersist": row[3]}
+                        self.enso_cache[row[0]] = {"prefix": row[1], "modlogs": row[2], "roles_persist": row[3]}
 
         # Make sure the connection is setup before the bot is ready
         self.loop.run_until_complete(create_connection())
@@ -166,36 +197,36 @@ class Bot(commands.Bot):
 
     # --------------------------------------------!Cache Section!-------------------------------------------------------
 
-    def store_cache(self, guildid, prefix, channel, rolespersist):
+    def store_cache(self, guild_id, prefix, channel, rolespersist):
         """Storing GuildID, Modlogs Channel and Prefix in Cache"""
 
-        self.enso_cache[guildid] = {"Prefix": prefix, "Modlogs": channel, "RolesPersist": rolespersist}
+        self.enso_cache[guild_id] = {"prefix": prefix, "modlogs": channel, "roles_persist": rolespersist}
 
-    def del_cache(self, guildid):
+    def del_cache(self, guild_id):
         """Deleting the entry of the guild within the cache"""
 
-        del self.enso_cache[guildid]
+        del self.enso_cache[guild_id]
 
     # --------------------------------------------!End Cache Section!---------------------------------------------------
 
     # --------------------------------------------!RolePersist Section!-------------------------------------------------
 
-    def get_roles_persist(self, guildid):
+    def get_roles_persist(self, guild_id):
         """Returning rolespersist value of the guild"""
 
-        return self.enso_cache[guildid]["RolesPersist"]
+        return self.enso_cache[guild_id]["roles_persist"]
 
-    async def update_role_persist(self, guildid, value, pool):
+    async def update_role_persist(self, guild_id, value, pool):
         """Update the rolepersist value of the guild (Enabled or Disabled)"""
 
-        self.enso_cache[guildid]["RolesPersist"] = value
+        self.enso_cache[guild_id]["roles_persist"] = value
 
         # Setup up pool connection and cursor
         async with pool.acquire() as conn:
             async with conn.cursor() as cur:
                 # Update the existing prefix within the database
                 update_query = """UPDATE guilds SET rolespersist = (%s) WHERE guildID = (%s)"""
-                update_vals = value, guildid,
+                update_vals = value, guild_id,
 
                 # Execute the query
                 await cur.execute(update_query, update_vals)
@@ -208,7 +239,7 @@ class Bot(commands.Bot):
     async def storage_modlog_for_guild(self, pool, ctx, channelID, setup):
         """Updating the modlog within the dict and database"""
 
-        self.enso_cache[str(ctx.guild.id)]["Modlogs"] = channelID
+        self.enso_cache[str(ctx.guild.id)]["modlogs"] = channelID
 
         # Setup up pool connection and cursor
         async with pool.acquire() as conn:
@@ -237,15 +268,15 @@ class Bot(commands.Bot):
             await self.generate_embed(ctx,
                                       desc=f"Modlog Channel for **{ctx.guild.name}** has been updated to {channel.mention}")
 
-    def remove_modlog_channel(self, guildid):
+    def remove_modlog_channel(self, guild_id):
         """Remove the value of modlog for the guild specified"""
 
-        self.enso_cache[guildid]["Modlogs"] = None
+        self.enso_cache[guild_id]["modlogs"] = None
 
-    def get_modlog_for_guild(self, guildid):
+    def get_modlog_for_guild(self, guild_id):
         """Get the modlog channel of the guild that the user is in"""
 
-        channel = self.enso_cache[guildid]["Modlogs"]
+        channel = self.enso_cache[guild_id]["modlogs"]
         return channel
 
     # --------------------------------------------!End ModLogs Section!-------------------------------------------------
@@ -255,7 +286,7 @@ class Bot(commands.Bot):
     async def storage_prefix_for_guild(self, pool, ctx, prefix):
         """Updating the prefix within the dict and database when the method is called"""
 
-        self.enso_cache[str(ctx.guild.id)]["Prefix"] = prefix
+        self.enso_cache[str(ctx.guild.id)]["prefix"] = prefix
 
         # Setup up pool connection and cursor
         async with pool.acquire() as conn:
@@ -272,10 +303,10 @@ class Bot(commands.Bot):
                 # Let the user know that the guild prefix has been updated
                 await self.generate_embed(ctx, desc=f"**Guild prefix has been updated to `{prefix}`**")
 
-    def get_prefix_for_guild(self, guildid):
+    def get_prefix_for_guild(self, guild_id):
         """Get the prefix of the guild that the user is in"""
 
-        prefix = self.enso_cache[guildid]["Prefix"]
+        prefix = self.enso_cache[guild_id]["prefix"]
         if prefix is not None:
             return prefix
         return "~"

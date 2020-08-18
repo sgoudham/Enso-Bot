@@ -57,7 +57,7 @@ async def send_to_modlogs(self, ctx, target, reason, action):
         await channel.send(embed=embed)
 
 
-async def check(self, ctx, members):
+async def check(ctx, members):
     """
     Check Function
     
@@ -69,11 +69,11 @@ async def check(self, ctx, members):
 
     if not len(members):
         desc = f"Not Correct Syntax!\nUse **{ctx.prefix}help** to find how to use **{ctx.command}**",
-        await self.bot.generate_embed(ctx, desc=desc)
+        await ctx.bot.generate_embed(ctx, desc=desc)
         return True
 
     elif ctx.author in members:
-        await self.bot.generate_embed(ctx, desc="**❌ Forbidden Action ❌**")
+        await ctx.bot.generate_embed(ctx, desc="**❌ Forbidden Action ❌**")
         return True
 
 
@@ -273,7 +273,7 @@ class Moderation(Cog):
         Multiple Members can be Kicked at Once
         """
 
-        if not await check(self, ctx, members):
+        if not await check(ctx, members):
             with ctx.typing():
                 # Send embed of the kicked member
                 await kick_members(self, ctx, members, reason)
@@ -287,7 +287,7 @@ class Moderation(Cog):
         Multiple Members can be Muted At Once
         """
 
-        if not await check(self, ctx, members):
+        if not await check(ctx, members):
             with ctx.typing():
 
                 # Get muted role from the server
@@ -300,7 +300,7 @@ class Moderation(Cog):
                         await channel.set_permissions(muted, read_messages=False)
 
                     await mute_members(self, ctx, members, reason, muted)
-                    
+
                 else:
                     await mute_members(self, ctx, members, reason, role)
 
@@ -314,7 +314,7 @@ class Moderation(Cog):
         """
         unmute = False
 
-        if not await check(self, ctx, members):
+        if not await check(ctx, members):
             with ctx.typing():
                 role = discord.utils.get(ctx.guild.roles, name="Muted")
 
@@ -346,7 +346,7 @@ class Moderation(Cog):
         Multiple Members can be banned at once
         """
 
-        if not await check(self, ctx, members):
+        if not await check(ctx, members):
             with ctx.typing():
                 await ban_members(self, ctx, members, reason)
 
@@ -360,7 +360,7 @@ class Moderation(Cog):
         Unban Member(s) from Server
         Multiple Members can be Unbanned At Once
         """
-        if not await check(self, ctx, members):
+        if not await check(ctx, members):
             with ctx.typing():
                 await unban_members(self, ctx, members, reason)
 

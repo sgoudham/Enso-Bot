@@ -147,7 +147,7 @@ class Info(Cog):
     async def ping(self, ctx):
         """Latency of the Bot (ms)"""
 
-        await self.bot.generate_embed(ctx, desc=f"Pong! `{round(self.bot.latency * 1000)}ms`")
+        await self.bot.generate_embed(ctx, desc=f"Pong! **{round(self.bot.latency * 1000)}ms**")
 
     @command(name="userinfo")
     @cooldown(1, 5, BucketType.user)

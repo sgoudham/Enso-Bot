@@ -84,7 +84,7 @@ def displayServerImage(array, ctx, name):
     # Set embed up for the person requested by the user
     embed = Embed(
         title=f"**Look At What A Cutie {name.capitalize()} is! <a:huh:676195228872474643> <a:huh:676195228872474643> **",
-        colour=ctx.bot.rnd_colour,
+        colour=ctx.bot.random_colour(),
         timestamp=datetime.datetime.utcnow())
     embed.set_image(url=random.choice(array))
     embed.set_footer(text=f"Requested by {member}", icon_url=userAvatar)

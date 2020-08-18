@@ -341,8 +341,8 @@ class Bot(commands.Bot):
     async def on_message(self, message):
         """Make sure bot messages are not tracked"""
 
-        if message.author.bot:
-            return
+        if message.author.bot: return
+
         # Processing the message
         await self.process_commands(message)
 

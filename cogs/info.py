@@ -147,7 +147,7 @@ class Info(Cog):
     async def ping(self, ctx):
         """Latency of the Bot (ms)"""
 
-        await ctx.send(f"Pong! `{round(self.bot.latency * 1000)}ms`")
+        await self.bot.generate_embed(ctx, desc=f"Pong! `{round(self.bot.latency * 1000)}ms`")
 
     @command(name="userinfo")
     @cooldown(1, 5, BucketType.user)
@@ -201,7 +201,7 @@ class Info(Cog):
         # Define fields to be added into the embed
         embed_fields = [("Name", member.mention, True),
                         ("Tag", member.name, True),
-                        ("Discrim", "#" + member.discriminator, True),
+                        ("Discrim", f"#{member.discriminator}", True),
                         ("Registered", member.created_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"), True),
                         ("Joined", member.joined_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"), True),
                         ("Top Role", member.top_role.mention, False),
@@ -360,7 +360,7 @@ class Info(Cog):
     async def checking_bot_stats(self, ctx):
         """Bot Statistics! (CPU/Mem Usage etc)"""
 
-        stats = Embed(title="<:github:741000905364603010> Ensō~Chan v1.7.2 Statistics",
+        stats = Embed(title=f"<:github:741000905364603010> Ensō~Chan {self.bot.version} Statistics",
                       url="https://github.com/sgoudham/Enso-Bot",
                       colour=self.bot.admin_colour,
                       timestamp=datetime.datetime.utcnow())

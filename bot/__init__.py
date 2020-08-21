@@ -95,8 +95,7 @@ class Bot(commands.Bot):
                 user=user,
                 password=password,
                 database=db,
-                loop=self.loop,
-                command_timeout=60)
+                loop=self.loop)
 
         async def startup_cache_log():
             """Store the guilds/modmail systems in cache from the database on startup"""

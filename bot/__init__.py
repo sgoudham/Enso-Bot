@@ -87,15 +87,14 @@ class Bot(commands.Bot):
         self.member_cache = MyCoolCache(2)
 
         async def create_connection():
-            """Setting up connection using pool/aiomysql"""
+            """Setting up connection using asyncpg"""
 
             self.db = await asyncpg.create_pool(
                 host=host,
                 port=int(port),
                 user=user,
                 password=password,
-                database=db,
-                loop=self.loop)
+                database=db)
 
         async def startup_cache_log():
             """Store the guilds/modmail systems in cache from the database on startup"""

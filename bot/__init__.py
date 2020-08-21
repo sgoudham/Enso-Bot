@@ -12,7 +12,6 @@
 # GNU General Public License for more details.
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
-import asyncio
 import datetime
 import logging
 import os
@@ -129,14 +128,8 @@ class Bot(commands.Bot):
                 except asyncpg.PostgresError as e:
                     print("PostGres Error: Modmail Records Could Not Be Loaded Into Cache On Startup", e)
 
-                # Release connection back to pool
-                await pool.release(conn)
-
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(create_connection())
-
         # Establish Database Connection
-        # self.loop.run_until_complete(create_connection())
+        self.loop.run_until_complete(create_connection())
         # Load Information Into Cache
         self.loop.run_until_complete(startup_cache_log())
 

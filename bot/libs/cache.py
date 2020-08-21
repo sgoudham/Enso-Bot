@@ -95,6 +95,9 @@ class MyCoolCache:
     def remove_many(self, in_guild_id):
         # This method is to be used for when the bot has left a guild
         with self.threadLock:
+            # Array to store keys to be removed
+            keys_to_remove = []
+
             # For every member within the cache
             for (member_id, guild_id) in self.cache:
                 # if the guild_id passed in is equal to the guild_id within the cache
@@ -102,5 +105,10 @@ class MyCoolCache:
                     # When removing a value from the cache due to a guild leave, permanently remove all values
                     # Yes it is expensive, however as this can run concurrently and we won't need the data available
                     # For this guild, it doesn't matter how long it takes, and will save in memory in the long term
-                    self.cache.pop((member_id, guild_id))
+                    # Store key within array
+                    keys_to_remove.append((member_id, guild_id))
                     self.queue.remove((member_id, guild_id))
+
+            # Iterate through the array and then pop the keys from cache
+            for key in keys_to_remove:
+                self.cache.pop(key)

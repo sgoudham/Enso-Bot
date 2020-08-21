@@ -125,7 +125,7 @@ class Bot(commands.Bot):
         # Establish Database Connection
         # self.loop.run_until_complete(create_connection())
         # Load Information Into Cache
-        self.loop.run_until_complete(startup_cache_log())
+        # self.loop.run_until_complete(startup_cache_log())
 
         async def post_bot_stats():
             """Update guild count on discord.bots.gg"""

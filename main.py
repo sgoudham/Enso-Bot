@@ -20,6 +20,7 @@ from bot import Bot
 
 # Initiating Bot Object As Client
 client = Bot()
+client.create_connection()
 
 
 @client.command()
@@ -37,8 +38,6 @@ async def test(ctx):
     testing4 = await client.check_cache(154840866496839680, 663651584399507476)
     print(client.member_cache.cache)
 
-
-client.create_connection()
 
 # Run the bot
 client.execute()

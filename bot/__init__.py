@@ -58,11 +58,10 @@ class Bot(commands.Bot):
                 return "."
             return when_mentioned_or(self.get_prefix_for_guild(message.guild.id))(bot, message)
 
-        super().__init__(command_prefix=get_prefix, **options)
+        super().__init__(command_prefix=get_prefix, case_insensitive=True, **options)
         self.db = None
         self.description = 'All current available commands within Ensō~Chan',
         self.owner_id = 154840866496839680  # Your unique User ID
-        self.case_insensitive = True  # Commands are now Case Insensitive
         self.admin_colour = Colour(0x62167a)  # Admin Embed Colour
         self.version = "0.8.2"  # Version number of Ensō~Chan
         self.remove_command("help")  # Remove default help command
@@ -84,7 +83,7 @@ class Bot(commands.Bot):
         # Instance variables for cache
         self.enso_cache = {}
         self.modmail_cache = {}
-        self.member_cache = MyCoolCache(2)
+        self.member_cache = MyCoolCache(50)
 
         async def create_connection():
             """Setting up connection using asyncpg"""

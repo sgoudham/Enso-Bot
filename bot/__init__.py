@@ -108,9 +108,9 @@ class Bot(commands.Bot):
 
                     # Store the guilds information within cache
                     for row in results:
-                        self.enso_cache[row[0]] = {"prefix": row[1],
-                                                   "modlogs": row[2],
-                                                   "roles_persist": row[3]}
+                        self.enso_cache[row["guild_id"]] = {"prefix": row["prefix"],
+                                                            "modlogs": row["modlogs"],
+                                                            "roles_persist": row["roles_persist"]}
                 # Catch errors
                 except asyncpg.PostgresError as e:
                     print("PostGres Error: Guild Records Could Not Be Loaded Into Cache On Startup", e)
@@ -121,9 +121,10 @@ class Bot(commands.Bot):
 
                     # Store the information for modmail within cache
                     for row in results:
-                        self.modmail_cache[row[0]] = {"modmail_channel_id": row[1],
-                                                      "message_id": row[2],
-                                                      "modmail_logging_channel_id": row[3]}
+                        self.modmail_cache[row["guild_id"]] = {"modmail_channel_id": row["modmail_channel_id"],
+                                                               "message_id": row["message_id"],
+                                                               "modmail_logging_channel_id":
+                                                                   row["modmail_logging_channel_id"]}
                 # Catch errors
                 except asyncpg.PostgresError as e:
                     print("PostGres Error: Modmail Records Could Not Be Loaded Into Cache On Startup", e)

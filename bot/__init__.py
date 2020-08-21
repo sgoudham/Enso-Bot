@@ -128,6 +128,9 @@ class Bot(commands.Bot):
                 except asyncpg.PostgresError as e:
                     print("PostGres Error: Modmail Records Could Not Be Loaded Into Cache On Startup", e)
 
+                # Release connection back to pool
+                await pool.release(conn)
+
         # Establish Database Connection
         self.loop.run_until_complete(create_connection())
         # Load Information Into Cache

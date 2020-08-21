@@ -12,6 +12,7 @@
 # GNU General Public License for more details.
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
+
 import datetime
 import logging
 import os
@@ -432,9 +433,8 @@ class Bot(commands.Bot):
         # Processing the message
         await self.process_commands(message)
 
-    @staticmethod
-    async def on_ready():
-        """Display Startup Message"""
+    async def on_ready(self):
+        """Display startup message"""
 
         print("UvU Senpaiii I'm ready\n")
 
@@ -451,7 +451,7 @@ class Bot(commands.Bot):
         pool = self.db
         async with pool.acquire() as conn:
 
-            # Query to insert the guild information into guilds table
+            # Insert the guild information into guilds table
             try:
                 insert_query = """INSERT INTO guilds VALUES ($1, $2, $3, $4) ON CONFLICT (guild_id) DO NOTHING"""
                 rowcount = await conn.execute(insert_query, guild.id, ".", None, 0)
@@ -463,6 +463,7 @@ class Bot(commands.Bot):
             # Print success
             else:
                 print(rowcount, f"Record(s) inserted successfully into {guild}")
+                self.store_cache(guild.id, modlogs=None, prefix=".", roles_persist=0)
 
             # Query to insert all the member details to members table
             try:
@@ -475,7 +476,6 @@ class Bot(commands.Bot):
             # Store in cache
             else:
                 print(rowcount, f"Record(s) inserted successfully into Members from {guild}")
-                self.store_cache(guild.id, modlogs=None, prefix=".", roles_persist=0)
 
             # Release connection back to pool
             await pool.release(conn)
@@ -504,7 +504,7 @@ class Bot(commands.Bot):
                 print(rowcount, f"Record deleted successfully from Guild {guild}")
                 self.del_cache(guild.id)
 
-            # Delete the record of the member as the bot leaves the server
+            # Delete all records of members from that guild
             try:
                 delete_query = """DELETE FROM members WHERE guild_id = $1"""
                 rowcount = await conn.execute(delete_query, guild.id)
@@ -516,6 +516,8 @@ class Bot(commands.Bot):
             # Print success
             else:
                 print(rowcount, f"Record(s) deleted successfully from Members from {guild}")
+                # Remove any/all members stored in cache from that guild
+                self.member_cache.remove_many(guild.id)
 
             # Release connection back to pool
             await pool.release(conn)
@@ -658,6 +660,9 @@ class Bot(commands.Bot):
 
         # --------------------------------------------!End Events Section!----------------------------------------------
 
+    async def update_cache(self, member_id, guild_id):
+        pass
+
     async def check_cache(self, member_id, guild_id):
         """Checks if member is in the member cache"""
 
@@ -674,9 +679,7 @@ class Bot(commands.Bot):
                 # Get the author's/members row from the Members Table
                 try:
                     select_query = """SELECT * FROM members WHERE member_id = $1 and guild_id = $2"""
-                    member_val = member_id, guild_id,
-
-                    result = await conn.fetchrow(select_query, member_val)
+                    result = await conn.fetchrow(select_query, member_id, guild_id)
 
                 # Catch errors
                 except asyncpg.PostgresError as e:
@@ -685,10 +688,10 @@ class Bot(commands.Bot):
 
                 # Store it in cache
                 else:
-                    dict_items = {"married": result[1],
-                                  "marriage_date": result[2],
-                                  "muted_roles": result[4],
-                                  "roles": result[5]}
+                    dict_items = {"married": result["married"],
+                                  "married_date": result["married_date"],
+                                  "muted_roles": result["muted_roles"],
+                                  "roles": result["roles"]}
                     self.member_cache.store_cache((member_id, guild_id), dict_items)
 
                     return self.member_cache.cache[(member_id, guild_id)]

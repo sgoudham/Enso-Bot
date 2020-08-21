@@ -13,7 +13,7 @@
 
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
-
+import asyncpg
 from discord import Member
 from discord.ext.commands import Cog, command, is_owner
 
@@ -45,7 +45,7 @@ class Owner(Cog):
     @command(name="restart", hidden=True)
     @is_owner()
     async def restart(self, ctx):
-        """Restart the Bot"""
+        """Restart the bot"""
 
         await self.bot.generate_embed(ctx, desc="**Success Senpai!"
                                                 "\nMy Reboot Had No Problems** <a:ThumbsUp:737832825469796382>")
@@ -62,21 +62,29 @@ class Owner(Cog):
         # Setup pool
         pool = self.bot.db
 
+        # Store every single record into an array
+        records = [(ctx.guild.id, member.id) for member in ctx.guild.members]
+
         # Setup up pool connection and cursor
         async with pool.acquire() as conn:
-            async with conn.cursor() as cur:
-                # Define the insert statement that will insert the user's information
-                insert = """INSERT INTO members (guildID, discordID) VALUES """ + ", ".join(
-                    map(lambda m: f"({ctx.guild.id}, {m.id})",
-                        ctx.guild.members)) + """ ON DUPLICATE KEY UPDATE guildID = VALUES(guildID), discordID = VALUES(discordID)"""
+            # Define the insert statement that will insert the user's information
+            try:
+                insert_query = """INSERT INTO members (guild_id, member_id) VALUES ($1, $2)
+                            ON CONFLICT (guild_id, member_id) DO NOTHING"""
 
-                # Execute the insert statement
-                await cur.execute(insert)
-                await conn.commit()
-                print(cur.rowcount, f"Record(s) inserted successfully into Members from {ctx.guild.name}")
+                await conn.executemany(insert_query, records)
 
-                # Sending confirmation message
-                await ctx.send(f"Database Reloaded Successfully for **{ctx.guild.name}**")
+            # Catch errors
+            except asyncpg.PostgresError as e:
+                print(f"PostGres Error: Member(s) were not be able to be added to Guild", e)
+
+            # Print success
+            else:
+                print(f"Record(s) Inserted Into Members")
+
+            finally:
+                # Release connection back to pool
+                await pool.release(conn)
 
 
 def setup(bot):

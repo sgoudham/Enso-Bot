@@ -19,6 +19,7 @@ import datetime
 import io
 import random
 
+import asyncpg
 import discord
 from discord import Embed, TextChannel
 from discord import File
@@ -188,7 +189,7 @@ class Guild(Cog):
     async def rp_status(self, ctx):
         """Showing the status of the role persist within the guild"""
 
-        if self.bot.get_roles_persist(str(ctx.guild.id)) == 0:
+        if self.bot.get_roles_persist(ctx.guild.id) == 0:
             await self.bot.generate_embed(ctx, desc=f"**Role Persist is currently disabled within {ctx.guild}**")
         else:
             await self.bot.generate_embed(ctx, desc=f"**Role Persist is currently enabled within {ctx.guild}**")
@@ -199,10 +200,8 @@ class Guild(Cog):
     async def rp_enable(self, ctx):
         """Enabling role persist within the guild"""
 
-        pool = self.bot.db
-
-        if self.bot.get_roles_persist(str(ctx.guild.id)) == 0:
-            await self.bot.update_role_persist(str(ctx.guild.id), value=1, pool=pool)
+        if self.bot.get_roles_persist(ctx.guild.id) == 0:
+            await self.bot.update_role_persist(ctx.guild.id, value=1)
             await self.bot.generate_embed(ctx, desc=f"**Role Persist has been enabled within {ctx.guild}!**")
         else:
             await self.bot.generate_embed(ctx, desc=f"**Role Persist is already enabled within {ctx.guild}!**")
@@ -213,10 +212,8 @@ class Guild(Cog):
     async def rp_disable(self, ctx):
         """Disabling role persist within the guild"""
 
-        pool = self.bot.db
-
-        if self.bot.get_roles_persist(str(ctx.guild.id)) == 1:
-            await self.bot.update_role_persist(str(ctx.guild.id), value=0, pool=pool)
+        if self.bot.get_roles_persist(ctx.guild.id) == 1:
+            await self.bot.update_role_persist(ctx.guild.id, value=0)
             await self.bot.generate_embed(ctx, desc=f"**Role Persist has been disabled within {ctx.guild}!**")
         else:
             await self.bot.generate_embed(ctx, desc=f"**Role Persist is already disabled within {ctx.guild}!**")
@@ -226,17 +223,17 @@ class Guild(Cog):
     @bot_has_permissions(administrator=True)
     async def modlogs(self, ctx):
         """
-        Show Current Modlogs Channel (If Setup)
+        Show current modlogs channel
         """
 
-        ml_channel = self.bot.get_modlog_for_guild(str(ctx.guild.id))
+        ml_channel = self.bot.get_modlog_for_guild(ctx.guild.id)
 
         # Send current modlogs channel only if it is setup
         # Send error if no modlogs channel has been setup
-        if ml_channel is not None:
+        if ml_channel:
 
             # Get the modlog channel for the current guild
-            channel = ctx.guild.get_channel(int(ml_channel))
+            channel = ctx.guild.get_channel(ml_channel)
 
             text = f"**The current modlogs channel is set to {channel.mention}**"
             await self.bot.generate_embed(ctx, desc=text)
@@ -250,105 +247,114 @@ class Guild(Cog):
     @has_permissions(manage_guild=True)
     @bot_has_permissions(administrator=True)
     async def mlsetup(self, ctx, user_channel: TextChannel):
-        """Setup a Channel for the Kick/Ban/Mute Actions to be Logged In"""
+        """Setup a channel for Kick/Ban/Mute actions to be logged"""
 
-        # Setup pool
+        # Setup pool connection
         pool = self.bot.db
-
-        # Setup pool connection and cursor
         async with pool.acquire() as conn:
-            async with conn.cursor() as cur:
-                # Get the row of the guild
-                select_query = """SELECT * FROM guilds WHERE guildID = (%s)"""
-                val = ctx.guild.id,
 
-                # Execute the SQL Query
-                await cur.execute(select_query, val)
-                result = await cur.fetchone()
+            # Get the row of the guild from database
+            try:
+                select_query = """SELECT * FROM guilds WHERE guild_id = $1"""
+                result = await conn.fetchrow(select_query, ctx.guild.id)
 
-        # Throw error if the modlog channel already exists and then stop the function
-        if result[2] is not None:
-            text = "**Modlogs Channel** already set up!" \
-                   f"\nDo **{ctx.prefix}help modlogs** to find out more!"
-            await self.bot.generate_embed(ctx, desc=text)
-            return
+            # Catch errors
+            except asyncpg.PostgresError as e:
+                print("PostGres Error: Guild Record Could Not Be Retrieved For Modlog Setup", e)
 
-        else:
-            # Set up the modlogs channel within the guild
-            mod_log_setup = True
-            await self.bot.storage_modlog_for_guild(self.bot.db, ctx, user_channel.id, mod_log_setup)
+            # Throw error if the modlog channel already exists
+            else:
+                if result["modlogs"]:
+                    text = "**Modlogs Channel** already set up!" \
+                           f"\nDo **{ctx.prefix}help modlogs** to find out more!"
+                    await self.bot.generate_embed(ctx, desc=text)
+
+                # Set up the modlogs channel within the guild
+                else:
+                    mod_log_setup = True
+                    await self.bot.storage_modlog_for_guild(ctx, user_channel.id, mod_log_setup)
+
+            # Release the connection back to the pool
+            finally:
+                await pool.release(conn)
 
     @modlogs.command(name="update")
     @has_permissions(manage_guild=True)
     @bot_has_permissions(administrator=True)
     async def mlupdate(self, ctx, user_channel: TextChannel):
-        """Change the Channel that your Modlogs are Sent to"""
+        """Change the channel that your modlogs are sent to"""
 
-        # Setup pool
+        # Setup up pool connectionF
         pool = self.bot.db
-
-        # Setup up pool connection and cursor
         async with pool.acquire() as conn:
-            async with conn.cursor() as cur:
-                # Get the guilds row from the guilds table
-                select_query = """SELECT * FROM guilds WHERE guildID = (%s)"""
-                vals = ctx.guild.id,
 
-                # Execute the SQL Query
-                await cur.execute(select_query, vals)
-                result = await cur.fetchone()
+            # Get the guilds row from the guilds table
+            try:
+                select_query = """SELECT * FROM guilds WHERE guild_id = $1"""
+                result = await conn.fetchrow(select_query, ctx.guild.id)
 
-        # Throw error if the modlog channel already exists and then stop the function
-        if result[2] is None:
-            text = "**Modlogs Channel** not set up!" \
-                   f"\nDo **{ctx.prefix}help modlogs** to find out more!"
-            await self.bot.generate_embed(ctx, desc=text)
+            # Catch errors
+            except asyncpg.PostgresError as e:
+                print("PostGres Error: Guild Record Could Not Be Retrieved For Modlog Update", e)
 
-        else:
-            # Update the modlog channel within the database and cache
-            mod_log_setup = False
-            await self.bot.storage_modlog_for_guild(self.bot.db, ctx, user_channel.id, mod_log_setup)
+            # Throw error if the modlog channel already exists
+            else:
+                if result["married"] is None:
+                    text = "**Modlogs Channel** not set up!" \
+                           f"\nDo **{ctx.prefix}help modlogs** to find out more!"
+                    await self.bot.generate_embed(ctx, desc=text)
+
+                # Update the modlog channel within the database and cache
+                else:
+                    mod_log_setup = False
+                    await self.bot.storage_modlog_for_guild(ctx, user_channel.id, mod_log_setup)
+
+            # Release the connection back to the pool
+            finally:
+                await pool.release(conn)
 
     @modlogs.command("delete")
     @has_permissions(manage_guild=True)
     @bot_has_permissions(administrator=True)
     async def mldelete(self, ctx):
-        """Delete the Existing Modlogs System"""
+        """Delete the existing modlogs channel"""
 
-        # Setup pool
+        # Setup up pool connection
         pool = self.bot.db
-
-        # Setup up pool connection and cursor
         async with pool.acquire() as conn:
-            async with conn.cursor() as cur:
-                # Get the guilds row from the guilds table
-                select_query = """SELECT * FROM guilds WHERE guildID = (%s)"""
-                vals = ctx.guild.id,
 
-                # Execute the SQL Query
-                await cur.execute(select_query, vals)
-                result = await cur.fetchone()
+            # Get the guilds row from the guilds table
+            try:
+                select_query = """SELECT * FROM guilds WHERE guild_id = $1"""
+                result = await conn.fetchrow(select_query, ctx.guild.id)
 
-        # Throw error is modlogs error has not been setup before performing a delete action
-        if result[2] is None:
-            text = "**Modlogs Channel** not set up!" \
-                   f"\nDo **{ctx.prefix}help modlogs** to find out more!"
-            await self.bot.generate_embed(ctx, desc=text)
-            return
+            # Catch errors
+            except asyncpg.PostgresError as e:
+                print("PostGres Error: Guild Record Could Not Be Retrieved For Modlog Delete", e)
 
-        # Setup up pool connection and cursor
-        async with pool.acquire() as conn:
-            async with conn.cursor() as cur:
-                # Update the existing prefix within the database
-                update_query = """UPDATE guilds SET modlogs = NULL WHERE guildID = (%s)"""
-                update_vals = ctx.guild.id,
+            # Throw error that modlogs have not been setup
+            else:
+                if result["married"] is None:
+                    text = "**Modlogs Channel** not set up!" \
+                           f"\nDo **{ctx.prefix}help modlogs** to find out more!"
+                    await self.bot.generate_embed(ctx, desc=text)
+                    return
 
-                # Execute the query
-                await cur.execute(update_query, update_vals)
-                await conn.commit()
+            # Update the existing modlogs for guild
+            try:
+                update_query = """UPDATE guilds SET modlogs = NULL WHERE guild_id = $1"""
+                await conn.execute(update_query, ctx.guild.id)
 
-        # Delete channel from cache
-        self.bot.remove_modlog_channel(str(ctx.guild.id))
+            # Catch errors
+            except asyncpg.PostgresError as e:
+                print(f"PostGres Error: Guild Modlogs Could Not Be Updated For {ctx.guild.id}", e)
+
+            # Delete channel from cache
+            else:
+                self.bot.remove_modlog_channel(ctx.guild.id)
+
+        # Release the connection back to the pool
+        await pool.release(conn)
 
         text = "**Modlogs System** successfully deleted!" \
                f"\nDo **{ctx.prefix}help modlogs** to setup Modlogs again!"
@@ -366,155 +372,195 @@ class Guild(Cog):
     @modmail.command(name="setup")
     @has_permissions(manage_guild=True)
     @bot_has_permissions(administrator=True)
-    async def mmsetup(self, ctx, user_channel: TextChannel, modmail_channel: TextChannel):
+    async def mmsetup(self, ctx, modmail: TextChannel, modmail_logging: TextChannel):
         """
         Setup Modmail System
         First Argument: Input Channel(Mention or ID) where members can send modmail
         Second Argument: Input Channel(Mention or ID) where the members mail should be sent
         """
 
-        # Setup pool
+        # Setup up pool connection
         pool = self.bot.db
-
-        # Setup up pool connection and cursor
         async with pool.acquire() as conn:
-            async with conn.cursor() as cur:
-                # Get the author's row from the Members Table
-                select_query = """SELECT * FROM moderatormail WHERE guildID = (%s)"""
-                val = ctx.guild.id,
 
-                # Execute the SQL Query
-                await cur.execute(select_query, val)
-                result = await cur.fetchone()
+            # Get the author's row from the members table
+            try:
+                select_query = """SELECT * FROM moderatormail WHERE guild_id = $1"""
+                result = await conn.fetchrow(select_query, ctx.guild.id)
 
-        # Throw error if the guild already exists and then stop the function
-        if result is not None:
-            text = "**Modmail System** already set up!" \
-                   f"\nDo **{ctx.prefix}help modmail** to find out more!"
-            await self.bot.generate_embed(ctx, desc=text)
-            return
+            # Catch errors
+            except asyncpg.PostgresError as e:
+                print("PostGres Error: ModeratorMail Record Could Not Be Retrieved For Modmail Setup", e)
 
+            # Throw error if the guild already exists
+            else:
+                if result:
+                    text = "**Modmail System** already set up!" \
+                           f"\nDo **{ctx.prefix}help modmail** to find out more!"
+                    await self.bot.generate_embed(ctx, desc=text)
+                    return
+
+            # Release the connection back to the pool
+            finally:
+                await pool.release(conn)
+
+        # Set up embed to let the user how to start sending modmail
         desc = "React to this message if you want to send a message to the Staff Team!" \
                "\n\n**React with ✅**" \
                "\n\nWe encourage all suggestions/thoughts and opinions on the server!" \
                "\nAs long as it is **valid** criticism." \
                "\n\n\n**Purely negative feedback will not be considered.**"
 
-        # Set up embed to let the user how to start sending modmail
         ModMail = Embed(title="**Welcome to Modmail!**",
                         description=desc,
                         colour=self.bot.admin_colour,
                         timestamp=datetime.datetime.utcnow())
         ModMail.set_thumbnail(url=self.bot.user.avatar_url)
 
-        modmail_message = await user_channel.send(embed=ModMail)
-
-        # Auto add the ✅ reaction
+        # Send modmail embed to the specified channel and auto add the ✅ reaction
+        modmail_message = await modmail.send(embed=ModMail)
         await modmail_message.add_reaction('✅')
 
-        # Setup up pool connection and cursor
+        # Setup up pool connection
         async with pool.acquire() as conn:
-            async with conn.cursor() as cur:
-                # Define the insert statement that will insert information about the modmail channel
-                insert_query = """INSERT INTO moderatormail (guildID, channelID, messageID, modmailChannelID) VALUES (%s, %s, %s, %s)"""
-                vals = ctx.guild.id, user_channel.id, modmail_message.id, modmail_channel.id,
 
-                # Execute the SQL Query
-                await cur.execute(insert_query, vals)
-                await conn.commit()
+            # Insert the information about the modmail system into database
+            try:
+                insert_query = """INSERT INTO moderatormail (guild_id, modmail_channel_id, message_id, modmail_logging_channel_id) 
+                                  VALUES ($1, $2, $3, $4)"""
+                await conn.execute(insert_query, ctx.guild.id, modmail.id, modmail_message.id, modmail_logging.id)
 
-            text = "**Modmail System** is successfully set up!" \
-                   f"\nRefer to **{ctx.prefix}help modmail** for more information"
-            await self.bot.generate_embed(ctx, desc=text)
+            # Catch errors
+            except asyncpg.PostgresError as e:
+                print(f"PostGres Error: Modmail System Record Could Not Be Inserted For Guild {ctx.guild.id}", e)
+
+            # Send confirmation message
+            else:
+                text = "**Modmail System** is successfully set up!" \
+                       f"\nRefer to **{ctx.prefix}help modmail** for more information"
+                await self.bot.generate_embed(ctx, desc=text)
+
+                # Store into cache
+                self.bot.cache_store_modmail(ctx.guild.id, modmail.id, modmail_message.id, modmail_logging.id)
+
+            # Release connection back into pool
+            finally:
+                await pool.release(conn)
 
     @modmail.command(name="update")
     @has_permissions(manage_guild=True)
     @bot_has_permissions(administrator=True)
-    async def mmupdate(self, ctx, modmail_channel: TextChannel):
+    async def mmupdate(self, ctx, modmail_logging_channel: TextChannel):
         """
         Update the Channel that the Modmail is logged to
         You can Mention or use the Channel ID
         """
 
-        # Setup pool
+        # Setup up pool connection
         pool = self.bot.db
+        async with pool.acquire() as conn:
+
+            # Get the moderatormail record from the guilds table
+            try:
+                select_query = """SELECT * FROM moderatormail WHERE guild_id = $1"""
+                result = await conn.fetchrow(select_query, ctx.guild.id)
+
+            # Catch errors
+            except asyncpg.PostgresError as e:
+                print("PostGres Error: ModeratorMail Record Could Not Be Retrieved For Modmail Update", e)
+
+            # Throw error if the guild already exists
+            else:
+                if not result:
+                    text = "**Modmail System** not set up!" \
+                           f"\nDo **{ctx.prefix}help modmail** to find out more!"
+                    await self.bot.generate_embed(ctx, desc=text)
+                    return
+
+            # Release connection back to pool
+            finally:
+                await pool.release(conn)
 
         # Setup up pool connection and cursor
         async with pool.acquire() as conn:
-            async with conn.cursor() as cur:
-                # Get the author's row from the Members Table
-                select_query = """SELECT * FROM moderatormail WHERE guildID = (%s)"""
-                vals = ctx.guild.id,
 
-                # Execute the SQL Query
-                await cur.execute(select_query, vals)
-                result = await cur.fetchone()
+            # Update the modmail channel in the database
+            try:
+                update_query = """UPDATE moderatormail SET modmail_logging_channel_id = $1 WHERE guild_id = $2"""
+                await conn.execute(update_query, modmail_logging_channel.id, ctx.guild.id)
 
-            # Throw error if the guild already exists and then stop the function
-            if result is None:
-                text = "**Modmail System** not set up!" \
-                       f"\nDo **{ctx.prefix}help modmail** to find out more!"
+            # Catch errors
+            except asyncpg.PostgresError as e:
+                print(f"PostGres Error: Modmail System Record Could Not Be Updated For Guild {ctx.guild.id}", e)
+
+            # Send confirmation that the channel has been updated
+            else:
+                text = "**Channel Updated**" \
+                       f"\nNew Modmail will be sent to {modmail_logging_channel.mention}"
                 await self.bot.generate_embed(ctx, desc=text)
-                return
 
-        # Setup up pool connection and cursor
-        async with pool.acquire() as conn:
-            async with conn.cursor() as cur:
-                # Define the update statement that will insert information about the modmail channel
-                update_query = """UPDATE moderatormail SET modmailChannelID = (%s) WHERE guildID = (%s)"""
-                vals = modmail_channel.id, ctx.guild.id
+                # Update cache
+                self.bot.update_modmail(ctx.guild.id, modmail_logging_channel.id)
 
-                # Execute the SQL Query
-                await cur.execute(update_query, vals)
-                await conn.commit()
-
-        # Send confirmation that the channel has been updated
-        text = "**Channel Updated**" \
-               f"\nNew Modmail will be sent to {modmail_channel.mention}"
-        await self.bot.generate_embed(ctx, desc=text)
+            # Release connection back to pool
+            finally:
+                await pool.release(conn)
 
     @modmail.command(name="delete")
     @has_permissions(manage_guild=True)
     @bot_has_permissions(administrator=True)
     async def mmdelete(self, ctx):
-        """Delete the Entire Modmail System from the Guild"""
+        """Delete the entire modmail system from the guild"""
 
-        # Setup pool
+        # Setup up pool connection
         pool = self.bot.db
-
-        # Setup up pool connection and cursor
         async with pool.acquire() as conn:
-            async with conn.cursor() as cur:
-                # Get the author's row from the Members Table
-                select_query = """SELECT * FROM moderatormail WHERE guildID = (%s)"""
-                vals = ctx.author.guild.id,
 
-                # Execute the SQL Query
-                await cur.execute(select_query, vals)
-                result = await cur.fetchone()
+            # Get the moderatormail record from the guilds table
+            try:
+                select_query = """SELECT * FROM moderatormail WHERE guild_id = $1"""
+                result = await conn.fetchrow(select_query, ctx.guild.id)
 
-            # Throw error if modmail system does not exist already
-            if result is None:
-                text = "**Modmail System** not set up!" \
-                       f"\nDo **{ctx.prefix}help modmail** to find out more!"
-                await self.bot.generate_embed(ctx, desc=text)
-                return
+            # Catch errors
+            except asyncpg.PostgresError as e:
+                print("PostGres Error: ModeratorMail Record Could Not Be Retrieved For Modmail Delete", e)
 
-        # Setup up pool connection and cursor
+            else:
+                # Throw error if modmail system does not exist already
+                if result is None:
+                    text = "**Modmail System** not set up!" \
+                           f"\nDo **{ctx.prefix}help modmail** to find out more!"
+                    await self.bot.generate_embed(ctx, desc=text)
+                    return
+
+            # Release connection back to pool
+            finally:
+                await pool.release(conn)
+
+        # Setup up pool connection
         async with pool.acquire() as conn:
-            async with conn.cursor() as cur:
-                # Define the delete statement to remove all information about the guild
-                delete_query = """DELETE FROM moderatormail WHERE guildID = (%s)"""
-                vals = ctx.author.guild.id,
 
-                # Execute the SQL Query
-                await cur.execute(delete_query, vals)
-                await conn.commit()
+            # Remove the moderatormail record from the database
+            try:
+                delete_query = """DELETE FROM moderatormail WHERE guild_id = $1"""
+                await conn.execute(delete_query, ctx.guild.id)
+
+            # Catch errors
+            except asyncpg.PostgresError as e:
+                print(f"PostGres Error: ModeratorMail Record Could Not Be Deleted for Guild {ctx.guild.id}", e)
 
             # Sending confirmation message that the modmail system has been deleted
-            text = "**Modmail System** successfully deleted!" \
-                   f"\nDo **{ctx.prefix}help modmail** to find out more!"
-            await self.bot.generate_embed(ctx, desc=text)
+            else:
+                text = "**Modmail System** successfully deleted!" \
+                       f"\nDo **{ctx.prefix}help modmail** to find out more!"
+                await self.bot.generate_embed(ctx, desc=text)
+
+                # Delete from cache
+                self.bot.delete_modmail(ctx.guild.id)
+
+            # Release connection back to pool
+            finally:
+                await pool.release(conn)
 
     @Cog.listener()
     async def on_raw_reaction_add(self, payload):
@@ -525,35 +571,17 @@ class Guild(Cog):
         if payload.member.bot or str(payload.emoji) not in ['✅', '❌']:
             return
 
-        # Find a role corresponding to the Emoji name.
-        guildid = payload.guild_id
-
-        # Setup pool
-        pool = self.bot.db
-
-        # Setup up pool connection and cursor
-        async with pool.acquire() as conn:
-            async with conn.cursor() as cur:
-                # Get the author's row from the Members Table
-                select_query = """SELECT * FROM moderatormail WHERE guildID = (%s)"""
-                val = guildid,
-
-                # Execute the SQL Query
-                await cur.execute(select_query, val)
-                result = await cur.fetchone()
-
-                # Adding error handling
-                if result is None:
-                    return
-
-                # Define variables
-                guild_id = int(result[0])
-                channel_id = int(result[1])
-                message_id = int(result[2])
-                modmail_channel_id = int(result[3])
+        # Get the modmail information from cache
+        modmail = self.bot.get_modmail(payload.guild_id)
+        if modmail:
+            channel_id = modmail["modmail_channel_id"]
+            message_id = modmail["message_id"]
+            modmail_channel_id = modmail["modmail_logging_channel_id"]
+        else:
+            return
 
         # Bunch of checks to make sure it has the right guild, channel, message and reaction
-        if payload.guild_id == guild_id and payload.channel_id == channel_id and payload.message_id == message_id and payload.emoji.name == "✅":
+        if payload.channel_id == channel_id and payload.message_id == message_id and payload.emoji.name == "✅":
 
             # Get the guild
             guild = self.bot.get_guild(payload.guild_id)

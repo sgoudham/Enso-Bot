@@ -17,6 +17,7 @@
 import datetime
 import random
 
+import asyncpg
 from discord import Embed, Member
 from discord.ext.commands import cooldown, command, BucketType, bot_has_permissions, Cog
 
@@ -43,29 +44,16 @@ class Interactive(Cog):
         """Printing out that Cog is ready on startup"""
         print(f"{self.__class__.__name__} Cog has been loaded\n-----")
 
+    # TODO: MAKE EVERYTHING IN HERE ASYNCHRONOUS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
     @command(name="kiss")
     @bot_has_permissions(embed_links=True)
     @cooldown(1, 3, BucketType.user)
     async def kiss(self, ctx, member: Member):
-        """Kiss your Partner"""
+        """Kiss your partner"""
 
         # Get the guild
-        guild = ctx.author.guild
-
-        # Setup pool
-        pool = self.bot.db
-
-        # Setup pool connection and cursor
-        async with pool.acquire() as conn:
-            async with conn.cursor() as cur:
-                # Get the author's row from the Members Table
-                select_query = """SELECT * FROM members WHERE discordID = (%s) and guildID = (%s)"""
-                val = ctx.author.id, guild.id,
-
-                # Execute the SQL Query
-                await cur.execute(select_query, val)
-                result = await cur.fetchone()
-                married_user = result[1]
+        guild = ctx.guild
 
         # Error handling to make sure that the user can kiss themselves
         if member.id == ctx.author.id:
@@ -75,21 +63,35 @@ class Interactive(Cog):
             kiss = True
             title = f":kissing_heart: :kissing_heart: | **{ctx.author.display_name}** kissed **{member.display_name}**"
 
-        try:
-            # Make sure the user isn't trying to kiss someone else besides their partner
-            if married_user is None and kiss:
-                await ctx.send("Σ(‘◉⌓◉’) You need to be married in order to use this command! Baka!")
-                return
-            # Make sure that the married people can only kiss their partner
-            elif not str(member.id) == married_user and kiss:
-                await ctx.send("Σ(‘◉⌓◉’) You can only kiss your partner! Baka!")
-                return
-        except Exception as ex:
-            print(ex)
+        # Setup pool connection
+        pool = self.bot.db
+        async with pool.acquire() as conn:
 
-        # Surround with try/except to catch any exceptions that may occur
-        try:
+            # Get the author's row from the members table
+            try:
+                select_query = """SELECT * FROM members WHERE member_id = $1 and guild_id = $2"""
+                result = await conn.fetchrow(select_query, ctx.author.id, guild.id)
 
+            # Catch errors
+            except asyncpg.PostgresError as e:
+                print("PostGres Error: Member Record Could Not Be Retrieved For Kiss Command", e)
+
+            # Checking conditions to make sure user is married/kissing their partner
+            else:
+                married_user = result["married"]
+
+                if married_user is None and kiss:
+                    await ctx.send("Σ(‘◉⌓◉’) You need to be married in order to use this command! Baka!")
+                    return
+                elif not member.id == married_user and kiss:
+                    await ctx.send("Σ(‘◉⌓◉’) You can only kiss your partner! Baka!")
+                    return
+
+            # Release connection back to pool
+            finally:
+                await pool.release(conn)
+
+        try:
             # Open the file containing the kissing gifs
             with open('images/FunCommands/kissing.txt') as file:
                 # Store content of the file in kissing_array
@@ -116,25 +118,10 @@ class Interactive(Cog):
     @bot_has_permissions(embed_links=True)
     @cooldown(1, 3, BucketType.user)
     async def cuddle(self, ctx, member: Member):
-        """Cuddle your Partner"""
+        """Cuddle your partner"""
 
         # Get the guild
-        guild = ctx.author.guild
-
-        # Setup pool
-        pool = self.bot.db
-
-        # Setup pool connection and cursor
-        async with pool.acquire() as conn:
-            async with conn.cursor() as cur:
-                # Get the author's row from the Members Table
-                select_query = """SELECT * FROM members WHERE discordID = (%s) and guildID = (%s)"""
-                val = ctx.author.id, guild.id
-
-                # Execute the SQL Query
-                await cur.execute(select_query, val)
-                result = await cur.fetchone()
-                married_user = result[1]
+        guild = ctx.guild
 
         # Error handling to make sure that the user can cuddle themselves
         if member.id == ctx.author.id:
@@ -144,19 +131,30 @@ class Interactive(Cog):
             cuddle = True
             title = f":blush: :blush: | **{ctx.author.display_name}** cuddled **{member.display_name}**"
 
-        try:
-            # Make sure the user isn't trying to cuddle someone else besides their partner
-            if married_user is None and cuddle:
-                await ctx.send("Σ(‘◉⌓◉’) You need to be married in order to use this command! Baka!")
-                return
-            # Make sure that the married people can only cuddle their partner
-            elif not str(member.id) == married_user and cuddle:
-                await ctx.send("Σ(‘◉⌓◉’) You can only cuddle your partner! Baka!")
-                return
-        except Exception as ex:
-            print(ex)
+        # Setup pool connection
+        pool = self.bot.db
+        async with pool.acquire() as conn:
 
-        # Surround with try/except to catch any exceptions that may occur
+            # Get the author's row from the members table
+            try:
+                select_query = """SELECT * FROM members WHERE member_id = $1 and guild_id = $2"""
+                result = await conn.fetchrow(select_query, ctx.author.id, guild.id)
+
+            # Catch errors
+            except asyncpg.PostgresError as e:
+                print("PostGres Error: Member Record Could Not Be Retrieved For Cuddle Command", e)
+
+            # Checking conditions to make sure user is married/cuddling their partner
+            else:
+                married_user = result["married"]
+
+                if married_user is None and cuddle:
+                    await ctx.send("Σ(‘◉⌓◉’) You need to be married in order to use this command! Baka!")
+                    return
+                elif not member.id == married_user and cuddle:
+                    await ctx.send("Σ(‘◉⌓◉’) You can only cuddle your partner! Baka!")
+                    return
+
         try:
 
             # Open the file containing the cuddling gifs
@@ -185,14 +183,13 @@ class Interactive(Cog):
     @bot_has_permissions(embed_links=True)
     @cooldown(1, 3, BucketType.user)
     async def kill(self, ctx, member: Member):
-        """Kill a Member"""
+        """Kill a member"""
 
         if member is ctx.author:
             title = f":scream: :scream: | **{ctx.author.display_name}** killed **themselves**"
         else:
             title = f":scream: :scream: | **{ctx.author.display_name}** killed **{member.display_name}**"
 
-        # Surround with try/except to catch any exceptions that may occur
         try:
 
             # Open the file containing the killing gifs
@@ -221,14 +218,13 @@ class Interactive(Cog):
     @bot_has_permissions(embed_links=True)
     @cooldown(1, 3, BucketType.user)
     async def slap(self, ctx, member: Member):
-        """Slap a Member"""
+        """Slap a member"""
 
         if member is ctx.author:
             title = f":cold_sweat: :cold_sweat: | **{ctx.author.display_name}** slapped **themselves**"
         else:
             title = f":cold_sweat: :cold_sweat: | **{ctx.author.display_name}** slapped **{member.display_name}**"
 
-        # Surround with try/except to catch any exceptions that may occur
         try:
 
             # Open the file containing the cuddling gifs
@@ -257,14 +253,13 @@ class Interactive(Cog):
     @bot_has_permissions(embed_links=True)
     @cooldown(1, 3, BucketType.user)
     async def pat(self, ctx, member: Member):
-        """Pat a Member"""
+        """Pat a member"""
 
         if member is ctx.author:
             title = f"👉 👈 | **{ctx.author.display_name}** patted **themselves**"
         else:
             title = f"👉 👈 | **{ctx.author.display_name}** patted **{member.display_name}**"
 
-        # Surround with try/except to catch any exceptions that may occur
         try:
 
             # Open the file containing the patting gifs
@@ -293,7 +288,7 @@ class Interactive(Cog):
     @bot_has_permissions(embed_links=True)
     @cooldown(1, 3, BucketType.user)
     async def lemon(self, ctx, member: Member):
-        """Give Lemon to Member"""
+        """Give Lemon to member"""
 
         if member is ctx.author:
             title = f":relaxed: :relaxed: | **{ctx.author.display_name}** gave a lemon to **themselves**"
@@ -304,7 +299,6 @@ class Interactive(Cog):
                        "https://media.discordapp.net/attachments/669812887564320769/720093575492272208/lemon2.gif",
                        "https://media.discordapp.net/attachments/718484280925224981/719629805263257630/lemon.gif"]
 
-        # Surround with try/except to catch any exceptions that may occur
         try:
 
             # Get the member and the userAvatar
@@ -328,14 +322,13 @@ class Interactive(Cog):
     @bot_has_permissions(embed_links=True)
     @cooldown(1, 3, BucketType.user)
     async def choke(self, ctx, member: Member):
-        """Choke a Member"""
+        """Choke a member"""
 
         if member is ctx.author:
             title = f":confounded: :confounded: | **{ctx.author.display_name}** choked **themselves**"
         else:
             title = f":confounded: :confounded: | **{ctx.author.display_name}** choked **{member.display_name}**"
 
-        # Surround with try/except to catch any exceptions that may occur
         try:
             # Open the file containing the choking gifs
             with open('images/FunCommands/choking.txt') as file:
@@ -363,14 +356,13 @@ class Interactive(Cog):
     @bot_has_permissions(embed_links=True)
     @cooldown(1, 3, BucketType.user)
     async def hug(self, ctx, member: Member):
-        """Hug a Member"""
+        """Hug a member"""
 
         if member is ctx.author:
             title = f":smiling_face_with_3_hearts: :smiling_face_with_3_hearts: | **{ctx.author.display_name}** hugged **themselves**"
         else:
             title = f":smiling_face_with_3_hearts: :smiling_face_with_3_hearts: | **{ctx.author.display_name}** hugged **{member.display_name}**"
 
-        # Surround with try/except to catch any exceptions that may occur
         try:
 
             # Open the file containing the hug gifs

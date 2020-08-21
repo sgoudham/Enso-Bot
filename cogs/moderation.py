@@ -35,11 +35,11 @@ async def send_to_modlogs(self, ctx, target, reason, action):
     """
 
     # Get the channel of the modlog within the guild
-    modlog = self.bot.get_modlog_for_guild(str(ctx.guild.id))
+    modlog = self.bot.get_modlog_for_guild(ctx.guild.id)
 
-    if modlog is not None:
+    if modlog:
 
-        channel = ctx.guild.get_channel(int(modlog))
+        channel = ctx.guild.get_channel(modlog)
 
         embed = Embed(title=f"Member {action}",
                       colour=self.bot.admin_colour,
@@ -87,30 +87,34 @@ async def ummute_members(self, ctx, targets, reason):
 
     """
 
-    # Setup pool
-    pool = self.bot.db
-
     for target in targets:
         if (ctx.guild.me.top_role.position > target.top_role.position
                 and not target.guild_permissions.administrator):
 
-            # Setup up pool connection and cursor
+            # Setup up pool connection
+            pool = self.bot.db
             async with pool.acquire() as conn:
-                async with conn.cursor() as cur:
-                    # Get the roles of the user from the database
-                    select_query = """SELECT * FROM members WHERE guildID = (%s) AND discordID = (%s)"""
-                    select_vals = ctx.guild.id, target.id,
 
-                    # Execute the SQL Query
-                    await cur.execute(select_query, select_vals)
-                    result = await cur.fetchone()
-                    role_ids = result[4]
+                # Get the roles of the user from the database
+                try:
+                    select_query = """SELECT * FROM members WHERE guild_id = $1 AND member_id = $2"""
+                    result = await conn.fetchrow(select_query, ctx.guild.id, target.id)
+
+                # Catch Errors
+                except Exception as e:
+                    print("PostGres Error: Record Not Found For Unmuting Members", e)
 
                 # Get all the roles of the user before they were muted from the database
-                roles = [ctx.guild.get_role(int(id_)) for id_ in role_ids.split(", ") if len(id_)]
+                else:
+                    role_ids = result["muted_roles"]
+                    roles = [ctx.guild.get_role(int(id_)) for id_ in role_ids.split(", ") if len(id_)]
 
-                # Clear all the roles of the user
-                await self.bot.clearRoles(member=target)
+                # Release connection back to pool
+                finally:
+                    await pool.release(conn)
+
+            # Clear all the roles of the user
+            await self.bot.clearRoles(member=target)
 
             await target.edit(roles=roles)
 
@@ -159,7 +163,7 @@ async def mute_members(self, ctx, targets, reason, muted):
                 embed = Embed(description=f"✅ **{target}** Was Muted! ✅",
                               colour=self.bot.admin_colour)
 
-                if self.bot.get_roles_persist(str(ctx.guild.id)) == 0:
+                if self.bot.get_roles_persist(ctx.guild.id) == 0:
                     embed.add_field(name="**WARNING: ROLE PERSIST NOT ENABLED**",
                                     value="The bot **will not give** the roles back to the user if they leave the server."
                                           "\nAllowing the user to bypass the Mute by leaving and rejoining."
@@ -409,12 +413,12 @@ class Moderation(Cog):
         """Logging Bulk Message Deletion from Server"""
 
         # Get the channel within the cache
-        channel = self.bot.get_modlog_for_guild(str(payload.guild_id))
+        channel = self.bot.get_modlog_for_guild(payload.guild_id)
 
         # When no modlogs channel is returned, do nothing
-        if channel is not None:
+        if channel:
             # Get the modlogs channel and channel that the messages were deleted in
-            modlogs_channel = self.bot.get_channel(int(channel))
+            modlogs_channel = self.bot.get_channel(channel)
             deleted_msgs_channel = self.bot.get_channel(payload.channel_id)
             desc = f"**Bulk Delete in {deleted_msgs_channel.mention} | {len(payload.message_ids)} messages deleted**"
 
@@ -431,13 +435,15 @@ class Moderation(Cog):
     async def on_member_remove(self, member):
         """Log Member Leaves from Server"""
 
+        if member == self.bot.user: return
+
         # Get the channel within the cache
-        channel = self.bot.get_modlog_for_guild(str(member.guild.id))
+        channel = self.bot.get_modlog_for_guild(member.guild.id)
 
         # When no modlogs channel is returned, do nothing
-        if channel is not None:
+        if channel:
             # Get the modlogs channel
-            modlogs_channel = self.bot.get_channel(int(channel))
+            modlogs_channel = self.bot.get_channel(channel)
 
             embed = Embed(description=f"**{member.mention}** | **{member}**",
                           colour=self.bot.admin_colour,
@@ -453,12 +459,12 @@ class Moderation(Cog):
         """Log Member Joins to Server"""
 
         # Get the channel within the cache
-        channel = self.bot.get_modlog_for_guild(str(member.guild.id))
+        channel = self.bot.get_modlog_for_guild(member.guild.id)
 
         # When no modlogs channel is returned, do nothing
-        if channel is not None:
+        if channel:
             # Get the modlogs channel
-            modlogs_channel = self.bot.get_channel(int(channel))
+            modlogs_channel = self.bot.get_channel(channel)
 
             embed = Embed(description=f"**{member.mention}** | **{member}**",
                           colour=self.bot.admin_colour,
@@ -477,12 +483,12 @@ class Moderation(Cog):
         """Logs Member Bans to Server"""
 
         # Get the channel within the cache
-        channel = self.bot.get_modlog_for_guild(str(guild.id))
+        channel = self.bot.get_modlog_for_guild(guild.id)
 
         # When no modlogs channel is returned, do nothing
-        if channel is not None:
+        if channel:
             # Get the modlogs channel
-            modlogs_channel = self.bot.get_channel(int(channel))
+            modlogs_channel = self.bot.get_channel(channel)
 
             embed = Embed(description=f"{user.mention} | **{user}**",
                           colour=self.bot.admin_colour,
@@ -498,12 +504,12 @@ class Moderation(Cog):
         """Logs Member Unbans to Server"""
 
         # Get the channel within the cache
-        channel = self.bot.get_modlog_for_guild(str(guild.id))
+        channel = self.bot.get_modlog_for_guild(guild.id)
 
         # When no modlogs channel is returned, do nothing
-        if channel is not None:
+        if channel:
             # Get the modlogs channel
-            modlogs_channel = self.bot.get_channel(int(channel))
+            modlogs_channel = self.bot.get_channel(channel)
 
             embed = Embed(description=f"{user.mention} | **{user}**",
                           colour=self.bot.admin_colour,
@@ -519,12 +525,12 @@ class Moderation(Cog):
         """Logging Member Profile Updates"""
 
         # Get the channel within the cache
-        channel = self.bot.get_modlog_for_guild(str(after.guild.id))
+        channel = self.bot.get_modlog_for_guild(after.guild.id)
 
         # When no modlogs channel is returned, do nothing
-        if channel is not None:
+        if channel:
             # Get the modlogs channel
-            modlogs_channel = self.bot.get_channel(int(channel))
+            modlogs_channel = self.bot.get_channel(channel)
 
             # Logging Nickname Updates
             if before.nick != after.nick:
@@ -586,19 +592,19 @@ class Moderation(Cog):
     async def on_message_edit(self, before, after):
         """Logging Message Edits (Within Cache)"""
 
-        msg_channel = self.bot.get_channel(int(after.channel.id))
+        msg_channel = self.bot.get_channel(after.channel.id)
 
         # Get the channel within the cache
         if not isinstance(msg_channel, DMChannel):
             # Get the channel within the cache
-            channel = self.bot.get_modlog_for_guild(str(after.guild.id))
+            channel = self.bot.get_modlog_for_guild(after.guild.id)
         else:
             return
 
         # When no modlogs channel is returned, do nothing
-        if channel is not None:
+        if channel:
             # Get the modlogs channel
-            modlogs_channel = self.bot.get_channel(int(channel))
+            modlogs_channel = self.bot.get_channel(channel)
 
             # Logging Message Content Edits
             # Not logging any message edits from bots
@@ -629,16 +635,17 @@ class Moderation(Cog):
 
         # Get the channel within the cache
         if not isinstance(msg_channel, DMChannel):
-            channel = self.bot.get_modlog_for_guild(payload.data["guild_id"])
+            channel = self.bot.get_modlog_for_guild(int(payload.data["guild_id"]))
         else:
             return
 
-        # Only log this message if the message does not exist within the internal cache and modlogs channel is set up
-        if channel is not None and not payload.cached_message:
+        # Only log this message edit when the message does not exist within the internal cache
+        # and modlogs channel is set up
+        if channel and not payload.cached_message:
             # Get the modlogs channel
-            modlogs_channel = self.bot.get_channel(int(channel))
+            modlogs_channel = self.bot.get_channel(channel)
 
-            desc = f"**Message Edited Within <#{payload.channel_id}>\nMessage Content Not Displayable**"
+            desc = f"**Message Edited Within {msg_channel.mention}\nMessage Content Not Displayable**"
             embed = Embed(description=desc,
                           colour=self.bot.admin_colour,
                           timestamp=datetime.datetime.utcnow())
@@ -652,12 +659,12 @@ class Moderation(Cog):
         """Logging Message Deletions (Within Cache)"""
 
         # Get the channel within the cache
-        channel = self.bot.get_modlog_for_guild(str(message.guild.id))
+        channel = self.bot.get_modlog_for_guild(message.guild.id)
 
         # When no modlogs channel is returned, do nothing
-        if channel is not None and not message.author.bot:
+        if channel and not message.author.bot:
             # Get the modlogs channel
-            modlogs_channel = self.bot.get_channel(int(channel))
+            modlogs_channel = self.bot.get_channel(channel)
 
             if not message.attachments:
                 desc = f"**Message Sent By {message.author.mention} Deleted In {message.channel.mention}" \
@@ -674,6 +681,33 @@ class Moderation(Cog):
                           timestamp=datetime.datetime.utcnow())
             embed.set_author(name=message.author, icon_url=message.author.avatar_url)
             embed.set_footer(text=f"Author ID: {message.author.id} | Message ID: {message.id}")
+
+            await modlogs_channel.send(embed=embed)
+
+    @Cog.listener()
+    async def on_raw_message_delete(self, payload):
+        """Logging Message Deletions Not Stored Within Internal Cache"""
+
+        msg_channel = self.bot.get_channel(payload.channel_id)
+
+        # Get the channel within the cache
+        if not isinstance(msg_channel, DMChannel):
+            channel = self.bot.get_modlog_for_guild(payload.guild_id)
+        else:
+            return
+
+        # Only log this message deletion when the message does not exist within the internal cache
+        # and modlogs channel is set up
+        if channel and not payload.cached_message:
+            # Get the modlogs channel
+            modlogs_channel = self.bot.get_channel(channel)
+
+            desc = f"**Message Deleted Within {msg_channel.mention}\nMessage Content Not Displayable**"
+            embed = Embed(description=desc,
+                          colour=self.bot.admin_colour,
+                          timestamp=datetime.datetime.utcnow())
+            embed.set_author(name=modlogs_channel.guild.name, icon_url=modlogs_channel.guild.icon_url)
+            embed.set_footer(text=f"Message ID: {payload.message_id}")
 
             await modlogs_channel.send(embed=embed)
 

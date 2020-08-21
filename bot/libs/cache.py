@@ -39,10 +39,10 @@ class CachingCircularQueue:
 
     def remove(self, value):
         # To my knowledge, this method can be called when deleting a single member and many members???
-        # TODO: So this should only be called to remove a single member at a time
+        # So this should only be called to remove a single member at a time
         with self.threadLock:
             # Remove the value inside the array (value will be a tuple that is passed in)
-            # TODO: PRECONDITION, VALUE EXISTS IN CACHE, SO SHOULD EXIST IN LIST
+            # PRECONDITION, VALUE EXISTS IN CACHE, SO SHOULD EXIST IN LIST
             self.values.remove(value)
             # As you said, to ensure concurrency, set the current size back to the length of the array
 
@@ -57,19 +57,25 @@ class MyCoolCache:
 
     def store_cache(self, key, dict_item):
         with self.threadLock:
-            # TODO: Changed == to >= just incase of concurrency issue meaning size exceeds maximum, thats my fault
-            if len(self.queue.values) >= self.MAX_SIZE:
-                key_to_delete = None
-                if key in self.cache:
-                    if self.cache[key] is None:
-                        key_to_delete = self.queue.push(key)
-                else:
-                    key_to_delete = self.queue.push(key)
+            has_key = True
+            # Assume the key exists in the cache
+            if key in self.cache:
+                # If the key is None, aka removed
+                if self.cache[key] is None:
+                    has_key = False
+            else:
+                # Or doesn't exist
+                has_key = False
+
+            # Then we don't have the key.
+            # In this case, we have to check if adding a key will exceed max size
+            if not has_key:
+                key_to_delete = self.queue.push(key)
+                # If the key is not None, that means the queue was full. We must delete an item.
+
                 if key_to_delete is not None:
                     self.cache[key_to_delete] = None
-            else:
-                self.cache[key] = dict_item
-                self.queue.push(key)
+            self.cache[key] = dict_item
 
     def remove_many(self, in_guild_id):
         # This method is to be used for when the bot has left a guild
@@ -77,11 +83,9 @@ class MyCoolCache:
             # For every member within the cache
             for (member_id, guild_id) in self.cache:
                 # if the guild_id passed in is equal to the guild_id within the cache
-                # TODO: Changed 'in' to ==, remember you're comparing one entry at a time
                 if in_guild_id == guild_id:
-                    # set that entry to be equal to none
-                    # TODO: When removing a value from the cache due to a guild leave, permanently remove all values
-                    # TODO: Yes it is expensive, however as this can run concurrently and we won't need the data available
-                    # TODO: For this guild, it doesn't matter how long it takes, and will save in memory in the long term
+                    # When removing a value from the cache due to a guild leave, permanently remove all values
+                    # Yes it is expensive, however as this can run concurrently and we won't need the data available
+                    # For this guild, it doesn't matter how long it takes, and will save in memory in the long term
                     self.cache.pop((member_id, guild_id))
                     self.queue.remove((member_id, guild_id))

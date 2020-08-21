@@ -120,7 +120,7 @@ class Enso(Cog):
 
         # Making sure this command only works in Enso
         if not ctx.guild.id == self.bot.enso_guild_ID:
-            await ctx.send("**Sorry! That command is only for a certain guild!**")
+            await self.bot.generate_embed(ctx, desc="**Sorry! That command is only for a certain guild!**")
             return
 
         # If the channel that the command has been sent is in the list of accepted channels
@@ -143,8 +143,9 @@ class Enso(Cog):
                     # Send the list of available members to the channel
                     nice = string.capwords(', '.join(map(str, enso_people())))
                     # Send error message saying that the person isn't recognised
-                    await ctx.send(f"Sorry! That person doesn't exist! Try the names listed below!"
-                                   f"\n{nice}")
+                    await self.bot.generate_embed(ctx,
+                                                  desc=f"Sorry! That person doesn't exist! Try the names listed below!"
+                                                       f"\n{nice}")
 
             else:
 
@@ -180,8 +181,8 @@ class Enso(Cog):
         # Send the list of available members to the channel
         nice = string.capwords(', '.join(map(str, enso_people())))
         # Send error message saying that the person isn't recognised
-        await ctx.send(f"Try the names listed below!"
-                       f"\n{nice}")
+        await self.bot.generate_embed(ctx, desc=f"Try the names listed below!"
+                                                f"\n{nice}")
 
     @command(name="rules")
     @cooldown(1, 5, BucketType.user)
@@ -190,7 +191,7 @@ class Enso(Cog):
 
         # Making sure this command only works in Enso
         if not ctx.guild.id == self.bot.enso_guild_ID:
-            await ctx.send("**Sorry! That command is only for a certain guild!**")
+            await self.bot.generate_embed(ctx, desc="**Sorry! That command is only for a certain guild!**")
             return
 
         # Define Izzy's roles ID
@@ -284,7 +285,7 @@ class Enso(Cog):
         """Leveled role/xp system for Ensō"""
 
         if not ctx.guild.id == self.bot.enso_guild_ID:
-            await ctx.send("**Sorry! That command is only for a certain guild!**")
+            await self.bot.generate_embed(ctx, desc="**Sorry! That command is only for a certain guild!**")
             return
 
         # Get the url of the leveled roles image
@@ -400,7 +401,7 @@ class Enso(Cog):
             role = discord.utils.find(lambda r: r.name == payload.emoji.name, guild.roles)
 
             # if the role does exist
-            if role is not None:
+            if role:
                 # Print to me that the role was found and display the id of the role
                 print(role.name + " was found!")
                 print(role.id)
@@ -437,7 +438,7 @@ class Enso(Cog):
             role = discord.utils.find(lambda r: r.name == payload.emoji.name, guild.roles)
 
             # if the role does exist
-            if role is not None:
+            if role:
                 # Find the member that has the role which the emoji is connected to
                 member = discord.utils.find(lambda m: m.id == payload.user_id, guild.members)
 

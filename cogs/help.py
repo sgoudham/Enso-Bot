@@ -657,16 +657,17 @@ class Help(Cog):
         # As long as a new prefix has been given and is less than 5 characters
         if new and len(new) <= 5:
             # Store the new prefix in the dictionary and update the database
-            await self.bot.storage_prefix_for_guild(self.bot.db, ctx, new)
+            await self.bot.storage_prefix_for_guild(ctx, new)
 
         # Making sure that errors are handled if prefix is above 5 characters
         elif new and len(new) > 5:
-            await ctx.send("The guild prefix must be less than or equal to **5** characters!")
+            await self.bot.generate_embed(ctx, desc="The guild prefix must be less than or equal to **5** characters!")
 
         # if no prefix was provided
         elif not new:
             # Grab the current prefix for the guild within the cached dictionary
-            await ctx.send(f"**The current guild prefix is `{self.bot.get_prefix_for_guild(str(ctx.guild.id))}`**")
+            await self.bot.generate_embed(ctx,
+                                          desc=f"**The current guild prefix is `{self.bot.get_prefix_for_guild(ctx.guild.id)}`**")
 
     @command(name="support")
     async def support(self, ctx):

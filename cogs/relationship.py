@@ -17,6 +17,7 @@
 import asyncio
 import datetime
 
+import asyncpg
 from discord import Member, Embed
 from discord.ext.commands import BucketType, command, cooldown, bot_has_permissions, Cog
 
@@ -80,37 +81,35 @@ class Relationship(Cog):
             await self.bot.generate_embed(ctx, desc="**Senpaii! ˭̡̞(◞⁎˃ᆺ˂)◞*✰ You can't possibly marry yourself!**")
             return
 
+        # TODO: Probably will need to get rid of this in favour of getting from cache
+
         # Setup pool connection and cursor
         async with pool.acquire() as conn:
-            async with conn.cursor() as author_cursor:
-                # Get the author's/members row from the Members Table
-                select_query = """SELECT * FROM members WHERE discordID = (%s) and guildID = (%s)"""
-                author_val = ctx.author.id, guild.id,
-                member_val = member.id, guild.id,
+            # Get the author's/members row from the Members Table
+            select_query = """SELECT * FROM members WHERE member_id = $1 and guild_id = $2"""
 
-                # Execute the Author SQL Query
-                await author_cursor.execute(select_query, author_val)
-                author_result = await author_cursor.fetchone()
-                married_user = author_result[1]
+            # Execute the Author SQL Query
+            db_author = await conn.fetchrow(select_query, ctx.author.id, guild.id)
+            married_user = db_author["married"]
 
-                # Make sure that the person is not already married to someone else within the server
-                if married_user is not None:
-                    member = guild.get_member(int(married_user))
-                    await self.bot.generate_embed(ctx, desc=f"**((╬◣﹏◢)) You're already married to {member.mention}!**")
-                    return
+            # Make sure that the person is not already married to someone else within the server
+            if married_user:
+                member = guild.get_member(married_user)
+                await self.bot.generate_embed(ctx, desc=f"**((╬◣﹏◢)) You're already married to {member.mention}!**")
+                return
 
-            # Set up new cursor for member row
-            async with conn.cursor() as member_cursor:
-                # Execute the Member SQL Query
-                await member_cursor.execute(select_query, member_val)
-                member_result = await member_cursor.fetchone()
-                target_user = member_result[1]
+            # Execute the Member SQL Query
+            db_member = await conn.fetchrow(select_query, member.id, guild.id)
+            target_user = db_member["married"]
 
-                if target_user is not None:
-                    member = guild.get_member(int(target_user))
-                    await self.bot.generate_embed(ctx,
-                                                  desc=f"**Sorry! That user is already married to {member.mention}**")
-                    return
+            if target_user:
+                member = guild.get_member(target_user)
+                await self.bot.generate_embed(ctx,
+                                              desc=f"**Sorry! That user is already married to {member.mention}**")
+                return
+
+        # Release connection back to pool
+        await pool.release(conn)
 
         # Send a message to the channel mentioning the author and the person they want to wed.
         await self.bot.generate_embed(ctx, desc=f"{ctx.author.mention} **Proposes To** {member.mention}"
@@ -132,18 +131,20 @@ class Relationship(Cog):
 
                 # Setup pool connection and cursor
                 async with pool.acquire() as conn:
-                    async with conn.cursor() as cur:
-                        message_time = msg.created_at.strftime("%a, %b %d, %Y")
-                        # Update the existing records in the database with the user that they are marrying along with the time of the accepted proposal
-                        update_query = """UPDATE members SET married = (%s), marriedDate = (%s) WHERE discordID = (%s) AND guildID = (%s)"""
-                        proposer = member.id, message_time, ctx.author.id, guild.id,
-                        proposee = ctx.author.id, message_time, member.id, guild.id,
 
-                        # Execute the SQL Query's
-                        await cur.execute(update_query, proposer)
-                        await cur.execute(update_query, proposee)
-                        await conn.commit()
-                        print(cur.rowcount, "2 people have been married!")
+                    message_time = msg.created_at.strftime("%a, %b %d, %Y")
+                    # Update the existing records in the database with the user that they are marrying along with the time of the accepted proposal
+                    update_query = """UPDATE members SET married = $1, married_date = $2 WHERE member_id = $3 AND guild_id = $4"""
+
+                    # Execute the SQL Query's
+                    try:
+                        await conn.execute(update_query, member.id, message_time, ctx.author.id, guild.id)
+                        await conn.execute(update_query, ctx.author.id, message_time, member.id, guild.id)
+                    except asyncpg.PostgresError as e:
+                        print(f"PostGres Error: {member.id} and {ctx.author.id} Could Not Be Married", e)
+                    else:
+                        # TODO: Update the cache that the users have been married
+                        pass
 
                 # Congratulate them!
                 desc = f"**Congratulations! ｡ﾟ( ﾟ^∀^ﾟ)ﾟ｡ {ctx.author.mention} and {member.mention} are now married to each other!**"
@@ -180,17 +181,18 @@ class Relationship(Cog):
             await self.bot.generate_embed(ctx, desc="**Senpaii! ˭̡̞(◞⁎˃ᆺ˂)◞*✰ You can't possibly divorce yourself!**")
             return
 
+        # TODO: Probably will need to get rid of this in favour of getting from cache
+        # TODO: Not gonna bother refactoring this db statement
+
         # Setup pool connection and cursor
         async with pool.acquire() as conn:
             async with conn.cursor() as cur:
                 # Get the author's row from the Members Table
-                select_query = """SELECT * FROM members WHERE discordID = (%s) and guildID = (%s)"""
-                val = ctx.author.id, guild.id,
+                select_query = """SELECT * FROM members WHERE member_id = $1 and guild_id = $1"""
 
                 # Execute the SQL Query
-                await cur.execute(select_query, val)
-                result = await cur.fetchone()
-                married_user = result[1]
+                result = await cur.fetchrow(select_query, ctx.author.id, guild.id)
+                married_user = result["married"]
 
                 # Make sure that the person trying to divorce is actually married to the user
                 if married_user is None:
@@ -200,8 +202,8 @@ class Relationship(Cog):
                     return
 
                 # Make sure the person is married to the person that they're trying to divorce
-                elif married_user != str(member.id):
-                    member = guild.get_member(int(married_user))
+                elif married_user != member.id:
+                    member = guild.get_member(married_user)
 
                     desc = f"**(ノ ゜口゜)ノ You can only divorce the person that you're married!" \
                            f"\n That person is {member.mention}**"
@@ -228,17 +230,19 @@ class Relationship(Cog):
 
                 # Setup pool connection and cursor
                 async with pool.acquire() as conn:
-                    async with conn.cursor() as cur:
-                        # Update the existing records in the database with the user that they are marrying along with the time of the accepted proposal
-                        update_query = """UPDATE members SET married = null, marriedDate = null WHERE discordID = (%s) and guildID = (%s)"""
-                        divorcer = ctx.author.id, guild.id,
-                        divorcee = member.id, guild.id,
 
+                    # Update the existing records in the database with the user that they are marrying along with the time of the accepted proposal
+                    update_query = """UPDATE members SET married = NULL, married_date = NULL WHERE member_id = $1 and guild_id = $2"""
+
+                    try:
                         # Execute the SQL Query's
-                        await cur.execute(update_query, divorcer)
-                        await cur.execute(update_query, divorcee)
-                        await conn.commit()
-                        print(cur.rowcount, "2 Members have been divorced :(!")
+                        await conn.execute(update_query, ctx.author.id, guild.id)
+                        await conn.execute(update_query, member.id, guild.id)
+                    except asyncpg.PostgresError as e:
+                        print(f"PostGres Error: {member.id} and {ctx.author.id} Could Not Be Divorced", e)
+                    else:
+                        # TODO: Update the cache that the users have been divorced
+                        pass
 
                 # Congratulate them!
                 desc = f"**૮( ´⁰▱๋⁰ )ა {ctx.author.mention} and {member.mention} are now divorced." \
@@ -277,29 +281,28 @@ class Relationship(Cog):
         # Setup pool
         pool = self.bot.db
 
+        # TODO: Replace this entire section with retrieving from cache
+
         # Setup pool connection and cursor
         async with pool.acquire() as conn:
-            async with conn.cursor() as cur:
-                # Get the author's row from the Members Table
-                select_query = """SELECT * FROM members WHERE discordID = (%s) and guildID = (%s)"""
-                val = member.id, guild.id,
+            # Get the author's row from the Members Table
+            select_query = """SELECT * FROM members WHERE member_id = $1 and guild_id = $2"""
 
-                # Execute the SQL Query
-                await cur.execute(select_query, val)
-                result = await cur.fetchone()
-                user = result[1]
-                marriage_date = result[2]
+            # Execute the SQL Query
+            result = await conn.fetchrow(select_query, member.id, guild.id)
+            user = result["married"]
+            marriage_date = result["married_date"]
 
-                # Set empty values for non-married users
-                if user is None:
-                    married = False
-                    marriedUser = ""
-                    marriedDate = ""
-                # Set the member, date married and setting married status
-                else:
-                    marriedUser = guild.get_member(int(user))
-                    marriedDate = marriage_date
-                    married = True
+            # Set empty values for non-married users
+            if not user:
+                married = False
+                marriedUser = ""
+                marriedDate = ""
+            # Set the member, date married and setting married status
+            else:
+                married = True
+                marriedUser = guild.get_member(user)
+                marriedDate = marriage_date
 
         # Get the current date of the message sent by the user
         currentDate = ctx.message.created_at.strftime("%a, %b %d, %Y")

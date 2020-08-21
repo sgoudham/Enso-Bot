@@ -284,7 +284,7 @@ class Guild(Cog):
     async def mlupdate(self, ctx, user_channel: TextChannel):
         """Change the channel that your modlogs are sent to"""
 
-        # Setup up pool connectionF
+        # Setup up pool connection
         pool = self.bot.db
         async with pool.acquire() as conn:
 
@@ -299,7 +299,7 @@ class Guild(Cog):
 
             # Throw error if the modlog channel already exists
             else:
-                if result["married"] is None:
+                if result["modlogs"] is None:
                     text = "**Modlogs Channel** not set up!" \
                            f"\nDo **{ctx.prefix}help modlogs** to find out more!"
                     await self.bot.generate_embed(ctx, desc=text)
@@ -334,7 +334,7 @@ class Guild(Cog):
 
             # Throw error that modlogs have not been setup
             else:
-                if result["married"] is None:
+                if result["modlogs"] is None:
                     text = "**Modlogs Channel** not set up!" \
                            f"\nDo **{ctx.prefix}help modlogs** to find out more!"
                     await self.bot.generate_embed(ctx, desc=text)

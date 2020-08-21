@@ -38,5 +38,7 @@ async def test(ctx):
     print(client.member_cache.cache)
 
 
+client.create_connection()
+
 # Run the bot
 client.execute()

@@ -86,16 +86,6 @@ class Bot(commands.Bot):
         self.modmail_cache = {}
         self.member_cache = MyCoolCache(2)
 
-        async def create_connection():
-            """Setting up connection using asyncpg"""
-
-            self.db = await asyncpg.create_pool(
-                host=host,
-                port=int(port),
-                user=user,
-                password=password,
-                database=db)
-
         async def startup_cache_log():
             """Store the guilds/modmail systems in cache from the database on startup"""
 
@@ -133,7 +123,7 @@ class Bot(commands.Bot):
                 await pool.release(conn)
 
         # Establish Database Connection
-        self.loop.run_until_complete(create_connection())
+        # self.loop.run_until_complete(create_connection())
         # Load Information Into Cache
         self.loop.run_until_complete(startup_cache_log())
 
@@ -710,3 +700,14 @@ class Bot(commands.Bot):
             self.run(API_TOKEN)
         except discord.errors.LoginFailure as e:
             print(e, "Login unsuccessful.")
+
+    async def create_connection(self):
+        """Setting up connection using asyncpg"""
+
+        self.db = await asyncpg.create_pool(
+            host=host,
+            port=int(port),
+            user=user,
+            password=password,
+            database=db,
+            loop=self.loop)

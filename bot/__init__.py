@@ -12,11 +12,11 @@
 # GNU General Public License for more details.
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
+import asyncio
 import datetime
 import logging
 import os
 import random
-import threading
 
 import aiohttp
 import asyncpg as asyncpg
@@ -49,8 +49,6 @@ API_TOKEN = config('DISCORD_TOKEN')
 
 
 class Bot(commands.Bot):
-    threadLock = threading.Lock()
-
     def __init__(self, **options):
 
         async def get_prefix(bot, message):
@@ -90,14 +88,13 @@ class Bot(commands.Bot):
 
         async def create_connection():
             """Setting up connection using asyncpg"""
-            with self.threadLock:
-                self.db = await asyncpg.create_pool(
-                    host=host,
-                    port=int(port),
-                    user=user,
-                    password=password,
-                    database=db,
-                    loop=self.loop)
+            self.db = await asyncpg.create_pool(
+                host=host,
+                port=int(port),
+                user=user,
+                password=password,
+                database=db,
+                loop=self.loop)
 
         async def startup_cache_log():
             """Store the guilds/modmail systems in cache from the database on startup"""
@@ -135,8 +132,11 @@ class Bot(commands.Bot):
                 # Release connection back to pool
                 await pool.release(conn)
 
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(create_connection())
+
         # Establish Database Connection
-        self.loop.run_until_complete(create_connection())
+        # self.loop.run_until_complete(create_connection())
         # Load Information Into Cache
         self.loop.run_until_complete(startup_cache_log())
 

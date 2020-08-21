@@ -12,7 +12,7 @@
 # GNU General Public License for more details.
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
-
+import asyncio
 import datetime
 import logging
 import os
@@ -97,7 +97,7 @@ class Bot(commands.Bot):
                 database=db,
                 loop=self.loop)
 
-        create_connection()
+        asyncio.run(create_connection())
 
         async def startup_cache_log():
             """Store the guilds/modmail systems in cache from the database on startup"""

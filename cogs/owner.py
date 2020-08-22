@@ -13,6 +13,8 @@
 
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
+from typing import Optional
+
 import asyncpg
 from discord import Member
 from discord.ext.commands import Cog, command, is_owner
@@ -67,11 +69,11 @@ class Owner(Cog):
 
         # Setup up pool connection and cursor
         async with pool.acquire() as conn:
+
             # Define the insert statement that will insert the user's information
             try:
                 insert_query = """INSERT INTO members (guild_id, member_id) VALUES ($1, $2)
                             ON CONFLICT (guild_id, member_id) DO NOTHING"""
-
                 await conn.executemany(insert_query, records)
 
             # Catch errors
@@ -82,9 +84,32 @@ class Owner(Cog):
             else:
                 print(f"Record(s) Inserted Into Members")
 
+            # Release connection back to pool
             finally:
-                # Release connection back to pool
                 await pool.release(conn)
+
+    @command(name="cache", hidden=True)
+    @is_owner()
+    async def set_cache(self, ctx, size: Optional[int]):
+        """Allow me to dynamically set the cache max size"""
+
+        if size:
+            try:
+                self.bot.member_cache.change_array_size(size)
+
+            # Catch errors
+            except Exception as e:
+                print(e)
+
+            # Let me that it's successful
+            else:
+                await self.bot.generate_embed(ctx, desc=f"Cache Now Storing To **{size}** Records")
+
+        else:
+            max_cache_len, cache_len, queue_len = self.bot.member_cache.get_size()
+            await self.bot.generate_embed(ctx, desc=f"\nCurrent Records Stored Within Cache: **{cache_len}**"
+                                                    f"\nCurrent Queue Length: **{queue_len}**"
+                                                    f"Max Size Of Cache: **{max_cache_len}**")
 
 
 def setup(bot):

@@ -17,7 +17,6 @@
 import datetime
 import random
 
-import asyncpg
 from discord import Embed, Member
 from discord.ext.commands import cooldown, command, BucketType, bot_has_permissions, Cog
 
@@ -63,33 +62,16 @@ class Interactive(Cog):
             kiss = True
             title = f":kissing_heart: :kissing_heart: | **{ctx.author.display_name}** kissed **{member.display_name}**"
 
-        # Setup pool connection
-        pool = self.bot.db
-        async with pool.acquire() as conn:
+        # Get author record from cache/database
+        result = await self.bot.check_cache(ctx.author.id, guild.id)
 
-            # Get the author's row from the members table
-            try:
-                select_query = """SELECT * FROM members WHERE member_id = $1 and guild_id = $2"""
-                result = await conn.fetchrow(select_query, ctx.author.id, guild.id)
-
-            # Catch errors
-            except asyncpg.PostgresError as e:
-                print("PostGres Error: Member Record Could Not Be Retrieved For Kiss Command", e)
-
-            # Checking conditions to make sure user is married/kissing their partner
-            else:
-                married_user = result["married"]
-
-                if married_user is None and kiss:
-                    await ctx.send("Σ(‘◉⌓◉’) You need to be married in order to use this command! Baka!")
-                    return
-                elif not member.id == married_user and kiss:
-                    await ctx.send("Σ(‘◉⌓◉’) You can only kiss your partner! Baka!")
-                    return
-
-            # Release connection back to pool
-            finally:
-                await pool.release(conn)
+        married_user = result["married"]
+        if married_user is None and kiss:
+            await ctx.send("Σ(‘◉⌓◉’) You need to be married in order to use this command! Baka!")
+            return
+        elif not member.id == married_user and kiss:
+            await ctx.send("Σ(‘◉⌓◉’) You can only kiss your partner! Baka!")
+            return
 
         try:
             # Open the file containing the kissing gifs
@@ -131,29 +113,16 @@ class Interactive(Cog):
             cuddle = True
             title = f":blush: :blush: | **{ctx.author.display_name}** cuddled **{member.display_name}**"
 
-        # Setup pool connection
-        pool = self.bot.db
-        async with pool.acquire() as conn:
+        # Get author record from cache/database
+        result = await self.bot.check_cache(ctx.author.id, guild.id)
 
-            # Get the author's row from the members table
-            try:
-                select_query = """SELECT * FROM members WHERE member_id = $1 and guild_id = $2"""
-                result = await conn.fetchrow(select_query, ctx.author.id, guild.id)
-
-            # Catch errors
-            except asyncpg.PostgresError as e:
-                print("PostGres Error: Member Record Could Not Be Retrieved For Cuddle Command", e)
-
-            # Checking conditions to make sure user is married/cuddling their partner
-            else:
-                married_user = result["married"]
-
-                if married_user is None and cuddle:
-                    await ctx.send("Σ(‘◉⌓◉’) You need to be married in order to use this command! Baka!")
-                    return
-                elif not member.id == married_user and cuddle:
-                    await ctx.send("Σ(‘◉⌓◉’) You can only cuddle your partner! Baka!")
-                    return
+        married_user = result["married"]
+        if married_user is None and cuddle:
+            await ctx.send("Σ(‘◉⌓◉’) You need to be married in order to use this command! Baka!")
+            return
+        elif not member.id == married_user and cuddle:
+            await ctx.send("Σ(‘◉⌓◉’) You can only cuddle your partner! Baka!")
+            return
 
         try:
 

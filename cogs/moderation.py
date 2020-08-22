@@ -91,30 +91,14 @@ async def ummute_members(self, ctx, targets, reason):
         if (ctx.guild.me.top_role.position > target.top_role.position
                 and not target.guild_permissions.administrator):
 
-            # Setup up pool connection
-            pool = self.bot.db
-            async with pool.acquire() as conn:
+            # Get the roles of the user
+            result = await self.bot.check_cache(target.id, ctx.guild.id)
 
-                # Get the roles of the user from the database
-                try:
-                    select_query = """SELECT * FROM members WHERE guild_id = $1 AND member_id = $2"""
-                    result = await conn.fetchrow(select_query, ctx.guild.id, target.id)
-
-                # Catch Errors
-                except Exception as e:
-                    print("PostGres Error: Record Not Found For Unmuting Members", e)
-
-                # Get all the roles of the user before they were muted from the database
-                else:
-                    role_ids = result["muted_roles"]
-                    roles = [ctx.guild.get_role(int(id_)) for id_ in role_ids.split(", ") if len(id_)]
-
-                # Release connection back to pool
-                finally:
-                    await pool.release(conn)
+            role_ids = result["muted_roles"]
+            roles = [ctx.guild.get_role(int(id_)) for id_ in role_ids.split(", ") if len(id_)]
 
             # Clear all the roles of the user
-            await self.bot.clearRoles(member=target)
+            await self.bot.clear_roles(member=target)
 
             await target.edit(roles=roles)
 
@@ -155,7 +139,7 @@ async def mute_members(self, ctx, targets, reason, muted):
                     and not target.guild_permissions.administrator):
 
                 # Store the current roles of the user within database
-                await self.bot.storeRoles(target=target, ctx=ctx, member=target)
+                await self.bot.store_roles(target=target, ctx=ctx, member=target)
                 # Give the user the muted role (and any integration roles if need be)
                 await target.edit(roles=roles, reason=reason)
 
@@ -192,6 +176,7 @@ async def ban_members(self, ctx, targets, reason):
     for target in targets:
         if (ctx.guild.me.top_role.position > target.top_role.position
                 and not target.guild_permissions.administrator):
+
             await target.ban(reason=reason)
 
             await self.bot.generate_embed(ctx, desc=f"✅ **{target}** Was Banned! ✅")
@@ -220,8 +205,8 @@ async def unban_members(self, ctx, targets, reason):
     for target in targets:
         if target not in ban_ids:
             await self.bot.generate_embed(ctx, desc="❌ **Member Is Not In Ban's List!** ❌")
-        else:
 
+        else:
             # Get the member and unban them
             user = await self.bot.fetch_user(target)
             await ctx.guild.unban(user, reason=reason)
@@ -245,6 +230,7 @@ async def kick_members(self, ctx, targets, reason):
     for target in targets:
         if (ctx.guild.me.top_role.position > target.top_role.position
                 and not target.guild_permissions.administrator):
+
             await target.kick(reason=reason)
 
             await self.bot.generate_embed(ctx, desc=f"✅ **{target}** Was Kicked! ✅")
@@ -458,6 +444,8 @@ class Moderation(Cog):
     async def on_member_join(self, member):
         """Log Member Joins to Server"""
 
+        if member == self.bot.user: return
+
         # Get the channel within the cache
         channel = self.bot.get_modlog_for_guild(member.guild.id)
 
@@ -481,6 +469,8 @@ class Moderation(Cog):
     @Cog.listener()
     async def on_member_ban(self, guild, user):
         """Logs Member Bans to Server"""
+
+        if user == self.bot.user: return
 
         # Get the channel within the cache
         channel = self.bot.get_modlog_for_guild(guild.id)
@@ -523,6 +513,8 @@ class Moderation(Cog):
     @Cog.listener()
     async def on_member_update(self, before, after):
         """Logging Member Profile Updates"""
+
+        if before == self.bot.user: return
 
         # Get the channel within the cache
         channel = self.bot.get_modlog_for_guild(after.guild.id)

@@ -88,6 +88,9 @@ class MyCoolCache:
             if input_size > self.MAX_SIZE:
                 self.queue.MAX_SIZE = input_size
                 self.MAX_SIZE = input_size
+            elif self.MAX_SIZE > input_size > len(self.queue.values):
+                self.queue.MAX_SIZE = input_size
+                self.MAX_SIZE = input_size
             else:
                 # Split Array into 2 and iterate through the queue and delete things
                 for value in self.queue.values[input_size:]:

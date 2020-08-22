@@ -16,6 +16,8 @@
 # Built by karan#7508
 # Edited by Hamothy#5619
 
+# TODO: UPDATE ALL COMMENTARY TO REFLECT OUR WORK
+
 import threading
 
 
@@ -29,9 +31,6 @@ class CachingCircularQueue:
         self.values = []
         # The maximum size of the queue
         self.MAX_SIZE = size
-
-    def increase_size(self, size):
-        """Increase the size of the queue"""
 
     def push(self, value):
         # thread safe
@@ -66,7 +65,6 @@ class CachingCircularQueue:
             # PRECONDITION, VALUE EXISTS IN CACHE, SO SHOULD EXIST IN LIST
             if value in self.values:
                 self.values.remove(value)
-            # As you said, to ensure concurrency, set the current size back to the length of the array
 
 
 class MyCoolCache:
@@ -77,30 +75,30 @@ class MyCoolCache:
         self.queue = CachingCircularQueue(size)
         self.cache = {}
 
-    def decrease_size(self, size):
-        """Decrease the size of the array"""
+    def get_size(self):
+        """Return size of cache and queue"""
+
+        return self.MAX_SIZE, len(self.cache), len(self.queue.values)
 
     def change_array_size(self, input_size):
+        """Dynamically change the size of the array"""
+
         with self.threadLock:
-            try:
-                # Increase the size of the array and the cache to the new size
-                if input_size > self.MAX_SIZE:
-                    self.queue.MAX_SIZE = input_size
-                    self.MAX_SIZE = input_size
-                else:
-                    # Split Array into 2 and iterate through the queue and delete things
-                    for value in self.queue.values[input_size:]:
-                        self.cache.pop(value)
+            # Increase the size of the array and the cache to the new size
+            if input_size > self.MAX_SIZE:
+                self.queue.MAX_SIZE = input_size
+                self.MAX_SIZE = input_size
+            else:
+                # Split Array into 2 and iterate through the queue and delete things
+                for value in self.queue.values[input_size:]:
+                    self.cache.pop(value)
 
-                    # Make sure only the records up until the size specified are stored
-                    self.queue.values = self.queue.values[:input_size]
+                # Make sure only the records up until the size specified are stored
+                self.queue.values = self.queue.values[:input_size]
 
-                    # Set max size of queue and cache to be the length of the new queue
-                    self.queue.MAX_SIZE = len(self.queue.values)
-                    self.MAX_SIZE = len(self.queue.values)
-
-            except Exception as e:
-                print(e)
+                # Set max size of queue and cache to be the length of the new queue
+                self.queue.MAX_SIZE = len(self.queue.values)
+                self.MAX_SIZE = input_size
 
     def store_cache(self, key, dict_item):
         with self.threadLock:

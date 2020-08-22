@@ -83,14 +83,22 @@ class MyCoolCache:
     def change_array_size(self, input_size):
         """Dynamically change the size of the array"""
 
+        # Making it thread-safe
         with self.threadLock:
+
             # Increase the size of the array and the cache to the new size
             if input_size > self.MAX_SIZE:
                 self.queue.MAX_SIZE = input_size
                 self.MAX_SIZE = input_size
+
+            # Increase the size of the array while
+            # it's greater than the queue and
+            # less than the max value of the cache
             elif self.MAX_SIZE > input_size > len(self.queue.values):
                 self.queue.MAX_SIZE = input_size
                 self.MAX_SIZE = input_size
+
+            # Decrease the size of the queue and pop values in cache
             else:
                 # Split Array into 2 and iterate through the queue and delete things
                 for value in self.queue.values[input_size:]:
@@ -104,6 +112,8 @@ class MyCoolCache:
                 self.MAX_SIZE = input_size
 
     def store_cache(self, key, dict_item):
+        """Store the value in queue/cache"""
+
         with self.threadLock:
             has_key = True
             # Assume the key exists in the cache
@@ -138,8 +148,10 @@ class MyCoolCache:
                     # When removing a value from the cache due to a guild leave, permanently remove all values
                     # Yes it is expensive, however as this can run concurrently and we won't need the data available
                     # For this guild, it doesn't matter how long it takes, and will save in memory in the long term
+
                     # Store key within array
                     keys_to_remove.append((member_id, guild_id))
+                    # Remove the key from the queue
                     self.queue.remove((member_id, guild_id))
 
             # Iterate through the array and then pop the keys from cache

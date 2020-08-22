@@ -13,6 +13,7 @@
 
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
+import asyncio
 from typing import Optional
 
 import asyncpg
@@ -49,12 +50,19 @@ class Owner(Cog):
     async def restart(self, ctx):
         """Restart the bot"""
 
-        await self.bot.generate_embed(ctx, desc="**Success Senpai!"
-                                                "\nMy Reboot Had No Problems** <a:ThumbsUp:737832825469796382>")
+        # Close the database connection
+        try:
+            await asyncio.wait_for(self.bot.db.close(), timeout=1.0)
 
-        self.bot.db.close()
-        await self.bot.db.wait_closed()
-        await self.bot.logout()
+        # Catch errors
+        except asyncio.TimeoutError:
+            await self.bot.generate_embed(ctx, desc="**Database Connection Timed Out!")
+
+        # Shutdown the bot
+        else:
+            await self.bot.generate_embed(ctx, desc="**Success Senpai!"
+                                                    "\nMy Reboot Had No Problems** <a:ThumbsUp:737832825469796382>")
+            await self.bot.logout()
 
     @command(name="reloadusers", hidden=True)
     @is_owner()

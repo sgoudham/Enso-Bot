@@ -83,7 +83,7 @@ class Bot(commands.Bot):
         # Instance variables for cache
         self.enso_cache = {}
         self.modmail_cache = {}
-        self.member_cache = MyCoolCache(50)
+        self.member_cache = MyCoolCache(1000)
 
         async def create_connection():
             """Setting up connection using asyncpg"""

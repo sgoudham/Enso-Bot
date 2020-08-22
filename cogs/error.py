@@ -30,7 +30,7 @@ async def send_error(ctx, perms, embed):
         await ctx.send(embed=embed)
     elif perms.send_messages:
         await ctx.send(
-            "Error Embed Message Could Not Be Sent. Make sure that the bot has the **Embed Links** Permission")
+            "Error Message Not Sent.\nMake sure that the bot has the **Embed Links** Permission")
     else:
         print("Error: Error Handling Message Could Not Be Sent")
 

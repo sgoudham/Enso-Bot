@@ -83,10 +83,11 @@ class Bot(commands.Bot):
         # Instance variables for cache
         self.enso_cache = {}
         self.modmail_cache = {}
-        self.member_cache = MyCoolCache(1000)
+        self.member_cache = MyCoolCache(5000)
 
         async def create_connection():
             """Setting up connection using asyncpg"""
+
             self.db = await asyncpg.create_pool(
                 host=host,
                 port=int(port),
@@ -325,9 +326,7 @@ class Bot(commands.Bot):
             # Query to update the existing prefix within the database
             try:
                 update_query = """UPDATE guilds SET prefix = $1 WHERE guild_id = $2"""
-
                 rowcount = await conn.execute(update_query, prefix, ctx.guild.id)
-                print(rowcount, f"Guild prefix has been updated for guild {ctx.guild}")
 
             # Catch errors
             except asyncpg.PostgresError as e:
@@ -335,6 +334,7 @@ class Bot(commands.Bot):
 
             # Let the user know that the guild prefix has been updated
             else:
+                print(rowcount, f"Guild prefix has been updated for guild {ctx.guild}")
                 await self.generate_embed(ctx, desc=f"Guild prefix has been updated to **{prefix}**")
 
                 # Store in cache
@@ -370,7 +370,7 @@ class Bot(commands.Bot):
 
         await ctx.send(embed=embed)
 
-    async def storeRoles(self, target, ctx, member):
+    async def store_roles(self, target, ctx, member):
         """Storing user roles within database"""
 
         role_ids = ", ".join([str(r.id) for r in target.roles])
@@ -383,6 +383,7 @@ class Bot(commands.Bot):
             try:
                 update_query = """UPDATE members SET muted_roles = $1 WHERE guild_id = $2 AND member_id = $3"""
                 rowcount = await conn.execute(update_query, role_ids, ctx.guild.id, member.id)
+                result = await self.check_cache(member.id, member.guild.id)
 
             # Catch errors
             except asyncpg.PostgresError as e:
@@ -390,13 +391,14 @@ class Bot(commands.Bot):
 
             # Print success
             else:
+                result["muted_roles"] = role_ids
                 print(rowcount, f"Roles Added For User {member} in {ctx.guild}")
 
             # Release connection back to pool
             finally:
                 await pool.release(conn)
 
-    async def clearRoles(self, member):
+    async def clear_roles(self, member):
         """Clear the roles when the user has been unmuted"""
 
         # Setup up pool connection
@@ -407,6 +409,7 @@ class Bot(commands.Bot):
             try:
                 update_query = """UPDATE members SET muted_roles = NULL WHERE guild_id = $1 AND member_id = $2"""
                 rowcount = await conn.execute(update_query, member.guild.id, member.id)
+                result = await self.check_cache(member.id, member.guild.id)
 
             # Catch error
             except asyncpg.PostgresError as e:
@@ -414,7 +417,9 @@ class Bot(commands.Bot):
                       e)
 
             # Print success
+            # Update cache
             else:
+                result["muted_roles"] = None
                 print(rowcount, f"Roles Cleared For User {member} in {member.guild.name}")
 
             # Release connection back to pool
@@ -593,6 +598,7 @@ class Bot(commands.Bot):
                 print(f"PostGres Error: Clearing Member {member.id} Roles in Guild {member.guild.id}", e)
 
             # Print success
+            # Update cache
             else:
                 print(rowcount, f"Roles Cleared For {member} in {member.guild}")
 
@@ -645,13 +651,16 @@ class Bot(commands.Bot):
             try:
                 update_query = """UPDATE members SET roles = $1 WHERE guild_id = $2 AND member_id = $3"""
                 rowcount = await conn.execute(update_query, role_ids, member.guild.id, member.id)
+                result = await self.check_cache(member.id, member.guild.id)
 
             # Catch Error
             except asyncpg.PostgresError as e:
                 print(f"PostGres Error: Roles Could Not Be Added To {member} When Leaving {member.guild.id}", e)
 
             # Print success
+            # Update cache
             else:
+                result["roles"] = role_ids
                 print(rowcount, f"{member} Left {member.guild.name}, Roles stored into Members")
 
             finally:
@@ -659,9 +668,6 @@ class Bot(commands.Bot):
                 await pool.release(conn)
 
         # --------------------------------------------!End Events Section!----------------------------------------------
-
-    async def update_cache(self, member_id, guild_id):
-        pass
 
     async def check_cache(self, member_id, guild_id):
         """Checks if member is in the member cache"""

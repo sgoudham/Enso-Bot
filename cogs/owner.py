@@ -52,7 +52,7 @@ class Owner(Cog):
         await self.bot.generate_embed(ctx, desc="**Success Senpai!"
                                                 "\nMy Reboot Had No Problems** <a:ThumbsUp:737832825469796382>")
 
-        self.bot.db.terminate()
+        self.bot.db.close()
         await self.bot.db.wait_closed()
         await self.bot.logout()
 
@@ -93,6 +93,7 @@ class Owner(Cog):
     async def set_cache(self, ctx, size: Optional[int]):
         """Allow me to dynamically set the cache max size"""
 
+        # Change the size of the cache
         if size:
             try:
                 self.bot.member_cache.change_array_size(size)
@@ -105,6 +106,7 @@ class Owner(Cog):
             else:
                 await self.bot.generate_embed(ctx, desc=f"Cache Now Storing To **{size}** Records")
 
+        # Display the length of the current queue and cache and the max length of the cache
         else:
             max_cache_len, cache_len, queue_len = self.bot.member_cache.get_size()
             await self.bot.generate_embed(ctx, desc=f"Current Records Stored Within Cache: **{cache_len}**"

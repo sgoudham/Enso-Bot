@@ -72,9 +72,7 @@ class Relationship(Cog):
         """Wed your Lover!"""
 
         # Getting the guild of the user
-        guild = ctx.author.guild
-        # Setup pool
-        pool = self.bot.db
+        guild = ctx.guild
 
         # Make sure that the user cannot marry themselves
         if member.id == ctx.author.id:
@@ -83,33 +81,24 @@ class Relationship(Cog):
 
         # TODO: Probably will need to get rid of this in favour of getting from cache
 
-        # Setup pool connection and cursor
-        async with pool.acquire() as conn:
-            # Get the author's/members row from the Members Table
-            select_query = """SELECT * FROM members WHERE member_id = $1 and guild_id = $2"""
+        # Get the author from the cache
+        db_author = await self.bot.check_cache(ctx.author.id, ctx.guild.id)
+        married_user = db_author["married"]
 
-            # Execute the Author SQL Query
-            db_author = await conn.fetchrow(select_query, ctx.author.id, guild.id)
-            married_user = db_author["married"]
+        # Make sure that the person is not already married to someone else within the server
+        if married_user:
+            member = guild.get_member(married_user)
+            await self.bot.generate_embed(ctx, desc=f"**((╬◣﹏◢)) You're already married to {member.mention}!**")
+            return
 
-            # Make sure that the person is not already married to someone else within the server
-            if married_user:
-                member = guild.get_member(married_user)
-                await self.bot.generate_embed(ctx, desc=f"**((╬◣﹏◢)) You're already married to {member.mention}!**")
-                return
+        # Get the member mentioned from the cache
+        db_member = await self.bot.check_cache(member.id, ctx.guild.id)
+        target_user = db_member["married"]
 
-            # Execute the Member SQL Query
-            db_member = await conn.fetchrow(select_query, member.id, guild.id)
-            target_user = db_member["married"]
-
-            if target_user:
-                member = guild.get_member(target_user)
-                await self.bot.generate_embed(ctx,
-                                              desc=f"**Sorry! That user is already married to {member.mention}**")
-                return
-
-        # Release connection back to pool
-        await pool.release(conn)
+        if target_user:
+            member = guild.get_member(target_user)
+            await self.bot.generate_embed(ctx, desc=f"**Sorry! That user is already married to {member.mention}**")
+            return
 
         # Send a message to the channel mentioning the author and the person they want to wed.
         await self.bot.generate_embed(ctx, desc=f"{ctx.author.mention} **Proposes To** {member.mention}"
@@ -121,7 +110,6 @@ class Relationship(Cog):
         def check(m):
             return m.author == member and m.channel == ctx.channel
 
-        # Surround with try/except to catch any exceptions that may occur
         try:
             # Wait for the message from the mentioned user
             msg = await self.bot.wait_for('message', check=check, timeout=90.0)
@@ -129,22 +117,35 @@ class Relationship(Cog):
             # if the person says yes
             if msg.content.lower() in ['y', 'yes', 'yea']:
 
-                # Setup pool connection and cursor
+                # Setup pool connection
+                pool = self.bot.db
                 async with pool.acquire() as conn:
 
+                    # Get the time of marriage
                     message_time = msg.created_at.strftime("%a, %b %d, %Y")
-                    # Update the existing records in the database with the user that they are marrying along with the time of the accepted proposal
-                    update_query = """UPDATE members SET married = $1, married_date = $2 WHERE member_id = $3 AND guild_id = $4"""
 
-                    # Execute the SQL Query's
+                    # Update the existing records in the database with the user that they are marrying along with the time of the accepted proposal
                     try:
+                        update_query = """UPDATE members SET married = $1, married_date = $2 WHERE member_id = $3 AND guild_id = $4"""
                         await conn.execute(update_query, member.id, message_time, ctx.author.id, guild.id)
                         await conn.execute(update_query, ctx.author.id, message_time, member.id, guild.id)
+
+                    # Catch errors
                     except asyncpg.PostgresError as e:
                         print(f"PostGres Error: {member.id} and {ctx.author.id} Could Not Be Married", e)
+
+                    # Update cache new details
                     else:
                         # TODO: Update the cache that the users have been married
-                        pass
+                        db_author["married"] = member.id
+                        db_author["married_date"] = message_time
+
+                        db_member["married"] = ctx.author.id
+                        db_member["married_date"] = message_time
+
+                    # Release connection back to pool
+                    finally:
+                        await pool.release(conn)
 
                 # Congratulate them!
                 desc = f"**Congratulations! ｡ﾟ( ﾟ^∀^ﾟ)ﾟ｡ {ctx.author.mention} and {member.mention} are now married to each other!**"
@@ -172,9 +173,7 @@ class Relationship(Cog):
         """Divorce your Partner!"""
 
         # Getting the guild of the user
-        guild = ctx.author.guild
-        # Setup pool
-        pool = self.bot.db
+        guild = ctx.guild
 
         # Make sure that the user cannot divorce themselves
         if member.id == ctx.author.id:
@@ -184,31 +183,24 @@ class Relationship(Cog):
         # TODO: Probably will need to get rid of this in favour of getting from cache
         # TODO: Not gonna bother refactoring this db statement
 
-        # Setup pool connection and cursor
-        async with pool.acquire() as conn:
-            async with conn.cursor() as cur:
-                # Get the author's row from the Members Table
-                select_query = """SELECT * FROM members WHERE member_id = $1 and guild_id = $1"""
+        # Get the author from the cache
+        db_author = await self.bot.check_cache(ctx.author.id, ctx.guild.id)
+        married_user = db_author["married"]
 
-                # Execute the SQL Query
-                result = await cur.fetchrow(select_query, ctx.author.id, guild.id)
-                married_user = result["married"]
+        # Make sure that the person trying to divorce is actually married to the user
+        if married_user is None:
+            desc = "**((╬◣﹏◢)) You must be married in order to divorce someone! Baka!**"
+            await self.bot.generate_embed(ctx, desc=desc)
+            return
 
-                # Make sure that the person trying to divorce is actually married to the user
-                if married_user is None:
+        # Make sure the person is married to the person that they're trying to divorce
+        elif married_user != member.id:
+            member = guild.get_member(married_user)
 
-                    desc = "**((╬◣﹏◢)) You must be married in order to divorce someone! Baka!**"
-                    await self.bot.generate_embed(ctx, desc=desc)
-                    return
-
-                # Make sure the person is married to the person that they're trying to divorce
-                elif married_user != member.id:
-                    member = guild.get_member(married_user)
-
-                    desc = f"**(ノ ゜口゜)ノ You can only divorce the person that you're married!" \
-                           f"\n That person is {member.mention}**"
-                    await self.bot.generate_embed(ctx, desc=desc)
-                    return
+            desc = f"**(ノ ゜口゜)ノ You can only divorce the person that you're married!" \
+                   f"\n That person is {member.mention}**"
+            await self.bot.generate_embed(ctx, desc=desc)
+            return
 
         # Send a message to the channel mentioning the author and the person they want to wed.
         await self.bot.generate_embed(ctx, desc=f"{ctx.author.mention} **Wishes to Divorce** {member.mention}"
@@ -228,21 +220,33 @@ class Relationship(Cog):
             # if the person says yes
             if msg.content.lower() in ['y', 'yes', 'yea']:
 
-                # Setup pool connection and cursor
+                # Setup pool connection
+                pool = self.bot.db
                 async with pool.acquire() as conn:
 
-                    # Update the existing records in the database with the user that they are marrying along with the time of the accepted proposal
-                    update_query = """UPDATE members SET married = NULL, married_date = NULL WHERE member_id = $1 and guild_id = $2"""
-
+                    # Update the existing records in the database that the author and member are divorced
                     try:
-                        # Execute the SQL Query's
+                        update_query = """UPDATE members SET married = NULL, married_date = NULL WHERE member_id = $1 and guild_id = $2"""
                         await conn.execute(update_query, ctx.author.id, guild.id)
                         await conn.execute(update_query, member.id, guild.id)
+
+                    # Catch errors
                     except asyncpg.PostgresError as e:
                         print(f"PostGres Error: {member.id} and {ctx.author.id} Could Not Be Divorced", e)
+
+                    # Update cache with new details
                     else:
                         # TODO: Update the cache that the users have been divorced
-                        pass
+                        db_author["married"] = None
+                        db_author["married_date"] = None
+
+                        db_member = await self.bot.check_cache(member.id, ctx.guild.id)
+                        db_member["married"] = None
+                        db_member["married_date"] = None
+
+                    # Release connection back to pool
+                    finally:
+                        await pool.release(conn)
 
                 # Congratulate them!
                 desc = f"**૮( ´⁰▱๋⁰ )ა {ctx.author.mention} and {member.mention} are now divorced." \

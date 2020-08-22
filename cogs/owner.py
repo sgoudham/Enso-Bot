@@ -107,9 +107,9 @@ class Owner(Cog):
 
         else:
             max_cache_len, cache_len, queue_len = self.bot.member_cache.get_size()
-            await self.bot.generate_embed(ctx, desc=f"\nCurrent Records Stored Within Cache: **{cache_len}**"
+            await self.bot.generate_embed(ctx, desc=f"Current Records Stored Within Cache: **{cache_len}**"
                                                     f"\nCurrent Queue Length: **{queue_len}**"
-                                                    f"Max Size Of Cache: **{max_cache_len}**")
+                                                    f"\nMax Size Of Cache: **{max_cache_len}**")
 
 
 def setup(bot):

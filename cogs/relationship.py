@@ -282,31 +282,22 @@ class Relationship(Cog):
         # Getting the guild of the user
         guild = member.guild
 
-        # Setup pool
-        pool = self.bot.db
+        # Get the author from the cache
+        result = await self.bot.check_cache(member.id, ctx.guild.id)
 
-        # TODO: Replace this entire section with retrieving from cache
+        user = result["married"]
+        marriage_date = result["married_date"]
 
-        # Setup pool connection and cursor
-        async with pool.acquire() as conn:
-            # Get the author's row from the Members Table
-            select_query = """SELECT * FROM members WHERE member_id = $1 and guild_id = $2"""
-
-            # Execute the SQL Query
-            result = await conn.fetchrow(select_query, member.id, guild.id)
-            user = result["married"]
-            marriage_date = result["married_date"]
-
-            # Set empty values for non-married users
-            if not user:
-                married = False
-                marriedUser = ""
-                marriedDate = ""
-            # Set the member, date married and setting married status
-            else:
-                married = True
-                marriedUser = guild.get_member(user)
-                marriedDate = marriage_date
+        # Set empty values for non-married users
+        if not user:
+            married = False
+            marriedUser = ""
+            marriedDate = ""
+        # Set the member, date married and setting married status
+        else:
+            married = True
+            marriedUser = guild.get_member(user)
+            marriedDate = marriage_date
 
         # Get the current date of the message sent by the user
         currentDate = ctx.message.created_at.strftime("%a, %b %d, %Y")

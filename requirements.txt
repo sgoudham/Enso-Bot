@@ -67,6 +67,7 @@ smmap==3.0.4
 soupsieve==2.0.1
 South==1.0.2
 sqlparse==0.3.1
+statcord.py==2.2.0
 stevedore==3.2.0
 tenorpy==1.0.3
 typing-extensions==3.7.4.2

@@ -491,10 +491,10 @@ class Info(Cog):
             ("Developer", f"{self.bot.hammyMention} | Hamothy#5619", False),
 
             ("Language | Library",
-             f"<:python:661908544739737611> Python {python_version()} | <:discord:314003252830011395> Discord.py {discord_version}",
+             f"<:python:747224674319990895> Python {python_version()} | <:discord:747224665553895544> Discord.py {discord_version}",
              False),
 
-            ("<:discord:314003252830011395> Support Server",
+            ("<:discord:747224665553895544> Support Server",
              "[Here!](https://discord.com/invite/SZ5nexg)", True),
 
             ("<:invite:740998357643952139> Invite Link",

@@ -452,6 +452,7 @@ class Info(Cog):
                   ("Permissions Synced?", perms_synced, True),
                   ("Nsfw?", nsfw, True),
                   ("Creation At", channel.created_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"), False)]
+
         # Add fields to the embed
         for name, value, inline in fields:
             embed.add_field(name=name, value=value, inline=inline)

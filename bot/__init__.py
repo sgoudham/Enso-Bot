@@ -564,7 +564,7 @@ class Bot(commands.Bot):
                 select_query = """SELECT * FROM members WHERE guild_id = $1 AND member_id = $2"""
 
                 user_joined = await conn.fetchrow(select_query, member.guild.id, member.id)
-                role_ids = user_joined[5]
+                role_ids = user_joined["roles"]
 
             # Catch errors
             except asyncpg.PostgresError as e:
@@ -575,9 +575,11 @@ class Bot(commands.Bot):
                 if role_persist == 1:
                     # Get Enso Chan
                     bot = guild.get_member(self.user.id)
+                    # Set flag for what value role_ids is
+                    flag = role_ids
 
                     # Check permissions of Enso
-                    if bot.guild_permissions.manage_roles and role_ids:
+                    if bot.guild_permissions.manage_roles and flag:
                         # Get all the roles of the user before they were muted from the database
                         roles = [member.guild.get_role(int(id_)) for id_ in role_ids.split(", ") if len(id_)]
 
@@ -585,6 +587,11 @@ class Bot(commands.Bot):
                         await member.edit(roles=roles)
                         print(f"{member} Had Their Roles Given Back In {member.guild}")
 
+                    # Don't give roles if user has no roles to be given
+                    elif bot.guild_permissions.manage_roles and not flag:
+                        print(f"Member {member.id} Had No Roles To Be Given")
+
+                    # No permissions to give roles in the server
                     else:
                         print(f"Insufficient Permissions to Add Roles to Member {member.id} in Guild {member.guild.id}")
 
@@ -598,7 +605,6 @@ class Bot(commands.Bot):
                 print(f"PostGres Error: Clearing Member {member.id} Roles in Guild {member.guild.id}", e)
 
             # Print success
-            # Update cache
             else:
                 print(rowcount, f"Roles Cleared For {member} in {member.guild}")
 

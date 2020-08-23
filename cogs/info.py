@@ -342,11 +342,11 @@ class Info(Cog):
             length = len(ctx.guild.roles) - 20
 
             # Store the first 20 roles in a string called "roles" (highest to lowest)
-            role_string = f"{' '.join(map(str, (role.mention for role in list(reversed(ctx.guild.roles))[:20])))} and **{length}** more"
+            role_string = f"{' **|** '.join(map(str, (role.mention for role in list(reversed(ctx.guild.roles))[:20])))} and **{length}** more"
 
         else:
             # Display all roles as it is lower than 20
-            role_string = f"{' '.join(map(str, (role.mention for role in list(reversed(ctx.guild.roles[1:])))))}"
+            role_string = f"{' **|** '.join(map(str, (role.mention for role in list(reversed(ctx.guild.roles[1:])))))}"
 
         # Check if the list of emojis returned are greater than 20
         if len(ctx.guild.emojis) > 20:
@@ -388,10 +388,10 @@ class Info(Cog):
         embed.set_footer(text=f"ID: {guild_id}", icon_url=guild_icon)
 
         # Get the list of banned users from the server
-        bans = len(await ctx.guild.bans()) if perms.ban_members else "N/A"
+        bans = len(await ctx.guild.bans()) if perms.ban_members else "No Perms <:xMark:746834944629932032>"
 
         # Get the list of invites created for the server
-        invites = len(await ctx.guild.invites()) if perms.manage_guild else "N/A"
+        invites = len(await ctx.guild.invites()) if perms.manage_guild else "No Perms <:xMark:746834944629932032>"
 
         # Define fields to be added into the embed
         fields = [("Owner", ctx.guild.owner.mention, True),
@@ -429,27 +429,29 @@ class Info(Cog):
     async def channel_info(self, ctx, channel: Optional[TextChannel] = None):
         """Channel Statistics! (Category/Created At etc)"""
 
-        # Get the channel that the user is in
+        # Get information about the channel
         channel = ctx.channel if not channel else channel
+        category = channel.category.name if channel.category else "<:xMark:746834944629932032>"
+        perms_synced = "<:greenTick:746834932936212570>" if channel.permissions_synced else "<:xMark:746834944629932032>"
+        topic = channel.topic if channel.topic else "<:xMark:746834944629932032>"
+        nsfw = "<:greenTick:746834932936212570>" if channel.is_nsfw() else "<:xMark:746834944629932032>"
 
         # Set up Embed
+        desc = f"**Guild:** {ctx.guild}" \
+               f"\n**Category:** {category}" \
+               f"\n**Topic:** {topic}"
         embed = Embed(title=f"Statistics For #{channel.name}",
-                      description=f"{f'Category: {channel.category.name}' if channel.category else 'N/A'}",
+                      description=desc,
                       timestamp=datetime.datetime.utcnow(),
                       colour=self.bot.random_colour())
         embed.set_thumbnail(url=ctx.guild.icon_url)
         embed.set_footer(text=f"ID: {channel.id}")
 
         # Setting up fields
-        fields = [
-            ("Guild", ctx.guild.name, True),
-            ("Creation At", channel.created_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"), True),
-            ("Topic", f"{channel.topic if channel.topic else 'No Topic'}", True),
-            ("Permissions Synced?", channel.permissions_synced, True),
-            ("Position", channel.position, True),
-            ("NSFW?", channel.is_nsfw(), True)
-        ]
-
+        fields = [("Position", channel.position, False),
+                  ("Permissions Synced?", perms_synced, True),
+                  ("Nsfw?", nsfw, True),
+                  ("Creation At", channel.created_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"), False)]
         # Add fields to the embed
         for name, value, inline in fields:
             embed.add_field(name=name, value=value, inline=inline)

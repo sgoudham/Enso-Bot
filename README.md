@@ -1,3 +1,7 @@
+# Support Server
+
+- <b> Make sure you join the <a href="https://discord.gg/SZ5nexg">support server </a> for any help that you may need! </b>
+
 # Ensō~Chan
 
 <h3> Welcome to my passion project over quarantine! :P </h3>
@@ -40,7 +44,9 @@
 
 # Ensō Server 
 
-![Ensō Server Logo](https://media.discordapp.net/attachments/683490529862090814/729814673502765184/image.gif?width=300&height=315)
+<p align="left">
+  <img src="https://media.discordapp.net/attachments/683490529862090814/729814673502765184/image.gif?width=300&height=315" alt="Server">
+</p>
 
 <b> <p> 
 A warm welcome from our small but growing community of Ensō. 
@@ -54,5 +60,5 @@ This is a chill community with awesome talented members, keep that in mind!
 
 There are a variety of roles you are introduced to the more active you are on the server, in minimal occasions we host events or moderator applications, we strive to make our ambience better for each and every individual, so feel free to join in the fun in Ensō! 
 
-Please join [our server!](https://discord.gg/yBd8Esz) 
+Please join <a href="https://discord.gg/yBd8Esz"> our server! </a>
 </p> </b>

@@ -178,14 +178,12 @@ class Guild(Cog):
 
     @group(name="rolepersist", invoke_without_command=True, case_insensitive=True, usage="`[argument...]`")
     @has_permissions(manage_guild=True)
-    @bot_has_permissions(administrator=True)
+    @bot_has_permissions(manage_roles=True)
     async def roles_persist(self, ctx):
         """Role Persist! Keep user roles when they leave/join!"""
         pass
 
     @roles_persist.command(name="status")
-    @has_permissions(manage_guild=True)
-    @bot_has_permissions(administrator=True)
     async def rp_status(self, ctx):
         """Showing the status of the role persist within the guild"""
 
@@ -196,7 +194,7 @@ class Guild(Cog):
 
     @roles_persist.command(name="enable")
     @has_permissions(manage_guild=True)
-    @bot_has_permissions(administrator=True)
+    @bot_has_permissions(manage_roles=True)
     async def rp_enable(self, ctx):
         """Enabling role persist within the guild"""
 
@@ -208,7 +206,7 @@ class Guild(Cog):
 
     @roles_persist.command(name="disable")
     @has_permissions(manage_guild=True)
-    @bot_has_permissions(administrator=True)
+    @bot_has_permissions(manage_roles=True)
     async def rp_disable(self, ctx):
         """Disabling role persist within the guild"""
 

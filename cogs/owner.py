@@ -69,13 +69,11 @@ class Owner(Cog):
     async def reload_db(self, ctx):
         """Reloads the database by inserting/updating all the records"""
 
-        # Setup pool
-        pool = self.bot.db
-
         # Store every single record into an array
         records = [(ctx.guild.id, member.id) for member in ctx.guild.members]
 
-        # Setup up pool connection and cursor
+        # Setup up pool connection
+        pool = self.bot.db
         async with pool.acquire() as conn:
 
             # Define the insert statement that will insert the user's information

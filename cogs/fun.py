@@ -168,7 +168,8 @@ class Fun(Cog):
             f"{member.mention} I would give up my lifelong goals just to have a chance with you <a:huh:676195228872474643> <a:huh:676195228872474643>",
             f"{member.mention} Will you be the **yee** to my **haw**? :pleading_face: :pleading_face:",
             f"{member.mention} is the definition of perfection :heart_eyes: :heart_eyes:",
-            f"{member.mention} My love for you is bigger than the amount of code Hammy has written <:Kawaii:676203363922214953> <:Kawaii:676203363922214953> <:Kawaii:676203363922214953>"
+            f"{member.mention} My love for you is bigger than the amount of code Hammy has written <:Kawaii:676203363922214953> <:Kawaii:676203363922214953> <:Kawaii:676203363922214953>",
+            f"{member.mention} Why jump off a cliff when you can jump into my arms :flushed: :flushed:"
         ]
 
         # Sending out a random compliment from the array "responses"

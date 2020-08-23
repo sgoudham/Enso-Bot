@@ -23,7 +23,6 @@ import urllib.parse
 from typing import Optional
 
 import discord
-import pytesseract.pytesseract
 from PIL import Image, ImageDraw, ImageFont
 from aiohttp import request
 from discord import Member, Embed
@@ -362,7 +361,7 @@ class Fun(Cog):
             # Send the bytes object as an image file
             await ctx.send(file=discord.File(file, "homies.png"))
 
-    @command(name="owo")
+    @command(name="owo", aliases=["uwu"])
     @cooldown(1, 1, BucketType.user)
     @bot_has_permissions(manage_messages=True)
     async def owo(self, ctx, *, text):
@@ -378,22 +377,24 @@ class Fun(Cog):
         # Send the text back
         await ctx.message.channel.send(owo)
 
-    @command(name="text", hidden=True)
-    @cooldown(1, 1, BucketType.user)
+    @command(name="grayscale", aliases=["gs"])
+    @cooldown(1, 5, BucketType.user)
+    @bot_has_permissions(attach_files=True)
     async def image_to_text(self, ctx):
-        """Display text from an image submitted"""
-
-        pytesseract.pytesseract.tesseract_cmd = r'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
+        """Display grayscale version of image uploaded"""
 
         if ctx.message.attachments:
             for attachments in ctx.message.attachments:
                 attach = await attachments.read()
+                image = Image.open(io.BytesIO(attach)).convert('LA')
 
-                image = Image.open(io.BytesIO(attach))
-                text = pytesseract.image_to_string(image)
+                # Save new grayscale image as bytes
+                file = io.BytesIO()
+                image.save(file, format='PNG')
+                file.seek(0)
 
-                await ctx.send(text)
-
+                # Send Grayscale Image
+                await ctx.send(file=discord.File(file, "gp.png"))
         else:
             await self.bot.generate_embed(ctx, desc="**Image Not Detected!**")
 

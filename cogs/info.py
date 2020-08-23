@@ -202,9 +202,9 @@ class Info(Cog):
             ("Creation At", role.created_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"), True),
 
             (f"Misc",
-             f"\n Mentionable?: {mentionable}" +
-             f"\n Hoisted?: {hoisted}" +
-             f"\n Managed?: {managed}", True),
+             f"\nMentionable?: {mentionable}" +
+             f"\nHoisted?: {hoisted}" +
+             f"\nManaged?: {managed}", True),
 
             (f"Members ({len(role.members)})",
              f"\nHumans: {len(list(filter(lambda m: not m.bot, role.members)))}" +

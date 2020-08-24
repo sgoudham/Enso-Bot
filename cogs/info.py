@@ -23,6 +23,7 @@ from platform import python_version
 from time import time
 from typing import Optional
 
+import aiofiles
 from discord import Embed, Role
 from discord import Member, TextChannel
 from discord import __version__ as discord_version
@@ -76,7 +77,7 @@ region = {
 }
 
 
-def getRegion(disc_region, region_dict):
+def get_region(disc_region, region_dict):
     """Return Nicer Looking Region String"""
 
     for key in region_dict:
@@ -86,7 +87,7 @@ def getRegion(disc_region, region_dict):
             pass
 
 
-def detectPermissions(message, fset):
+def detect_perms(message, fset):
     """Filter out permissions that are not important"""
 
     # Split the message individual permissions
@@ -97,7 +98,7 @@ def detectPermissions(message, fset):
     return ", ".join(filtered)
 
 
-def lineCount():
+async def line_count():
     """Getting the line count of the project"""
 
     code = 0
@@ -113,8 +114,8 @@ def lineCount():
             if not name.endswith(".py") or ENV in file_dir:
                 continue
             file_amount += 1
-            with open(file_dir, "r", encoding="utf-8") as file:
-                for line in file:
+            async with aiofiles.open(file_dir, "r", encoding="utf-8") as file:
+                async for line in file:
                     if line.strip().startswith("#"):
                         comments += 1
                     elif not line.strip():
@@ -161,7 +162,7 @@ class Info(Cog):
         perms = ",".join(map(lambda x: x[0].replace("_", " "), filtered))
 
         # Capitalise every word in the array and filter out the permissions that are defined within the frozenset
-        permission = string.capwords("".join(map(str, detectPermissions(perms, Perms))))
+        permission = string.capwords("".join(map(str, detect_perms(perms, Perms))))
 
         # Accounting for the edge case where the user has no key permissions to be displayed
         permissions = "No Key Permissions" if permission == "" else permission
@@ -181,9 +182,9 @@ class Info(Cog):
         members = "No Members In Role" if member == "" else member
 
         # Using emotes to represent bools
-        mentionable = "<:greenTick:746834932936212570>" if role.mention else "<:xMark:746834944629932032>"
-        hoisted = "<:greenTick:746834932936212570>" if role.hoist else "<:xMark:746834944629932032>"
-        managed = "<:greenTick:746834932936212570>" if role.managed else "<:xMark:746834944629932032>"
+        mentionable = self.bot.tick if role.mention else self.bot.cross
+        hoisted = self.bot.tick if role.hoist else self.bot.cross
+        managed = self.bot.tick if role.managed else self.bot.cross
 
         # Description of the embed
         desc = f"{role.mention} " \
@@ -285,7 +286,7 @@ class Info(Cog):
         perms = ",".join(map(lambda x: x[0].replace("_", " "), filtered))
 
         # Capitalise every word in the array and filter out the permissions that are defined within the frozenset
-        permission = string.capwords("".join(map(str, detectPermissions(perms, Perms))))
+        permission = string.capwords("".join(map(str, detect_perms(perms, Perms))))
 
         # Accounting for the edge case where the user has no key permissions to be displayed
         permissions = "No Key Permissions" if permission == "" else permission
@@ -396,7 +397,7 @@ class Info(Cog):
         # Define fields to be added into the embed
         fields = [("Owner", ctx.guild.owner.mention, True),
                   ("Created", ctx.guild.created_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"), False),
-                  ("Region", getRegion(str(ctx.guild.region), region), False),
+                  ("Region", get_region(str(ctx.guild.region), region), False),
                   ("Statuses", f"🟢 {statuses[0]} \n🟠 {statuses[1]} \n🔴 {statuses[2]} \n⚪ {statuses[3]}", False),
 
                   (f"Members ({len(ctx.guild.members)})",
@@ -431,10 +432,10 @@ class Info(Cog):
 
         # Get information about the channel
         channel = ctx.channel if not channel else channel
-        category = channel.category.name if channel.category else "<:xMark:746834944629932032>"
-        perms_synced = "<:greenTick:746834932936212570>" if channel.permissions_synced else "<:xMark:746834944629932032>"
-        topic = channel.topic if channel.topic else "<:xMark:746834944629932032>"
-        nsfw = "<:greenTick:746834932936212570>" if channel.is_nsfw() else "<:xMark:746834944629932032>"
+        category = channel.category.name if channel.category else self.bot.cross
+        perms_synced = self.bot.tick if channel.permissions_synced else self.bot.cross
+        topic = channel.topic if channel.topic else self.bot.cross
+        nsfw = self.bot.tick if channel.is_nsfw() else self.bot.cross
 
         # Set up Embed
         desc = f"**Guild:** {ctx.guild}" \
@@ -509,7 +510,7 @@ class Info(Cog):
              f"\nCommands: {len(self.bot.commands)}"
              f"\nUsers: {len(self.bot.users):,}", True),
 
-            ("Line Count", lineCount(), True),
+            ("Line Count", await line_count(), True),
             ("Uptime", frmt_uptime, False),
             ("Memory Usage", f"{mem_usage:,.2f} / {mem_total:,.2f} MiB ({mem_of_total:.2f}%)", False)]
 

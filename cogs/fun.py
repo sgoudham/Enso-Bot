@@ -368,6 +368,10 @@ class Fun(Cog):
                     uploads = data["uploads"]["count"]
                     biography = data["biography"]
 
+                elif response.status == 422:
+                    await self.bot.generate_embed(ctx, desc="**Instagram Username Not Found!**")
+                    return
+
         # Setting bools to ticks/cross emojis
         verif = self.bot.tick if verified else self.bot.cross
         priv = self.bot.tick if private else self.bot.cross

@@ -23,7 +23,6 @@ from platform import python_version
 from time import time
 from typing import Optional
 
-import aiofiles
 from discord import Embed, Role
 from discord import Member, TextChannel
 from discord import __version__ as discord_version
@@ -114,8 +113,8 @@ async def line_count():
             if not name.endswith(".py") or ENV in file_dir:
                 continue
             file_amount += 1
-            async with aiofiles.open(file_dir, "r", encoding="utf-8") as file:
-                async for line in file:
+            with open(file_dir, "r", encoding="utf-8") as file:
+                for line in file:
                     if line.strip().startswith("#"):
                         comments += 1
                     elif not line.strip():

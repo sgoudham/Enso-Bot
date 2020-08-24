@@ -23,7 +23,7 @@ import asyncpg
 import discord
 from discord import Embed, TextChannel
 from discord import File
-from discord.ext.commands import has_permissions, Cog, group, bot_has_permissions, BadArgument
+from discord.ext.commands import has_permissions, Cog, group, bot_has_permissions, BadArgument, MissingRequiredArgument
 
 
 # Method to ask the user if they want to be anonymous or not
@@ -218,7 +218,6 @@ class Guild(Cog):
 
     @group(name="modlogs", invoke_without_command=True, case_insensitive=True, usage="`[argument...]`")
     @has_permissions(manage_guild=True)
-    @bot_has_permissions(administrator=True)
     async def modlogs(self, ctx):
         """
         Show current modlogs channel
@@ -243,7 +242,6 @@ class Guild(Cog):
 
     @modlogs.command(name="setup")
     @has_permissions(manage_guild=True)
-    @bot_has_permissions(administrator=True)
     async def mlsetup(self, ctx, user_channel: TextChannel):
         """Setup a channel for Kick/Ban/Mute actions to be logged"""
 
@@ -278,7 +276,6 @@ class Guild(Cog):
 
     @modlogs.command(name="update")
     @has_permissions(manage_guild=True)
-    @bot_has_permissions(administrator=True)
     async def mlupdate(self, ctx, user_channel: TextChannel):
         """Change the channel that your modlogs are sent to"""
 
@@ -297,7 +294,7 @@ class Guild(Cog):
 
             # Throw error if the modlog channel already exists
             else:
-                if result["modlogs"] is None:
+                if not result["modlogs"]:
                     text = "**Modlogs Channel** not set up!" \
                            f"\nDo **{ctx.prefix}help modlogs** to find out more!"
                     await self.bot.generate_embed(ctx, desc=text)
@@ -313,7 +310,7 @@ class Guild(Cog):
 
     @modlogs.command("delete")
     @has_permissions(manage_guild=True)
-    @bot_has_permissions(administrator=True)
+    @bot_has_permissions(embed_links=True)
     async def mldelete(self, ctx):
         """Delete the existing modlogs channel"""
 
@@ -332,7 +329,7 @@ class Guild(Cog):
 
             # Throw error that modlogs have not been setup
             else:
-                if result["modlogs"] is None:
+                if not result["modlogs"]:
                     text = "**Modlogs Channel** not set up!" \
                            f"\nDo **{ctx.prefix}help modlogs** to find out more!"
                     await self.bot.generate_embed(ctx, desc=text)
@@ -359,17 +356,18 @@ class Guild(Cog):
         await self.bot.generate_embed(ctx, desc=text)
 
     @group(name="modmail", invoke_without_command=True, case_insensitive=True, usage="`[argument...]`")
-    @bot_has_permissions(administrator=True)
-    async def modmail(self, ctx):
+    @bot_has_permissions(manage_channels=True)
+    async def mod_mail(self, ctx):
         """
         Show Current Modlogs Channel (If Setup)
         Setup/Update/Delete Modmail System
         """
         pass
 
-    @modmail.command(name="setup")
+    @mod_mail.command(name="setup")
     @has_permissions(manage_guild=True)
-    @bot_has_permissions(administrator=True)
+    @bot_has_permissions(manage_channels=True, embed_links=True, add_reactions=True, manage_messages=True,
+                         attach_files=True, read_message_history=True)
     async def mmsetup(self, ctx, modmail: TextChannel, modmail_logging: TextChannel):
         """
         Setup Modmail System
@@ -417,7 +415,10 @@ class Guild(Cog):
 
         # Send modmail embed to the specified channel and auto add the ✅ reaction
         modmail_message = await modmail.send(embed=ModMail)
-        await modmail_message.add_reaction('✅')
+        try:
+            await modmail_message.add_reaction('✅')
+        except Exception as e:
+            print(e)
 
         # Setup up pool connection
         async with pool.acquire() as conn:
@@ -445,9 +446,10 @@ class Guild(Cog):
             finally:
                 await pool.release(conn)
 
-    @modmail.command(name="update")
+    @mod_mail.command(name="update")
     @has_permissions(manage_guild=True)
-    @bot_has_permissions(administrator=True)
+    @bot_has_permissions(manage_channels=True, embed_links=True, add_reactions=True, manage_messages=True,
+                         attach_files=True, read_message_history=True)
     async def mmupdate(self, ctx, modmail_logging_channel: TextChannel):
         """
         Update the Channel that the Modmail is logged to
@@ -504,9 +506,10 @@ class Guild(Cog):
             finally:
                 await pool.release(conn)
 
-    @modmail.command(name="delete")
+    @mod_mail.command(name="delete")
     @has_permissions(manage_guild=True)
-    @bot_has_permissions(administrator=True)
+    @bot_has_permissions(manage_channels=True, embed_links=True, add_reactions=True, manage_messages=True,
+                         attach_files=True, read_message_history=True)
     async def mmdelete(self, ctx):
         """Delete the entire modmail system from the guild"""
 
@@ -525,7 +528,7 @@ class Guild(Cog):
 
             else:
                 # Throw error if modmail system does not exist already
-                if result is None:
+                if not result:
                     text = "**Modmail System** not set up!" \
                            f"\nDo **{ctx.prefix}help modmail** to find out more!"
                     await self.bot.generate_embed(ctx, desc=text)
@@ -597,7 +600,8 @@ class Guild(Cog):
             # Setting up the channel permissions for the new channel that will be created
             overwrites = {
                 guild.default_role: discord.PermissionOverwrite(read_messages=False, send_messages=False),
-                guild.me: discord.PermissionOverwrite(administrator=True),
+                guild.me: discord.PermissionOverwrite(read_messages=True, send_messages=True, embed_links=True,
+                                                      add_reactions=True, manage_messages=True),
                 member: discord.PermissionOverwrite(read_messages=True, send_messages=True)
             }
 
@@ -653,7 +657,7 @@ class Guild(Cog):
 
                     # Wait for the message from the author
                     msg = await wait_for_msg(self, check, user_channel)
-                    if msg is None: return
+                    if not msg: return
 
                     # Making sure that the message is below 50 characters and the message was sent in the channel
                     while len(msg.content) <= 50 and msg.channel == user_channel:
@@ -661,7 +665,7 @@ class Guild(Cog):
 
                         # Wait for the message from the author
                         msg = await wait_for_msg(self, check, user_channel)
-                        if msg is None: return
+                        if not msg: return
 
                     # As long as the message is above 50 characters and in the correct channel
                     if len(msg.content) > 50 and msg.channel == user_channel:
@@ -714,6 +718,10 @@ class Guild(Cog):
 
         if isinstance(exc, BadArgument):
             text = "**Channel Not Detected... Aborting Process**"
+            await self.bot.generate_embed(ctx, desc=text)
+        if isinstance(exc, MissingRequiredArgument):
+            text = "Required Argument(s) Missing!" \
+                   f"\nUse **{ctx.prefix}help** to find how to use **{ctx.command}**"
             await self.bot.generate_embed(ctx, desc=text)
 
 

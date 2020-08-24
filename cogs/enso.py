@@ -21,7 +21,7 @@ import string
 from typing import Optional
 
 import discord
-from discord import Embed, Colour
+from discord import Embed
 from discord.ext import commands
 from discord.ext.commands import cooldown, BucketType, command, is_owner, bot_has_permissions, Cog
 
@@ -461,35 +461,20 @@ class Enso(Cog):
         # Setting the channel to "
         channel = ctx.guild.get_channel(722347423913213992)
 
+        desc = "\n\n🤗 : **Welcomers** | React to be pinged for new people joining!" \
+               "\n\n❗ : **Dead Chat** | React to be pinged when chat needs to be revived!" \
+               "\n\n🏆 : **Contests** | React to be pinged for any competitions!" \
+               "\n\n🎥 : **Movie Nights** | React to be pinged for movie nights!" \
+               "\n\n🎤 : **Karaoke Nights** | React to be pinged for karaoke nights!" \
+               "\n\n🎧 : **Enso Bros Podcasts** | React to be pinged for podcasts!" \
+               "\n\n🎮 : **Game Nights** | React to be pinged for game nights!"
+
         # Set up embed to let people know what ping-able roles can be chosen
         embed = Embed(title="**Role Menu: Ping-Able Roles**",
                       colour=Colour.orange(),
                       timestamp=datetime.datetime.utcnow())
 
         embed.set_thumbnail(url=ctx.guild.icon_url)
-        embed.set_author(name=ctx.author, icon_url=ctx.author.avatar_url)
-        embed.set_footer(text=f"{ctx.message.author}", icon_url=ctx.author.avatar_url)
-        embed.add_field(
-            name="\u200b",
-            value="React to give yourself roles to be pinged for these events!",
-            inline=False)
-        embed.add_field(
-            name="\u200b",
-            value="🎥 : **Movie Nights**",
-            inline=False)
-        embed.add_field(
-            name="\u200b",
-            value="🎤 : **Karaoke Nights**",
-            inline=False)
-        embed.add_field(
-            name="\u200b",
-            value="🎧 : **Enso Bros Podcasts**",
-            inline=False)
-        embed.add_field(
-            name="\u200b",
-            value="🎮 : **Game Nights**",
-            inline=False)
-
         # Edit the Embed And Update it
         message = await ctx.fetch_message(722514840559812649)
         await message.edit(embed=embed)

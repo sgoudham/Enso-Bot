@@ -19,7 +19,7 @@ from datetime import timedelta
 from typing import Optional
 
 import discord
-from discord import Member, Embed, DMChannel
+from discord import Member, Embed, DMChannel, NotFound
 from discord.ext.commands import command, guild_only, has_guild_permissions, bot_has_guild_permissions, Greedy, \
     cooldown, BucketType, Cog
 
@@ -68,7 +68,7 @@ async def check(ctx, members):
     """
 
     if not len(members):
-        desc = f"Not Correct Syntax!\nUse **{ctx.prefix}help** to find how to use **{ctx.command}**",
+        desc = f"Not Correct Syntax!\nUse **{ctx.prefix}help** to find how to use **{ctx.command}**"
         await ctx.bot.generate_embed(ctx, desc=desc)
         return True
 
@@ -360,7 +360,7 @@ class Moderation(Cog):
                     await self.bot.generate_embed(ctx, desc="❌ **Member Is Already Banned!** ❌")
                 else:
                     await ctx.guild.ban(discord.Object(id=user))
-                    target = self.bot.get_user(user)
+                    target = await self.bot.fetch_user(user)
                     # Send confirmation to the channel that the user is in
                     await self.bot.generate_embed(ctx, desc=f"✅ **{target}** Was Power Banned! ✅")
 
@@ -439,6 +439,18 @@ class Moderation(Cog):
                                               after=datetime.datetime.utcnow() - timedelta(days=14))
 
             await ctx.send(f"Deleted **{len(deleted):,}** messages.", delete_after=5)
+
+    @ban.error
+    @unban.error
+    @force_ban.error
+    async def ban_command_error(self, ctx, exc):
+        """Catching error if channel is not recognised"""
+
+        error = getattr(exc, "original", exc)
+
+        if isinstance(error, NotFound):
+            text = "**❌ User Not Detected... Aborting Process** ❌"
+            await self.bot.generate_embed(ctx, desc=text)
 
     @Cog.listener()
     async def on_raw_bulk_message_delete(self, payload):

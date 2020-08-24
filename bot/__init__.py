@@ -21,7 +21,6 @@ import random
 import aiohttp
 import asyncpg as asyncpg
 import discord
-import pytz
 from decouple import config
 from discord import Colour, Embed
 from discord.ext import commands, tasks
@@ -457,7 +456,7 @@ class Bot(commands.Bot):
         """
 
         # Store every single record into an array
-        records = [(member.id, None, None, guild.id, None, None) for member in guild.members]
+        records = [(member.id, None, None, guild.id, None, None, None, 0) for member in guild.members]
 
         # Setup up pool connection
         pool = self.db
@@ -556,7 +555,7 @@ class Bot(commands.Bot):
             try:
 
                 insert_query = """INSERT INTO members (guild_id, member_id) VALUES ($1, $2)
-                ON CONFLICT (guild_id, member_id) DO UPDATE SET roles = NULL"""
+                ON CONFLICT (guild_id, member_id) DO UPDATE SET roles = NULL, left_at = NULL, has_left = 0"""
                 rowcount = await conn.execute(insert_query, member.guild.id, member.id)
 
             # Catch errors
@@ -640,7 +639,7 @@ class Bot(commands.Bot):
         if member.bot: return
 
         # Get the datetime of when the user left the guild
-        my_date = datetime.datetime.now(pytz.timezone('Europe/Berlin'))
+        left_at = datetime.datetime.utcnow()
 
         # Store member roles within a string to insert into database
         role_ids = ", ".join([str(r.id) for r in member.roles if not r.managed])
@@ -651,8 +650,9 @@ class Bot(commands.Bot):
 
             # Store member roles within the database
             try:
-                update_query = """UPDATE members SET roles = $1 WHERE guild_id = $2 AND member_id = $3"""
-                rowcount = await conn.execute(update_query, role_ids, member.guild.id, member.id)
+                update_query = """UPDATE members SET roles = $1, left_at = $2, has_left = 1
+                                  WHERE guild_id = $3 AND member_id = $4"""
+                rowcount = await conn.execute(update_query, role_ids, left_at, member.guild.id, member.id)
 
             # Catch Error
             except asyncpg.PostgresError as e:

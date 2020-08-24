@@ -81,6 +81,10 @@ class Bot(commands.Bot):
         self.enso_modmail_ID = 728083016290926623
         self.enso_feedback_ID = 739807803438268427
 
+        # Cross/Tick Emojis
+        self.cross = "<:xMark:746834944629932032>"
+        self.tick = "<:greenTick:746834932936212570>"
+
         # Instance variables for cache
         self.enso_cache = {}
         self.modmail_cache = {}

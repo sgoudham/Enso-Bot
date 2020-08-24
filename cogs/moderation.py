@@ -94,6 +94,7 @@ async def ummute_members(self, ctx, targets, reason):
             # Get the roles of the user
             result = await self.bot.check_cache(target.id, ctx.guild.id)
 
+            # Get muted roles of the user from cache/database and give them back
             role_ids = result["muted_roles"]
             roles = [ctx.guild.get_role(int(id_)) for id_ in role_ids.split(", ") if len(id_)]
 
@@ -339,6 +340,51 @@ class Moderation(Cog):
         if not await check(ctx, members):
             with ctx.typing():
                 await ban_members(self, ctx, members, reason)
+
+    @command(name="forceban", aliases=["powerban", "ultraban"], usage="`<member>...` `[reason]`")
+    @guild_only()
+    @has_guild_permissions(ban_members=True)
+    @bot_has_guild_permissions(ban_members=True)
+    @cooldown(1, 1, BucketType.user)
+    async def force_ban(self, ctx, users: Greedy[int], *, reason: Optional[str] = "No Reason Given"):
+        """Ban User(s) from Server (MUST PROVIDE ID)"""
+
+        if not await check(ctx, users):
+            # Get the list of banned users from the server
+            bans = await ctx.guild.bans()
+            ban_ids = list(map(lambda m: m.user.id, bans))
+
+            # Power ban users from guilds without them being in there
+            for user in users:
+                if user in ban_ids:
+                    await self.bot.generate_embed(ctx, desc="❌ **Member Is Already Banned!** ❌")
+                else:
+                    await ctx.guild.ban(discord.Object(id=user))
+                    target = self.bot.get_user(user)
+                    # Send confirmation to the channel that the user is in
+                    await self.bot.generate_embed(ctx, desc=f"✅ **{target}** Was Power Banned! ✅")
+
+                    # Get the channel of the modlog within the guild
+                    modlog = self.bot.get_modlog_for_guild(ctx.guild.id)
+
+                    if modlog:
+
+                        channel = ctx.guild.get_channel(modlog)
+
+                        embed = Embed(title=f"User Power Banned",
+                                      colour=self.bot.admin_colour,
+                                      timestamp=datetime.datetime.utcnow())
+
+                        embed.set_thumbnail(url=target.avatar_url)
+
+                        fields = [("User ID", target, False),
+                                  ("Actioned by", ctx.author.mention, False),
+                                  ("Reason", reason, False)]
+
+                        for name, value, inline in fields:
+                            embed.add_field(name=name, value=value, inline=inline)
+
+                        await channel.send(embed=embed)
 
     @command(name="unban", usage="`<member>...` `[reason]`")
     @guild_only()

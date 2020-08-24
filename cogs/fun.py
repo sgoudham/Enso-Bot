@@ -22,6 +22,7 @@ import textwrap
 import urllib.parse
 from typing import Optional
 
+import aiohttp
 import discord
 from PIL import Image, ImageDraw, ImageFont
 from aiohttp import request
@@ -340,6 +341,60 @@ class Fun(Cog):
         except commands.BadArgument as e:
             raise e
 
+    @command(name="insta", aliases=["instagram"])
+    @cooldown(1, 1, BucketType.user)
+    async def insta_info(self, ctx, *, user_name):
+        """Retrieve a persons Instagram profile information"""
+
+        url = f"https://apis.duncte123.me/insta/{user_name}"
+        async with aiohttp.ClientSession() as session:
+            async with await session.get(url=url) as response:
+                if response.status == 200:
+                    insta = await response.json()
+                    data = insta["user"]
+                    images = insta["images"]
+                    private = data["is_private"]
+                    verified = data["is_verified"]
+                    if not private:
+                        image_url = images[0]["url"]
+                        image_caption = images[0]["caption"]
+
+                    full_name = data["full_name"]
+                    username = data["username"]
+                    pfp = data["profile_pic_url"]
+
+                    followers = data["followers"]["count"]
+                    following = data["following"]["count"]
+                    uploads = data["uploads"]["count"]
+                    biography = data["biography"]
+
+        # Setting bools to ticks/cross emojis
+        verif = self.bot.tick if verified else self.bot.cross
+        priv = self.bot.tick if private else self.bot.cross
+
+        page_url = images[0]["page_url"] if not private else f"https://www.instagram.com/{username}/"
+
+        desc = f"**Full Name:** {full_name}" \
+               f"\n**Bio:** {biography}" \
+               f"\n\n**Verified?:** {verif} | **Private?:** {priv}" \
+               f"\n**Following:** {following} | **Followers:** {followers}" \
+               f"\n**Upload Count:** {uploads}"
+        embed = discord.Embed(title=f"{username}'s Instagram",
+                              description=desc,
+                              url=page_url,
+                              colour=self.bot.random_colour(),
+                              timestamp=datetime.datetime.utcnow())
+        embed.set_thumbnail(url=pfp)
+        embed.set_footer(text=f"Requested By {ctx.author}", icon_url=ctx.author.avatar_url)
+
+        if not private:
+            embed.add_field(name="My Latest Post",
+                            value=f"**Caption:** {image_caption}",
+                            inline=False)
+            embed.set_image(url=image_url)
+
+        await ctx.send(embed=embed)
+
     @command(name="homies")
     @cooldown(1, 10, BucketType.user)
     @bot_has_permissions(attach_files=True)
@@ -362,26 +417,10 @@ class Fun(Cog):
             # Send the bytes object as an image file
             await ctx.send(file=discord.File(file, "homies.png"))
 
-    @command(name="owo", aliases=["uwu"])
-    @cooldown(1, 1, BucketType.user)
-    @bot_has_permissions(manage_messages=True)
-    async def owo(self, ctx, *, text):
-        """Converts given text to 'OwO' format"""
-
-        # Delete the message sent by the user
-        await ctx.message.delete()
-
-        # Convert to "OwO" text
-        uwu = OwO()
-        owo = uwu.whatsthis(text)
-
-        # Send the text back
-        await ctx.message.channel.send(owo)
-
     @command(name="grayscale", aliases=["gs"])
     @cooldown(1, 5, BucketType.user)
     @bot_has_permissions(attach_files=True)
-    async def image_to_text(self, ctx):
+    async def grayscale(self, ctx):
         """Display grayscale version of image uploaded"""
 
         if ctx.message.attachments:
@@ -398,6 +437,22 @@ class Fun(Cog):
                 await ctx.send(file=discord.File(file, "gp.png"))
         else:
             await self.bot.generate_embed(ctx, desc="**Image Not Detected!**")
+
+    @command(name="owo", aliases=["uwu"])
+    @cooldown(1, 1, BucketType.user)
+    @bot_has_permissions(manage_messages=True)
+    async def owo(self, ctx, *, text):
+        """Converts given text to 'OwO' format"""
+
+        # Delete the message sent by the user
+        await ctx.message.delete()
+
+        # Convert to "OwO" text
+        uwu = OwO()
+        owo = uwu.whatsthis(text)
+
+        # Send the text back
+        await ctx.message.channel.send(owo)
 
 
 def setup(bot):

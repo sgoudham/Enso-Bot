@@ -14,7 +14,6 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 import datetime
-import logging
 import os
 import random
 
@@ -27,12 +26,6 @@ from discord.ext import commands, tasks
 from discord.ext.commands import when_mentioned_or
 
 from bot.libs.cache import MyCoolCache
-
-logger = logging.getLogger('discord')
-logger.setLevel(logging.DEBUG)
-handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
-handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
-logger.addHandler(handler)
 
 counter = 0
 

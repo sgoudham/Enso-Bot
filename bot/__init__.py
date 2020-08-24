@@ -21,6 +21,7 @@ import random
 import aiohttp
 import asyncpg as asyncpg
 import discord
+import pytz
 from decouple import config
 from discord import Colour, Embed
 from discord.ext import commands, tasks
@@ -42,6 +43,7 @@ host = config('DB_HOST')
 user = config('DB_USER')
 port = config('DB_PORT')
 db = config('DB_NAME')
+disforge_auth = config('DISFORGE_AUTH')
 disc_bots_gg_auth = config('DISCORD_BOTS_BOTS_AUTH')
 
 # Getting the bot token from environment variables
@@ -139,13 +141,18 @@ class Bot(commands.Bot):
         self.loop.run_until_complete(startup_cache_log())
 
         async def post_bot_stats():
-            """Update guild count on discord.bots.gg"""
+            """Update guild count on bot lists"""
 
             async with aiohttp.ClientSession() as session:
                 await session.post(f"https://discord.bots.gg/api/v1/bots/{self.user.id}/stats",
                                    data={"guildCount": {len(self.guilds)},
                                          "Content-Type": "application/json"},
                                    headers={'Authorization': disc_bots_gg_auth})
+
+                await session.post(f"https://disforge.com/api/botstats/{self.user.id}",
+                                   data={"servers": {len(self.guilds)}},
+                                   headers={'Authorization': disforge_auth})
+
                 await session.close()
 
         @tasks.loop(minutes=10, reconnect=True)
@@ -223,7 +230,7 @@ class Bot(commands.Bot):
     def update_modmail(self, guild_id, channel_id):
         """Update the modmail channel"""
 
-        self.modmail_cache[guild_id]["roles_persist"] = channel_id
+        self.modmail_cache[guild_id]["modmail_logging_channel_id"] = channel_id
 
     def delete_modmail(self, guild_id):
         """Deleting the modmail system of the guild within the Cache"""
@@ -545,10 +552,11 @@ class Bot(commands.Bot):
         async with pool.acquire() as conn:
 
             # Define the insert statement that will insert the user's information
+            # On conflict, set the left values to null
             try:
-                insert_query = """INSERT INTO members (guild_id, member_id) VALUES ($1, $2)
-                ON CONFLICT (guild_id, member_id) DO NOTHING"""
 
+                insert_query = """INSERT INTO members (guild_id, member_id) VALUES ($1, $2)
+                ON CONFLICT (guild_id, member_id) DO UPDATE SET roles = NULL"""
                 rowcount = await conn.execute(insert_query, member.guild.id, member.id)
 
             # Catch errors
@@ -558,6 +566,7 @@ class Bot(commands.Bot):
             # Print success
             else:
                 print(rowcount, f"{member} Joined {member.guild}, Record Inserted Into Members")
+                print(rowcount, f"Roles Cleared For {member} in {member.guild}")
 
             # Get the roles of the user from the database
             try:
@@ -595,22 +604,6 @@ class Bot(commands.Bot):
                     else:
                         print(f"Insufficient Permissions to Add Roles to Member {member.id} in Guild {member.guild.id}")
 
-            # Reset the roles entry for the database
-            try:
-                update_query = """UPDATE members SET roles = NULL WHERE guild_id = $1 AND member_id = $2"""
-                rowcount = await conn.execute(update_query, member.guild.id, member.id)
-
-            # Catch errors
-            except asyncpg.PostgresError as e:
-                print(f"PostGres Error: Clearing Member {member.id} Roles in Guild {member.guild.id}", e)
-
-            # Print success
-            else:
-                print(rowcount, f"Roles Cleared For {member} in {member.guild}")
-
-            # Release connection back to pool
-            await pool.release(conn)
-
         # Make sure the guild is Enso and send welcoming embed to the server
         if guild.id == self.enso_guild_ID:
             new_people = guild.get_channel(self.enso_newpeople_ID)
@@ -646,6 +639,9 @@ class Bot(commands.Bot):
         # Ignoring bots
         if member.bot: return
 
+        # Get the datetime of when the user left the guild
+        my_date = datetime.datetime.now(pytz.timezone('Europe/Berlin'))
+
         # Store member roles within a string to insert into database
         role_ids = ", ".join([str(r.id) for r in member.roles if not r.managed])
 
@@ -657,16 +653,13 @@ class Bot(commands.Bot):
             try:
                 update_query = """UPDATE members SET roles = $1 WHERE guild_id = $2 AND member_id = $3"""
                 rowcount = await conn.execute(update_query, role_ids, member.guild.id, member.id)
-                result = await self.check_cache(member.id, member.guild.id)
 
             # Catch Error
             except asyncpg.PostgresError as e:
                 print(f"PostGres Error: Roles Could Not Be Added To {member} When Leaving {member.guild.id}", e)
 
             # Print success
-            # Update cache
             else:
-                result["roles"] = role_ids
                 print(rowcount, f"{member} Left {member.guild.name}, Roles stored into Members")
 
             finally:

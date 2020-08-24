@@ -25,21 +25,21 @@ from discord import Embed
 from discord.ext import commands
 from discord.ext.commands import cooldown, BucketType, command, is_owner, bot_has_permissions, Cog
 
-"""events = {
+events = {
     "🎤": 722483603409469470,  # Karaoke Night
     "🎧": 696753950879383605,  # Enso Bros Podcast
     "🎥": 722482922518609990,  # Movie Night
     "🎮": 722493033882452078,  # Game Night
-    "<:xoxo:743564377864536204>": 744356592186687521,
+    "❗": 744356592186687521,  # Dead Chat
+    "🤗": 747156232330281141,  # Welcomers
+    "🏆": 747307872022429808,  # Contests
     ":GameNight:": 722493033882452078,
     ":EnsoBros:": 696753950879383605,
     ":MovieNight:": 722482922518609990,
     ":Karaoke:": 722483603409469470
 }
-"""
 
 
-# Error handling function to make sure that the commands only work in "enso-chan-commands"
 def error_function(self):
     """Make sure that commands only work in "enso-chan-commands" in the server"""
 
@@ -53,8 +53,9 @@ def helpDm(self):
            f"\nPlease ping my owner {self.bot.hammy_role_ID} for any issues/questions you have!"
 
 
-# Method to retrieve information about the user and the guild
 def get_user_info(ctx):
+    """Get user information"""
+
     # Allowing the bot to dm the user
     author = ctx.author
 
@@ -66,8 +67,9 @@ def get_user_info(ctx):
     return author, guild_icon, enso_icon, enso_name
 
 
-# Gets the member and user avatar
 def getMember(ctx):
+    """Get member and avtar"""
+
     # Set member as the author
     member = ctx.message.author
     # Get the member avatar
@@ -76,8 +78,9 @@ def getMember(ctx):
     return member, userAvatar
 
 
-# Function to display all the images requested of the people
 def displayServerImage(array, ctx, name):
+    """Return embed of server member requested"""
+
     # Get the member and the userAvatar
     member, userAvatar = getMember(ctx)
 
@@ -373,89 +376,50 @@ class Enso(Cog):
                 await member.remove_roles(not_verified)
                 await member.add_roles(lucid)
 
-                # Set hamothyID equal to my id in discord
-                hamothyID = '<@&715412394968350756>'
-
+                # Get the welcomers role and ping them
+                welcomers = discord.utils.get(guild.roles, name="Welcome")
+                # Get my own role
+                hammy_role = "<@&715412394968350756>"
                 # Set the channel id to "general"
                 general = guild.get_channel(663651584399507481)
 
                 # String for welcoming people in the #general channel
-                general_welcome = f"Welcome to the server! {member.mention} I hope you enjoy your stay here <a:huh:676195228872474643> <a:huh:676195228872474643> " \
+                general_welcome = f"{welcomers.mention} to the server! {member.mention} I hope you enjoy your stay here <a:huh:676195228872474643> <a:huh:676195228872474643> " \
                                   f"\nPlease go into <#722347423913213992> to choose some ping-able roles for events! " \
-                                  f"\nPlease ping {hamothyID} for any questions about the server and of course, the other staff members!"
+                                  f"\nPlease ping {hammy_role} for any questions about the server and of course, the other staff members!"
 
                 # Send welcome message to #general
                 await general.send(general_welcome)
 
-        # If the message id equals the self roles message
-        if payload.message_id == 722514840559812649:
-
-            # Print out the emoji name
-            print(payload.emoji.name)
-
-            # Find a role corresponding to the Emoji name.
-            guild_id = payload.guild_id
-
-            # Find the guild Enso and find the role of the emoji that has been reacted to
-            guild = discord.utils.find(lambda g: g.id == guild_id, self.bot.guilds)
-            role = discord.utils.find(lambda r: r.name == payload.emoji.name, guild.roles)
-
-            # if the role does exist
-            if role:
-                # Print to me that the role was found and display the id of the role
-                print(role.name + " was found!")
-                print(role.id)
-
-                # Find the member who had reacted to the emoji
-                member = discord.utils.find(lambda m: m.id == payload.user_id, guild.members)
-                # Add the role to the member
-                await member.add_roles(role)
-
-                # Print to me that the role has been added
-                print("done")
-
-                """# Make sure the reaction event doesn't count other channels
-                if payload.channel_id == 722347423913213992:
-                    role = payload.member.guild.get_role(events.get(payload.emoji.name))
-                    await payload.member.add_roles(role)
-                    print(f"{payload.member.name} Was Given Role {role}")"""
+        # Make sure the reaction event doesn't count other channels
+        if payload.channel_id == 722347423913213992 and not payload.member.bot:
+            role = payload.member.guild.get_role(events.get(payload.emoji.name))
+            try:
+                await payload.member.add_roles(role)
+            except Exception as e:
+                print(f"Uh Oh Role {role} Couldn't Be Added To {member}", e)
+            else:
+                print(f"{payload.member.name} Was Given Role {role}")
 
     # Cog listener for enabling roles to be removed from users when they unreact to the embedded messaged
     @Cog.listener()
     async def on_raw_reaction_remove(self, payload):
 
-        # If the message id equals the self roles message
-        if payload.message_id == 722514840559812649:
+        # Make sure the reaction event doesn't count other channels
+        if payload.channel_id == 722347423913213992:
+            guild = self.bot.get_guild(payload.guild_id)
 
-            # Print out the emoji name
-            print(payload.emoji.name)
-
-            # Get the server id
-            guild_id = payload.guild_id
-
-            # Find the guild Enso and find the role of the emoji that has been unreacted to
-            guild = discord.utils.find(lambda g: g.id == guild_id, self.bot.guilds)
-            role = discord.utils.find(lambda r: r.name == payload.emoji.name, guild.roles)
-
-            # if the role does exist
-            if role:
-                # Find the member that has the role which the emoji is connected to
-                member = discord.utils.find(lambda m: m.id == payload.user_id, guild.members)
-
-                # Remove the role from the member
+            member = guild.get_member(payload.user_id)
+            role = guild.get_role(events.get(payload.emoji.name))
+            try:
                 await member.remove_roles(role)
-
-                """# Make sure the reaction event doesn't count other channels
-                if payload.channel_id == 722347423913213992:
-                    guild = self.bot.get_guild(payload.guild_id)
-    
-                    member = guild.get_member(payload.user_id)
-                    role = guild.get_role(events.get(payload.emoji.name))
-                    await member.remove_roles(role)
-                    print(f"{member.name} Was Removed from Role {role}")"""
+            except Exception as e:
+                print(f"Uh Oh Role {role} Couldn't Be Removed From {member}", e)
+            else:
+                print(f"{member.name} Was Removed from Role {role}")
 
     # Allowing people to get ping-able self roles
-    @command(name="rolemenu", hidden=True)
+    @command(name="rolemenuu", hidden=True)
     @is_owner()
     async def role_menu(self, ctx):
         # Setting the channel to "
@@ -470,17 +434,24 @@ class Enso(Cog):
                "\n\n🎮 : **Game Nights** | React to be pinged for game nights!"
 
         # Set up embed to let people know what ping-able roles can be chosen
-        embed = Embed(title="**Role Menu: Ping-Able Roles**",
-                      colour=Colour.orange(),
+        embed = Embed(title="**Ping-Able Roles**",
+                      description=f"React to give yourself roles to be pinged for these events!{desc}",
+                      colour=self.bot.admin_colour,
                       timestamp=datetime.datetime.utcnow())
-
         embed.set_thumbnail(url=ctx.guild.icon_url)
         # Edit the Embed And Update it
-        message = await ctx.fetch_message(722514840559812649)
-        await message.edit(embed=embed)
+        # message = await ctx.fetch_message(722514840559812649)
+        # await message.edit(embed=embed)
 
-        # Send the embed to the channel "newpeople"
-        # await channel.send(embed=embed)
+        # Send the embed to the channel "self-roles"
+        msg = await channel.send(embed=embed)
+        await msg.add_reaction("🤗")
+        await msg.add_reaction("❗")
+        await msg.add_reaction("🏆")
+        await msg.add_reaction("🎥")
+        await msg.add_reaction("🎤")
+        await msg.add_reaction("🎧")
+        await msg.add_reaction("🎮")
 
 
 def setup(bot):

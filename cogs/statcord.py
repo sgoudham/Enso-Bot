@@ -15,7 +15,10 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 import statcord
+from decouple import config
 from discord.ext import commands
+
+statcord_auth = config("STATCORD_AUTH")
 
 
 class StatcordPost(commands.Cog):
@@ -23,7 +26,7 @@ class StatcordPost(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
-        self.key = "statcord.com-UmgVg71QGpIFeDdZXn5h"
+        self.key = f"statcord.com-{statcord_auth}"
         self.api = statcord.Client(self.bot, self.key)
         self.api.start_loop()
 

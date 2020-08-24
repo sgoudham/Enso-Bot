@@ -225,10 +225,7 @@ class Bot(commands.Bot):
     def get_modmail(self, guild_id):
         """Returning the modmail system of the guild"""
 
-        if guild_id in self.modmail_cache:
-            return self.modmail_cache[guild_id]
-        else:
-            return None
+        return self.modmail_cache.get(guild_id)
 
     def update_modmail(self, guild_id, channel_id):
         """Update the modmail channel"""
@@ -247,7 +244,7 @@ class Bot(commands.Bot):
     def get_roles_persist(self, guild_id):
         """Returning rolespersist value of the guild"""
 
-        return self.enso_cache[guild_id]["roles_persist"]
+        return self.enso_cache.get(guild_id)["roles_persist"]
 
     async def update_role_persist(self, guild_id, value):
         """Update the rolepersist value of the guild (Enabled or Disabled)"""
@@ -319,8 +316,7 @@ class Bot(commands.Bot):
     def get_modlog_for_guild(self, guild_id):
         """Get the modlog channel of the guild that the user is in"""
 
-        channel = self.enso_cache[guild_id]["modlogs"]
-        return channel
+        return self.enso_cache.get(guild_id)["modlogs"]
 
     # --------------------------------------------!End ModLogs Section!-------------------------------------------------
 

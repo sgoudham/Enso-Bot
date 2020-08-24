@@ -67,10 +67,11 @@ class Interactive(Cog):
 
         married_user = result["married"]
         if married_user is None and kiss:
-            await ctx.send("Σ(‘◉⌓◉’) You need to be married in order to use this command! Baka!")
+            await self.bot.generate_embed(ctx,
+                                          desc="Σ(‘◉⌓◉’) You need to be married in order to use this command! Baka!")
             return
         elif not member.id == married_user and kiss:
-            await ctx.send("Σ(‘◉⌓◉’) You can only kiss your partner! Baka!")
+            await self.bot.generate_embed(ctx, desc="Σ(‘◉⌓◉’) You can only kiss your partner! Baka!")
             return
 
         try:
@@ -118,10 +119,11 @@ class Interactive(Cog):
 
         married_user = result["married"]
         if married_user is None and cuddle:
-            await ctx.send("Σ(‘◉⌓◉’) You need to be married in order to use this command! Baka!")
+            await self.bot.generate_embed(ctx,
+                                          desc="Σ(‘◉⌓◉’) You need to be married in order to use this command! Baka!")
             return
         elif not member.id == married_user and cuddle:
-            await ctx.send("Σ(‘◉⌓◉’) You can only cuddle your partner! Baka!")
+            await self.bot.generate_embed(ctx, desc="Σ(‘◉⌓◉’) You can only cuddle your partner! Baka!")
             return
 
         try:

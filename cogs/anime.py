@@ -23,22 +23,25 @@ from discord.ext.commands import Cog, group, bot_has_permissions
 my_waifu_list_auth = config('MYWAIFULIST_AUTH')
 
 
-def store_waifus(waifus_dict, waifu, value):
+def store_dict(dict_, key, value):
     """Method to store waifu's in the new dict"""
 
-    waifus_dict[waifu["name"]][value] = waifu[value]
+    dict_[key["name"]][value] = key[value]
 
 
-def multiple_waifu_generator(self, bot):
+def multiple_dict_generator(self, bot):
     """Method to generate embed of multiple waifu's"""
 
     embeds = []
-    for key in self.waifus_dict.values():
+    for key in self._dict.values():
         embed = Embed(title=key["name"], description=f"{key['original_name']} | {key['type']}",
                       colour=bot.random_colour(),
                       url=key["url"])
         embed.set_image(url=key["display_picture"])
-        embed.set_footer(text=f"❤️ {key['likes']} 🗑️ {key['trash']} | Powered by MyWaifuList")
+        if "waifu" == self.type:
+            embed.set_footer(text=f"❤️ {key['likes']} 🗑️ {key['trash']} | Powered by MyWaifuList")
+        elif "show" == self.type:
+            embed.set_footer(text=f"{key['romaji_name']} | Powered by MyWaifuList")
 
         embeds.append(embed)
 
@@ -69,23 +72,24 @@ def single_waifu_generator(self, waifu):
 
 # Set up the Cog
 class HelpMenu(menus.Menu):
-    def __init__(self, i, waifu, bot, guild_bot):
+    def __init__(self, i, _dict, _type, bot, guild_bot):
         super().__init__(timeout=125.0, clear_reactions_after=True)
-        self.waifus_dict = waifu
+        self._dict = _dict
+        self.type = _type
         self.i = i
         self.bot = bot
-        self.waifu = multiple_waifu_generator(self, bot)
+        self.dicts = multiple_dict_generator(self, bot)
         self.guild_bot = guild_bot
 
     # Message to be sent on the initial command ~help
     async def send_initial_message(self, ctx, channel):
         # Set the first embed to the first element in the pages[]
 
-        initial = self.waifu[self.i]
+        initial = self.dicts[self.i]
 
         cur_page = self.i + 1
-        pages = len(self.waifu)
-        initial.set_author(name=f"Page {cur_page}/{pages}")
+        pages = len(self.dicts)
+        initial.set_author(name=f"Airing Shows | Page {cur_page}/{pages}")
 
         # Send embed
         return await channel.send(embed=initial)
@@ -101,12 +105,12 @@ class HelpMenu(menus.Menu):
         # Do nothing if the check does not return true
         if check(self.ctx):
             # Set self.i to (i - 1) remainder length of the array
-            self.i = (self.i - 1) % len(self.waifu)
-            prev_page = self.waifu[self.i]
+            self.i = (self.i - 1) % len(self.dicts)
+            prev_page = self.dicts[self.i]
 
             cur_page = self.i + 1
-            pages = len(self.waifu)
-            prev_page.set_author(name=f"Page {cur_page}/{pages}")
+            pages = len(self.dicts)
+            prev_page.set_author(name=f"Airing Shows | Page {cur_page}/{pages}")
 
             # Send the embed and remove the reaction of the user
             await self.message.edit(embed=prev_page)
@@ -124,12 +128,12 @@ class HelpMenu(menus.Menu):
         # Do nothing if the check does not return true
         if check(self.ctx):
             # Set self.i to (i + 1) remainder length of the array
-            self.i = (self.i + 1) % len(self.waifu)
-            next_page = self.waifu[self.i]
+            self.i = (self.i + 1) % len(self.dicts)
+            next_page = self.dicts[self.i]
 
             cur_page = self.i + 1
-            pages = len(self.waifu)
-            next_page.set_author(name=f"Page {cur_page}/{pages}")
+            pages = len(self.dicts)
+            next_page.set_author(name=f"Airing Shows | Page {cur_page}/{pages}")
 
             # Send the embed and remove the reaction of the user
             await self.message.edit(embed=next_page)
@@ -161,6 +165,51 @@ class Anime(Cog):
     async def on_ready(self):
         """Printing out that Cog is ready on startup"""
         print(f"{self.__class__.__name__} Cog has been loaded!\n-----")
+
+    @group(name="airing", invoke_without_command=True, case_insensitive=True)
+    @bot_has_permissions(embed_links=True, add_reactions=True)
+    async def airing_shows(self, ctx):
+        """
+        Show's statiscs about airing shows and waifus
+        (UNDER CONSTRUCTION)
+        """
+        pass
+
+    @airing_shows.command(name="shows", aliases=["currently", "current"])
+    @bot_has_permissions(embed_links=True, add_reactions=True)
+    async def shows(self, ctx):
+        """Display the current airing shows"""
+
+        # Local Variable i to allow the index of the pages[] to be modified
+        i = 0
+
+        shows_dict = {}
+        url = "https://mywaifulist.moe/api/v1/airing"
+        data = {'content-type': "application/json"}
+
+        # Searching API for the current airing shows
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url, data=data, headers=self.headers) as resp:
+                # Store waifu's in dict when request is successful, else send an error
+                if resp.status == 200:
+                    show_dict = await resp.json()
+
+                # Send error if something went wrong internally/while grabbing data from API
+                else:
+                    await self.bot.generate_embed(ctx, desc="**Something went wrong!**")
+
+        # Store all the shows with the name as the key
+        for show in show_dict["data"]:
+            shows_dict[show["name"]] = {}
+            for value in show:
+                store_dict(shows_dict, show, value)
+
+        # Get the instance of the bot
+        bot = ctx.guild.get_member(self.bot.user.id)
+
+        # Send the menu to the display
+        menu = HelpMenu(i, shows_dict, "show", self.bot, bot)
+        await menu.start(ctx)
 
     @group(name="waifu", invoke_without_command=True, case_insensitive=True)
     @bot_has_permissions(embed_links=True, add_reactions=True)
@@ -198,7 +247,7 @@ class Anime(Cog):
                 if waifu["type"] in ["Waifu", "Husbando"]:
                     waifus_dict[waifu["name"]] = {}
                     for value in waifu:
-                        store_waifus(waifus_dict, waifu, value)
+                        store_dict(waifus_dict, waifu, value)
 
                 else:
                     break
@@ -212,7 +261,7 @@ class Anime(Cog):
         bot = ctx.guild.get_member(self.bot.user.id)
 
         # Send the menu to the display
-        menu = HelpMenu(i, waifus_dict, self.bot, bot)
+        menu = HelpMenu(i, waifus_dict, "waifu", self.bot, bot)
         await menu.start(ctx)
 
     @waifu.command(name="daily")

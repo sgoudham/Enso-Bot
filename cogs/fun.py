@@ -346,56 +346,66 @@ class Fun(Cog):
     async def insta_info(self, ctx, *, user_name):
         """Retrieve a persons Instagram profile information"""
 
-        url = f"https://apis.duncte123.me/insta/{user_name}"
-        async with aiohttp.ClientSession() as session:
-            async with await session.get(url=url) as response:
-                if response.status == 200:
-                    insta = await response.json()
-                    data = insta["user"]
-                    images = insta["images"]
-                    private = data["is_private"]
-                    verified = data["is_verified"]
-                    if not private:
-                        image_url = images[0]["url"]
-                        image_caption = images[0]["caption"]
+        with ctx.typing():
+            # Request profile information from API
+            url = f"https://apis.duncte123.me/insta/{user_name}"
+            async with aiohttp.ClientSession() as session:
+                async with await session.get(url=url) as response:
 
-                    full_name = data["full_name"]
-                    username = data["username"]
-                    pfp = data["profile_pic_url"]
+                    # When succesful, read data from json
+                    if response.status == 200:
+                        insta = await response.json()
 
-                    followers = data["followers"]["count"]
-                    following = data["following"]["count"]
-                    uploads = data["uploads"]["count"]
-                    biography = data["biography"]
+                        data = insta["user"]
+                        images = insta["images"]
+                        private = data["is_private"]
+                        verified = data["is_verified"]
 
-                elif response.status == 422:
-                    await self.bot.generate_embed(ctx, desc="**Instagram Username Not Found!**")
-                    return
+                        full_name = data["full_name"]
+                        username = data["username"]
+                        pfp = data["profile_pic_url"]
 
-        # Setting bools to ticks/cross emojis
-        verif = self.bot.tick if verified else self.bot.cross
-        priv = self.bot.tick if private else self.bot.cross
+                        followers = data["followers"]["count"]
+                        following = data["following"]["count"]
+                        uploads = data["uploads"]["count"]
+                        biography = data["biography"]
 
-        page_url = images[0]["page_url"] if not private else f"https://www.instagram.com/{username}/"
+                        # When profile isn't private, grab the information of their last post
+                        if not private:
+                            image_url = images[0]["url"]
+                            image_caption = images[0]["caption"]
 
-        desc = f"**Full Name:** {full_name}" \
-               f"\n**Bio:** {biography}" \
-               f"\n\n**Verified?:** {verif} | **Private?:** {priv}" \
-               f"\n**Following:** {following} | **Followers:** {followers}" \
-               f"\n**Upload Count:** {uploads}"
-        embed = discord.Embed(title=f"{username}'s Instagram",
-                              description=desc,
-                              url=page_url,
-                              colour=self.bot.random_colour(),
-                              timestamp=datetime.datetime.utcnow())
-        embed.set_thumbnail(url=pfp)
-        embed.set_footer(text=f"Requested By {ctx.author}", icon_url=ctx.author.avatar_url)
+                    # Send error if no instagram profile was found with given username
+                    elif response.status == 422:
+                        await self.bot.generate_embed(ctx, desc="**Instagram Username Not Found!**")
+                        return
 
-        if not private:
-            embed.add_field(name="My Latest Post",
-                            value=f"**Caption:** {image_caption}",
-                            inline=False)
-            embed.set_image(url=image_url)
+            # Setting bools to ticks/cross emojis
+            verif = self.bot.tick if verified else self.bot.cross
+            priv = self.bot.tick if private else self.bot.cross
+
+            # Set the page url to the last post or the profile based on privacy settings
+            page_url = images[0]["page_url"] if not private else f"https://www.instagram.com/{username}/"
+
+            desc = f"**Full Name:** {full_name}" \
+                   f"\n**Bio:** {biography}" \
+                   f"\n\n**Verified?:** {verif} | **Private?:** {priv}" \
+                   f"\n**Following:** {following} | **Followers:** {followers}" \
+                   f"\n**Upload Count:** {uploads}"
+            embed = discord.Embed(title=f"{username}'s Instagram",
+                                  description=desc,
+                                  url=page_url,
+                                  colour=self.bot.random_colour(),
+                                  timestamp=datetime.datetime.utcnow())
+            embed.set_thumbnail(url=pfp)
+            embed.set_footer(text=f"Requested By {ctx.author}", icon_url=ctx.author.avatar_url)
+
+            # When profile is not private, display the last post with the caption
+            if not private:
+                embed.add_field(name="My Latest Post",
+                                value=f"**Caption:** {image_caption}",
+                                inline=False)
+                embed.set_image(url=image_url)
 
         await ctx.send(embed=embed)
 

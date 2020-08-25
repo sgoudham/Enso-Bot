@@ -237,7 +237,8 @@ class Bot(commands.Bot):
     def get_roles_persist(self, guild_id):
         """Returning rolespersist value of the guild"""
 
-        return self.enso_cache.get(guild_id).get("roles_persist")
+        role_persist = self.enso_cache.get(guild_id)
+        return role_persist.get("roles_persist") if role_persist else None
 
     async def update_role_persist(self, guild_id, value):
         """Update the rolepersist value of the guild (Enabled or Disabled)"""
@@ -309,7 +310,8 @@ class Bot(commands.Bot):
     def get_modlog_for_guild(self, guild_id):
         """Get the modlog channel of the guild that the user is in"""
 
-        return self.enso_cache.get(guild_id).get("modlogs")
+        modlogs = self.enso_cache.get(guild_id)
+        return modlogs.get("modlogs") if modlogs else None
 
     # --------------------------------------------!End ModLogs Section!-------------------------------------------------
 
@@ -687,8 +689,9 @@ class Bot(commands.Bot):
         modlogs = self.get_modlog_for_guild(channel.guild.id)
 
         # Get the modmail record - (normal and logging channels)
-        modmail_channel = self.get_modmail(channel.guild.id).get("modmail_channel_id")
-        modmail_logging_channel = self.get_modmail(channel.guild.id).get("modmail_logging_channel_id")
+        modmail_record = self.get_modmail(channel.guild.id)
+        modmail_channel = modmail_record.get("modmail_channel_id") if modmail_record else None
+        modmail_logging_channel = modmail_record.get("modmail_logging_channel_id") if modmail_record else None
 
         # Get pool
         pool = self.db

@@ -438,6 +438,8 @@ class Fun(Cog):
         """Display grayscale version of image uploaded"""
 
         if ctx.message.attachments:
+            await ctx.message.delete()
+
             for attachments in ctx.message.attachments:
                 attach = await attachments.read()
                 image = Image.open(io.BytesIO(attach)).convert('LA')

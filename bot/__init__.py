@@ -81,7 +81,7 @@ class Bot(commands.Bot):
         # Instance variables for cache
         self.enso_cache = {}
         self.modmail_cache = {}
-        self.member_cache = MyCoolCache(5000)
+        self.member_cache = MyCoolCache(100)
 
         async def create_connection():
             """Setting up connection using asyncpg"""
@@ -236,8 +236,10 @@ class Bot(commands.Bot):
 
     def get_roles_persist(self, guild_id):
         """Returning rolespersist value of the guild"""
-
-        return self.enso_cache.get(guild_id)["roles_persist"]
+        try:
+            return self.enso_cache[guild_id]["roles_persist"]
+        except KeyError:
+            return None
 
     async def update_role_persist(self, guild_id, value):
         """Update the rolepersist value of the guild (Enabled or Disabled)"""
@@ -308,8 +310,10 @@ class Bot(commands.Bot):
 
     def get_modlog_for_guild(self, guild_id):
         """Get the modlog channel of the guild that the user is in"""
-
-        return self.enso_cache.get(guild_id)["modlogs"]
+        try:
+            return self.enso_cache[guild_id]["modlogs"]
+        except KeyError:
+            return None
 
     # --------------------------------------------!End ModLogs Section!-------------------------------------------------
 
@@ -389,6 +393,7 @@ class Bot(commands.Bot):
                 print(f"PostGres Error: Roles Could Not Be Stored For Member {member.id} in Guild {member.guild.id}", e)
 
             # Print success
+            # Update cache
             else:
                 result["muted_roles"] = role_ids
                 print(rowcount, f"Roles Added For User {member} in {ctx.guild}")
@@ -406,8 +411,8 @@ class Bot(commands.Bot):
 
             # Query to clear the existing role of the member from the database
             try:
-                update_query = """UPDATE members SET muted_roles = NULL WHERE guild_id = $1 AND member_id = $2"""
-                rowcount = await conn.execute(update_query, member.guild.id, member.id)
+                update = """UPDATE members SET muted_roles = NULL WHERE guild_id = $1 AND member_id = $2"""
+                rowcount = await conn.execute(update, member.guild.id, member.id)
                 result = await self.check_cache(member.id, member.guild.id)
 
             # Catch error
@@ -457,8 +462,8 @@ class Bot(commands.Bot):
 
             # Insert the guild information into guilds table
             try:
-                insert_query = """INSERT INTO guilds VALUES ($1, $2, $3, $4) ON CONFLICT (guild_id) DO NOTHING"""
-                rowcount = await conn.execute(insert_query, guild.id, ".", None, 0)
+                insert = """INSERT INTO guilds VALUES ($1, $2, $3, $4) ON CONFLICT (guild_id) DO NOTHING"""
+                rowcount = await conn.execute(insert, guild.id, ".", None, 0)
 
             # Catch errors
             except asyncpg.PostgresError as e:
@@ -496,8 +501,8 @@ class Bot(commands.Bot):
 
             # Delete the guild information as the bot leaves the server
             try:
-                delete_query = """DELETE FROM guilds WHERE guild_id = $1"""
-                rowcount = await conn.execute(delete_query, guild.id)
+                delete = """DELETE FROM guilds WHERE guild_id = $1"""
+                rowcount = await conn.execute(delete, guild.id)
 
             # Catch errors
             except asyncpg.PostgresError as e:
@@ -510,8 +515,8 @@ class Bot(commands.Bot):
 
             # Delete all records of members from that guild
             try:
-                delete_query = """DELETE FROM members WHERE guild_id = $1"""
-                rowcount = await conn.execute(delete_query, guild.id)
+                delete = """DELETE FROM members WHERE guild_id = $1"""
+                rowcount = await conn.execute(delete, guild.id)
 
             # Catch errors
             except asyncpg.PostgresError as e:
@@ -547,9 +552,9 @@ class Bot(commands.Bot):
             # On conflict, set the left values to null
             try:
 
-                insert_query = """INSERT INTO members (guild_id, member_id) VALUES ($1, $2)
+                insert = """INSERT INTO members (guild_id, member_id) VALUES ($1, $2)
                 ON CONFLICT (guild_id, member_id) DO UPDATE SET roles = NULL, left_at = NULL, has_left = 0"""
-                rowcount = await conn.execute(insert_query, member.guild.id, member.id)
+                rowcount = await conn.execute(insert, member.guild.id, member.id)
 
             # Catch errors
             except asyncpg.PostgresError as e:
@@ -643,9 +648,9 @@ class Bot(commands.Bot):
 
             # Store member roles within the database
             try:
-                update_query = """UPDATE members SET roles = $1, left_at = $2, has_left = 1
+                update = """UPDATE members SET roles = $1, left_at = $2, has_left = 1
                                   WHERE guild_id = $3 AND member_id = $4"""
-                rowcount = await conn.execute(update_query, role_ids, left_at, member.guild.id, member.id)
+                rowcount = await conn.execute(update, role_ids, left_at, member.guild.id, member.id)
 
             # Catch Error
             except asyncpg.PostgresError as e:
@@ -655,9 +660,67 @@ class Bot(commands.Bot):
             else:
                 print(rowcount, f"{member} Left {member.guild.name}, Roles stored into Members")
 
+            # Release connection back to pool
             finally:
-                # Release connection back to pool
                 await pool.release(conn)
+
+    async def on_guild_channel_delete(self, channel):
+        """Deleting modlogs/modmail channel if it's deleted in the guild"""
+
+        # Get the modlogs channel (channel or none)
+        modlogs = self.get_modlog_for_guild(channel.guild.id)
+
+        # Stupid dumb error handling that I shouldn't have to do
+        try:
+            modmail_channel = self.modmail_cache[channel.guild.id]["modmail_channel_id"]
+        except KeyError:
+            modmail_channel = None
+
+        # Get pool
+        pool = self.db
+        # Delete the modlogs system from the database when modlogs channel is deleted
+        if channel.id == modlogs:
+            # Setup pool connection
+            async with pool.acquire() as conn:
+
+                # Set channel to none
+                try:
+                    update = """UPDATE guilds SET modlogs = NULL WHERE guild_id = $1"""
+                    await conn.execute(update, channel.guild.id)
+
+                # Catch errors
+                except asyncpg.PostgresError as e:
+                    print(f"PostGres Error: Guild Modlogs Could Not Be Deleted For {channel.guild.id}", e)
+
+                # Delete channel from cache
+                else:
+                    self.remove_modlog_channel(channel.guild.id)
+
+                # Release connection back to pool
+                finally:
+                    await pool.release(conn)
+
+        # If modmail channels are deleted, delete the entire system
+        if channel.id == modmail_channel:
+            # Set up pool connection
+            async with pool.acquire() as conn:
+
+                # Remove the moderatormail record from the database
+                try:
+                    delete = """DELETE FROM moderatormail WHERE guild_id = $1"""
+                    await conn.execute(delete, channel.guild.id)
+
+                # Catch errors
+                except asyncpg.PostgresError as e:
+                    print(f"PostGres Error: ModeratorMail Record Could Not Be Deleted for Guild {channel.guild.id}", e)
+
+                # Delete from cache
+                else:
+                    self.delete_modmail(channel.guild.id)
+
+                # Release connection back to pool
+                finally:
+                    await pool.release(conn)
 
         # --------------------------------------------!End Events Section!----------------------------------------------
 

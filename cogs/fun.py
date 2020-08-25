@@ -380,6 +380,8 @@ class Fun(Cog):
                         await self.bot.generate_embed(ctx, desc="**Instagram Username Not Found!**")
                         return
 
+                await session.close()
+
             # Setting bools to ticks/cross emojis
             verif = self.bot.tick if verified else self.bot.cross
             priv = self.bot.tick if private else self.bot.cross

@@ -549,7 +549,7 @@ class Bot(commands.Bot):
             try:
 
                 insert = """INSERT INTO members (guild_id, member_id) VALUES ($1, $2)
-                ON CONFLICT (guild_id, member_id) DO UPDATE SET roles = NULL, left_at = NULL, has_left = 0"""
+                ON CONFLICT (guild_id, member_id) DO UPDATE left_at = NULL, has_left = 0"""
                 rowcount = await conn.execute(insert, member.guild.id, member.id)
 
             # Catch errors
@@ -599,6 +599,22 @@ class Bot(commands.Bot):
                     else:
                         print(
                             f"Insufficient Permissions to Add Roles to {member} | {member.id} in {member.guild} | {member.guild.id}")
+
+            # Reset the roles entry for the database
+            try:
+                update_query = """UPDATE members SET roles = NULL WHERE guild_id = $1 AND member_id = $2"""
+                rowcount = await conn.execute(update_query, member.guild.id, member.id)
+
+            # Catch errors
+            except asyncpg.PostgresError as e:
+                print(f"PostGres Error: Clearing Member {member.id} Roles in Guild {member.guild.id}", e)
+
+            # Print success
+            else:
+                print(rowcount, f"Roles Cleared For {member} in {member.guild}")
+
+            # Release connection back to pool
+            await pool.release(conn)
 
         # Make sure the guild is Enso and send welcoming embed to the server
         if guild.id == self.enso_guild_ID:

@@ -236,7 +236,7 @@ class Guild(Cog):
             await self.bot.generate_embed(ctx, desc=text)
         else:
 
-            text = "**Modlogs Channel** already set up!" \
+            text = "**Modlogs Channel** not set up!" \
                    f"\nDo **{ctx.prefix}help modlogs** to find out more!"
             await self.bot.generate_embed(ctx, desc=text)
 
@@ -337,12 +337,12 @@ class Guild(Cog):
 
             # Update the existing modlogs for guild
             try:
-                update_query = """UPDATE guilds SET modlogs = NULL WHERE guild_id = $1"""
-                await conn.execute(update_query, ctx.guild.id)
+                update = """UPDATE guilds SET modlogs = NULL WHERE guild_id = $1"""
+                await conn.execute(update, ctx.guild.id)
 
             # Catch errors
             except asyncpg.PostgresError as e:
-                print(f"PostGres Error: Guild Modlogs Could Not Be Updated For {ctx.guild.id}", e)
+                print(f"PostGres Error: Guild Modlogs Could Not Be Deleted For {ctx.guild.id}", e)
 
             # Delete channel from cache
             else:
@@ -367,7 +367,7 @@ class Guild(Cog):
     @mod_mail.command(name="setup")
     @has_permissions(manage_guild=True)
     @bot_has_permissions(manage_channels=True, embed_links=True, add_reactions=True, manage_messages=True,
-                         attach_files=True, read_message_history=True)
+                         attach_files=True, read_message_history=True, manage_roles=True)
     async def mmsetup(self, ctx, modmail: TextChannel, modmail_logging: TextChannel):
         """
         Setup Modmail System
@@ -449,7 +449,7 @@ class Guild(Cog):
     @mod_mail.command(name="update")
     @has_permissions(manage_guild=True)
     @bot_has_permissions(manage_channels=True, embed_links=True, add_reactions=True, manage_messages=True,
-                         attach_files=True, read_message_history=True)
+                         attach_files=True, read_message_history=True, manage_roles=True)
     async def mmupdate(self, ctx, modmail_logging_channel: TextChannel):
         """
         Update the Channel that the Modmail is logged to
@@ -509,7 +509,7 @@ class Guild(Cog):
     @mod_mail.command(name="delete")
     @has_permissions(manage_guild=True)
     @bot_has_permissions(manage_channels=True, embed_links=True, add_reactions=True, manage_messages=True,
-                         attach_files=True, read_message_history=True)
+                         attach_files=True, read_message_history=True, manage_roles=True)
     async def mmdelete(self, ctx):
         """Delete the entire modmail system from the guild"""
 

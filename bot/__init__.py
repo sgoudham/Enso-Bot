@@ -236,10 +236,8 @@ class Bot(commands.Bot):
 
     def get_roles_persist(self, guild_id):
         """Returning rolespersist value of the guild"""
-        try:
-            return self.enso_cache[guild_id]["roles_persist"]
-        except KeyError:
-            return None
+
+        return self.enso_cache.get(guild_id).get("roles_persist")
 
     async def update_role_persist(self, guild_id, value):
         """Update the rolepersist value of the guild (Enabled or Disabled)"""
@@ -310,10 +308,8 @@ class Bot(commands.Bot):
 
     def get_modlog_for_guild(self, guild_id):
         """Get the modlog channel of the guild that the user is in"""
-        try:
-            return self.enso_cache[guild_id]["modlogs"]
-        except KeyError:
-            return None
+
+        return self.enso_cache.get(guild_id).get("modlogs")
 
     # --------------------------------------------!End ModLogs Section!-------------------------------------------------
 
@@ -558,7 +554,9 @@ class Bot(commands.Bot):
 
             # Catch errors
             except asyncpg.PostgresError as e:
-                print(f"PostGres Error: Member {member.id} was not be able to be added to Guild {member.guild.id}", e)
+                print(
+                    f"PostGres Error: {member} | {member.id} was not be able to be added to {member.guild} | {member.guild.id}",
+                    e)
 
             # Print success
             else:
@@ -574,7 +572,7 @@ class Bot(commands.Bot):
 
             # Catch errors
             except asyncpg.PostgresError as e:
-                print(f"PostGres Error: Member {member} Record Not Found", e)
+                print(f"PostGres Error: {member} | {member.id} Record Not Found", e)
 
             # Give roles back to the user if role persist is enabled
             else:
@@ -595,11 +593,12 @@ class Bot(commands.Bot):
 
                     # Don't give roles if user has no roles to be given
                     elif bot.guild_permissions.manage_roles and not flag:
-                        print(f"Member {member.id} Had No Roles To Be Given")
+                        print(f"Member {member} | {member.id} Had No Roles To Be Given")
 
                     # No permissions to give roles in the server
                     else:
-                        print(f"Insufficient Permissions to Add Roles to Member {member.id} in Guild {member.guild.id}")
+                        print(
+                            f"Insufficient Permissions to Add Roles to {member} | {member.id} in {member.guild} | {member.guild.id}")
 
         # Make sure the guild is Enso and send welcoming embed to the server
         if guild.id == self.enso_guild_ID:
@@ -670,14 +669,13 @@ class Bot(commands.Bot):
         # Get the modlogs channel (channel or none)
         modlogs = self.get_modlog_for_guild(channel.guild.id)
 
-        # Stupid dumb error handling that I shouldn't have to do
-        try:
-            modmail_channel = self.modmail_cache[channel.guild.id]["modmail_channel_id"]
-        except KeyError:
-            modmail_channel = None
+        # Get the modmail record - (normal and logging channels)
+        modmail_channel = self.get_modmail(channel.guild.id).get("modmail_channel_id")
+        modmail_logging_channel = self.get_modmail(channel.guild.id).get("modmail_logging_channel_id")
 
         # Get pool
         pool = self.db
+
         # Delete the modlogs system from the database when modlogs channel is deleted
         if channel.id == modlogs:
             # Setup pool connection
@@ -701,7 +699,7 @@ class Bot(commands.Bot):
                     await pool.release(conn)
 
         # If modmail channels are deleted, delete the entire system
-        if channel.id == modmail_channel:
+        if channel.id == modmail_channel or channel.id == modmail_logging_channel:
             # Set up pool connection
             async with pool.acquire() as conn:
 

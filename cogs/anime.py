@@ -18,7 +18,7 @@ import aiohttp
 from decouple import config
 from discord import Embed
 from discord.ext import menus
-from discord.ext.commands import Cog, group, bot_has_permissions
+from discord.ext.commands import Cog, group, bot_has_permissions, command
 
 my_waifu_list_auth = config('MYWAIFULIST_AUTH')
 
@@ -29,18 +29,24 @@ def store_dict(dict_, key, value):
     dict_[key["name"]][value] = key[value]
 
 
-def multiple_dict_generator(self, bot):
+def search(self, bot):
     """Method to generate embed of multiple waifu's"""
 
     embeds = []
     for key in self._dict.values():
-        embed = Embed(title=key["name"], description=f"{key['original_name']} | {key['type']}",
+
+        # Only setting up description if waifu og_name has a value
+        desc = f"{key['original_name']}" if key["original_name"] else Embed.Empty
+
+        embed = Embed(title=key["name"], description=desc,
                       colour=bot.random_colour(),
                       url=key["url"])
         embed.set_image(url=key["display_picture"])
+
         if "waifu" == self.type:
+            embed.set_author(name=key["type"])
             embed.set_footer(text=f"❤️ {key['likes']} 🗑️ {key['trash']} | Powered by MyWaifuList")
-        elif "show" == self.type:
+        elif "anime" == self.type:
             embed.set_footer(text=f"{key['romaji_name']} | Powered by MyWaifuList")
 
         embeds.append(embed)
@@ -48,7 +54,7 @@ def multiple_dict_generator(self, bot):
     return embeds
 
 
-def single_waifu_generator(self, waifu):
+def waifu_embedder(self, waifu, _type):
     """Method to generate embed of single waifu's"""
 
     # Get all the data to be displayed in the embed
@@ -60,8 +66,13 @@ def single_waifu_generator(self, waifu):
     trash = waifu["trash"]
     waifu_type = waifu["type"]
 
-    # Set up the embed
-    embed = Embed(title=name, description=f"{og_name} | {waifu_type}",
+    # Set different values for description based on the command
+    if _type == "random":
+        desc = f"{og_name} | Random {waifu_type}" if waifu["original_name"] else f"Random {waifu_type}"
+    elif _type == "daily":
+        desc = f"{og_name} | Daily {waifu_type}" if waifu["original_name"] else f"Daily {waifu_type}"
+
+    embed = Embed(title=name, description=desc,
                   colour=self.bot.random_colour(),
                   url=url)
     embed.set_image(url=picture)
@@ -78,25 +89,64 @@ class HelpMenu(menus.Menu):
         self.type = _type
         self.i = i
         self.bot = bot
-        self.dicts = multiple_dict_generator(self, bot)
+        self.dicts = search(self, bot)
         self.guild_bot = guild_bot
 
-    # Message to be sent on the initial command ~help
+    @staticmethod
+    def set_author(embed, _type, cur_page, pages):
+        """
+        Returns the author for the first initial embed
+
+        The reason why it's different is because I need to retrieve the previous author that I set for the
+        embed (to get the type from the API)
+
+        """
+
+        if _type == "anime":
+            __type = embed.author.name
+            embed.remove_author()
+            return embed.set_author(name=f"{__type} | Page {cur_page}/{pages}")
+        elif _type == "waifu":
+            __type = embed.author.name
+            embed.remove_author()
+            return embed.set_author(name=f"{__type} | Page {cur_page}/{pages}")
+
+    @staticmethod
+    def set_author_after(embed, _type, cur_page, pages):
+        """
+        Returns the author for all the pages when the user reacts to go back and forwards
+
+        This needs to be another method because the previous author is gonna be different to the one
+        specified at the start "multiple_dict_generators()"
+        """
+
+        if _type == "anime":
+            author = embed.author.name
+            tv_type = author.split("|")
+            __type = tv_type[0].strip()
+            return embed.set_author(name=f"{__type} | Page {cur_page}/{pages}")
+
+        elif _type == "waifu":
+            author = embed.author.name
+            tv_type = author.split("|")
+            __type = tv_type[0].strip()
+            return embed.set_author(name=f"{__type} | Page {cur_page}/{pages}")
+
     async def send_initial_message(self, ctx, channel):
-        # Set the first embed to the first element in the pages[]
+        """Set the first embed to the first element in the pages[]"""
 
         initial = self.dicts[self.i]
 
         cur_page = self.i + 1
         pages = len(self.dicts)
-        initial.set_author(name=f"Airing Shows | Page {cur_page}/{pages}")
+        initial = self.set_author(initial, self.type, cur_page, pages)
 
         # Send embed
         return await channel.send(embed=initial)
 
-    # Reaction to allow user to go to the previous page in the embed
     @menus.button('\N{LEFTWARDS BLACK ARROW}')
     async def on_left_arrow(self, payload):
+        """Reaction to allow user to go to the previous page in the embed"""
 
         # Simple check to make sure that the reaction is performed by the user
         def check(m):
@@ -110,16 +160,16 @@ class HelpMenu(menus.Menu):
 
             cur_page = self.i + 1
             pages = len(self.dicts)
-            prev_page.set_author(name=f"Airing Shows | Page {cur_page}/{pages}")
+            prev_page = self.set_author_after(prev_page, self.type, cur_page, pages)
 
             # Send the embed and remove the reaction of the user
             await self.message.edit(embed=prev_page)
             if self.guild_bot.guild_permissions.manage_messages:
                 await self.message.remove_reaction("⬅", self.ctx.author)
 
-    # Reaction to allow user to go to the next page in the embed
     @menus.button('\N{BLACK RIGHTWARDS ARROW}')
     async def on_right_arrow(self, payload):
+        """Reaction to allow user to go to the next page in the embed"""
 
         # Simple check to make sure that the reaction is performed by the user
         def check(m):
@@ -133,7 +183,7 @@ class HelpMenu(menus.Menu):
 
             cur_page = self.i + 1
             pages = len(self.dicts)
-            next_page.set_author(name=f"Airing Shows | Page {cur_page}/{pages}")
+            next_page = self.set_author_after(next_page, self.type, cur_page, pages)
 
             # Send the embed and remove the reaction of the user
             await self.message.edit(embed=next_page)
@@ -142,6 +192,7 @@ class HelpMenu(menus.Menu):
 
     @menus.button('\N{BLACK SQUARE FOR STOP}\ufe0f')
     async def on_stop(self, payload):
+        """Reaction to allow user to make the embed disappear"""
 
         # Simple check to make sure that the reaction is performed by the user
         def check(m):
@@ -166,21 +217,59 @@ class Anime(Cog):
         """Printing out that Cog is ready on startup"""
         print(f"{self.__class__.__name__} Cog has been loaded!\n-----")
 
-    @group(name="airing", invoke_without_command=True, case_insensitive=True)
+    @group(name="airing", case_insensitive=True)
     @bot_has_permissions(embed_links=True, add_reactions=True)
-    async def airing_shows(self, ctx):
+    async def airing(self, ctx):
         """
-        Show's statiscs about airing shows and waifus
+        Display airing shows and waifu's in those shows
         (UNDER CONSTRUCTION)
         """
-        pass
+        await self.bot.generate_embed(ctx, desc="Required Argument(s) Missing!"
+                                                f"\nUse **{ctx.prefix}help** to find how to use **{ctx.command}**")
 
-    @airing_shows.command(name="shows", aliases=["currently", "current"])
-    @bot_has_permissions(embed_links=True, add_reactions=True)
-    async def shows(self, ctx):
-        """Display the current airing shows"""
+    @airing.command(name="best", aliases=[""])
+    async def airing_best(self, ctx):
+        """Get the best waifu’s from the airing shows"""
 
-        # Local Variable i to allow the index of the pages[] to be modified
+        # Local Variable i to allow the pages to be modified
+        i = 0
+
+        airing_best = {}
+        url = "https://mywaifulist.moe/api/v1/airing/best"
+        data = {'content-type': "application/json"}
+
+        # Searching API for the current airing shows
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url, data=data, headers=self.headers) as resp:
+                # Store waifu's in dict when request is successful, else send an error
+                if resp.status == 200:
+                    best_waifus = await resp.json()
+
+                # Send error if something went wrong internally/while grabbing data from API
+                else:
+                    await self.bot.generate_embed(ctx, desc="**Something went wrong with MyWaifuList!**")
+
+            # Close session
+            await session.close()
+
+        # Store all the shows with the name as the key
+        for waifu in best_waifus["data"]:
+            airing_best[waifu["name"]] = {}
+            for value in waifu:
+                store_dict(airing_best, waifu, value)
+
+        # Get the instance of the bot
+        bot = ctx.guild.get_member(self.bot.user.id)
+
+        # Send the menu to the display
+        menu = HelpMenu(i, airing_best, "waifu", self.bot, bot)
+        await menu.start(ctx)
+
+    @airing.command(name="anime", aliases=["shows", "series"])
+    async def anime(self, ctx):
+        """Display the current airing anime"""
+
+        # Local Variable i to allow the pages to be modified
         i = 0
 
         shows_dict = {}
@@ -196,7 +285,10 @@ class Anime(Cog):
 
                 # Send error if something went wrong internally/while grabbing data from API
                 else:
-                    await self.bot.generate_embed(ctx, desc="**Something went wrong!**")
+                    await self.bot.generate_embed(ctx, desc="**Something went wrong with MyWaifuList!**")
+
+            # Close session
+            await session.close()
 
         # Store all the shows with the name as the key
         for show in show_dict["data"]:
@@ -208,23 +300,20 @@ class Anime(Cog):
         bot = ctx.guild.get_member(self.bot.user.id)
 
         # Send the menu to the display
-        menu = HelpMenu(i, shows_dict, "show", self.bot, bot)
+        menu = HelpMenu(i, shows_dict, "anime", self.bot, bot)
         await menu.start(ctx)
 
-    @group(name="waifu", invoke_without_command=True, case_insensitive=True)
+    @command(name="search", aliases=["lookup"], usage="")
     @bot_has_permissions(embed_links=True, add_reactions=True)
-    async def waifu(self, ctx, *, name: str):
-        """
-        Shows a Waifu (UNDER CONSTRUCTION)
-        Waifu's are grabbed from mywaifulist.com
-        """
+    async def search(self, ctx, *, term: str):
+        """Search the entire website! (Shows/Waifus/Husbandos)"""
 
-        # Local Variable i to allow the index of the pages[] to be modified
+        # Local Variable i to allow the index of the embeds to be modified
         i = 0
 
-        waifus_dict = {}
+        anime_or_character = {}
         url = "https://mywaifulist.moe/api/v1/search/"
-        data = {"term": name,
+        data = {"term": term,
                 'content-type': "application/json"}
 
         # Searching API for waifu(s)
@@ -236,33 +325,49 @@ class Anime(Cog):
 
                 # Send error if something went wrong internally/while grabbing data from API
                 else:
-                    await self.bot.generate_embed(ctx, desc="**Something went wrong!**")
+                    await self.bot.generate_embed(ctx, desc="**Something went wrong with MyWaifuList!**")
+
+            # Close session
+            await session.close()
 
         # As long waifu's were returned from the GET request
         # Store waifus in a dict
         if len(waifu_dict["data"]) > 0:
+            tv_show = 0
             for waifu in waifu_dict["data"]:
-
                 # Only store "Waifu's" and "Husbando's"
                 if waifu["type"] in ["Waifu", "Husbando"]:
-                    waifus_dict[waifu["name"]] = {}
+                    anime_or_character[waifu["name"]] = {}
                     for value in waifu:
-                        store_dict(waifus_dict, waifu, value)
+                        store_dict(anime_or_character, waifu, value)
 
-                else:
-                    break
+                elif waifu["type"] in ["TV", "ONA", "OVA"]:
+                    tv_show += 1
+
+            if tv_show >= 1:
+                await self.bot.generate_embed(ctx, desc="**Anime Information Coming Soon!!")
 
         # When no waifu has been retrieved, send error message to the user
         else:
 
-            await self.bot.generate_embed(ctx, desc="**Waifu Not Found!**")
+            await self.bot.generate_embed(ctx, desc="**Waifu/Anime Not Found!**")
 
         # Get the instance of the bot
         bot = ctx.guild.get_member(self.bot.user.id)
 
         # Send the menu to the display
-        menu = HelpMenu(i, waifus_dict, "waifu", self.bot, bot)
+        menu = HelpMenu(i, anime_or_character, "waifu", self.bot, bot)
         await menu.start(ctx)
+
+    @group(name="waifu", case_insensitive=True)
+    @bot_has_permissions(embed_links=True, add_reactions=True)
+    async def waifu(self, ctx):
+        """
+        Waifu's are grabbed from mywaifulist.com
+        (UNDER CONSTRUCTION)
+        """
+        await self.bot.generate_embed(ctx, desc="Required Argument(s) Missing!"
+                                                f"\nUse **{ctx.prefix}help** to find how to use **{ctx.command}**")
 
     @waifu.command(name="daily")
     @bot_has_permissions(embed_links=True)
@@ -281,9 +386,12 @@ class Anime(Cog):
 
                 # Send error if something went wrong internally/while grabbing data from API
                 else:
-                    await ctx.send("Something went wrong!")
+                    await self.bot.generate_embed(ctx, desc="**Something went wrong with MyWaifuList!**")
 
-        await ctx.send(embed=single_waifu_generator(self, waifu))
+            # Close session
+            await session.close()
+
+        await ctx.send(embed=waifu_embedder(self, waifu, "daily"))
 
     @waifu.command(name="random", aliases=["rnd"])
     @bot_has_permissions(embed_links=True)
@@ -299,13 +407,15 @@ class Anime(Cog):
                 # Store waifu's in dict when request is successful, else send an error
                 if resp.status == 200:
                     waifu_dict = await resp.json()
-                    waifu3 = waifu_dict["data"]
+                    waifu = waifu_dict["data"]
 
                 # Send error if something went wrong internally/while grabbing data from API
                 else:
-                    await self.bot.generate_embed(ctx, desc="**Something went wrong!**")
+                    await self.bot.generate_embed(ctx, desc="**Something went wrong with MyWaifuList!**")
 
-        await ctx.send(embed=single_waifu_generator(self, waifu3))
+            await session.close()
+
+        await ctx.send(embed=waifu_embedder(self, waifu, "random"))
 
 
 def setup(bot):

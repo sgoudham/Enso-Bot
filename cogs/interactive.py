@@ -77,7 +77,7 @@ class Interactive(Cog):
         # Set details for search
         apikey = config("TENOR_AUTH")  # test value
         search_term = "anime-kiss"
-        url = f"https://api.tenor.com/v1/random?q={search_term}&key={apikey}&limit=1"
+        url = f"https://api.tenor.com/v1/random?q={search_term}&key={apikey}&limit=1&media_filter=minimal"
 
         # get random results using default locale of EN_US
         # Searching API for the current airing shows

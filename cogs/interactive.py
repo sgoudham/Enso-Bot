@@ -167,29 +167,34 @@ class Interactive(Cog):
         else:
             title = f":scream: :scream: | **{ctx.author.display_name}** killed **{member.display_name}**"
 
-        try:
+        # Set details for search
+        apikey = config("TENOR_AUTH")  # test value
+        search_term = "anime-kill"
+        url = f"https://api.tenor.com/v1/random?q={search_term}&key={apikey}&limit=1&media_filter=minimal"
 
-            # Open the file containing the killing gifs
-            with open('images/FunCommands/killing.txt') as file:
-                # Store content of the file in killing_array
-                killing_array = file.readlines()
+        # get random results using default locale of EN_US
+        # Searching API for the current airing shows
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as resp:
+                if resp.status == 200:
+                    gifs = await resp.json()
+                    url = gifs["results"][0]["media"][0]["gif"]["url"]
+                else:
+                    self.bot.generate_embed(ctx, desc="**Something Went Wrong With Tenor!**")
 
-            # Get the member and the userAvatar
-            member, userAvatar = getMember(ctx)
+        # Get the member and the userAvatar
+        member, userAvatar = getMember(ctx)
 
-            # Set up the embed to display a random killing gif
-            embed = Embed(
-                title=title,
-                colour=self.bot.random_colour(),
-                timestamp=datetime.datetime.utcnow())
-            embed.set_image(url=random.choice(killing_array))
-            embed.set_footer(text=f"Requested by {member}", icon_url=userAvatar)
+        # Set up the embed to display a random killing gif
+        embed = Embed(
+            title=title,
+            colour=self.bot.random_colour(),
+            timestamp=datetime.datetime.utcnow())
+        embed.set_image(url=url)
+        embed.set_footer(text=f"Requested by {member}", icon_url=userAvatar)
 
-            # Send the embedded message to the user
-            await ctx.send(embed=embed)
-
-        except FileNotFoundError as e:
-            print(e)
+        # Send the embedded message to the user
+        await ctx.send(embed=embed)
 
     @command(name="slap")
     @bot_has_permissions(embed_links=True)

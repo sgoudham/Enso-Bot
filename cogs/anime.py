@@ -41,7 +41,7 @@ class WaifuCommandNotFound(Exception):
         return f'{self.command} -> {self.message}'
 
 
-async def get_airing_api(self, url):
+async def get_airing_api(self, ctx, url):
     """Retreiving information about the airing shows/waifus"""
 
     url = f"https://mywaifulist.moe/api/v1/{url}"
@@ -84,12 +84,15 @@ def search(self, bot):
                       url=key["url"])
         embed.set_image(url=key["display_picture"])
 
-        if "waifu" == self.type:
+        if key["type"] in ["Waifu", "Husbando"]:
             embed.set_author(name=key["type"])
             embed.set_footer(text=f"❤️ {key['likes']} 🗑️ {key['trash']} | Powered by MyWaifuList")
-        elif "anime" == self.type:
+        elif key["type"] in ["TV", "ONA", "OVA"]:
             embed.set_author(name=key["type"])
-            embed.set_footer(text=f"{key['romaji_name']} | Powered by MyWaifuList")
+            if key['romaji_name']:
+                embed.set_footer(text=f"{key['romaji_name']} | Powered by MyWaifuList")
+            else:
+                embed.set_footer(text="- | Powered by MyWaifuList")
 
         embeds.append(embed)
 
@@ -277,7 +280,7 @@ class Anime(Cog):
         # Variables to set up the reaction menu
         i = 0
         airing_trash = {}
-        trash_waifus = await get_airing_api(self, "airing/trash")
+        trash_waifus = await get_airing_api(self, ctx, "airing/trash")
 
         # Store all the shows with the name as the key
         for waifu in trash_waifus["data"]:
@@ -300,7 +303,7 @@ class Anime(Cog):
         # Variables to setup the reaction menu
         i = 0
         airing_popular = {}
-        popular_waifus = await get_airing_api(self, "airing/popular")
+        popular_waifus = await get_airing_api(self, ctx, "airing/popular")
 
         # Store all the shows with the name as the key
         for waifu in popular_waifus["data"]:
@@ -323,7 +326,7 @@ class Anime(Cog):
         # Local Variable i to allow the pages to be modified
         i = 0
         airing_best = {}
-        best_waifus = await get_airing_api(self, "airing/best")
+        best_waifus = await get_airing_api(self, ctx, "airing/best")
 
         # Store all the shows with the name as the key
         for waifu in best_waifus["data"]:
@@ -346,7 +349,7 @@ class Anime(Cog):
         # Local Variable i to allow the pages to be modified
         i = 0
         anime_dict = {}
-        animes = await get_airing_api(self, "airing")
+        animes = await get_airing_api(self, ctx, "airing")
 
         # Store all the shows with the name as the key
         for show in animes["data"]:
@@ -391,7 +394,6 @@ class Anime(Cog):
         # As long waifu's were returned from the GET request
         # Store waifus in a dict
         if len(waifu_dict["data"]) > 0:
-            tv_show = 0
             for waifu in waifu_dict["data"]:
                 # Only store "Waifu's" and "Husbando's"
                 if waifu["type"] in ["Waifu", "Husbando"]:
@@ -400,14 +402,12 @@ class Anime(Cog):
                         store_dict(anime_or_waifu, waifu, value)
 
                 elif waifu["type"] in ["TV", "ONA", "OVA"]:
-                    tv_show += 1
-
-            if tv_show >= 1:
-                await self.bot.generate_embed(ctx, desc="**Anime Information Coming Soon!!")
+                    anime_or_waifu[waifu["name"]] = {}
+                    for value in waifu:
+                        store_dict(anime_or_waifu, waifu, value)
 
         # When no waifu has been retrieved, send error message to the user
         else:
-
             await self.bot.generate_embed(ctx, desc="**Waifu/Anime Not Found!**")
 
         # Get the instance of the bot

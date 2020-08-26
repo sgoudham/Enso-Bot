@@ -65,6 +65,7 @@ def search(self, bot):
             embed.set_author(name=key["type"])
             embed.set_footer(text=f"❤️ {key['likes']} 🗑️ {key['trash']} | Powered by MyWaifuList")
         elif "anime" == self.type:
+            embed.set_author(name=key["type"])
             embed.set_footer(text=f"{key['romaji_name']} | Powered by MyWaifuList")
 
         embeds.append(embed)

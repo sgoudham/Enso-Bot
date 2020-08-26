@@ -176,7 +176,7 @@ class Guild(Cog):
         """Printing out that Cog is ready on startup"""
         print(f"{self.__class__.__name__} Cog has been loaded\n-----")
 
-    @group(name="rolepersist", invoke_without_command=True, case_insensitive=True, usage="`<status|enable|disable>`")
+    @group(name="rolepersist", case_insensitive=True, usage="`<status|enable|disable>`")
     @has_permissions(manage_guild=True)
     @bot_has_permissions(manage_roles=True)
     async def roles_persist(self, ctx):
@@ -212,13 +212,17 @@ class Guild(Cog):
         else:
             await self.bot.generate_embed(ctx, desc=f"**Role Persist is already disabled within {ctx.guild}!**")
 
-    @group(name="modlogs", invoke_without_command=True, case_insensitive=True, usage="`<setup|update|delete>`")
+    @group(name="modlogs", case_insensitive=True, usage="`<status|setup|update|delete>`")
     @has_permissions(manage_guild=True)
     @bot_has_permissions(embed_links=True)
     async def modlogs(self, ctx):
         """
         Log updates in your server! (Nicknames/Deleted Msgs/etc!)
         """
+
+    @modlogs.command(name="status")
+    async def mlstatus(self, ctx):
+        """Current status of the modlogs channel"""
 
         ml_channel = self.bot.get_modlog_for_guild(ctx.guild.id)
 
@@ -348,7 +352,7 @@ class Guild(Cog):
                f"\nDo **{ctx.prefix}help modlogs** to setup Modlogs again!"
         await self.bot.generate_embed(ctx, desc=text)
 
-    @group(name="modmail", invoke_without_command=True, case_insensitive=True, usage="`<setup|update|delete>`")
+    @group(name="modmail", case_insensitive=True, usage="`<setup|update|delete>`")
     @bot_has_permissions(manage_channels=True, embed_links=True, add_reactions=True, manage_messages=True,
                          attach_files=True, read_message_history=True, manage_roles=True)
     @has_permissions(manage_guild=True)
@@ -356,7 +360,6 @@ class Guild(Cog):
         """
         Modmail! Allow your members to send mail to the staff team!
         """
-        pass
 
     @mod_mail.command(name="setup")
     async def mmsetup(self, ctx, modmail: TextChannel, modmail_logging: TextChannel):

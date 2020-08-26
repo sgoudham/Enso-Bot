@@ -435,7 +435,9 @@ class Bot(commands.Bot):
     async def on_message(self, message):
         """Make sure bot messages are not tracked"""
 
-        if message.author.bot: return
+        # Ignoring messages that start with 2 ..
+        if message.content.startswith("..") or message.author.bot:
+            return
 
         # Processing the message
         await self.process_commands(message)

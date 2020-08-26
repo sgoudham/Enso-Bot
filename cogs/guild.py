@@ -176,7 +176,7 @@ class Guild(Cog):
         """Printing out that Cog is ready on startup"""
         print(f"{self.__class__.__name__} Cog has been loaded\n-----")
 
-    @group(name="rolepersist", invoke_without_command=True, case_insensitive=True, usage="`[argument...]`")
+    @group(name="rolepersist", invoke_without_command=True, case_insensitive=True, usage="`<status/enable/disable>`")
     @has_permissions(manage_guild=True)
     @bot_has_permissions(manage_roles=True)
     async def roles_persist(self, ctx):

@@ -17,6 +17,8 @@
 import datetime
 import random
 
+import aiohttp
+from decouple import config
 from discord import Embed, Member
 from discord.ext.commands import cooldown, command, BucketType, bot_has_permissions, Cog
 
@@ -42,8 +44,6 @@ class Interactive(Cog):
     async def on_ready(self):
         """Printing out that Cog is ready on startup"""
         print(f"{self.__class__.__name__} Cog has been loaded\n-----")
-
-    # TODO: MAKE EVERYTHING IN HERE ASYNCHRONOUS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     @command(name="kiss")
     @bot_has_permissions(embed_links=True)
@@ -74,28 +74,34 @@ class Interactive(Cog):
             await self.bot.generate_embed(ctx, desc="Σ(‘◉⌓◉’) You can only kiss your partner! Baka!")
             return
 
-        try:
-            # Open the file containing the kissing gifs
-            with open('images/FunCommands/kissing.txt') as file:
-                # Store content of the file in kissing_array
-                kissing_array = file.readlines()
+        # Set details for search
+        apikey = config("TENOR_AUTH")  # test value
+        search_term = "anime-kiss"
+        url = f"https://api.tenor.com/v1/random?q={search_term}&key={apikey}&limit=1"
 
-            # Get the member and the userAvatar
-            member, userAvatar = getMember(ctx)
+        # get random results using default locale of EN_US
+        # Searching API for the current airing shows
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as resp:
+                if resp.status == 200:
+                    gifs = await resp.json()
+                    url = gifs["results"][0]["media"][0]["gif"]["url"]
+                else:
+                    self.bot.generate_embed(ctx, desc="**Something Went Wrong With Tenor!**")
 
-            # Set up the embed to display a random kissing gif
-            embed = Embed(
-                title=title,
-                colour=self.bot.random_colour(),
-                timestamp=datetime.datetime.utcnow())
-            embed.set_image(url=random.choice(kissing_array))
-            embed.set_footer(text=f"Requested by {member}", icon_url=userAvatar)
+        # Get the member and the userAvatar
+        member, userAvatar = getMember(ctx)
 
-            # Send the embedded message to the user
-            await ctx.send(embed=embed)
+        # Set up the embed to display a random kissing gif
+        embed = Embed(
+            title=title,
+            colour=self.bot.random_colour(),
+            timestamp=datetime.datetime.utcnow())
+        embed.set_image(url=url)
+        embed.set_footer(text=f"Requested by {member}", icon_url=userAvatar)
 
-        except FileNotFoundError as e:
-            print(e)
+        # Send the embedded message to the user
+        await ctx.send(embed=embed)
 
     @command(name="cuddle")
     @bot_has_permissions(embed_links=True)

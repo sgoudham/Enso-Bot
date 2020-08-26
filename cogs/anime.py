@@ -41,6 +41,29 @@ class WaifuCommandNotFound(Exception):
         return f'{self.command} -> {self.message}'
 
 
+async def get_airing_api(self, url):
+    """Retreiving information about the airing shows/waifus"""
+
+    url = f"https://mywaifulist.moe/api/v1/{url}"
+    data = {'content-type': "application/json"}
+
+    # Searching API for the current airing shows
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url, data=data, headers=self.headers) as resp:
+            # Store waifu's in dict when request is successful, else send an error
+            if resp.status == 200:
+                airing = await resp.json()
+
+            # Send error if something went wrong internally/while grabbing data from API
+            else:
+                await self.bot.generate_embed(ctx, desc="**Something went wrong with MyWaifuList!**")
+
+        # Close session
+        await session.close()
+
+    return airing
+
+
 def store_dict(dict_, key, value):
     """Method to store waifu's in the new dict"""
 
@@ -246,43 +269,50 @@ class Anime(Cog):
         error = WaifuCommandNotFound(ctx.command, ctx)
         await self.bot.generate_embed(ctx, desc=error.message)
 
-    @airing.command(name="popular", aliases=["pop"])
+    @airing.command(name="trash", aliases=["worst", "garbage"])
     @bot_has_permissions(embed_links=True, add_reactions=True)
-    async def airing_popular(self, ctx):
+    async def airing_trash(self, ctx):
         """Get the most popular waifu’s from the airing shows"""
 
-        # Local Variable i to allow the pages to be modified
+        # Variables to set up the reaction menu
         i = 0
-
-        airing_best = {}
-        url = "https://mywaifulist.moe/api/v1/airing/popular"
-        data = {'content-type': "application/json"}
-
-        # Searching API for the current airing shows
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url, data=data, headers=self.headers) as resp:
-                # Store waifu's in dict when request is successful, else send an error
-                if resp.status == 200:
-                    best_waifus = await resp.json()
-
-                # Send error if something went wrong internally/while grabbing data from API
-                else:
-                    await self.bot.generate_embed(ctx, desc="**Something went wrong with MyWaifuList!**")
-
-            # Close session
-            await session.close()
+        airing_trash = {}
+        trash_waifus = await get_airing_api(self, "airing/trash")
 
         # Store all the shows with the name as the key
-        for waifu in best_waifus["data"]:
-            airing_best[waifu["name"]] = {}
+        for waifu in trash_waifus["data"]:
+            airing_trash[waifu["name"]] = {}
             for value in waifu:
-                store_dict(airing_best, waifu, value)
+                store_dict(airing_trash, waifu, value)
 
         # Get the instance of the bot
         bot = ctx.guild.get_member(self.bot.user.id)
 
         # Send the menu to the display
-        menu = HelpMenu(i, airing_best, "waifu", self.bot, bot)
+        menu = HelpMenu(i, airing_trash, "waifu", self.bot, bot)
+        await menu.start(ctx)
+
+    @airing.command(name="popular", aliases=["pop"])
+    @bot_has_permissions(embed_links=True, add_reactions=True)
+    async def airing_popular(self, ctx):
+        """Get the most popular waifu’s from the airing shows"""
+
+        # Variables to setup the reaction menu
+        i = 0
+        airing_popular = {}
+        popular_waifus = await get_airing_api(self, "airing/popular")
+
+        # Store all the shows with the name as the key
+        for waifu in popular_waifus["data"]:
+            airing_popular[waifu["name"]] = {}
+            for value in waifu:
+                store_dict(airing_popular, waifu, value)
+
+        # Get the instance of the bot
+        bot = ctx.guild.get_member(self.bot.user.id)
+
+        # Send the menu to the display
+        menu = HelpMenu(i, airing_popular, "waifu", self.bot, bot)
         await menu.start(ctx)
 
     @airing.command(name="best")
@@ -292,24 +322,8 @@ class Anime(Cog):
 
         # Local Variable i to allow the pages to be modified
         i = 0
-
         airing_best = {}
-        url = "https://mywaifulist.moe/api/v1/airing/best"
-        data = {'content-type': "application/json"}
-
-        # Searching API for the current airing shows
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url, data=data, headers=self.headers) as resp:
-                # Store waifu's in dict when request is successful, else send an error
-                if resp.status == 200:
-                    best_waifus = await resp.json()
-
-                # Send error if something went wrong internally/while grabbing data from API
-                else:
-                    await self.bot.generate_embed(ctx, desc="**Something went wrong with MyWaifuList!**")
-
-            # Close session
-            await session.close()
+        best_waifus = await get_airing_api(self, "airing/best")
 
         # Store all the shows with the name as the key
         for waifu in best_waifus["data"]:
@@ -331,36 +345,20 @@ class Anime(Cog):
 
         # Local Variable i to allow the pages to be modified
         i = 0
-
-        shows_dict = {}
-        url = "https://mywaifulist.moe/api/v1/airing"
-        data = {'content-type': "application/json"}
-
-        # Searching API for the current airing shows
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url, data=data, headers=self.headers) as resp:
-                # Store waifu's in dict when request is successful, else send an error
-                if resp.status == 200:
-                    show_dict = await resp.json()
-
-                # Send error if something went wrong internally/while grabbing data from API
-                else:
-                    await self.bot.generate_embed(ctx, desc="**Something went wrong with MyWaifuList!**")
-
-            # Close session
-            await session.close()
+        anime_dict = {}
+        animes = await get_airing_api(self, "airing")
 
         # Store all the shows with the name as the key
-        for show in show_dict["data"]:
-            shows_dict[show["name"]] = {}
+        for show in animes["data"]:
+            anime_dict[show["name"]] = {}
             for value in show:
-                store_dict(shows_dict, show, value)
+                store_dict(anime_dict, show, value)
 
         # Get the instance of the bot
         bot = ctx.guild.get_member(self.bot.user.id)
 
         # Send the menu to the display
-        menu = HelpMenu(i, shows_dict, "anime", self.bot, bot)
+        menu = HelpMenu(i, anime_dict, "anime", self.bot, bot)
         await menu.start(ctx)
 
     @command(name="search", aliases=["lookup"], usage="`<waifu|anime>`")

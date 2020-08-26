@@ -176,7 +176,7 @@ class Guild(Cog):
         """Printing out that Cog is ready on startup"""
         print(f"{self.__class__.__name__} Cog has been loaded\n-----")
 
-    @group(name="rolepersist", invoke_without_command=True, case_insensitive=True, usage="`<status/enable/disable>`")
+    @group(name="rolepersist", invoke_without_command=True, case_insensitive=True, usage="`<status|enable|disable>`")
     @has_permissions(manage_guild=True)
     @bot_has_permissions(manage_roles=True)
     async def roles_persist(self, ctx):
@@ -216,11 +216,11 @@ class Guild(Cog):
         else:
             await self.bot.generate_embed(ctx, desc=f"**Role Persist is already disabled within {ctx.guild}!**")
 
-    @group(name="modlogs", invoke_without_command=True, case_insensitive=True, usage="`[argument...]`")
+    @group(name="modlogs", invoke_without_command=True, case_insensitive=True, usage="`<setup|update|delete>`")
     @has_permissions(manage_guild=True)
     async def modlogs(self, ctx):
         """
-        Show current modlogs channel
+        Log updates in your server! (Nicknames/Deleted Msgs/etc!)
         """
 
         ml_channel = self.bot.get_modlog_for_guild(ctx.guild.id)
@@ -355,12 +355,11 @@ class Guild(Cog):
                f"\nDo **{ctx.prefix}help modlogs** to setup Modlogs again!"
         await self.bot.generate_embed(ctx, desc=text)
 
-    @group(name="modmail", invoke_without_command=True, case_insensitive=True, usage="`[argument...]`")
+    @group(name="modmail", invoke_without_command=True, case_insensitive=True, usage="`<setup|update|delete>`")
     @bot_has_permissions(manage_channels=True)
     async def mod_mail(self, ctx):
         """
-        Show Current Modlogs Channel (If Setup)
-        Setup/Update/Delete Modmail System
+        Modmail! Allow your members to send mail to the staff team!
         """
         pass
 

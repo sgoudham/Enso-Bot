@@ -23,6 +23,24 @@ from discord.ext.commands import Cog, group, bot_has_permissions, command
 my_waifu_list_auth = config('MYWAIFULIST_AUTH')
 
 
+class WaifuCommandNotFound(Exception):
+    """Exception raised for errors when user does not use the right arguments for waifu command
+
+    Attributes:
+        waifu -- input command which cause the error
+        message -- explanation of the error
+    """
+
+    def __init__(self, waifu, ctx):
+        self.command = waifu
+        self.bot = ctx.bot
+        self.message = f"Error! Use **{ctx.prefix}help {self.command}** to see {self.command} commands"
+        super().__init__(self.message)
+
+    def __str__(self):
+        return f'{self.command} -> {self.message}'
+
+
 def store_dict(dict_, key, value):
     """Method to store waifu's in the new dict"""
 
@@ -217,17 +235,57 @@ class Anime(Cog):
         """Printing out that Cog is ready on startup"""
         print(f"{self.__class__.__name__} Cog has been loaded!\n-----")
 
-    @group(name="airing", case_insensitive=True)
+    @group(name="airing", invoke_without_command=True, case_insensitive=True)
     @bot_has_permissions(embed_links=True, add_reactions=True)
     async def airing(self, ctx):
         """
         Display airing shows and waifu's in those shows
         (UNDER CONSTRUCTION)
         """
-        await self.bot.generate_embed(ctx, desc="Required Argument(s) Missing!"
-                                                f"\nUse **{ctx.prefix}help** to find how to use **{ctx.command}**")
+        error = WaifuCommandNotFound(ctx.command, ctx)
+        await self.bot.generate_embed(ctx, desc=error.message)
 
-    @airing.command(name="best", aliases=[""])
+    @airing.command(name="popular", aliases=["pop"])
+    @bot_has_permissions(embed_links=True, add_reactions=True)
+    async def airing_popular(self, ctx):
+        """Get the most popular waifu’s from the airing shows"""
+
+        # Local Variable i to allow the pages to be modified
+        i = 0
+
+        airing_best = {}
+        url = "https://mywaifulist.moe/api/v1/airing/popular"
+        data = {'content-type': "application/json"}
+
+        # Searching API for the current airing shows
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url, data=data, headers=self.headers) as resp:
+                # Store waifu's in dict when request is successful, else send an error
+                if resp.status == 200:
+                    best_waifus = await resp.json()
+
+                # Send error if something went wrong internally/while grabbing data from API
+                else:
+                    await self.bot.generate_embed(ctx, desc="**Something went wrong with MyWaifuList!**")
+
+            # Close session
+            await session.close()
+
+        # Store all the shows with the name as the key
+        for waifu in best_waifus["data"]:
+            airing_best[waifu["name"]] = {}
+            for value in waifu:
+                store_dict(airing_best, waifu, value)
+
+        # Get the instance of the bot
+        bot = ctx.guild.get_member(self.bot.user.id)
+
+        # Send the menu to the display
+        menu = HelpMenu(i, airing_best, "waifu", self.bot, bot)
+        await menu.start(ctx)
+
+    @airing.command(name="best")
+    @bot_has_permissions(embed_links=True, add_reactions=True)
     async def airing_best(self, ctx):
         """Get the best waifu’s from the airing shows"""
 
@@ -266,6 +324,7 @@ class Anime(Cog):
         await menu.start(ctx)
 
     @airing.command(name="anime", aliases=["shows", "series"])
+    @bot_has_permissions(embed_links=True, add_reactions=True)
     async def anime(self, ctx):
         """Display the current airing anime"""
 
@@ -303,15 +362,15 @@ class Anime(Cog):
         menu = HelpMenu(i, shows_dict, "anime", self.bot, bot)
         await menu.start(ctx)
 
-    @command(name="search", aliases=["lookup"], usage="")
+    @command(name="search", aliases=["lookup"], usage="`<waifu|anime>`")
     @bot_has_permissions(embed_links=True, add_reactions=True)
     async def search(self, ctx, *, term: str):
-        """Search the entire website! (Shows/Waifus/Husbandos)"""
+        """Search the entire website! (Anime|Waifus|Husbandos)"""
 
         # Local Variable i to allow the index of the embeds to be modified
         i = 0
 
-        anime_or_character = {}
+        anime_or_waifu = {}
         url = "https://mywaifulist.moe/api/v1/search/"
         data = {"term": term,
                 'content-type': "application/json"}
@@ -337,9 +396,9 @@ class Anime(Cog):
             for waifu in waifu_dict["data"]:
                 # Only store "Waifu's" and "Husbando's"
                 if waifu["type"] in ["Waifu", "Husbando"]:
-                    anime_or_character[waifu["name"]] = {}
+                    anime_or_waifu[waifu["name"]] = {}
                     for value in waifu:
-                        store_dict(anime_or_character, waifu, value)
+                        store_dict(anime_or_waifu, waifu, value)
 
                 elif waifu["type"] in ["TV", "ONA", "OVA"]:
                     tv_show += 1
@@ -356,18 +415,18 @@ class Anime(Cog):
         bot = ctx.guild.get_member(self.bot.user.id)
 
         # Send the menu to the display
-        menu = HelpMenu(i, anime_or_character, "waifu", self.bot, bot)
+        menu = HelpMenu(i, anime_or_waifu, "waifu", self.bot, bot)
         await menu.start(ctx)
 
-    @group(name="waifu", case_insensitive=True)
-    @bot_has_permissions(embed_links=True, add_reactions=True)
+    @group(name="waifu", invoke_without_command=True, case_insensitive=True)
+    @bot_has_permissions(embed_links=True)
     async def waifu(self, ctx):
         """
         Waifu's are grabbed from mywaifulist.com
         (UNDER CONSTRUCTION)
         """
-        await self.bot.generate_embed(ctx, desc="Required Argument(s) Missing!"
-                                                f"\nUse **{ctx.prefix}help** to find how to use **{ctx.command}**")
+        error = WaifuCommandNotFound(ctx.command, ctx)
+        await self.bot.generate_embed(ctx, desc=error.message)
 
     @waifu.command(name="daily")
     @bot_has_permissions(embed_links=True)

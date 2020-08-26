@@ -193,8 +193,6 @@ class Guild(Cog):
             await self.bot.generate_embed(ctx, desc=f"**Role Persist is currently enabled within {ctx.guild}**")
 
     @roles_persist.command(name="enable")
-    @has_permissions(manage_guild=True)
-    @bot_has_permissions(manage_roles=True)
     async def rp_enable(self, ctx):
         """Enabling role persist within the guild"""
 
@@ -205,8 +203,6 @@ class Guild(Cog):
             await self.bot.generate_embed(ctx, desc=f"**Role Persist is already enabled within {ctx.guild}!**")
 
     @roles_persist.command(name="disable")
-    @has_permissions(manage_guild=True)
-    @bot_has_permissions(manage_roles=True)
     async def rp_disable(self, ctx):
         """Disabling role persist within the guild"""
 
@@ -218,6 +214,7 @@ class Guild(Cog):
 
     @group(name="modlogs", invoke_without_command=True, case_insensitive=True, usage="`<setup|update|delete>`")
     @has_permissions(manage_guild=True)
+    @bot_has_permissions(embed_links=True)
     async def modlogs(self, ctx):
         """
         Log updates in your server! (Nicknames/Deleted Msgs/etc!)
@@ -241,7 +238,6 @@ class Guild(Cog):
             await self.bot.generate_embed(ctx, desc=text)
 
     @modlogs.command(name="setup")
-    @has_permissions(manage_guild=True)
     async def mlsetup(self, ctx, user_channel: TextChannel):
         """Setup a channel for Kick/Ban/Mute actions to be logged"""
 
@@ -275,7 +271,6 @@ class Guild(Cog):
                 await pool.release(conn)
 
     @modlogs.command(name="update")
-    @has_permissions(manage_guild=True)
     async def mlupdate(self, ctx, user_channel: TextChannel):
         """Change the channel that your modlogs are sent to"""
 
@@ -309,8 +304,6 @@ class Guild(Cog):
                 await pool.release(conn)
 
     @modlogs.command("delete")
-    @has_permissions(manage_guild=True)
-    @bot_has_permissions(embed_links=True)
     async def mldelete(self, ctx):
         """Delete the existing modlogs channel"""
 
@@ -356,7 +349,9 @@ class Guild(Cog):
         await self.bot.generate_embed(ctx, desc=text)
 
     @group(name="modmail", invoke_without_command=True, case_insensitive=True, usage="`<setup|update|delete>`")
-    @bot_has_permissions(manage_channels=True)
+    @bot_has_permissions(manage_channels=True, embed_links=True, add_reactions=True, manage_messages=True,
+                         attach_files=True, read_message_history=True, manage_roles=True)
+    @has_permissions(manage_guild=True)
     async def mod_mail(self, ctx):
         """
         Modmail! Allow your members to send mail to the staff team!
@@ -364,9 +359,6 @@ class Guild(Cog):
         pass
 
     @mod_mail.command(name="setup")
-    @has_permissions(manage_guild=True)
-    @bot_has_permissions(manage_channels=True, embed_links=True, add_reactions=True, manage_messages=True,
-                         attach_files=True, read_message_history=True, manage_roles=True)
     async def mmsetup(self, ctx, modmail: TextChannel, modmail_logging: TextChannel):
         """
         Setup Modmail System
@@ -446,9 +438,6 @@ class Guild(Cog):
                 await pool.release(conn)
 
     @mod_mail.command(name="update")
-    @has_permissions(manage_guild=True)
-    @bot_has_permissions(manage_channels=True, embed_links=True, add_reactions=True, manage_messages=True,
-                         attach_files=True, read_message_history=True, manage_roles=True)
     async def mmupdate(self, ctx, modmail_logging_channel: TextChannel):
         """
         Update the Channel that the Modmail is logged to
@@ -506,9 +495,6 @@ class Guild(Cog):
                 await pool.release(conn)
 
     @mod_mail.command(name="delete")
-    @has_permissions(manage_guild=True)
-    @bot_has_permissions(manage_channels=True, embed_links=True, add_reactions=True, manage_messages=True,
-                         attach_files=True, read_message_history=True, manage_roles=True)
     async def mmdelete(self, ctx):
         """Delete the entire modmail system from the guild"""
 

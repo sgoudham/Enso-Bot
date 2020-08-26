@@ -17,8 +17,6 @@
 import datetime
 import random
 
-import aiohttp
-from decouple import config
 from discord import Embed, Member
 from discord.ext.commands import cooldown, command, BucketType, bot_has_permissions, Cog
 
@@ -54,7 +52,7 @@ class Interactive(Cog):
 
     @command(name="kiss")
     @bot_has_permissions(embed_links=True)
-    @cooldown(1, 3, BucketType.user)
+    @cooldown(1, 1, BucketType.user)
     async def kiss(self, ctx, member: Member):
         """Kiss your partner"""
 
@@ -97,7 +95,7 @@ class Interactive(Cog):
 
     @command(name="cuddle")
     @bot_has_permissions(embed_links=True)
-    @cooldown(1, 3, BucketType.user)
+    @cooldown(1, 1, BucketType.user)
     async def cuddle(self, ctx, member: Member):
         """Cuddle your partner"""
 
@@ -124,16 +122,6 @@ class Interactive(Cog):
             await self.bot.generate_embed(ctx, desc="Σ(‘◉⌓◉’) You can only cuddle your partner! Baka!")
             return
 
-        try:
-
-            # Open the file containing the cuddling gifs
-            with open('images/FunCommands/cuddling.txt') as file:
-                # Store content of the file in cuddling_array
-                cuddling_array = file.readlines()
-
-        except FileNotFoundError as e:
-            print(e)
-
         # Get the member and the userAvatar
         member, userAvatar = getMember(ctx)
 
@@ -142,7 +130,7 @@ class Interactive(Cog):
             title=title,
             colour=self.bot.random_colour(),
             timestamp=datetime.datetime.utcnow())
-        embed.set_image(url=random.choice(cuddling_array))
+        embed.set_image(url=random_line("cuddling"))
         embed.set_footer(text=f"Requested by {member}", icon_url=userAvatar)
 
         # Send the embedded message to the user
@@ -150,7 +138,7 @@ class Interactive(Cog):
 
     @command(name="kill")
     @bot_has_permissions(embed_links=True)
-    @cooldown(1, 3, BucketType.user)
+    @cooldown(1, 1, BucketType.user)
     async def kill(self, ctx, member: Member):
         """Kill a member"""
 
@@ -158,21 +146,6 @@ class Interactive(Cog):
             title = f":scream: :scream: | **{ctx.author.display_name}** killed **themselves**"
         else:
             title = f":scream: :scream: | **{ctx.author.display_name}** killed **{member.display_name}**"
-
-        # Set details for search
-        apikey = config("TENOR_AUTH")  # test value
-        search_term = "anime-kill"
-        url = f"https://api.tenor.com/v1/random?q={search_term}&key={apikey}&limit=1&media_filter=minimal"
-
-        # get random results using default locale of EN_US
-        # Searching API for the current airing shows
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url) as resp:
-                if resp.status == 200:
-                    gifs = await resp.json()
-                    url = gifs["results"][0]["media"][0]["gif"]["url"]
-                else:
-                    self.bot.generate_embed(ctx, desc="**Something Went Wrong With Tenor!**")
 
         # Get the member and the userAvatar
         member, userAvatar = getMember(ctx)
@@ -182,7 +155,7 @@ class Interactive(Cog):
             title=title,
             colour=self.bot.random_colour(),
             timestamp=datetime.datetime.utcnow())
-        embed.set_image(url=url)
+        embed.set_image(url=random_line("killing"))
         embed.set_footer(text=f"Requested by {member}", icon_url=userAvatar)
 
         # Send the embedded message to the user
@@ -190,7 +163,7 @@ class Interactive(Cog):
 
     @command(name="slap")
     @bot_has_permissions(embed_links=True)
-    @cooldown(1, 3, BucketType.user)
+    @cooldown(1, 1, BucketType.user)
     async def slap(self, ctx, member: Member):
         """Slap a member"""
 
@@ -199,33 +172,23 @@ class Interactive(Cog):
         else:
             title = f":cold_sweat: :cold_sweat: | **{ctx.author.display_name}** slapped **{member.display_name}**"
 
-        try:
+        # Get the member and the userAvatar
+        member, userAvatar = getMember(ctx)
 
-            # Open the file containing the cuddling gifs
-            with open('images/FunCommands/slapping.txt') as file:
-                # Store content of the file in cuddling_array
-                slapping_array = file.readlines()
+        # Set up the embed to display a random slapping gif
+        embed = Embed(
+            title=title,
+            colour=self.bot.random_colour(),
+            timestamp=datetime.datetime.utcnow())
+        embed.set_image(url=random_line("slapping"))
+        embed.set_footer(text=f"Requested by {member}", icon_url=userAvatar)
 
-            # Get the member and the userAvatar
-            member, userAvatar = getMember(ctx)
-
-            # Set up the embed to display a random slapping gif
-            embed = Embed(
-                title=title,
-                colour=self.bot.random_colour(),
-                timestamp=datetime.datetime.utcnow())
-            embed.set_image(url=random.choice(slapping_array))
-            embed.set_footer(text=f"Requested by {member}", icon_url=userAvatar)
-
-            # Send the embedded message to the user
-            await ctx.send(embed=embed)
-
-        except FileNotFoundError as e:
-            print(e)
+        # Send the embedded message to the user
+        await ctx.send(embed=embed)
 
     @command(name="pat")
     @bot_has_permissions(embed_links=True)
-    @cooldown(1, 3, BucketType.user)
+    @cooldown(1, 1, BucketType.user)
     async def pat(self, ctx, member: Member):
         """Pat a member"""
 
@@ -234,33 +197,23 @@ class Interactive(Cog):
         else:
             title = f"👉 👈 | **{ctx.author.display_name}** patted **{member.display_name}**"
 
-        try:
+        # Get the member and the userAvatar
+        member, userAvatar = getMember(ctx)
 
-            # Open the file containing the patting gifs
-            with open('images/FunCommands/patting.txt') as file:
-                # Store content of the file in patting_array
-                patting_array = file.readlines()
+        # Set up the embed to display a random patting gif
+        embed = Embed(
+            title=title,
+            colour=self.bot.random_colour(),
+            timestamp=datetime.datetime.utcnow())
+        embed.set_image(url=random_line("patting"))
+        embed.set_footer(text=f"Requested by {member}", icon_url=userAvatar)
 
-            # Get the member and the userAvatar
-            member, userAvatar = getMember(ctx)
-
-            # Set up the embed to display a random patting gif
-            embed = Embed(
-                title=title,
-                colour=self.bot.random_colour(),
-                timestamp=datetime.datetime.utcnow())
-            embed.set_image(url=random.choice(patting_array))
-            embed.set_footer(text=f"Requested by {member}", icon_url=userAvatar)
-
-            # Send the embedded message to the user
-            await ctx.send(embed=embed)
-
-        except FileNotFoundError as e:
-            print(e)
+        # Send the embedded message to the user
+        await ctx.send(embed=embed)
 
     @command(name="lemon")
     @bot_has_permissions(embed_links=True)
-    @cooldown(1, 3, BucketType.user)
+    @cooldown(1, 1, BucketType.user)
     async def lemon(self, ctx, member: Member):
         """Give Lemon to member"""
 
@@ -273,28 +226,23 @@ class Interactive(Cog):
                        "https://media.discordapp.net/attachments/669812887564320769/720093575492272208/lemon2.gif",
                        "https://media.discordapp.net/attachments/718484280925224981/719629805263257630/lemon.gif"]
 
-        try:
+        # Get the member and the userAvatar
+        member, userAvatar = getMember(ctx)
 
-            # Get the member and the userAvatar
-            member, userAvatar = getMember(ctx)
+        # Set up the embed to display a random lemon gif
+        embed = Embed(
+            title=title,
+            colour=self.bot.random_colour(),
+            timestamp=datetime.datetime.utcnow())
+        embed.set_image(url=random.choice(lemon_array))
+        embed.set_footer(text=f"Requested by {member}", icon_url=userAvatar)
 
-            # Set up the embed to display a random lemon gif
-            embed = Embed(
-                title=title,
-                colour=self.bot.random_colour(),
-                timestamp=datetime.datetime.utcnow())
-            embed.set_image(url=random.choice(lemon_array))
-            embed.set_footer(text=f"Requested by {member}", icon_url=userAvatar)
-
-            # Send the embedded message to the user
-            await ctx.send(embed=embed)
-
-        except FileNotFoundError as e:
-            print(e)
+        # Send the embedded message to the user
+        await ctx.send(embed=embed)
 
     @command(name="choke")
     @bot_has_permissions(embed_links=True)
-    @cooldown(1, 3, BucketType.user)
+    @cooldown(1, 1, BucketType.user)
     async def choke(self, ctx, member: Member):
         """Choke a member"""
 
@@ -303,32 +251,23 @@ class Interactive(Cog):
         else:
             title = f":confounded: :confounded: | **{ctx.author.display_name}** choked **{member.display_name}**"
 
-        try:
-            # Open the file containing the choking gifs
-            with open('images/FunCommands/choking.txt') as file:
-                # Store content of the file in choking_array
-                choking_array = file.readlines()
+        # Get the member and the userAvatar
+        member, userAvatar = getMember(ctx)
 
-            # Get the member and the userAvatar
-            member, userAvatar = getMember(ctx)
+        # Set up the embed to display a random choking gif
+        embed = Embed(
+            title=title,
+            colour=self.bot.random_colour(),
+            timestamp=datetime.datetime.utcnow())
+        embed.set_image(url=random_line("choking"))
+        embed.set_footer(text=f"Requested by {member}", icon_url=userAvatar)
 
-            # Set up the embed to display a random choking gif
-            embed = Embed(
-                title=title,
-                colour=self.bot.random_colour(),
-                timestamp=datetime.datetime.utcnow())
-            embed.set_image(url=random.choice(choking_array))
-            embed.set_footer(text=f"Requested by {member}", icon_url=userAvatar)
-
-            # Send the embedded message to the user
-            await ctx.send(embed=embed)
-
-        except FileNotFoundError as e:
-            print(e)
+        # Send the embedded message to the user
+        await ctx.send(embed=embed)
 
     @command(name="hug")
     @bot_has_permissions(embed_links=True)
-    @cooldown(1, 3, BucketType.user)
+    @cooldown(1, 1, BucketType.user)
     async def hug(self, ctx, member: Member):
         """Hug a member"""
 
@@ -337,29 +276,19 @@ class Interactive(Cog):
         else:
             title = f":smiling_face_with_3_hearts: :smiling_face_with_3_hearts: | **{ctx.author.display_name}** hugged **{member.display_name}**"
 
-        try:
+        # Get the member and the userAvatar
+        member, userAvatar = getMember(ctx)
 
-            # Open the file containing the hug gifs
-            with open('images/FunCommands/hugging.txt') as file:
-                # Store content of the file in hugging_array
-                hugging_array = file.readlines()
+        # Set up the embed to display a random hugging gif
+        embed = Embed(
+            title=title,
+            colour=self.bot.random_colour(),
+            timestamp=datetime.datetime.utcnow())
+        embed.set_image(url=random_line("hugging"))
+        embed.set_footer(text=f"Requested by {member}", icon_url=userAvatar)
 
-            # Get the member and the userAvatar
-            member, userAvatar = getMember(ctx)
-
-            # Set up the embed to display a random hugging gif
-            embed = Embed(
-                title=title,
-                colour=self.bot.random_colour(),
-                timestamp=datetime.datetime.utcnow())
-            embed.set_image(url=random.choice(hugging_array))
-            embed.set_footer(text=f"Requested by {member}", icon_url=userAvatar)
-
-            # Send the embedded message to the user
-            await ctx.send(embed=embed)
-
-        except FileNotFoundError as e:
-            print(e)
+        # Send the embedded message to the user
+        await ctx.send(embed=embed)
 
 
 def setup(bot):

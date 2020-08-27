@@ -18,7 +18,7 @@ Ensō~Chan enables you do that with a wide range of commands at your disposal </
 <img style="float: left; display: inline" src="https://media.discordapp.net/attachments/721449922838134876/748609097183658144/unknown.png"> 
 
 
-<h3> More commands to come! View some examples <a href=https://imgur.com/gallery/w15ylYF""> here! </a> </h3> 
+<h3> More commands to come! View some examples <a href="https://imgur.com/gallery/w15ylYF"> here! </a> </h3> 
 
 # Other Features
 

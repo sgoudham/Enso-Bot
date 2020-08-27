@@ -13,15 +13,15 @@
 <h3> The main use is to able to retrieve information on any waifu/anime you desire. 
 Ensō~Chan enables you do that with a wide range of commands at your disposal </h3>
 
-<img style="float: left; padding-right: 30px" src="https://media.discordapp.net/attachments/721449922838134876/748603338194550804/unknown.png">
-<img style="float: left; padding-right: 30px" src="https://media.discordapp.net/attachments/721449922838134876/748602416395452466/unknown.png"> 
+<img style="float: left; display: inline" src="https://media.discordapp.net/attachments/721449922838134876/748603338194550804/unknown.png">
+<img style="float: left; display: inline" src="https://media.discordapp.net/attachments/721449922838134876/748602416395452466/unknown.png"> 
 
 <h3> Examples </h3>
-<img style="float: left; padding: 30px" src="https://media.discordapp.net/attachments/721449922838134876/748604101729845458/unknown.png"> 
-<img style="float: left; padding: 30px" src="https://media.discordapp.net/attachments/721449922838134876/748605084836823110/unknown.png"> 
+<img style="float: left; display: inline" src="https://media.discordapp.net/attachments/721449922838134876/748604101729845458/unknown.png"> 
+<img style="float: left; display: inline" src="https://media.discordapp.net/attachments/721449922838134876/748605084836823110/unknown.png"> 
 <br>
-<img style="float: left; padding: 30px" src="https://media.discordapp.net/attachments/721449922838134876/748605740855459972/unknown.png">
-<img style="float: left; padding: 30px" src="https://media.discordapp.net/attachments/721449922838134876/748606321057726566/unknown.png">  
+<img style="float: left; display: inline" src="https://media.discordapp.net/attachments/721449922838134876/748605740855459972/unknown.png">
+<img style="float: left; display: inline" src="https://media.discordapp.net/attachments/721449922838134876/748606321057726566/unknown.png">  
 
 # Other Features
 

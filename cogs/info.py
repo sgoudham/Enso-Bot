@@ -114,18 +114,14 @@ async def line_count():
              "__pycache__"]
 
     for path, _, files in os.walk("."):
-        # Ignore any files that are on linux starting with ".local"
-        if path in LINUX:
+        if ".local" in path:
             continue
-
         for name in files:
             file_dir = str(pathlib.PurePath(path, name))
             # Ignoring the venv directory
             if not name.endswith(".py") or ENV in file_dir:
                 continue
             file_amount += 1
-
-            # Count how many lines there are in every file
             with open(file_dir, "r", encoding="utf-8") as file:
                 for line in file:
                     if line.strip().startswith("#"):

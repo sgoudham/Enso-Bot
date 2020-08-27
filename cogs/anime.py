@@ -323,8 +323,7 @@ class Anime(Cog):
     @bot_has_permissions(embed_links=True, add_reactions=True)
     async def airing(self, ctx):
         """
-        Display airing shows and waifu's in those shows
-        (UNDER CONSTRUCTION)
+        Display's airing anime and waifu's within those anime's
         """
 
         error = WaifuCommandNotFound(ctx.command, ctx)
@@ -333,7 +332,7 @@ class Anime(Cog):
     @airing.command(name="trash", aliases=["worst", "garbage"])
     @bot_has_permissions(embed_links=True, add_reactions=True)
     async def airing_trash(self, ctx):
-        """Get the most popular waifu’s from the airing shows"""
+        """Get the most popular waifu’s from the airing anime"""
 
         # Variables to set up the reaction menu
         i = 0
@@ -358,7 +357,7 @@ class Anime(Cog):
     @airing.command(name="popular", aliases=["pop"])
     @bot_has_permissions(embed_links=True, add_reactions=True)
     async def airing_popular(self, ctx):
-        """Get the most popular waifu’s from the airing shows"""
+        """Get the most popular waifu’s from the airing anime"""
 
         # Variables to setup the reaction menu
         i = 0
@@ -383,7 +382,7 @@ class Anime(Cog):
     @airing.command(name="best")
     @bot_has_permissions(embed_links=True, add_reactions=True)
     async def airing_best(self, ctx):
-        """Get the best waifu’s from the airing shows"""
+        """Get the best waifu’s from the airing anime"""
 
         # Local Variable i to allow the pages to be modified
         i = 0
@@ -489,8 +488,7 @@ class Anime(Cog):
     @bot_has_permissions(embed_links=True)
     async def waifu(self, ctx):
         """
-        Waifu's are grabbed from mywaifulist.com
-        (UNDER CONSTRUCTION)
+        Waifu's that are retrieved from MyWaifuList
         """
         error = WaifuCommandNotFound(ctx.command, ctx)
         await self.bot.generate_embed(ctx, desc=error.message)

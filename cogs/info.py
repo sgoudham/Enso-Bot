@@ -31,10 +31,10 @@ from discord.ext.commands import BucketType, cooldown, bot_has_permissions, guil
 from discord.ext.commands import command
 from psutil import Process, virtual_memory
 
-# Using forzenset
-# Permissions to filter through
 from bot.libs.paginator import AllPermissions
 
+# Using forzenset
+# Permissions to filter through
 Perms = frozenset(
     {
         "create instant invite",

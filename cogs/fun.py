@@ -341,8 +341,44 @@ class Fun(Cog):
         except commands.BadArgument as e:
             raise e
 
+    @command(name="kpop")
+    async def get_kpop_member(self, ctx):
+        """Retrieve a random kpop member"""
+
+        # Request profile information from API
+        url = "https://apis.duncte123.me/kpop"
+        async with aiohttp.ClientSession() as session:
+            async with await session.get(url=url) as response:
+                # When succesful, read data from json
+                if response.status == 200:
+                    kpop = await response.json()
+
+                    name = kpop["data"]["name"]
+                    band = kpop["data"]["band"]
+                    image_url = kpop["data"]["img"]
+                    id = kpop["data"]["id"]
+
+                elif response.status == 422 or response.status == 404:
+                    await self.bot.generate_embed(ctx, desc="**Kpop Member Not Found!**")
+                    return
+
+                elif response.status == 429:
+                    await self.bot.generate_embed(ctx,
+                                                  desc="**You are being rate limited! You have spammed it too much :(**")
+                    return
+
+            await session.close()
+
+        embed = Embed(title=name,
+                      description=band,
+                      colour=self.bot.random_colour(),
+                      timestamp=datetime.datetime.utcnow())
+        embed.set_image(url=image_url)
+        embed.set_footer(text=f"Internal ID: {id}")
+
+        await ctx.send(embed=embed)
+
     @command(name="insta", aliases=["instagram"])
-    @cooldown(1, 1, BucketType.user)
     async def insta_info(self, ctx, *, user_name):
         """Retrieve a persons Instagram profile information"""
 
@@ -378,6 +414,11 @@ class Fun(Cog):
                     # Send error if no instagram profile was found with given username
                     elif response.status == 422:
                         await self.bot.generate_embed(ctx, desc="**Instagram Username Not Found!**")
+                        return
+
+                    elif response.status == 429:
+                        await self.bot.generate_embed(ctx,
+                                                      desc="**You are being rate limited! You have spammed it too much :(**")
                         return
 
                 await session.close()

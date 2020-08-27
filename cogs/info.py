@@ -247,8 +247,6 @@ class Info(Cog):
             perms = [f"{perm.title().replace('_', ' ')}: {self.bot.tick if value else self.bot.cross}" for perm, value
                      in item.permissions]
 
-        print(perms)
-
         # TODO: REALLY INEFFICIENT WAY. IMPROVE THIS
 
         middle = len(perms) // 2

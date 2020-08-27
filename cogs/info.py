@@ -232,7 +232,7 @@ class Info(Cog):
     @command(name="permissions", aliases=["perms"], usage="`[Member|Role]`")
     @cooldown(1, 1, BucketType.user)
     @guild_only()
-    @bot_has_permissions(embed_links=True)
+    @bot_has_permissions(embed_links=True, add_reactions=True)
     async def perms(self, ctx, *, item: Optional[Union[Member, Role]]):
 
         item = item if item else ctx.author

@@ -1,10 +1,29 @@
+# Ensō~Chan
+
+<h3> Welcome to my passion project over quarantine! :P </h3>
+
 # Support Server
 
 - <b> Make sure you join the <a href="https://discord.gg/SZ5nexg">support server </a> for any help that you may need! </b>
 
-# Ensō~Chan
+# Main Features
 
-<h3> Welcome to my passion project over quarantine! :P </h3>
+<h3> Integration with <a href="https://mywaifulist.moe/dash">MyWaifuList!! </a> </h3>
+
+<h3> The main use is to able to retrieve information on any waifu/anime you desire. 
+Ensō~Chan enables you do that with a wide range of commands at your disposal </h3>
+
+<img style="float: left; padding-right: 30px" src="https://media.discordapp.net/attachments/721449922838134876/748603338194550804/unknown.png">
+<img style="float: left; padding-right: 30px" src="https://media.discordapp.net/attachments/721449922838134876/748602416395452466/unknown.png"> 
+
+<h3> Examples </h3>
+<img style="float: left; padding: 30px" src="https://media.discordapp.net/attachments/721449922838134876/748604101729845458/unknown.png"> 
+<img style="float: left; padding: 30px" src="https://media.discordapp.net/attachments/721449922838134876/748605084836823110/unknown.png"> 
+<br>
+<img style="float: left; padding: 30px" src="https://media.discordapp.net/attachments/721449922838134876/748605740855459972/unknown.png">
+<img style="float: left; padding: 30px" src="https://media.discordapp.net/attachments/721449922838134876/748606321057726566/unknown.png">  
+
+# Other Features
 
 <h4> The features currently are as listed below: </h4>
 <ul>

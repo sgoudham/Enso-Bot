@@ -127,15 +127,32 @@ def waifu_embedder(self, waifu, _type):
 
 
 # Set up the Cog
-class HelpMenu(menus.Menu):
-    def __init__(self, i, _dict, _type, bot, guild_bot):
+class MWLMenu(menus.Menu):
+    def __init__(self, i, perms, _dict, _type, bot, guild_bot):
         super().__init__(timeout=125.0, clear_reactions_after=True)
+        self.i = i
+        self.perms = perms
         self._dict = _dict
         self.type = _type
-        self.i = i
         self.bot = bot
-        self.dicts = search(self, bot)
         self.guild_bot = guild_bot
+        self.dicts = search(self, bot)
+
+    @staticmethod
+    def check(m, payload):
+        """Simple check to make sure that the reaction is performed by the user"""
+        return m.author == payload.member
+
+    @staticmethod
+    def get_page(self):
+        """
+        Return the current page index
+        """
+
+        cur_page = self.i + 1
+        pages = len(self.dicts)
+
+        return cur_page, pages
 
     @staticmethod
     def set_author(embed, _type, cur_page, pages):
@@ -182,69 +199,100 @@ class HelpMenu(menus.Menu):
 
         initial = self.dicts[self.i]
 
-        cur_page = self.i + 1
-        pages = len(self.dicts)
+        cur_page, pages = self.get_page(self)
         initial = self.set_author(initial, self.type, cur_page, pages)
 
         # Send embed
         return await channel.send(embed=initial)
 
+    @menus.button('\N{BLACK LEFT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}')
+    async def on_first_page_arrow(self, payload):
+        """Reaction to allow the user to return to the first page"""
+
+        # Do nothing if the check does not return true
+        if self.check(self.ctx, payload):
+
+            # Send the embed and remove the reaction of the user
+            if self.i == 0:
+                await self.message.remove_reaction("\U000023ee", self.ctx.author)
+                return
+
+            self.i = 0 % len(self.dicts)
+            first_page = self.dicts[self.i]
+
+            cur_page, pages = self.get_page(self)
+            first_page = self.set_author_after(first_page, self.type, cur_page, pages)
+
+            await self.message.edit(embed=first_page)
+            if self.perms.manage_messages:
+                await self.message.remove_reaction("\U000023ee", self.ctx.author)
+
     @menus.button('\N{LEFTWARDS BLACK ARROW}')
     async def on_left_arrow(self, payload):
         """Reaction to allow user to go to the previous page in the embed"""
 
-        # Simple check to make sure that the reaction is performed by the user
-        def check(m):
-            return m.author == payload.member
-
         # Do nothing if the check does not return true
-        if check(self.ctx):
+        if self.check(self.ctx, payload):
+
             # Set self.i to (i - 1) remainder length of the array
             self.i = (self.i - 1) % len(self.dicts)
             prev_page = self.dicts[self.i]
 
-            cur_page = self.i + 1
-            pages = len(self.dicts)
+            cur_page, pages = self.get_page(self)
             prev_page = self.set_author_after(prev_page, self.type, cur_page, pages)
 
             # Send the embed and remove the reaction of the user
             await self.message.edit(embed=prev_page)
-            if self.guild_bot.guild_permissions.manage_messages:
+            if self.perms.manage_messages:
                 await self.message.remove_reaction("⬅", self.ctx.author)
 
     @menus.button('\N{BLACK RIGHTWARDS ARROW}')
     async def on_right_arrow(self, payload):
         """Reaction to allow user to go to the next page in the embed"""
 
-        # Simple check to make sure that the reaction is performed by the user
-        def check(m):
-            return m.author == payload.member
-
         # Do nothing if the check does not return true
-        if check(self.ctx):
+        if self.check(self.ctx, payload):
+
             # Set self.i to (i + 1) remainder length of the array
             self.i = (self.i + 1) % len(self.dicts)
             next_page = self.dicts[self.i]
 
-            cur_page = self.i + 1
-            pages = len(self.dicts)
+            cur_page, pages = self.get_page(self)
             next_page = self.set_author_after(next_page, self.type, cur_page, pages)
 
             # Send the embed and remove the reaction of the user
             await self.message.edit(embed=next_page)
-            if self.guild_bot.guild_permissions.manage_messages:
+            if self.perms.manage_messages:
                 await self.message.remove_reaction("➡", self.ctx.author)
+
+    @menus.button('\N{BLACK RIGHT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}')
+    async def on_last_page_arrow(self, payload):
+        """Reaction to allow the user to go to the last page in the embed"""
+
+        # Do nothing if the check does not return true
+        if self.check(self.ctx, payload):
+
+            # Send the embed and remove the reaction of the user
+            if self.i == len(self.dicts) - 1:
+                await self.message.remove_reaction("\U000023ed", self.ctx.author)
+                return
+
+            self.i = len(self.dicts) - 1
+            last_page = self.dicts[self.i]
+
+            cur_page, pages = self.get_page(self)
+            last_page = self.set_author_after(last_page, self.type, cur_page, pages)
+
+            await self.message.edit(embed=last_page)
+            if self.perms.manage_messages:
+                await self.message.remove_reaction("\U000023ed", self.ctx.author)
 
     @menus.button('\N{BLACK SQUARE FOR STOP}\ufe0f')
     async def on_stop(self, payload):
         """Reaction to allow user to make the embed disappear"""
 
-        # Simple check to make sure that the reaction is performed by the user
-        def check(m):
-            return m.author == payload.member
-
         # Do nothing if the check does not return true
-        if check(self.ctx):
+        if self.check(self.ctx, payload):
             # Delete the embed and stop the function from running
             await self.message.delete()
             self.stop()
@@ -290,9 +338,11 @@ class Anime(Cog):
 
         # Get the instance of the bot
         bot = ctx.guild.get_member(self.bot.user.id)
+        # Get the permissions of the channel
+        perms = bot.permissions_in(ctx.message.channel)
 
         # Send the menu to the display
-        menu = HelpMenu(i, airing_trash, "waifu", self.bot, bot)
+        menu = MWLMenu(i, perms, airing_trash, "waifu", self.bot, bot)
         await menu.start(ctx)
 
     @airing.command(name="popular", aliases=["pop"])
@@ -313,9 +363,11 @@ class Anime(Cog):
 
         # Get the instance of the bot
         bot = ctx.guild.get_member(self.bot.user.id)
+        # Get the permissions of the channel
+        perms = bot.permissions_in(ctx.message.channel)
 
         # Send the menu to the display
-        menu = HelpMenu(i, airing_popular, "waifu", self.bot, bot)
+        menu = MWLMenu(i, perms, airing_popular, "waifu", self.bot, bot)
         await menu.start(ctx)
 
     @airing.command(name="best")
@@ -336,9 +388,11 @@ class Anime(Cog):
 
         # Get the instance of the bot
         bot = ctx.guild.get_member(self.bot.user.id)
+        # Get the permissions of the channel
+        perms = bot.permissions_in(ctx.message.channel)
 
         # Send the menu to the display
-        menu = HelpMenu(i, airing_best, "waifu", self.bot, bot)
+        menu = MWLMenu(i, perms, airing_best, "waifu", self.bot, bot)
         await menu.start(ctx)
 
     @airing.command(name="anime", aliases=["shows", "series"])
@@ -359,9 +413,11 @@ class Anime(Cog):
 
         # Get the instance of the bot
         bot = ctx.guild.get_member(self.bot.user.id)
+        # Get the permissions of the channel
+        perms = bot.permissions_in(ctx.message.channel)
 
         # Send the menu to the display
-        menu = HelpMenu(i, anime_dict, "anime", self.bot, bot)
+        menu = MWLMenu(i, perms, anime_dict, "anime", self.bot, bot)
         await menu.start(ctx)
 
     @command(name="search", aliases=["lookup"], usage="`<waifu|anime>`")
@@ -412,9 +468,11 @@ class Anime(Cog):
 
         # Get the instance of the bot
         bot = ctx.guild.get_member(self.bot.user.id)
+        # Get the permissions of the channel
+        perms = bot.permissions_in(ctx.message.channel)
 
         # Send the menu to the display
-        menu = HelpMenu(i, anime_or_waifu, "waifu", self.bot, bot)
+        menu = MWLMenu(i, perms, anime_or_waifu, "waifu", self.bot, bot)
         await menu.start(ctx)
 
     @group(name="waifu", invoke_without_command=True, case_insensitive=True)

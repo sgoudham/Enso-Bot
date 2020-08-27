@@ -288,7 +288,7 @@ class Moderation(Cog):
                 if role is None:
                     muted = await ctx.guild.create_role(name="Muted")
                     for channel in ctx.guild.channels:
-                        await channel.set_permissions(muted, read_messages=False)
+                        await channel.set_permissions(muted, send_messages=False)
 
                     await mute_members(self, ctx, members, reason, muted)
 

@@ -121,6 +121,7 @@ async def line_count():
             # Ignoring the venv directory
             if not name.endswith(".py") or ENV in file_dir:
                 continue
+            print(name)
             file_amount += 1
             with open(file_dir, "r", encoding="utf-8") as file:
                 for line in file:

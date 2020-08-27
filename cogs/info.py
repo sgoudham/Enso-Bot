@@ -89,7 +89,7 @@ def get_region(disc_region, region_dict):
             pass
 
 
-def add_perms(embed, item, list):
+def add_perms(embed, list):
     """Add all the permission in the list to embed fields"""
 
     i = 0
@@ -130,7 +130,6 @@ async def line_count():
             # Ignoring the venv directory
             if not name.endswith(".py") or ENV in file_dir:
                 continue
-            print(name)
             file_amount += 1
             with open(file_dir, "r", encoding="utf-8") as file:
                 for line in file:
@@ -272,8 +271,8 @@ class Info(Cog):
         second_page.set_footer(text=f"ID: {item.id}")
 
         # Add permissions to both of the embeds
-        first = add_perms(first_page, item, f_half)
-        second = add_perms(second_page, item, s_half)
+        first = add_perms(first_page, f_half)
+        second = add_perms(second_page, s_half)
 
         # Get the permissions of the channel
         perms = ctx.guild.me.permissions_in(ctx.message.channel)

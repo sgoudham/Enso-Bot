@@ -586,7 +586,7 @@ class Info(Cog):
     @command(name="avatar")
     @cooldown(1, 1, BucketType.user)
     @bot_has_permissions(embed_links=True)
-    async def get_user_avatar(self, ctx, member: Optional[Member] = None):
+    async def get_user_avatar(self, ctx, *, member: Optional[Member] = None):
         """
         Displaying Member's Avatar
         Member can be mentioned and their avatar will be displayed

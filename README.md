@@ -2,10 +2,6 @@
 
 <h3> Welcome to my passion project over quarantine! :P </h3>
 
-# Support Server
-
-- <b> Make sure you join the <a href="https://discord.gg/SZ5nexg">support server </a> for any help that you may need! </b>
-
 # Main Features
 
 <h3> Integration with <a href="https://mywaifulist.moe/dash">MyWaifuList!! </a> </h3>
@@ -78,3 +74,7 @@ There are a variety of roles you are introduced to the more active you are on th
 
 Please join <a href="https://discord.gg/yBd8Esz"> our server! </a>
 </p> </b>
+
+# Support Server
+
+- <b> Make sure you join the <a href="https://discord.gg/SZ5nexg">support server </a> for any help that you may need! </b>

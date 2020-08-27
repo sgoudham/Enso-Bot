@@ -21,17 +21,20 @@ import string
 from asyncio.subprocess import Process
 from platform import python_version
 from time import time
-from typing import Optional
+from typing import Optional, Union
 
 from discord import Embed, Role
 from discord import Member, TextChannel
 from discord import __version__ as discord_version
-from discord.ext.commands import BucketType, cooldown, bot_has_permissions, guild_only, Cog
+from discord.ext.commands import BucketType, cooldown, bot_has_permissions, guild_only, Cog, MissingRequiredArgument, \
+    BadUnionArgument
 from discord.ext.commands import command
 from psutil import Process, virtual_memory
 
 # Using forzenset
 # Permissions to filter through
+from bot.libs.paginator import AllPermissions
+
 Perms = frozenset(
     {
         "create instant invite",
@@ -107,12 +110,18 @@ async def line_count():
     ENV = "venv"
 
     for path, _, files in os.walk("."):
+        # Ignore any files that are on linux starting with ".local"
+        if ".local" in path:
+            continue
+
         for name in files:
             file_dir = str(pathlib.PurePath(path, name))
             # Ignoring the venv directory
             if not name.endswith(".py") or ENV in file_dir:
                 continue
             file_amount += 1
+
+            # Count how many lines there are in every file
             with open(file_dir, "r", encoding="utf-8") as file:
                 for line in file:
                     if line.strip().startswith("#"):
@@ -150,7 +159,7 @@ class Info(Cog):
         await self.bot.generate_embed(ctx, desc=f"Pong! **{round(self.bot.latency * 1000)}ms**")
 
     @command(name="roleinfo", aliases=["ri"])
-    @cooldown(1, 5, BucketType.user)
+    @cooldown(1, 1, BucketType.user)
     @guild_only()
     async def role_info(self, ctx, role: Role):
         """Retrieve information about any role!"""
@@ -220,7 +229,63 @@ class Info(Cog):
 
         await ctx.send(embed=embed)
 
+    @command(name="permissions", aliases=["perms"], usage="`[Member|Role]`")
+    @cooldown(1, 1, BucketType.user)
+    @guild_only()
+    @bot_has_permissions(embed_links=True)
+    async def perms(self, ctx, *, item: Optional[Union[Member, Role]]):
+
+        item = item if item else ctx.author
+
+        if isinstance(item, Member):
+            # Iterating through list of perms
+            perms = [f"{perm.title().replace('_', ' ')}: {self.bot.tick if value else self.bot.cross}" for perm, value
+                     in item.guild_permissions]
+
+        else:
+            # Iterating through list of perms
+            perms = [f"{perm.title().replace('_', ' ')}: {self.bot.tick if value else self.bot.cross}" for perm, value
+                     in item.permissions]
+
+        print(perms)
+
+        # TODO: REALLY INEFFICIENT WAY. IMPROVE THIS
+
+        middle = len(perms) // 2
+        f_half = perms[:middle]
+        s_half = perms[middle:]
+
+        embed = Embed(description=f"**Item:** {item}",
+                      colour=self.bot.admin_colour,
+                      timestamp=datetime.datetime.utcnow())
+        embed.set_footer(text=f"ID: {item.id}")
+
+        embed2 = Embed(description=f"**Item:** {item}",
+                       colour=self.bot.admin_colour,
+                       timestamp=datetime.datetime.utcnow())
+        embed2.set_footer(text=f"ID: {item.id}")
+
+        i = 0
+        while i < len(f_half):
+            embed.add_field(name=str(f_half[i].split(":")[0]).strip(),
+                            value=f"<{f_half[i].split('<')[1]}",
+                            inline=True)
+            i += 1
+        i = 0
+        while i < len(s_half):
+            embed2.add_field(name=str(s_half[i].split(":")[0]).strip(),
+                             value=f"<{s_half[i].split('<')[1]}",
+                             inline=True)
+            i += 1
+
+        # Get the permissions of the channel
+        perms = ctx.guild.me.permissions_in(ctx.message.channel)
+
+        menu = AllPermissions(0, item, perms, [embed, embed2], self, ctx.bot)
+        await menu.start(ctx)
+
     @command(name="rolelist", aliases=["rl"])
+    @cooldown(1, 1, BucketType.user)
     @guild_only()
     async def role_list(self, ctx):
         """Retrieve list of all roles in the server!"""
@@ -251,7 +316,7 @@ class Info(Cog):
         await ctx.send(embed=embed)
 
     @command(name="userinfo")
-    @cooldown(1, 5, BucketType.user)
+    @cooldown(1, 1, BucketType.user)
     @guild_only()
     @bot_has_permissions(embed_links=True)
     async def user_info(self, ctx, member: Optional[Member] = None):
@@ -319,10 +384,10 @@ class Info(Cog):
         # Send the embed to the channel that the command was triggered in
         await ctx.send(embed=embed)
 
-    @command(name="serverinfo", aliases=["guildinfo"])
+    @command(name="serverinfo", aliases=["si", "guildinfo", "gi"])
+    @cooldown(1, 1, BucketType.user)
     @guild_only()
     @bot_has_permissions(embed_links=True)
-    @cooldown(1, 5, BucketType.user)
     async def server_info(self, ctx):
         """Guild Information! (Owner/Roles/Emojis etc)"""
 
@@ -424,6 +489,7 @@ class Info(Cog):
         await ctx.send(embed=embed)
 
     @command(name="channelinfo", aliases=["chinfo"])
+    @cooldown(1, 1, BucketType.user)
     @guild_only()
     @bot_has_permissions(embed_links=True)
     async def channel_info(self, ctx, channel: Optional[TextChannel] = None):
@@ -460,6 +526,7 @@ class Info(Cog):
         await ctx.send(embed=embed)
 
     @command(name="about")
+    @cooldown(1, 1, BucketType.user)
     @bot_has_permissions(embed_links=True)
     async def checking_bot_stats(self, ctx):
         """Bot Statistics! (CPU/Mem Usage etc)"""
@@ -520,6 +587,7 @@ class Info(Cog):
         await ctx.send(embed=stats)
 
     @command(name="avatar")
+    @cooldown(1, 1, BucketType.user)
     @bot_has_permissions(embed_links=True)
     async def get_user_avatar(self, ctx, member: Optional[Member] = None):
         """
@@ -541,6 +609,18 @@ class Info(Cog):
         embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
         await ctx.send(embed=embed)
+
+    @perms.error
+    async def mlsetup_command_error(self, ctx, exc):
+        """Catching error if User or Channel is not recognised"""
+
+        if isinstance(exc, BadUnionArgument):
+            text = "**User | Role** Not Detected... Aborting Process"
+            await self.bot.generate_embed(ctx, desc=text)
+        if isinstance(exc, MissingRequiredArgument):
+            text = "Required Argument(s) Missing!" \
+                   f"\nUse **{ctx.prefix}help** to find how to use **{ctx.command}**"
+            await self.bot.generate_embed(ctx, desc=text)
 
 
 def setup(bot):

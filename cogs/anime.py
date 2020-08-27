@@ -126,8 +126,9 @@ def waifu_embedder(self, waifu, _type):
     return embed
 
 
-# Set up the Cog
 class MWLMenu(menus.Menu):
+    """Setup menus for MyWaifuList results"""
+
     def __init__(self, i, perms, _dict, _type, bot, guild_bot):
         super().__init__(timeout=125.0, clear_reactions_after=True)
         self.i = i
@@ -299,7 +300,11 @@ class MWLMenu(menus.Menu):
 
 
 class Anime(Cog):
-    """Waifus and Husbandos!"""
+    """
+    Search MyWaifuList for Waifu's, Anime's and more!
+    Please keep in mind that this API is in ALPHA.
+    Searches might not return the proper results and images may be missing
+    """
 
     def __init__(self, bot):
         self.bot = bot

@@ -114,9 +114,8 @@ async def line_count():
              "__pycache__"]
 
     for path, _, files in os.walk("."):
-        if ".local" in path:
+        if ".local" in path or ".ssh" in path or ".config" in path:
             continue
-        print(files)
         for name in files:
             file_dir = str(pathlib.PurePath(path, name))
             # Ignoring the venv directory

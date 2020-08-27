@@ -89,6 +89,19 @@ def get_region(disc_region, region_dict):
             pass
 
 
+def add_perms(embed, item, list):
+    """Add all the permission in the list to embed fields"""
+
+    i = 0
+    while i < len(list):
+        embed.add_field(name=str(list[i].split(":")[0]).strip(),
+                        value=f"<{list[i].split('<')[1]}",
+                        inline=True)
+        i += 1
+
+    return embed
+
+
 def detect_perms(message, fset):
     """Filter out permissions that are not important"""
 
@@ -108,13 +121,9 @@ async def line_count():
     blank = 0
     file_amount = 0
     ENV = "venv"
-    LINUX = [".local", ".git", ".config", ".ssh",
-             ".bash_history", ".env", ".profile", ".mysql_history",
-             ".gitignore", ".viminfo", ".wget-hsts", ".bashrc",
-             "__pycache__"]
 
     for path, _, files in os.walk("."):
-        if ".local" in path or ".ssh" in path or ".config" in path:
+        if ".local" in path:
             continue
         for name in files:
             file_dir = str(pathlib.PurePath(path, name))
@@ -248,39 +257,28 @@ class Info(Cog):
             perms = [f"{perm.title().replace('_', ' ')}: {self.bot.tick if value else self.bot.cross}" for perm, value
                      in item.permissions]
 
-        # TODO: REALLY INEFFICIENT WAY. IMPROVE THIS
-
         middle = len(perms) // 2
         f_half = perms[:middle]
         s_half = perms[middle:]
 
-        embed = Embed(description=f"**Item:** {item}",
-                      colour=self.bot.admin_colour,
-                      timestamp=datetime.datetime.utcnow())
-        embed.set_footer(text=f"ID: {item.id}")
+        first_page = Embed(description=f"**Item:** {item}",
+                           colour=self.bot.admin_colour,
+                           timestamp=datetime.datetime.utcnow())
+        first_page.set_footer(text=f"ID: {item.id}")
 
-        embed2 = Embed(description=f"**Item:** {item}",
-                       colour=self.bot.admin_colour,
-                       timestamp=datetime.datetime.utcnow())
-        embed2.set_footer(text=f"ID: {item.id}")
+        second_page = Embed(description=f"**Item:** {item}",
+                            colour=self.bot.admin_colour,
+                            timestamp=datetime.datetime.utcnow())
+        second_page.set_footer(text=f"ID: {item.id}")
 
-        i = 0
-        while i < len(f_half):
-            embed.add_field(name=str(f_half[i].split(":")[0]).strip(),
-                            value=f"<{f_half[i].split('<')[1]}",
-                            inline=True)
-            i += 1
-        i = 0
-        while i < len(s_half):
-            embed2.add_field(name=str(s_half[i].split(":")[0]).strip(),
-                             value=f"<{s_half[i].split('<')[1]}",
-                             inline=True)
-            i += 1
+        # Add permissions to both of the embeds
+        first = add_perms(first_page, item, f_half)
+        second = add_perms(second_page, item, s_half)
 
         # Get the permissions of the channel
         perms = ctx.guild.me.permissions_in(ctx.message.channel)
 
-        menu = AllPermissions(0, item, perms, [embed, embed2], self, ctx.bot)
+        menu = AllPermissions(0, item, perms, [first, second], self, ctx.bot)
         await menu.start(ctx)
 
     @command(name="rolelist", aliases=["rl"])

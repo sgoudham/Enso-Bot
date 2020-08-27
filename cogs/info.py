@@ -116,6 +116,7 @@ async def line_count():
     for path, _, files in os.walk("."):
         if ".local" in path:
             continue
+        print(files)
         for name in files:
             file_dir = str(pathlib.PurePath(path, name))
             # Ignoring the venv directory

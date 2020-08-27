@@ -108,10 +108,13 @@ async def line_count():
     blank = 0
     file_amount = 0
     ENV = "venv"
+    LINUX = [".local", ".git", ".config", ".ssh",
+             ".bash_history", ".env", ".profile", ".mysql_history",
+             ".gitignore", ".viminfo", ".wget-hsts", ".bashrc"]
 
     for path, _, files in os.walk("."):
         # Ignore any files that are on linux starting with ".local"
-        if ".local" in path:
+        if path in LINUX:
             continue
 
         for name in files:

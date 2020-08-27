@@ -73,16 +73,20 @@ def store_dict(dict_, key, value):
 def search(self, bot):
     """Method to generate embed of multiple waifu's"""
 
+    not_found = "https://media.discordapp.net/attachments/741072426984538122/748586578074664980/DzEZ4UsXgAAcFjN.png?width=423&height=658"
+
     embeds = []
     for key in self._dict.values():
 
         # Only setting up description if waifu og_name has a value
         desc = f"{key['original_name']}" if key["original_name"] else Embed.Empty
+        # Only using image if it can be displayed, else display 404 image
+        url = key["display_picture"] if key["display_picture"].endswith((".jpeg", ".png", ".jpg")) else not_found
 
         embed = Embed(title=key["name"], description=desc,
                       colour=bot.random_colour(),
                       url=key["url"])
-        embed.set_image(url=key["display_picture"])
+        embed.set_image(url=url)
 
         if key["type"] in ["Waifu", "Husbando"]:
             embed.set_author(name=key["type"])
@@ -92,7 +96,7 @@ def search(self, bot):
             if key['romaji_name']:
                 embed.set_footer(text=f"{key['romaji_name']} | Powered by MyWaifuList")
             else:
-                embed.set_footer(text="- | Powered by MyWaifuList")
+                embed.set_footer(text="Powered by MyWaifuList")
 
         embeds.append(embed)
 
@@ -322,6 +326,7 @@ class Anime(Cog):
         Display airing shows and waifu's in those shows
         (UNDER CONSTRUCTION)
         """
+
         error = WaifuCommandNotFound(ctx.command, ctx)
         await self.bot.generate_embed(ctx, desc=error.message)
 

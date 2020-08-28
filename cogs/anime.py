@@ -43,6 +43,29 @@ class WaifuCommandNotFound(Exception):
         return f'{self.command} -> {self.message}'
 
 
+async def get_waifu_api(self, ctx, url):
+    """Retreiving information about daily/random waifu's"""
+
+    url = f"https://mywaifulist.moe/api/v1/meta/{url}"
+
+    # Retrieve random or daily waifu from API
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url, headers=self.headers) as resp:
+
+            # Store waifu's in dict when request is successful, else send an error
+            if resp.status == 200:
+                waifu_dict = await resp.json()
+                waifu = waifu_dict["data"]
+
+            # Send error if something went wrong internally/while grabbing data from API
+            else:
+                await self.bot.generate_embed(ctx, desc="**Something went wrong with MyWaifuList!**")
+
+        await session.close()
+
+    return waifu
+
+
 async def get_airing_api(self, ctx, url):
     """Retreiving information about the airing shows/waifus"""
 
@@ -575,23 +598,7 @@ class Anime(Cog):
     async def daily_waifu(self, ctx):
         """Returns the Daily Waifu from MyWaifuList"""
 
-        url = "https://mywaifulist.moe/api/v1/meta/daily"
-
-        # Retrieve a random waifu from the API
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url, headers=self.headers) as resp:
-                # Store waifu's in dict when request is successful, else send an error
-                if resp.status == 200:
-                    waifu_dict = await resp.json()
-                    waifu = waifu_dict["data"]
-
-                # Send error if something went wrong internally/while grabbing data from API
-                else:
-                    await self.bot.generate_embed(ctx, desc="**Something went wrong with MyWaifuList!**")
-
-            # Close session
-            await session.close()
-
+        waifu = await get_waifu_api(self, ctx, "daily")
         await ctx.send(embed=waifu_embedder(self, waifu, "daily"))
 
     @waifu.command(name="random", aliases=["rnd"])
@@ -599,24 +606,13 @@ class Anime(Cog):
     async def random_waifu(self, ctx):
         """Returning a Random Waifu from MyWaifuList"""
 
-        # Set variables to retrieve data from the API
-        url = "https://mywaifulist.moe/api/v1/meta/random"
-
-        # Retrieve a random waifu from the API
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url, headers=self.headers) as resp:
-                # Store waifu's in dict when request is successful, else send an error
-                if resp.status == 200:
-                    waifu_dict = await resp.json()
-                    waifu = waifu_dict["data"]
-
-                # Send error if something went wrong internally/while grabbing data from API
-                else:
-                    await self.bot.generate_embed(ctx, desc="**Something went wrong with MyWaifuList!**")
-
-            await session.close()
-
+        waifu = await get_waifu_api(self, ctx, "random")
         await ctx.send(embed=waifu_embedder(self, waifu, "random"))
+
+    @group(name="profile", aliases=["user"], invoke_without_command=True, case_insensitive=True)
+    @bot_has_permissions(embed_links=True)
+    async def mwl_user_profile(self, ctx):
+        """Returning the MWL User Profile requested"""
 
 
 def setup(bot):

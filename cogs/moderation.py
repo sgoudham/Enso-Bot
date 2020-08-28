@@ -809,7 +809,7 @@ class Moderation(Cog):
             modlogs_channel = self.bot.get_channel(modlogs)
             category = channel.category if channel.category else self.bot.cross
 
-            desc = f"**Channel Created |** #{channel.name}\n" \
+            desc = f"**Channel Created |** {channel.mention}\n" \
                    f"**Category |** {category}\n" \
                    f"**Position |** {channel.position}\n"
             embed = Embed(description=desc,

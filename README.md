@@ -13,7 +13,7 @@
 ![](https://media.discordapp.net/attachments/721449922838134876/748602416395452466/unknown.png)
 ![](https://media.discordapp.net/attachments/721449922838134876/748609097183658144/unknown.png)
 
-#### More commands to come! View some examples [here!](https://imgur.com/gallery/w15ylYF)
+#### More commands to come! View some examples [here!](https://imgur.com/a/sf4Y4yr)
 
 # Other Features
 

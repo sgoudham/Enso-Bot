@@ -796,6 +796,33 @@ class Moderation(Cog):
 
             await modlogs_channel.send(embed=embed)
 
+    @Cog.listener()
+    async def on_guild_channel_create(self, channel):
+        """Logging channel creations within the guild"""
+
+        # Get the channel within the cache
+        modlogs = self.bot.get_modlog_for_guild(channel.guild.id)
+
+        # When no modlogs channel is returned, do nothing
+        if modlogs:
+            # Get the modlogs channel
+            modlogs_channel = self.bot.get_channel(modlogs)
+            category = channel.category if channel.category else self.bot.cross
+
+            desc = f"**Channel Created |** #{channel.name}\n" \
+                   f"**Category |** {category}\n" \
+                   f"**Position |** {channel.position}\n"
+            embed = Embed(description=desc,
+                          colour=self.bot.admin_colour,
+                          timestamp=datetime.datetime.utcnow())
+            embed.add_field(name="Created Date",
+                            value=channel.created_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"),
+                            inline=True)
+            embed.set_author(name=modlogs_channel.guild.name, icon_url=modlogs_channel.guild.icon_url)
+            embed.set_footer(text="Channel Deleted")
+
+            await modlogs_channel.send(embed=embed)
+
 
 def setup(bot):
     bot.add_cog(Moderation(bot))

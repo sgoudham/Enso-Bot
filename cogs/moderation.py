@@ -785,10 +785,10 @@ class Moderation(Cog):
             embed = Embed(description=desc,
                           colour=self.bot.admin_colour,
                           timestamp=datetime.datetime.utcnow())
-            embed.add_field(name="Created At (UTC)",
+            embed.add_field(name="Created Date",
                             value=channel.created_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"),
                             inline=True)
-            embed.add_field(name="Deleted At (UTC)",
+            embed.add_field(name="Deleted Date",
                             value=deleted_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"),
                             inline=True)
             embed.set_author(name=modlogs_channel.guild.name, icon_url=modlogs_channel.guild.icon_url)

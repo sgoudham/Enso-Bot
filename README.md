@@ -67,4 +67,4 @@ Please join our [server!]("https://discord.gg/yBd8Esz)
 
 # Support Server
 
-- <b> Make sure you join the <a href="https://discord.gg/SZ5nexg">support server </a> for any help that you may need! </b>
+#### Make sure you join the [support server](https://discord.gg/SZ5nexg) for any help that you may need!

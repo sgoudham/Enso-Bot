@@ -158,13 +158,12 @@ def waifu_embedder(self, waifu, _type):
 class MWLMenu(menus.Menu):
     """Setup menus for MyWaifuList results"""
 
-    def __init__(self, i, perms, _dict, bot, guild_bot):
+    def __init__(self, i, perms, _dict, bot):
         super().__init__(timeout=125.0, clear_reactions_after=True)
         self.i = i
         self.perms = perms
         self._dict = _dict
         self.bot = bot
-        self.guild_bot = guild_bot
         self.dicts = search(self, bot)
 
     async def remove_reaction(self, reaction):
@@ -450,7 +449,7 @@ class Anime(Cog):
         perms = bot.permissions_in(ctx.message.channel)
 
         # Send the menu to the display
-        menu = MWLMenu(i, perms, airing_trash, self.bot, bot)
+        menu = MWLMenu(i, perms, airing_trash, self.bot)
         await menu.start(ctx)
 
     @airing.command(name="popular", aliases=["pop"])
@@ -475,7 +474,7 @@ class Anime(Cog):
         perms = bot.permissions_in(ctx.message.channel)
 
         # Send the menu to the display
-        menu = MWLMenu(i, perms, airing_popular, self.bot, bot)
+        menu = MWLMenu(i, perms, airing_popular, self.bot)
         await menu.start(ctx)
 
     @airing.command(name="best")
@@ -500,7 +499,7 @@ class Anime(Cog):
         perms = bot.permissions_in(ctx.message.channel)
 
         # Send the menu to the display
-        menu = MWLMenu(i, perms, airing_best, self.bot, bot)
+        menu = MWLMenu(i, perms, airing_best, self.bot)
         await menu.start(ctx)
 
     @airing.command(name="anime", aliases=["shows", "series"])
@@ -525,7 +524,7 @@ class Anime(Cog):
         perms = bot.permissions_in(ctx.message.channel)
 
         # Send the menu to the display
-        menu = MWLMenu(i, perms, anime_dict, self.bot, bot)
+        menu = MWLMenu(i, perms, anime_dict, self.bot)
         await menu.start(ctx)
 
     @command(name="search", aliases=["lookup"], usage="`<waifu|anime>`")
@@ -575,7 +574,7 @@ class Anime(Cog):
         perms = bot.permissions_in(ctx.message.channel)
 
         # Send the menu to the display
-        menu = MWLMenu(i, perms, anime_or_waifu, self.bot, bot)
+        menu = MWLMenu(i, perms, anime_or_waifu, self.bot)
         await menu.start(ctx)
 
     @group(name="waifu", invoke_without_command=True, case_insensitive=True)

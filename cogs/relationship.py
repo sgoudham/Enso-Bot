@@ -19,7 +19,7 @@ import datetime
 
 import asyncpg
 from discord import Member, Embed
-from discord.ext.commands import BucketType, command, cooldown, bot_has_permissions, Cog
+from discord.ext.commands import command, bot_has_permissions, Cog
 
 
 # Sets up the embed for the marriage info
@@ -67,7 +67,6 @@ class Relationship(Cog):
         print(f"{self.__class__.__name__} Cog has been loaded\n-----")
 
     @command(name="marry")
-    @cooldown(1, 1, BucketType.user)
     async def marry(self, ctx, member: Member):
         """Wed your Lover!"""
 
@@ -78,8 +77,6 @@ class Relationship(Cog):
         if member.id == ctx.author.id:
             await self.bot.generate_embed(ctx, desc="**Senpaii! ˭̡̞(◞⁎˃ᆺ˂)◞*✰ You can't possibly marry yourself!**")
             return
-
-        # TODO: Probably will need to get rid of this in favour of getting from cache
 
         # Get the author from the cache
         db_author = await self.bot.check_cache(ctx.author.id, ctx.guild.id)
@@ -136,7 +133,6 @@ class Relationship(Cog):
 
                     # Update cache new details
                     else:
-                        # TODO: Update the cache that the users have been married
                         db_author["married"] = member.id
                         db_author["married_date"] = message_time
 
@@ -168,7 +164,6 @@ class Relationship(Cog):
             await self.bot.generate_embed(ctx, desc=f"**(｡T ω T｡) {member.mention} waited too long**")
 
     @command(name="divorce")
-    @cooldown(1, 1, BucketType.user)
     async def divorce(self, ctx, member: Member):
         """Divorce your Partner!"""
 
@@ -179,9 +174,6 @@ class Relationship(Cog):
         if member.id == ctx.author.id:
             await self.bot.generate_embed(ctx, desc="**Senpaii! ˭̡̞(◞⁎˃ᆺ˂)◞*✰ You can't possibly divorce yourself!**")
             return
-
-        # TODO: Probably will need to get rid of this in favour of getting from cache
-        # TODO: Not gonna bother refactoring this db statement
 
         # Get the author from the cache
         db_author = await self.bot.check_cache(ctx.author.id, ctx.guild.id)
@@ -236,7 +228,6 @@ class Relationship(Cog):
 
                     # Update cache with new details
                     else:
-                        # TODO: Update the cache that the users have been divorced
                         db_author["married"] = None
                         db_author["married_date"] = None
 
@@ -271,7 +262,6 @@ class Relationship(Cog):
             await self.bot.generate_embed(ctx, desc=f"**(｡T ω T｡) {member.mention} waited too long**")
 
     @command(name="marriageinfo", aliases=["minfo"])
-    @cooldown(1, 1, BucketType.user)
     @bot_has_permissions(embed_links=True)
     async def m_info(self, ctx, member: Member = None):
         """Marriage Information!"""

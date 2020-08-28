@@ -23,7 +23,8 @@ import asyncpg
 import discord
 from discord import Embed, TextChannel
 from discord import File
-from discord.ext.commands import has_permissions, Cog, group, bot_has_permissions, BadArgument, MissingRequiredArgument
+from discord.ext.commands import has_permissions, Cog, group, bot_has_permissions, BadArgument, MissingRequiredArgument, \
+    command
 
 
 # Method to ask the user if they want to be anonymous or not
@@ -160,7 +161,7 @@ async def wait_for_msg(self, check, user_channel):
 
 # Set up the Cog
 class Guild(Cog):
-    """Modmail System!"""
+    """All Guild Systems (Modmail/Modlogs/RolePersist)"""
 
     def __init__(self, bot):
         self.bot = bot
@@ -176,7 +177,46 @@ class Guild(Cog):
         """Printing out that Cog is ready on startup"""
         print(f"{self.__class__.__name__} Cog has been loaded\n-----")
 
-    @group(name="rolepersist", case_insensitive=True, usage="`<status|enable|disable>`")
+    @command(name="modstatus", aliases=["logsstatus"])
+    @bot_has_permissions(embed_links=True)
+    async def all_statuses(self, ctx):
+        """Status of all the moderation systems (Modlogs/Modmail/RolePersist)"""
+        desc = ""
+
+        # Get status of mod
+        if self.bot.get_roles_persist(ctx.guild.id) == 0:
+            desc += f"**{self.bot.tick} Role Persist**\n"
+        else:
+            desc += f"**{self.bot.cross} Role Persist**\n"
+
+        # Get status of modlogs
+        ml_channel = self.bot.get_modlog_for_guild(ctx.guild.id)
+
+        if ml_channel:
+            channel = ctx.guild.get_channel(ml_channel)
+            desc += f"**{self.bot.tick} Modlogs | {channel.mention}**\n"
+        else:
+            desc += f"**{self.bot.cross} Modlogs**\n"
+
+        # Get status of modmail
+        modmail = self.bot.get_modmail(ctx.guild.id)
+        if modmail:
+            modmail_channel = ctx.guild.get_channel(modmail["modmail_channel_id"])
+            modmail_logging = ctx.guild.get_channel(modmail["modmail_logging_channel_id"])
+
+            desc += f"**{self.bot.tick} Modmail | Channel:  {modmail_channel.mention} | Logging: {modmail_logging.mention}**\n"
+        else:
+            desc += f"**{self.bot.cross} Modmail**\n"
+
+        embed = Embed(title="Moderation Systems",
+                      description=desc,
+                      colour=self.bot.random_colour(),
+                      timestamp=datetime.datetime.utcnow())
+        embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+
+        await ctx.send(embed=embed)
+
+    @group(name="rolepersist", case_insensitive=True, usage="`<enable|disable>`")
     @has_permissions(manage_guild=True)
     @bot_has_permissions(manage_roles=True)
     async def roles_persist(self, ctx):
@@ -211,7 +251,7 @@ class Guild(Cog):
         else:
             await self.bot.generate_embed(ctx, desc=f"**Role Persist is already disabled within {ctx.guild}!**")
 
-    @group(name="modlogs", case_insensitive=True, usage="`<status|setup|update|delete>`")
+    @group(name="modlogs", case_insensitive=True, usage="`<setup|update|delete>`")
     @has_permissions(manage_guild=True)
     @bot_has_permissions(embed_links=True)
     async def modlogs(self, ctx):

@@ -147,12 +147,14 @@ class MWLMenu(menus.Menu):
 
     async def remove_reaction(self, reaction):
         """Remove the reaction given"""
+
         if self.perms.manage_messages:
             await self.message.remove_reaction(reaction, self.ctx.author)
 
     @staticmethod
     def check(m, payload):
         """Simple check to make sure that the reaction is performed by the user"""
+
         return m.author == payload.member and m.channel.id == payload.channel_id
 
     @staticmethod
@@ -176,14 +178,9 @@ class MWLMenu(menus.Menu):
 
         """
 
-        if _type == "anime":
-            __type = embed.author.name
-            embed.remove_author()
-            return embed.set_author(name=f"{__type} | Page {cur_page}/{pages}")
-        elif _type == "waifu":
-            __type = embed.author.name
-            embed.remove_author()
-            return embed.set_author(name=f"{__type} | Page {cur_page}/{pages}")
+        __type = embed.author.name
+        embed.remove_author()
+        return embed.set_author(name=f"{__type} | Page {cur_page}/{pages}")
 
     @staticmethod
     def set_author_after(embed, _type, cur_page, pages):

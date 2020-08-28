@@ -337,6 +337,9 @@ class Moderation(Cog):
         Multiple Members can be banned at once
         """
 
+        # TODO: Combine the forceban and normal ban command
+        #  (Use Union Arguments/IsInstance methods to determine what method to use
+
         if not await check(ctx, members):
             with ctx.typing():
                 await ban_members(self, ctx, members, reason)
@@ -758,6 +761,38 @@ class Moderation(Cog):
                           timestamp=datetime.datetime.utcnow())
             embed.set_author(name=modlogs_channel.guild.name, icon_url=modlogs_channel.guild.icon_url)
             embed.set_footer(text=f"Message ID: {payload.message_id}")
+
+            await modlogs_channel.send(embed=embed)
+
+    @Cog.listener()
+    async def on_guild_channel_delete(self, channel):
+        """Logging channel deletions within the guild"""
+
+        deleted_at = datetime.datetime.utcnow()
+
+        # Get the channel within the cache
+        modlogs = self.bot.get_modlog_for_guild(channel.guild.id)
+
+        # When no modlogs channel is returned, do nothing
+        if modlogs:
+            # Get the modlogs channel
+            modlogs_channel = self.bot.get_channel(modlogs)
+            category = channel.category if channel.category else self.bot.cross
+
+            desc = f"**Channel Deleted |** #{channel.name}\n" \
+                   f"**Category |** {category}\n" \
+                   f"**Position |** {channel.position}\n"
+            embed = Embed(description=desc,
+                          colour=self.bot.admin_colour,
+                          timestamp=datetime.datetime.utcnow())
+            embed.add_field(name="Created At (UTC)",
+                            value=channel.created_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"),
+                            inline=True)
+            embed.add_field(name="Deleted At (UTC)",
+                            value=deleted_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"),
+                            inline=True)
+            embed.set_author(name=modlogs_channel.guild.name, icon_url=modlogs_channel.guild.icon_url)
+            embed.set_footer(text="Channel Deleted")
 
             await modlogs_channel.send(embed=embed)
 

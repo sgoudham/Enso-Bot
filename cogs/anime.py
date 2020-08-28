@@ -547,7 +547,7 @@ class Anime(Cog):
             async with session.post(url, data=data, headers=self.headers) as resp:
                 # Store waifu's in dict when request is successful, else send an error
                 if resp.status == 200:
-                    waifu_dict = await resp.json()
+                    api_data = await resp.json()
 
                 # Send error if something went wrong internally/while grabbing data from API
                 else:
@@ -556,20 +556,16 @@ class Anime(Cog):
             # Close session
             await session.close()
 
-        # As long waifu's were returned from the GET request
-        # Store waifus in a dict
-        if len(waifu_dict["data"]) > 0:
-            for waifu in waifu_dict["data"]:
-                # Only store "Waifu's" and "Husbando's"
-                if waifu["type"] in ["Waifu", "Husbando"]:
-                    anime_or_waifu[waifu["name"]] = {}
-                    for value in waifu:
-                        store_dict(anime_or_waifu, waifu, value)
+        # As long as data is returned
+        # Store all data from the api in dict
+        if len(api_data["data"]) > 0:
+            for item in api_data["data"]:
 
-                elif waifu["type"] in ["TV", "ONA", "OVA"]:
-                    anime_or_waifu[waifu["name"]] = {}
-                    for value in waifu:
-                        store_dict(anime_or_waifu, waifu, value)
+                # Don't bother storing Hentai's or Games (Not yet until I figure out what data they send)
+                if item["type"] in ["Waifu", "Husbando", "TV", "ONA", "OVA"]:
+                    anime_or_waifu[item["name"]] = {}
+                    for value in item:
+                        store_dict(anime_or_waifu, item, value)
 
         # When no waifu has been retrieved, send error message to the user
         else:

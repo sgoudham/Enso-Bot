@@ -158,12 +158,11 @@ def waifu_embedder(self, waifu, _type):
 class MWLMenu(menus.Menu):
     """Setup menus for MyWaifuList results"""
 
-    def __init__(self, i, perms, _dict, _type, bot, guild_bot):
+    def __init__(self, i, perms, _dict, bot, guild_bot):
         super().__init__(timeout=125.0, clear_reactions_after=True)
         self.i = i
         self.perms = perms
         self._dict = _dict
-        self.type = _type
         self.bot = bot
         self.guild_bot = guild_bot
         self.dicts = search(self, bot)
@@ -192,7 +191,7 @@ class MWLMenu(menus.Menu):
         return cur_page, pages
 
     @staticmethod
-    def set_author(embed, _type, cur_page, pages):
+    def set_author(embed, cur_page, pages):
         """
         Returns the author for the first initial embed
 
@@ -206,7 +205,7 @@ class MWLMenu(menus.Menu):
         return embed.set_author(name=f"{__type} | Page {cur_page}/{pages}")
 
     @staticmethod
-    def set_author_after(embed, _type, cur_page, pages):
+    def set_author_after(embed, cur_page, pages):
         """
         Returns the author for all the pages when the user reacts to go back and forwards
 
@@ -225,7 +224,7 @@ class MWLMenu(menus.Menu):
         initial = self.dicts[self.i]
 
         cur_page, pages = self.get_page(self)
-        initial = self.set_author(initial, self.type, cur_page, pages)
+        initial = self.set_author(initial, cur_page, pages)
 
         # Send embed
         return await channel.send(embed=initial)
@@ -246,7 +245,7 @@ class MWLMenu(menus.Menu):
             first_page = self.dicts[self.i]
 
             cur_page, pages = self.get_page(self)
-            first_page = self.set_author_after(first_page, self.type, cur_page, pages)
+            first_page = self.set_author_after(first_page, cur_page, pages)
 
             await self.message.edit(embed=first_page)
             await self.remove_reaction("\U000023ee")
@@ -262,7 +261,7 @@ class MWLMenu(menus.Menu):
             prev_page = self.dicts[self.i]
 
             cur_page, pages = self.get_page(self)
-            prev_page = self.set_author_after(prev_page, self.type, cur_page, pages)
+            prev_page = self.set_author_after(prev_page, cur_page, pages)
 
             # Send the embed and remove the reaction of the user
             await self.message.edit(embed=prev_page)
@@ -279,7 +278,7 @@ class MWLMenu(menus.Menu):
             next_page = self.dicts[self.i]
 
             cur_page, pages = self.get_page(self)
-            next_page = self.set_author_after(next_page, self.type, cur_page, pages)
+            next_page = self.set_author_after(next_page, cur_page, pages)
 
             # Send the embed and remove the reaction of the user
             await self.message.edit(embed=next_page)
@@ -301,7 +300,7 @@ class MWLMenu(menus.Menu):
             last_page = self.dicts[self.i]
 
             cur_page, pages = self.get_page(self)
-            last_page = self.set_author_after(last_page, self.type, cur_page, pages)
+            last_page = self.set_author_after(last_page, cur_page, pages)
 
             await self.message.edit(embed=last_page)
             await self.remove_reaction("\U000023ed")
@@ -348,7 +347,7 @@ class MWLMenu(menus.Menu):
                     number_page = self.dicts[self.i]
 
                     cur_page, pages = self.get_page(self)
-                    last_page = self.set_author_after(number_page, self.type, cur_page, pages)
+                    last_page = self.set_author_after(number_page, cur_page, pages)
 
                     await self.message.edit(embed=last_page)
                     await self.remove_reaction("\U0001f522")
@@ -451,7 +450,7 @@ class Anime(Cog):
         perms = bot.permissions_in(ctx.message.channel)
 
         # Send the menu to the display
-        menu = MWLMenu(i, perms, airing_trash, "waifu", self.bot, bot)
+        menu = MWLMenu(i, perms, airing_trash, self.bot, bot)
         await menu.start(ctx)
 
     @airing.command(name="popular", aliases=["pop"])
@@ -476,7 +475,7 @@ class Anime(Cog):
         perms = bot.permissions_in(ctx.message.channel)
 
         # Send the menu to the display
-        menu = MWLMenu(i, perms, airing_popular, "waifu", self.bot, bot)
+        menu = MWLMenu(i, perms, airing_popular, self.bot, bot)
         await menu.start(ctx)
 
     @airing.command(name="best")
@@ -501,7 +500,7 @@ class Anime(Cog):
         perms = bot.permissions_in(ctx.message.channel)
 
         # Send the menu to the display
-        menu = MWLMenu(i, perms, airing_best, "waifu", self.bot, bot)
+        menu = MWLMenu(i, perms, airing_best, self.bot, bot)
         await menu.start(ctx)
 
     @airing.command(name="anime", aliases=["shows", "series"])
@@ -526,7 +525,7 @@ class Anime(Cog):
         perms = bot.permissions_in(ctx.message.channel)
 
         # Send the menu to the display
-        menu = MWLMenu(i, perms, anime_dict, "anime", self.bot, bot)
+        menu = MWLMenu(i, perms, anime_dict, self.bot, bot)
         await menu.start(ctx)
 
     @command(name="search", aliases=["lookup"], usage="`<waifu|anime>`")
@@ -577,7 +576,7 @@ class Anime(Cog):
         perms = bot.permissions_in(ctx.message.channel)
 
         # Send the menu to the display
-        menu = MWLMenu(i, perms, anime_or_waifu, "waifu", self.bot, bot)
+        menu = MWLMenu(i, perms, anime_or_waifu, self.bot, bot)
         await menu.start(ctx)
 
     @group(name="waifu", invoke_without_command=True, case_insensitive=True)
@@ -586,6 +585,7 @@ class Anime(Cog):
         """
         Waifu's that are retrieved from MyWaifuList
         """
+
         error = WaifuCommandNotFound(ctx.command, ctx)
         await self.bot.generate_embed(ctx, desc=error.message)
 

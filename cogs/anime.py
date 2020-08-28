@@ -13,6 +13,8 @@
 
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
+import asyncio
+import datetime
 
 import aiohttp
 from decouple import config
@@ -143,10 +145,15 @@ class MWLMenu(menus.Menu):
         self.guild_bot = guild_bot
         self.dicts = search(self, bot)
 
+    async def remove_reaction(self, reaction):
+        """Remove the reaction given"""
+        if self.perms.manage_messages:
+            await self.message.remove_reaction(reaction, self.ctx.author)
+
     @staticmethod
     def check(m, payload):
         """Simple check to make sure that the reaction is performed by the user"""
-        return m.author == payload.member
+        return m.author == payload.member and m.channel.id == payload.channel_id
 
     @staticmethod
     def get_page(self):
@@ -187,17 +194,10 @@ class MWLMenu(menus.Menu):
         specified at the start "multiple_dict_generators()"
         """
 
-        if _type == "anime":
-            author = embed.author.name
-            tv_type = author.split("|")
-            __type = tv_type[0].strip()
-            return embed.set_author(name=f"{__type} | Page {cur_page}/{pages}")
-
-        elif _type == "waifu":
-            author = embed.author.name
-            tv_type = author.split("|")
-            __type = tv_type[0].strip()
-            return embed.set_author(name=f"{__type} | Page {cur_page}/{pages}")
+        author = embed.author.name
+        tv_type = author.split("|")
+        __type = tv_type[0].strip()
+        return embed.set_author(name=f"{__type} | Page {cur_page}/{pages}")
 
     async def send_initial_message(self, ctx, channel):
         """Set the first embed to the first element in the pages[]"""
@@ -219,7 +219,7 @@ class MWLMenu(menus.Menu):
 
             # Send the embed and remove the reaction of the user
             if self.i == 0:
-                await self.message.remove_reaction("\U000023ee", self.ctx.author)
+                await self.remove_reaction("\U000023ee")
                 return
 
             self.i = 0 % len(self.dicts)
@@ -229,8 +229,7 @@ class MWLMenu(menus.Menu):
             first_page = self.set_author_after(first_page, self.type, cur_page, pages)
 
             await self.message.edit(embed=first_page)
-            if self.perms.manage_messages:
-                await self.message.remove_reaction("\U000023ee", self.ctx.author)
+            await self.remove_reaction("\U000023ee")
 
     @menus.button('\N{LEFTWARDS BLACK ARROW}')
     async def on_left_arrow(self, payload):
@@ -238,7 +237,6 @@ class MWLMenu(menus.Menu):
 
         # Do nothing if the check does not return true
         if self.check(self.ctx, payload):
-
             # Set self.i to (i - 1) remainder length of the array
             self.i = (self.i - 1) % len(self.dicts)
             prev_page = self.dicts[self.i]
@@ -248,8 +246,7 @@ class MWLMenu(menus.Menu):
 
             # Send the embed and remove the reaction of the user
             await self.message.edit(embed=prev_page)
-            if self.perms.manage_messages:
-                await self.message.remove_reaction("⬅", self.ctx.author)
+            await self.remove_reaction("⬅")
 
     @menus.button('\N{BLACK RIGHTWARDS ARROW}')
     async def on_right_arrow(self, payload):
@@ -257,7 +254,6 @@ class MWLMenu(menus.Menu):
 
         # Do nothing if the check does not return true
         if self.check(self.ctx, payload):
-
             # Set self.i to (i + 1) remainder length of the array
             self.i = (self.i + 1) % len(self.dicts)
             next_page = self.dicts[self.i]
@@ -267,8 +263,7 @@ class MWLMenu(menus.Menu):
 
             # Send the embed and remove the reaction of the user
             await self.message.edit(embed=next_page)
-            if self.perms.manage_messages:
-                await self.message.remove_reaction("➡", self.ctx.author)
+            await self.remove_reaction("➡")
 
     @menus.button('\N{BLACK RIGHT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}')
     async def on_last_page_arrow(self, payload):
@@ -279,7 +274,7 @@ class MWLMenu(menus.Menu):
 
             # Send the embed and remove the reaction of the user
             if self.i == len(self.dicts) - 1:
-                await self.message.remove_reaction("\U000023ed", self.ctx.author)
+                await self.remove_reaction("\U000023ed")
                 return
 
             self.i = len(self.dicts) - 1
@@ -289,8 +284,91 @@ class MWLMenu(menus.Menu):
             last_page = self.set_author_after(last_page, self.type, cur_page, pages)
 
             await self.message.edit(embed=last_page)
-            if self.perms.manage_messages:
-                await self.message.remove_reaction("\U000023ed", self.ctx.author)
+            await self.remove_reaction("\U000023ed")
+
+    @menus.button('\N{INPUT SYMBOL FOR NUMBERS}')
+    async def on_numbered_page(self, payload):
+        """Reaction to allow users to input page numbers"""
+
+        # Do nothing if the check does not return true
+        if self.check(self.ctx, payload):
+
+            embed = Embed(description="**What Page Would You Like To Go To?**",
+                          colour=self.bot.admin_colour)
+            message = await self.ctx.send(embed=embed)
+
+            def check(m):
+                """Simple check to make sure that the reaction is performed by the user"""
+                return m.author == payload.member and m.channel.id == payload.channel_id
+
+            try:
+                # Wait for the message from the mentioned user
+                msg = await self.bot.wait_for('message', check=check, timeout=20.0)
+
+            # Catch timeout error
+            except asyncio.TimeoutError as ex:
+                print(ex)
+
+                await self.remove_reaction("\U0001f522")
+
+                embed = Embed(description="**You Waited Too Long D:**",
+                              colour=self.bot.admin_colour)
+                await message.edit(embed=embed)
+
+                await asyncio.sleep(2.5)
+                await message.delete()
+
+            else:
+                # As long as the number entered is within the page numbers, go to that page
+                if 0 < int(msg.content) <= len(self.dicts):
+                    await message.delete()
+                    await msg.delete()
+
+                    self.i = int(msg.content) - 1
+                    number_page = self.dicts[self.i]
+
+                    cur_page, pages = self.get_page(self)
+                    last_page = self.set_author_after(number_page, self.type, cur_page, pages)
+
+                    await self.message.edit(embed=last_page)
+                    await self.remove_reaction("\U0001f522")
+
+                # Delete the message and remove the reaction if out of bounds
+                else:
+                    await message.delete()
+                    await self.remove_reaction("\U0001f522")
+
+    @menus.button('\N{INFORMATION SOURCE}')
+    async def on_information(self, payload):
+        """Show's information about the pagination session"""
+
+        # Do nothing if the check does not return true
+        if self.check(self.ctx, payload):
+
+            messages = ['Welcome to the Waifu/Anime Pagination Session!',
+                        'This interactively allows you to see pages of text by navigating with '
+                        'reactions. They are as follows:\n']
+
+            reaction_emojis = [
+                ('\N{BLACK LEFT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}', "Takes You To The First Page"),
+                ('\N{BLACK LEFT-POINTING TRIANGLE}', "Takes You To The Previous Page"),
+                ('\N{BLACK RIGHT-POINTING TRIANGLE}', "Takes You To The Next Page"),
+                ('\N{BLACK RIGHT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}', "Takes You To The Last Page"),
+                ('\N{INPUT SYMBOL FOR NUMBERS}', "Enter Page Number To Go To"),
+                ('\N{INFORMATION SOURCE}', "Show's This Message"),
+                ('\N{BLACK SQUARE FOR STOP}', "Closes The Pagination Session")
+            ]
+
+            for value, func in reaction_emojis:
+                messages.append(f"{value}, {func}")
+
+            embed = Embed(description='\n'.join(messages),
+                          colour=self.bot.admin_colour,
+                          timestamp=datetime.datetime.utcnow())
+            embed.set_footer(text=f'We Were On Page {self.i + 1} Before This Message')
+
+            await self.message.edit(embed=embed)
+            await self.remove_reaction("\U00002139")
 
     @menus.button('\N{BLACK SQUARE FOR STOP}\ufe0f')
     async def on_stop(self, payload):
@@ -298,8 +376,10 @@ class MWLMenu(menus.Menu):
 
         # Do nothing if the check does not return true
         if self.check(self.ctx, payload):
-            # Delete the embed and stop the function from running
-            await self.message.delete()
+            # Edit the embed and tell the member that the session has been closed
+            embed = Embed(description="**Waifu/Anime Reaction Session Has Been Closed**",
+                          colour=self.bot.admin_colour)
+            await self.message.edit(embed=embed)
             self.stop()
 
 

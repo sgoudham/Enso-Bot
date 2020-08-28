@@ -43,6 +43,16 @@ class WaifuCommandNotFound(Exception):
         return f'{self.command} -> {self.message}'
 
 
+def store_in_dict(_dict):
+    """Store the waifu data in dicts"""
+
+    # Store all the shows with the name as the key
+    for item in _dict["data"]:
+        _dict[item["name"]] = {}
+        for value in item:
+            store_dict(_dict, item, value)
+
+
 async def get_waifu_api(self, ctx, url):
     """Retreiving information about daily/random waifu's"""
 
@@ -436,12 +446,7 @@ class Anime(Cog):
         i = 0
         airing_trash = {}
         trash_waifus = await get_airing_api(self, ctx, "airing/trash")
-
-        # Store all the shows with the name as the key
-        for waifu in trash_waifus["data"]:
-            airing_trash[waifu["name"]] = {}
-            for value in waifu:
-                store_dict(airing_trash, waifu, value)
+        store_in_dict(trash_waifus)
 
         # Get the instance of the bot
         bot = ctx.guild.get_member(self.bot.user.id)
@@ -461,12 +466,7 @@ class Anime(Cog):
         i = 0
         airing_popular = {}
         popular_waifus = await get_airing_api(self, ctx, "airing/popular")
-
-        # Store all the shows with the name as the key
-        for waifu in popular_waifus["data"]:
-            airing_popular[waifu["name"]] = {}
-            for value in waifu:
-                store_dict(airing_popular, waifu, value)
+        store_in_dict(popular_waifus)
 
         # Get the instance of the bot
         bot = ctx.guild.get_member(self.bot.user.id)
@@ -486,12 +486,7 @@ class Anime(Cog):
         i = 0
         airing_best = {}
         best_waifus = await get_airing_api(self, ctx, "airing/best")
-
-        # Store all the shows with the name as the key
-        for waifu in best_waifus["data"]:
-            airing_best[waifu["name"]] = {}
-            for value in waifu:
-                store_dict(airing_best, waifu, value)
+        store_in_dict(best_waifus)
 
         # Get the instance of the bot
         bot = ctx.guild.get_member(self.bot.user.id)
@@ -511,12 +506,7 @@ class Anime(Cog):
         i = 0
         anime_dict = {}
         animes = await get_airing_api(self, ctx, "airing")
-
-        # Store all the shows with the name as the key
-        for show in animes["data"]:
-            anime_dict[show["name"]] = {}
-            for value in show:
-                store_dict(anime_dict, show, value)
+        store_in_dict(animes)
 
         # Get the instance of the bot
         bot = ctx.guild.get_member(self.bot.user.id)

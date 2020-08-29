@@ -60,10 +60,10 @@ async def send_to_modlogs(self, ctx, target, reason, action):
 async def check(ctx, members):
     """
     Check Function
-    
+
     - Checks if all arguments are given
     - Checks if user mentions themselves
-    
+
     Error will be thrown in these two cases
     """
 
@@ -459,13 +459,10 @@ class Moderation(Cog):
     async def on_raw_bulk_message_delete(self, payload):
         """Logging Bulk Message Deletion from Server"""
 
-        # Get the channel within the cache
-        channel = self.bot.get_modlog_for_guild(payload.guild_id)
+        if modlogs := self.bot.get_modlog_for_guild(payload.guild_id):
+            # Get the modlogs channel
+            modlogs_channel = self.bot.get_channel(modlogs)
 
-        # When no modlogs channel is returned, do nothing
-        if channel:
-            # Get the modlogs channel and channel that the messages were deleted in
-            modlogs_channel = self.bot.get_channel(channel)
             deleted_msgs_channel = self.bot.get_channel(payload.channel_id)
             desc = f"**Bulk Delete in {deleted_msgs_channel.mention} | {len(payload.message_ids)} messages deleted**"
 
@@ -484,13 +481,9 @@ class Moderation(Cog):
 
         if member == self.bot.user: return
 
-        # Get the channel within the cache
-        channel = self.bot.get_modlog_for_guild(member.guild.id)
-
-        # When no modlogs channel is returned, do nothing
-        if channel:
+        if modlogs := self.bot.get_modlog_for_guild(member.guild.id):
             # Get the modlogs channel
-            modlogs_channel = self.bot.get_channel(channel)
+            modlogs_channel = self.bot.get_channel(modlogs)
 
             embed = Embed(description=f"**{member.mention}** | **{member}**",
                           colour=self.bot.admin_colour,
@@ -507,13 +500,9 @@ class Moderation(Cog):
 
         if member == self.bot.user: return
 
-        # Get the channel within the cache
-        channel = self.bot.get_modlog_for_guild(member.guild.id)
-
-        # When no modlogs channel is returned, do nothing
-        if channel:
+        if modlogs := self.bot.get_modlog_for_guild(member.guild.id):
             # Get the modlogs channel
-            modlogs_channel = self.bot.get_channel(channel)
+            modlogs_channel = self.bot.get_channel(modlogs)
 
             embed = Embed(description=f"**{member.mention}** | **{member}**",
                           colour=self.bot.admin_colour,
@@ -533,13 +522,9 @@ class Moderation(Cog):
 
         if user == self.bot.user: return
 
-        # Get the channel within the cache
-        channel = self.bot.get_modlog_for_guild(guild.id)
-
-        # When no modlogs channel is returned, do nothing
-        if channel:
+        if modlogs := self.bot.get_modlog_for_guild(guild.id):
             # Get the modlogs channel
-            modlogs_channel = self.bot.get_channel(channel)
+            modlogs_channel = self.bot.get_channel(modlogs)
 
             embed = Embed(description=f"{user.mention} | **{user}**",
                           colour=self.bot.admin_colour,
@@ -554,13 +539,9 @@ class Moderation(Cog):
     async def on_member_unban(self, guild, user):
         """Logs Member Unbans to Server"""
 
-        # Get the channel within the cache
-        channel = self.bot.get_modlog_for_guild(guild.id)
-
-        # When no modlogs channel is returned, do nothing
-        if channel:
+        if modlogs := self.bot.get_modlog_for_guild(guild.id):
             # Get the modlogs channel
-            modlogs_channel = self.bot.get_channel(channel)
+            modlogs_channel = self.bot.get_channel(modlogs)
 
             embed = Embed(description=f"{user.mention} | **{user}**",
                           colour=self.bot.admin_colour,
@@ -577,13 +558,9 @@ class Moderation(Cog):
 
         if before == self.bot.user: return
 
-        # Get the channel within the cache
-        channel = self.bot.get_modlog_for_guild(after.guild.id)
-
-        # When no modlogs channel is returned, do nothing
-        if channel:
+        if modlogs := self.bot.get_modlog_for_guild(after.guild.id):
             # Get the modlogs channel
-            modlogs_channel = self.bot.get_channel(channel)
+            modlogs_channel = self.bot.get_channel(modlogs)
 
             # Logging Nickname Updates
             if before.nick != after.nick:
@@ -770,13 +747,10 @@ class Moderation(Cog):
 
         deleted_at = datetime.datetime.utcnow()
 
-        # Get the channel within the cache
-        modlogs = self.bot.get_modlog_for_guild(channel.guild.id)
-
-        # When no modlogs channel is returned, do nothing
-        if modlogs:
+        if modlogs := self.bot.get_modlog_for_guild(channel.guild.id):
             # Get the modlogs channel
             modlogs_channel = self.bot.get_channel(modlogs)
+
             category = channel.category if channel.category else self.bot.cross
 
             desc = f"**Channel Deleted |** #{channel.name}\n" \
@@ -800,13 +774,10 @@ class Moderation(Cog):
     async def on_guild_channel_create(self, channel):
         """Logging channel creations within the guild"""
 
-        # Get the channel within the cache
-        modlogs = self.bot.get_modlog_for_guild(channel.guild.id)
-
-        # When no modlogs channel is returned, do nothing
-        if modlogs:
+        if modlogs := self.bot.get_modlog_for_guild(channel.guild.id):
             # Get the modlogs channel
             modlogs_channel = self.bot.get_channel(modlogs)
+
             category = channel.category if channel.category else self.bot.cross
 
             desc = f"**Channel Created |** {channel.mention}\n" \
@@ -822,6 +793,30 @@ class Moderation(Cog):
             embed.set_footer(text="Channel Deleted")
 
             await modlogs_channel.send(embed=embed)
+
+    """@Cog.listener()
+    async def on_guild_channel_update(self, before, after):
+        """"""
+
+        if modlogs := self.bot.get_modlog_for_guild(after.guild.id):
+            # Get the modlogs channel
+            modlogs_channel = self.bot.get_channel(modlogs)
+
+            category = after.category if after.category else self.bot.cross
+
+            desc = f"**Channel Created |** {channel.mention}\n" \
+                   f"**Category |** {category}\n" \
+                   f"**Position |** {channel.position}\n"
+            embed = Embed(description=desc,
+                          colour=self.bot.admin_colour,
+                          timestamp=datetime.datetime.utcnow())
+            embed.add_field(name="Created Date",
+                            value=channel.created_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"),
+                            inline=True)
+            embed.set_author(name=modlogs_channel.guild.name, icon_url=modlogs_channel.guild.icon_url)
+            embed.set_footer(text="Channel Deleted")
+
+            await modlogs_channel.send(embed=embed)Logging channel updates within the guild"""
 
 
 def setup(bot):

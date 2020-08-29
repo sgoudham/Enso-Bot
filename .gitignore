@@ -15,3 +15,5 @@ __pycache__*/
 /venv/
 venv*/
 venv
+/.idea/Enso-Bot.iml
+/.idea/inspectionProfiles/Project_Default.xml

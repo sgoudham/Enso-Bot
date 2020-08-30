@@ -31,7 +31,7 @@ from discord.ext.commands import BucketType, cooldown, bot_has_permissions, guil
 from discord.ext.commands import command
 from psutil import Process, virtual_memory
 
-from bot.libs.paginator import AllPermissions
+from bot.libs.paginator import SimpleMenu
 
 # Using forzenset
 # Permissions to filter through
@@ -277,7 +277,7 @@ class Info(Cog):
         # Get the permissions of the channel
         perms = ctx.guild.me.permissions_in(ctx.message.channel)
 
-        menu = AllPermissions(0, item, perms, [first, second], self, ctx.bot)
+        menu = SimpleMenu(0, item, perms, [first, second], self)
         await menu.start(ctx)
 
     @command(name="rolelist", aliases=["rl"])

@@ -602,7 +602,7 @@ class Anime(Cog):
         waifu = await get_from_api(self, ctx, "meta/random")
         await ctx.send(embed=waifu_embed(self, waifu, "random"))
 
-    @group(name="profile", aliases=["user"], invoke_without_command=True, case_insensitive=True)
+    @command(name="profile", aliases=["user"], usage="`<MWLUserID>")
     @bot_has_permissions(embed_links=True)
     async def mwl_user_profile(self, ctx, term: int):
         """Returning the MWL User Profile requested"""

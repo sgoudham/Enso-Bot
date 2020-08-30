@@ -48,7 +48,7 @@ def store_in_dict(_dict, api):
     """Store the waifu data in dicts"""
 
     # Store all the shows with the name as the key
-    for item in api["data"]:
+    for item in api:
         _dict[item["name"]] = {}
         for value in item:
             store_dict(_dict, item, value)
@@ -174,6 +174,9 @@ def user_embed(self, user):
     embed.set_footer(text=f"Internal ID: {id} | Powered by MyWaifuList")
 
     return embed
+
+def true_love_embed():
+    """Generate embed for profile with true love information"""
 
 
 class MWLMenu(menus.Menu):

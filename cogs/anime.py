@@ -13,6 +13,7 @@
 
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
+
 import asyncio
 import datetime
 
@@ -53,10 +54,16 @@ def store_in_dict(_dict, api):
             store_dict(_dict, item, value)
 
 
-async def get_waifu_api(self, ctx, url):
-    """Retreiving information about daily/random waifu's"""
+def store_dict(dict_, key, value):
+    """Method to store waifu's in the new dict"""
 
-    url = f"https://mywaifulist.moe/api/v1/meta/{url}"
+    dict_[key["name"]][value] = key[value]
+
+
+async def get_from_api(self, ctx, url):
+    """Retrieving data from API"""
+
+    url = f"https://mywaifulist.moe/api/v1/{url}"
 
     # Retrieve random or daily waifu from API
     async with aiohttp.ClientSession() as session:
@@ -64,8 +71,8 @@ async def get_waifu_api(self, ctx, url):
 
             # Store waifu's in dict when request is successful, else send an error
             if resp.status == 200:
-                waifu_dict = await resp.json()
-                waifu = waifu_dict["data"]
+                api_dict = await resp.json()
+                _dict = api_dict["data"]
 
             # Send error if something went wrong internally/while grabbing data from API
             else:
@@ -73,36 +80,7 @@ async def get_waifu_api(self, ctx, url):
 
         await session.close()
 
-    return waifu
-
-
-async def get_airing_api(self, ctx, url):
-    """Retreiving information about the airing shows/waifus"""
-
-    url = f"https://mywaifulist.moe/api/v1/{url}"
-    data = {'content-type': "application/json"}
-
-    # Searching API for the current airing shows
-    async with aiohttp.ClientSession() as session:
-        async with session.get(url, data=data, headers=self.headers) as resp:
-            # Store waifu's in dict when request is successful, else send an error
-            if resp.status == 200:
-                airing = await resp.json()
-
-            # Send error if something went wrong internally/while grabbing data from API
-            else:
-                await self.bot.generate_embed(ctx, desc="**Something went wrong with MyWaifuList!**")
-
-        # Close session
-        await session.close()
-
-    return airing
-
-
-def store_dict(dict_, key, value):
-    """Method to store waifu's in the new dict"""
-
-    dict_[key["name"]][value] = key[value]
+    return _dict
 
 
 def search(self, bot):
@@ -138,8 +116,8 @@ def search(self, bot):
     return embeds
 
 
-def waifu_embedder(self, waifu, _type):
-    """Method to generate embed of single waifu's"""
+def waifu_embed(self, waifu, _type):
+    """Generate embed of single waifu's"""
 
     # Get all the data to be displayed in the embed
     name = waifu["name"]
@@ -161,6 +139,37 @@ def waifu_embedder(self, waifu, _type):
                   url=url)
     embed.set_image(url=picture)
     embed.set_footer(text=f"❤️ {likes} 🗑️ {trash} | Powered by MyWaifuList")
+
+    return embed
+
+
+def user_embed(self, user):
+    """Generate embed of user profile information"""
+
+    # Get all the data to be displayed in the embed
+    name = user["name"]
+    avatar = user["avatar"] if user[
+        "avatar"] else "https://media.discordapp.net/attachments/741072426984538122/748586578074664980/DzEZ4UsXgAAcFjN.png?width=423&height=658"
+    joined = user["joined"]
+    id = user["id"]
+    waifus_created = user["waifus_created"]
+    waifus_liked = user["waifus_liked"]
+    waifus_trashed = user["waifus_trashed"]
+    main_love = user["true_love"]
+    profile_url = f"https://mywaifulist.moe/user/{id}"
+
+    date_time_obj = datetime.datetime.strptime(joined, '%Y-%m-%d %H:%M:%S')
+    joined_at = date_time_obj.strftime("%a, %b %d, %Y\n%I:%M:%S %p")
+
+    desc = f"**Waifu's Created:** {waifus_created}" \
+           f"\n**Waifu's Liked:** {waifus_liked}" \
+           f"\n**Waifu's Trashed:** {waifus_trashed}"
+    embed = Embed(title=name, description=desc,
+                  colour=self.bot.random_colour(),
+                  url=profile_url)
+    embed.add_field(name="Joined Date", value=joined_at, inline=False)
+    embed.set_thumbnail(url=avatar)
+    embed.set_footer(text=f"Internal ID: {id} | Powered by MyWaifuList")
 
     return embed
 
@@ -445,7 +454,7 @@ class Anime(Cog):
         # Variables to set up the reaction menu
         i = 0
         airing_trash = {}
-        trash_waifus = await get_airing_api(self, ctx, "airing/trash")
+        trash_waifus = await get_from_api(self, ctx, "airing/trash")
         store_in_dict(airing_trash, trash_waifus)
 
         # Get the instance of the bot
@@ -465,7 +474,7 @@ class Anime(Cog):
         # Variables to setup the reaction menu
         i = 0
         airing_popular = {}
-        popular_waifus = await get_airing_api(self, ctx, "airing/popular")
+        popular_waifus = await get_from_api(self, ctx, "airing/popular")
         store_in_dict(airing_popular, popular_waifus)
 
         # Get the instance of the bot
@@ -485,7 +494,7 @@ class Anime(Cog):
         # Local Variable i to allow the pages to be modified
         i = 0
         airing_best = {}
-        best_waifus = await get_airing_api(self, ctx, "airing/best")
+        best_waifus = await get_from_api(self, ctx, "airing/best")
         store_in_dict(airing_best, best_waifus)
 
         # Get the instance of the bot
@@ -505,7 +514,7 @@ class Anime(Cog):
         # Local Variable i to allow the pages to be modified
         i = 0
         anime_dict = {}
-        animes = await get_airing_api(self, ctx, "airing")
+        animes = await get_from_api(self, ctx, "airing")
         store_in_dict(anime_dict, animes)
 
         # Get the instance of the bot
@@ -582,21 +591,24 @@ class Anime(Cog):
     async def daily_waifu(self, ctx):
         """Returns the Daily Waifu from MyWaifuList"""
 
-        waifu = await get_waifu_api(self, ctx, "daily")
-        await ctx.send(embed=waifu_embedder(self, waifu, "daily"))
+        waifu = await get_from_api(self, ctx, "meta/daily")
+        await ctx.send(embed=waifu_embed(self, waifu, "daily"))
 
     @waifu.command(name="random", aliases=["rnd"])
     @bot_has_permissions(embed_links=True)
     async def random_waifu(self, ctx):
         """Returning a Random Waifu from MyWaifuList"""
 
-        waifu = await get_waifu_api(self, ctx, "random")
-        await ctx.send(embed=waifu_embedder(self, waifu, "random"))
+        waifu = await get_from_api(self, ctx, "meta/random")
+        await ctx.send(embed=waifu_embed(self, waifu, "random"))
 
     @group(name="profile", aliases=["user"], invoke_without_command=True, case_insensitive=True)
     @bot_has_permissions(embed_links=True)
-    async def mwl_user_profile(self, ctx):
+    async def mwl_user_profile(self, ctx, term: int):
         """Returning the MWL User Profile requested"""
+
+        user = await get_from_api(self, ctx, f"user/{term}")
+        await ctx.send(embed=user_embed(self, user))
 
 
 def setup(bot):

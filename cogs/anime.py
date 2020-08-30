@@ -124,6 +124,7 @@ def waifu_embed(self, waifu, _type):
     og_name = waifu["original_name"]
     picture = waifu["display_picture"]
     url = waifu["url"]
+    waifu_id = waifu["id"]
     likes = waifu["likes"]
     trash = waifu["trash"]
     waifu_type = waifu["type"]
@@ -137,6 +138,7 @@ def waifu_embed(self, waifu, _type):
     embed = Embed(title=name, description=desc,
                   colour=self.bot.random_colour(),
                   url=url)
+    embed.set_author(name=f"Internal ID: {waifu_id}")
     embed.set_image(url=picture)
     embed.set_footer(text=f"❤️ {likes} 🗑️ {trash} | Powered by MyWaifuList")
 

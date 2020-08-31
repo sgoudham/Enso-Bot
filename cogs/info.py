@@ -243,6 +243,7 @@ class Info(Cog):
     @guild_only()
     @bot_has_permissions(embed_links=True, add_reactions=True)
     async def perms(self, ctx, *, item: Optional[Union[Member, Role]]):
+        """View all permissions for any Member/Role!"""
 
         item = item if item else ctx.author
 

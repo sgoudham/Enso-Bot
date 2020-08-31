@@ -354,6 +354,12 @@ class Enso(Cog):
         verif = await ctx.fetch_message(728424149692842115)
         await verif.edit(embed=embed)
 
+    @command(name="wasp", hidden=True)
+    async def sb_wasp(self, ctx):
+
+        await ctx.message.delete()
+        await ctx.send("<a:sb_kyuuOhohoho:749414466940043274>")
+
     # Cog listener for enabling roles to be added to users when they react to the embedded message
     @Cog.listener()
     async def on_raw_reaction_add(self, payload):

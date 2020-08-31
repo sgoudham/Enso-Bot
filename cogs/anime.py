@@ -456,22 +456,29 @@ class MWLMenu(menus.Menu):
 
             else:
                 # As long as the number entered is within the page numbers, go to that page
-                if 0 < int(msg.content) <= len(self.dicts):
+                try:
+                    if 0 < int(msg.content) <= len(self.dicts):
+                        await message.delete()
+                        await msg.delete()
+
+                        self.i = int(msg.content) - 1
+                        number_page = self.dicts[self.i]
+
+                        cur_page, pages = self.get_page(self)
+                        last_page = self.set_author_after(number_page, cur_page, pages)
+
+                        await self.message.edit(embed=last_page)
+                        await self.remove_reaction("\U0001f522")
+
+                    # Delete the message and remove the reaction if out of bounds
+                    else:
+                        await message.delete()
+                        await msg.delete()
+                        await self.remove_reaction("\U0001f522")
+                except Exception as e:
+                    print(e)
                     await message.delete()
                     await msg.delete()
-
-                    self.i = int(msg.content) - 1
-                    number_page = self.dicts[self.i]
-
-                    cur_page, pages = self.get_page(self)
-                    last_page = self.set_author_after(number_page, cur_page, pages)
-
-                    await self.message.edit(embed=last_page)
-                    await self.remove_reaction("\U0001f522")
-
-                # Delete the message and remove the reaction if out of bounds
-                else:
-                    await message.delete()
                     await self.remove_reaction("\U0001f522")
 
     @menus.button('\N{INFORMATION SOURCE}')

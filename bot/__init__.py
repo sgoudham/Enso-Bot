@@ -17,7 +17,6 @@ import datetime
 import os
 import random
 
-import aiohttp
 import asyncpg as asyncpg
 import discord
 from decouple import config
@@ -35,8 +34,6 @@ host = config('DB_HOST')
 user = config('DB_USER')
 port = config('DB_PORT')
 db = config('DB_NAME')
-disforge_auth = config('DISFORGE_AUTH')
-disc_bots_gg_auth = config('DISCORD_BOTS_BOTS_AUTH')
 
 # Getting the bot token from environment variables
 API_TOKEN = config('DISCORD_TOKEN')
@@ -136,31 +133,13 @@ class Bot(commands.Bot):
         # Load Information Into Cache
         self.loop.run_until_complete(startup_cache_log())
 
-        async def post_bot_stats():
-            """Update guild count on bot lists"""
-
-            async with aiohttp.ClientSession() as session:
-                await session.post(f"https://discord.bots.gg/api/v1/bots/{self.user.id}/stats",
-                                   data={"guildCount": {len(self.guilds)},
-                                         "Content-Type": "application/json"},
-                                   headers={'Authorization': disc_bots_gg_auth})
-
-                await session.post(f"https://disforge.com/api/botstats/{self.user.id}",
-                                   data={"servers": {len(self.guilds)}},
-                                   headers={'Authorization': disforge_auth})
-
-                await session.close()
-
-        @tasks.loop(minutes=10, reconnect=True)
+        @tasks.loop(minutes=2, reconnect=True)
         async def change_status():
             """Creating custom statuses as background task"""
 
             global counter
             # Waiting for the bot to ready
             await self.wait_until_ready()
-
-            # Update guild count on discord.bots.gg
-            await post_bot_stats()
 
             # Define array of statuses
             looping_statuses = [

@@ -16,7 +16,7 @@
 
 import datetime
 from datetime import timedelta
-from typing import Optional
+from typing import Optional, Union
 
 import discord
 from discord import Member, Embed, DMChannel, NotFound
@@ -35,9 +35,7 @@ async def send_to_modlogs(self, ctx, target, reason, action):
     """
 
     # Get the channel of the modlog within the guild
-    modlog = self.bot.get_modlog_for_guild(ctx.guild.id)
-
-    if modlog:
+    if modlog := self.bot.get_modlog_for_guild(ctx.guild.id):
 
         channel = ctx.guild.get_channel(modlog)
 
@@ -344,7 +342,7 @@ class Moderation(Cog):
             with ctx.typing():
                 await ban_members(self, ctx, members, reason)
 
-    @command(name="forceban", aliases=["powerban", "ultraban"], usage="`<member>...` `[reason]`")
+    @command(name="force", aliases=["powerban", "ultraban"], usage="`<member>...` `[reason]`")
     @guild_only()
     @has_guild_permissions(ban_members=True)
     @bot_has_guild_permissions(ban_members=True)
@@ -367,27 +365,7 @@ class Moderation(Cog):
                     # Send confirmation to the channel that the user is in
                     await self.bot.generate_embed(ctx, desc=f"✅ **{target}** Was Power Banned! ✅")
 
-                    # Get the channel of the modlog within the guild
-                    modlog = self.bot.get_modlog_for_guild(ctx.guild.id)
-
-                    if modlog:
-
-                        channel = ctx.guild.get_channel(modlog)
-
-                        embed = Embed(title=f"User Power Banned",
-                                      colour=self.bot.admin_colour,
-                                      timestamp=datetime.datetime.utcnow())
-
-                        embed.set_thumbnail(url=target.avatar_url)
-
-                        fields = [("User ID", target, False),
-                                  ("Actioned by", ctx.author.mention, False),
-                                  ("Reason", reason, False)]
-
-                        for name, value, inline in fields:
-                            embed.add_field(name=name, value=value, inline=inline)
-
-                        await channel.send(embed=embed)
+                    await send_to_modlogs(self, ctx, target, reason, action="Power Banned")
 
     @command(name="unban", usage="`<member>...` `[reason]`")
     @guild_only()

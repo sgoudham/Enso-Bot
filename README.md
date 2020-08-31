@@ -1,6 +1,9 @@
 # Ensō~Chan
 
 ### Welcome to my passion project over quarantine! :P
+
+[![Discord Bots](https://top.gg/api/widget/716701699145728094.svg)](https://top.gg/bot/716701699145728094)
+
 ##### (Disclaimer: Please remember that this bot is in active development so it can and will be unstable at times!!)
 
 # Main Features

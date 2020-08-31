@@ -168,7 +168,6 @@ class Info(Cog):
         await self.bot.generate_embed(ctx, desc=f"Pong! **{round(self.bot.latency * 1000)}ms**")
 
     @command(name="roleinfo", aliases=["ri"])
-    @cooldown(1, 1, BucketType.user)
     @guild_only()
     async def role_info(self, ctx, role: Role):
         """Retrieve information about any role!"""
@@ -239,7 +238,6 @@ class Info(Cog):
         await ctx.send(embed=embed)
 
     @command(name="permissions", aliases=["perms"], usage="`[Member|Role]`")
-    @cooldown(1, 1, BucketType.user)
     @guild_only()
     @bot_has_permissions(embed_links=True, add_reactions=True)
     async def perms(self, ctx, *, item: Optional[Union[Member, Role]]):
@@ -282,7 +280,6 @@ class Info(Cog):
         await menu.start(ctx)
 
     @command(name="rolelist", aliases=["rl"])
-    @cooldown(1, 1, BucketType.user)
     @guild_only()
     async def role_list(self, ctx):
         """Retrieve list of all roles in the server!"""
@@ -313,7 +310,6 @@ class Info(Cog):
         await ctx.send(embed=embed)
 
     @command(name="userinfo")
-    @cooldown(1, 1, BucketType.user)
     @guild_only()
     @bot_has_permissions(embed_links=True)
     async def user_info(self, ctx, member: Optional[Member] = None):
@@ -382,7 +378,6 @@ class Info(Cog):
         await ctx.send(embed=embed)
 
     @command(name="serverinfo", aliases=["si", "guildinfo", "gi"])
-    @cooldown(1, 1, BucketType.user)
     @guild_only()
     @bot_has_permissions(embed_links=True)
     async def server_info(self, ctx):
@@ -486,7 +481,6 @@ class Info(Cog):
         await ctx.send(embed=embed)
 
     @command(name="channelinfo", aliases=["chinfo"])
-    @cooldown(1, 1, BucketType.user)
     @guild_only()
     @bot_has_permissions(embed_links=True)
     async def channel_info(self, ctx, channel: Optional[TextChannel] = None):
@@ -522,13 +516,28 @@ class Info(Cog):
 
         await ctx.send(embed=embed)
 
+    @command(name="source")
+    @bot_has_permissions(embed_links=True)
+    async def _bot_source(self, ctx):
+        """Link to the source code for Enso!"""
+
+        embed = Embed(title=f"<:github:741000905364603010> Source Code | Ensō~Chan {self.bot.version}",
+                      description="**Click above me to view my source code!**",
+                      url="https://github.com/sgoudham/Enso-Bot",
+                      colour=self.bot.admin_colour,
+                      timestamp=datetime.datetime.utcnow())
+        embed.set_thumbnail(url=self.bot.user.avatar_url)
+        embed.add_field(name="Developer", value=f"{self.bot.hammyMention} | Hamothy#5619", inline=False)
+        embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+
+        await ctx.send(embed=embed)
+
     @command(name="about")
-    @cooldown(1, 1, BucketType.user)
     @bot_has_permissions(embed_links=True)
     async def checking_bot_stats(self, ctx):
         """Bot Statistics! (CPU/Mem Usage etc)"""
 
-        stats = Embed(title=f"<:github:741000905364603010> Ensō~Chan {self.bot.version} Statistics",
+        stats = Embed(title=f"<:github:741000905364603010> Source Code | Ensō~Chan {self.bot.version}",
                       url="https://github.com/sgoudham/Enso-Bot",
                       colour=self.bot.admin_colour,
                       timestamp=datetime.datetime.utcnow())

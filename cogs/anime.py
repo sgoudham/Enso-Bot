@@ -429,7 +429,7 @@ class MWLMenu(menus.Menu):
         # Do nothing if the check does not return true
         if self.check(self.ctx, payload):
 
-            embed = Embed(description="**What Page Would You Like To Go To?**",
+            embed = Embed(description="**What Page Would You Like To Go To? (Only Numbers!)**",
                           colour=self.bot.admin_colour)
             message = await self.ctx.send(embed=embed)
 

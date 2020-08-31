@@ -23,6 +23,8 @@ from discord import Embed
 from discord.ext import menus
 from discord.ext.commands import Cog, group, bot_has_permissions, command
 
+from bot.libs.paginator import SimpleMenu
+
 my_waifu_list_auth = config('MYWAIFULIST_AUTH')
 
 
@@ -48,10 +50,13 @@ def store_in_dict(_dict, api):
     """Store the waifu data in dicts"""
 
     # Store all the shows with the name as the key
-    for item in api:
-        _dict[item["name"]] = {}
-        for value in item:
-            store_dict(_dict, item, value)
+    try:
+        for item in api:
+            _dict[item["name"]] = {}
+            for value in item:
+                store_dict(_dict, item, value)
+    except Exception as e:
+        print(e)
 
 
 def store_dict(dict_, key, value):
@@ -145,8 +150,88 @@ def waifu_embed(self, waifu, _type):
     return embed
 
 
-def user_embed(self, user):
+async def detailed_waifu_embed(self, waifu, author, ctx):
+    """Generate embed of single waifu's (detailed)"""
+
+    not_found = "https://media.discordapp.net/attachments/741072426984538122/748586578074664980/DzEZ4UsXgAAcFjN.png?width=423&height=658"
+
+    # Get all the data to be displayed in the embed
+    name = waifu["name"]
+    waifu_id = waifu["id"]
+    og_name = waifu["original_name"]
+    romaji_name = waifu["romaji_name"]
+    picture = waifu["display_picture"]
+    url = waifu["url"]
+
+    age = waifu["age"]
+    b_day = waifu["birthday_day"]
+    b_month = waifu["birthday_month"]
+    b_year = waifu["birthday_year"]
+
+    popularity_rank = waifu["popularity_rank"]
+    like_rank = waifu["like_rank"]
+    trash_rank = waifu["trash_rank"]
+    likes = waifu["likes"]
+    trash = waifu["trash"]
+
+    height = waifu["height"]
+    weight = waifu["weight"]
+    waist = waifu["waist"]
+    bust = waifu["bust"]
+    hip = waifu["hip"]
+
+    # Only setting up description if waifu og_name has a value
+    desc = f"**Original Name:** {og_name}\n" if og_name else f"**Original Name:** {self.bot.cross}\n"
+    desc += f"**Romaji Name:** {romaji_name}\n" if romaji_name else f"**Romaji Name:** {self.bot.cross}\n"
+
+    desc += f"\n**Age:** {age}\n" if age else f"**Age:** {self.bot.cross}\n"
+    desc += f"**Birthday-Day:** {b_day}\n" if b_day else f"**Birthday-Day:** {self.bot.cross}\n"
+    desc += f"**Birthday-Month:** {b_month}\n" if b_month else f"**Birthday-Month:** {self.bot.cross}\n"
+    desc += f"**Birthday-Year:** {b_year}\n" if b_year else f"**Birthday-Year:** {self.bot.cross}\n"
+
+    height = f"**Height:** {height}cm" if height else f"**Height:** {self.bot.cross}"
+    weight = f"**Weight:** {weight}kg" if weight else f"**Weight:** {self.bot.cross}"
+    waist = f"**Waist:** {waist}cm" if waist else f"**Waist:** {self.bot.cross}"
+    bust = f"**Bust:** {bust}cm" if bust else f"**Bust:** {self.bot.cross}"
+    hip = f"**Hip:** {hip}cm" if hip else f"**Hip:** {self.bot.cross}"
+
+    fields = [("Measurements",
+               f"{height}"
+               f"\n{weight}"
+               f"\n{waist}"
+               f"\n{bust}"
+               f"\n{hip}", True),
+
+              ("Ranks",
+               f"**Popularity Rank:** {popularity_rank}"
+               f"\n**Like Rank:** {like_rank}"
+               f"\n**Trash Rank:** {trash_rank}", True)]
+
+    # Only using image if it can be displayed, else display 404 image
+    picture_url = picture if picture.endswith((".jpeg", ".png", ".jpg")) else not_found
+
+    detailed = Embed(title=f"True Love | {name}", description=desc,
+                  colour=self.bot.random_colour(),
+                  url=url)
+    detailed.set_author(name=f"Internal True Love ID: {waifu_id}")
+    detailed.set_image(url=picture_url)
+    detailed.set_footer(text=f"❤️ {likes} 🗑️ {trash} | Powered by MyWaifuList")
+
+    # Add fields to the embed
+    for name, value, inline in fields:
+        detailed.add_field(name=name, value=value, inline=inline)
+
+    # Get the permissions of the channel
+    perms = ctx.guild.me.permissions_in(ctx.message.channel)
+
+    menu = SimpleMenu(0, "MyWaifuList User Information", perms, [author, detailed], self)
+    await menu.start(ctx)
+
+
+async def user_embed(self, user, ctx):
     """Generate embed of user profile information"""
+
+    love = False
 
     # Get all the data to be displayed in the embed
     name = user["name"]
@@ -166,14 +251,23 @@ def user_embed(self, user):
     desc = f"**Waifu's Created:** {waifus_created}" \
            f"\n**Waifu's Liked:** {waifus_liked}" \
            f"\n**Waifu's Trashed:** {waifus_trashed}"
-    embed = Embed(title=name, description=desc,
+    author = Embed(title=name, description=desc,
                   colour=self.bot.random_colour(),
                   url=profile_url)
-    embed.add_field(name="Joined Date", value=joined_at, inline=False)
-    embed.set_thumbnail(url=avatar)
-    embed.set_footer(text=f"Internal ID: {id} | Powered by MyWaifuList")
+    author.add_field(name="Joined Date", value=joined_at, inline=False)
+    author.set_thumbnail(url=avatar)
+    author.set_footer(text=f"Internal User ID: {id} | Powered by MyWaifuList")
 
-    return embed
+    if main_love["slug"]:
+        love = True
+        slug = main_love["slug"]
+
+        # Get true love details from the API
+        true_love = await get_from_api(self, ctx, f"waifu/{slug}")
+        await detailed_waifu_embed(self, true_love, author, ctx)
+
+    return author, love
+
 
 def true_love_embed():
     """Generate embed for profile with true love information"""
@@ -397,7 +491,7 @@ class MWLMenu(menus.Menu):
                 ('\N{BLACK RIGHT-POINTING TRIANGLE}', "Takes You To The Next Page"),
                 ('\N{BLACK RIGHT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}', "Takes You To The Last Page"),
                 ('\N{INPUT SYMBOL FOR NUMBERS}', "Enter Page Number To Go To"),
-                ('\N{INFORMATION SOURCE}', "Show's This Message"),
+                ('\N{INFORMATION SOURCE}', "Shows This Message"),
                 ('\N{BLACK SQUARE FOR STOP}', "Closes The Pagination Session")
             ]
 
@@ -613,7 +707,9 @@ class Anime(Cog):
         """Returning the MWL User Profile requested"""
 
         user = await get_from_api(self, ctx, f"user/{term}")
-        await ctx.send(embed=user_embed(self, user))
+        embed, love = await user_embed(self, user, ctx)
+        if not love:
+            await ctx.send(embed=embed)
 
 
 def setup(bot):

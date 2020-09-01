@@ -142,7 +142,7 @@ def waifu_embed(self, waifu, _type):
     embed = Embed(title=name, description=desc,
                   colour=self.bot.random_colour(),
                   url=url)
-    embed.set_author(name=f"Internal ID: {waifu_id}")
+    embed.set_author(name=f"ID: {waifu_id}")
     embed.set_image(url=picture)
     embed.set_footer(text=f"❤️ {likes} 🗑️ {trash} | Powered by MyWaifuList")
 
@@ -211,7 +211,7 @@ async def detailed_waifu_embed(self, waifu, author, ctx):
     # Different titles depending on if author was given or not
     title = f"True Love | {name}" if author else f"Detailed Waifu | {name}"
     # Different author depending on if author was given or not
-    set_author = f"Internal True Love ID: {waifu_id}" if author else f"Internal Waifu ID: {waifu_id}"
+    set_author = f"True Love ID: {waifu_id}" if author else f"Waifu ID: {waifu_id}"
 
     detailed = Embed(title=title, description=desc,
                      colour=self.bot.random_colour(),
@@ -228,7 +228,7 @@ async def detailed_waifu_embed(self, waifu, author, ctx):
     perms = ctx.guild.me.permissions_in(ctx.message.channel)
 
     if author:
-        menu = SimpleMenu(0, "MyWaifuList User Information", perms, [author, detailed], self)
+        menu = SimpleMenu(0, "User Information", perms, [author, detailed], self)
         await menu.start(ctx)
     else:
         return detailed
@@ -262,7 +262,7 @@ async def user_embed(self, user, ctx):
                    url=profile_url)
     author.add_field(name="Joined Date", value=joined_at, inline=False)
     author.set_thumbnail(url=avatar)
-    author.set_footer(text=f"Internal User ID: {id} | Powered by MyWaifuList")
+    author.set_footer(text=f"User ID: {id} | Powered by MyWaifuList")
 
     if main_love["slug"]:
         love = True

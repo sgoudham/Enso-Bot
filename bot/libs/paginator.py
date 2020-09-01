@@ -104,6 +104,6 @@ class SimpleMenu(menus.Menu):
         if self.check(self.ctx, payload):
             # Edit the embed and tell the member that the session has been closed
             embed = Embed(description="**Pagination Session Has Been Closed**",
-                          colour=self.bot.admin_colour)
+                          colour=self.bot.random_colour())
             await self.message.edit(embed=embed)
             self.stop()

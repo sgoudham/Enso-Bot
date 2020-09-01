@@ -425,7 +425,7 @@ class Enso(Cog):
                 print(f"{member.name} Was Removed from Role {role}")
 
     # Allowing people to get ping-able self roles
-    @command(name="rolemenuu", hidden=True)
+    @command(name="rolemenu", hidden=True)
     @is_owner()
     async def role_menu(self, ctx):
         # Setting the channel to "

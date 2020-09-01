@@ -571,7 +571,7 @@ class Info(Cog):
              "[Here!](https://discord.com/invite/SZ5nexg)", True),
 
             ("<:invite:740998357643952139> Invite Link",
-             "[Here!](https://discord.bots.gg/bots/716701699145728094)", True),
+             "[Here!](https://top.gg/bot/716701699145728094)", True),
 
             ("❗ Current Prefix", ctx.prefix, True),
 

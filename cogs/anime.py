@@ -105,12 +105,11 @@ def search(self, bot):
                       colour=bot.random_colour(),
                       url=key["url"])
         embed.set_image(url=url)
+        embed.set_author(name=key["type"])
 
         if key["type"] in ["Waifu", "Husbando"]:
-            embed.set_author(name=key["type"])
             embed.set_footer(text=f"❤️ {key['likes']} 🗑️ {key['trash']} | Powered by MyWaifuList")
         elif key["type"] in ["TV", "ONA", "OVA"]:
-            embed.set_author(name=key["type"])
             if key['romaji_name']:
                 embed.set_footer(text=f"{key['romaji_name']} | Powered by MyWaifuList")
             else:
@@ -209,11 +208,15 @@ async def detailed_waifu_embed(self, waifu, author, ctx):
 
     # Only using image if it can be displayed, else display 404 image
     picture_url = picture if picture.endswith((".jpeg", ".png", ".jpg")) else not_found
+    # Different titles depending on if author was given or not
+    title = f"True Love | {name}" if author else f"Detailed Waifu | {name}"
+    # Different author depending on if author was given or not
+    set_author = f"Internal True Love ID: {waifu_id}" if author else f"Internal Waifu ID: {waifu_id}"
 
-    detailed = Embed(title=f"True Love | {name}", description=desc,
-                  colour=self.bot.random_colour(),
-                  url=url)
-    detailed.set_author(name=f"Internal True Love ID: {waifu_id}")
+    detailed = Embed(title=title, description=desc,
+                     colour=self.bot.random_colour(),
+                     url=url)
+    detailed.set_author(name=set_author)
     detailed.set_image(url=picture_url)
     detailed.set_footer(text=f"❤️ {likes} 🗑️ {trash} | Powered by MyWaifuList")
 
@@ -224,8 +227,11 @@ async def detailed_waifu_embed(self, waifu, author, ctx):
     # Get the permissions of the channel
     perms = ctx.guild.me.permissions_in(ctx.message.channel)
 
-    menu = SimpleMenu(0, "MyWaifuList User Information", perms, [author, detailed], self)
-    await menu.start(ctx)
+    if author:
+        menu = SimpleMenu(0, "MyWaifuList User Information", perms, [author, detailed], self)
+        await menu.start(ctx)
+    else:
+        return detailed
 
 
 async def user_embed(self, user, ctx):
@@ -252,8 +258,8 @@ async def user_embed(self, user, ctx):
            f"\n**Waifu's Liked:** {waifus_liked}" \
            f"\n**Waifu's Trashed:** {waifus_trashed}"
     author = Embed(title=name, description=desc,
-                  colour=self.bot.random_colour(),
-                  url=profile_url)
+                   colour=self.bot.random_colour(),
+                   url=profile_url)
     author.add_field(name="Joined Date", value=joined_at, inline=False)
     author.set_thumbnail(url=avatar)
     author.set_footer(text=f"Internal User ID: {id} | Powered by MyWaifuList")
@@ -430,7 +436,7 @@ class MWLMenu(menus.Menu):
         if self.check(self.ctx, payload):
 
             embed = Embed(description="**What Page Would You Like To Go To? (Only Numbers!)**",
-                          colour=self.bot.admin_colour)
+                          colour=self.bot.random_colour())
             message = await self.ctx.send(embed=embed)
 
             def check(m):
@@ -448,7 +454,7 @@ class MWLMenu(menus.Menu):
                 await self.remove_reaction("\U0001f522")
 
                 embed = Embed(description="**You Waited Too Long D:**",
-                              colour=self.bot.admin_colour)
+                              colour=self.bot.random_colour())
                 await message.edit(embed=embed)
 
                 await asyncio.sleep(2.5)
@@ -506,7 +512,7 @@ class MWLMenu(menus.Menu):
                 messages.append(f"{value}, {func}")
 
             embed = Embed(description='\n'.join(messages),
-                          colour=self.bot.admin_colour,
+                          colour=self.bot.random_colour(),
                           timestamp=datetime.datetime.utcnow())
             embed.set_footer(text=f'We Were On Page {self.i + 1} Before This Message')
 
@@ -521,7 +527,7 @@ class MWLMenu(menus.Menu):
         if self.check(self.ctx, payload):
             # Edit the embed and tell the member that the session has been closed
             embed = Embed(description="**Waifu/Anime Reaction Session Has Been Closed**",
-                          colour=self.bot.admin_colour)
+                          colour=self.bot.random_colour())
             await self.message.edit(embed=embed)
             self.stop()
 
@@ -632,6 +638,51 @@ class Anime(Cog):
         menu = MWLMenu(i, perms, anime_dict, self.bot)
         await menu.start(ctx)
 
+    @group(name="waifu", invoke_without_command=True, case_insensitive=True)
+    @bot_has_permissions(embed_links=True)
+    async def waifu(self, ctx):
+        """
+        Waifu's that are retrieved from MyWaifuList
+        """
+
+        error = WaifuCommandNotFound(ctx.command, ctx)
+        await self.bot.generate_embed(ctx, desc=error.message)
+
+    @waifu.command(name="daily")
+    @bot_has_permissions(embed_links=True)
+    async def daily_waifu(self, ctx):
+        """Returns the Daily Waifu from MyWaifuList"""
+
+        waifu = await get_from_api(self, ctx, "meta/daily")
+        await ctx.send(embed=waifu_embed(self, waifu, "daily"))
+
+    @waifu.command(name="random", aliases=["rnd"])
+    @bot_has_permissions(embed_links=True)
+    async def random_waifu(self, ctx):
+        """Returning a Random Waifu from MyWaifuList"""
+
+        waifu = await get_from_api(self, ctx, "meta/random")
+        await ctx.send(embed=waifu_embed(self, waifu, "random"))
+
+    @command("detailedwaifu", aliases=["dwaifu"], usage="`<MWLWaifuID>`")
+    @bot_has_permissions(embed_links=True)
+    async def detailed_waifu(self, ctx, term: int):
+        """Returns detailed information about a waifu (MWL ID ONLY)"""
+
+        waifu = await get_from_api(self, ctx, f"waifu/{term}")
+        embed = await detailed_waifu_embed(self, waifu, None, ctx)
+        await ctx.send(embed=embed)
+
+    @command(name="profile", aliases=["user"], usage="`<MWLUserID>`")
+    @bot_has_permissions(embed_links=True)
+    async def mwl_user_profile(self, ctx, term: int):
+        """Returning the MWL User Profile requested"""
+
+        user = await get_from_api(self, ctx, f"user/{term}")
+        embed, love = await user_embed(self, user, ctx)
+        if not love:
+            await ctx.send(embed=embed)
+
     @command(name="search", aliases=["lookup"], usage="`<waifu|anime>`")
     @bot_has_permissions(embed_links=True, add_reactions=True)
     async def search(self, ctx, *, term: str):
@@ -681,42 +732,6 @@ class Anime(Cog):
         # Send the menu to the display
         menu = MWLMenu(i, perms, anime_or_waifu, self.bot)
         await menu.start(ctx)
-
-    @group(name="waifu", invoke_without_command=True, case_insensitive=True)
-    @bot_has_permissions(embed_links=True)
-    async def waifu(self, ctx):
-        """
-        Waifu's that are retrieved from MyWaifuList
-        """
-
-        error = WaifuCommandNotFound(ctx.command, ctx)
-        await self.bot.generate_embed(ctx, desc=error.message)
-
-    @waifu.command(name="daily")
-    @bot_has_permissions(embed_links=True)
-    async def daily_waifu(self, ctx):
-        """Returns the Daily Waifu from MyWaifuList"""
-
-        waifu = await get_from_api(self, ctx, "meta/daily")
-        await ctx.send(embed=waifu_embed(self, waifu, "daily"))
-
-    @waifu.command(name="random", aliases=["rnd"])
-    @bot_has_permissions(embed_links=True)
-    async def random_waifu(self, ctx):
-        """Returning a Random Waifu from MyWaifuList"""
-
-        waifu = await get_from_api(self, ctx, "meta/random")
-        await ctx.send(embed=waifu_embed(self, waifu, "random"))
-
-    @command(name="profile", aliases=["user"], usage="`<MWLUserID>`")
-    @bot_has_permissions(embed_links=True)
-    async def mwl_user_profile(self, ctx, term: int):
-        """Returning the MWL User Profile requested"""
-
-        user = await get_from_api(self, ctx, f"user/{term}")
-        embed, love = await user_embed(self, user, ctx)
-        if not love:
-            await ctx.send(embed=embed)
 
 
 def setup(bot):

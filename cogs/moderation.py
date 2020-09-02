@@ -16,7 +16,7 @@
 
 import datetime
 from datetime import timedelta
-from typing import Optional, Union
+from typing import Optional
 
 import discord
 from discord import Member, Embed, DMChannel, NotFound

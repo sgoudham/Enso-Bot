@@ -335,9 +335,6 @@ class Moderation(Cog):
         Multiple Members can be banned at once
         """
 
-        # TODO: Combine the forceban and normal ban command
-        #  (Use Union Arguments/IsInstance methods to determine what method to use
-
         if not await check(ctx, members):
             with ctx.typing():
                 await ban_members(self, ctx, members, reason)

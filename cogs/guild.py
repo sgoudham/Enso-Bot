@@ -259,27 +259,6 @@ class Guild(Cog):
         Log updates in your server! (Nicknames/Deleted Msgs/etc!)
         """
 
-    @modlogs.command(name="status")
-    async def mlstatus(self, ctx):
-        """Current status of the modlogs channel"""
-
-        ml_channel = self.bot.get_modlog_for_guild(ctx.guild.id)
-
-        # Send current modlogs channel only if it is setup
-        # Send error if no modlogs channel has been setup
-        if ml_channel:
-
-            # Get the modlog channel for the current guild
-            channel = ctx.guild.get_channel(ml_channel)
-
-            text = f"**The current modlogs channel is set to {channel.mention}**"
-            await self.bot.generate_embed(ctx, desc=text)
-        else:
-
-            text = "**Modlogs Channel** not set up!" \
-                   f"\nDo **{ctx.prefix}help modlogs** to find out more!"
-            await self.bot.generate_embed(ctx, desc=text)
-
     @modlogs.command(name="setup")
     async def mlsetup(self, ctx, user_channel: TextChannel):
         """Setup a channel for Kick/Ban/Mute actions to be logged"""

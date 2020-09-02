@@ -26,8 +26,7 @@ from typing import Optional, Union
 from discord import Embed, Role
 from discord import Member, TextChannel
 from discord import __version__ as discord_version
-from discord.ext.commands import BucketType, cooldown, bot_has_permissions, guild_only, Cog, MissingRequiredArgument, \
-    BadUnionArgument
+from discord.ext.commands import BucketType, cooldown, bot_has_permissions, guild_only, Cog
 from discord.ext.commands import command
 from psutil import Process, virtual_memory
 
@@ -615,18 +614,6 @@ class Info(Cog):
         embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
         await ctx.send(embed=embed)
-
-    @perms.error
-    async def mlsetup_command_error(self, ctx, exc):
-        """Catching error if User or Channel is not recognised"""
-
-        if isinstance(exc, BadUnionArgument):
-            text = "**User | Role** Not Detected... Aborting Process"
-            await self.bot.generate_embed(ctx, desc=text)
-        if isinstance(exc, MissingRequiredArgument):
-            text = "Required Argument(s) Missing!" \
-                   f"\nUse **{ctx.prefix}help** to find how to use **{ctx.command}**"
-            await self.bot.generate_embed(ctx, desc=text)
 
 
 def setup(bot):

@@ -120,27 +120,32 @@ async def detailed_waifu_embed(self, waifu, author, ctx):
     # Get all the data to be displayed in the embed
     name = waifu["name"]
     waifu_id = waifu["id"]
+    url = waifu["url"]
+    picture = waifu["display_picture"]
+    likes = waifu["likes"]
+    trash = waifu["trash"]
+
     og_name = waifu["original_name"]
     romaji_name = waifu["romaji_name"]
-    picture = waifu["display_picture"]
-    url = waifu["url"]
-
     age = waifu["age"]
     b_day = waifu["birthday_day"]
     b_month = waifu["birthday_month"]
     b_year = waifu["birthday_year"]
-
     popularity_rank = waifu["popularity_rank"]
     like_rank = waifu["like_rank"]
     trash_rank = waifu["trash_rank"]
-    likes = waifu["likes"]
-    trash = waifu["trash"]
 
     height = waifu["height"]
     weight = waifu["weight"]
     waist = waifu["waist"]
     bust = waifu["bust"]
     hip = waifu["hip"]
+
+    """height = f"{waifu['height']} cm"
+    weight = f"{waifu['weight']} kg"
+    waist = f"{waifu['waist']} cm"
+    bust = {waifu['bust']} cm"
+    hip = f"{waifu['hip']} cm"""
 
     # Only setting up description if waifu og_name has a value
     desc = f"**Waifu ID:** {waifu_id}\n"

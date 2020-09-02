@@ -22,7 +22,6 @@ from discord.ext.commands import Cog, group, bot_has_permissions, has_permission
 
 async def send_starboard_and_update_db(self, payload, action):
     """Send the starboard embed and update database/cache"""
-    deletion = False
 
     if (starboard := self.bot.get_starboard(payload.guild_id)) and payload.emoji.name == "⭐":
         message = await self.bot.get_channel(payload.channel_id).fetch_message(payload.message_id)
@@ -49,39 +48,6 @@ async def send_starboard_and_update_db(self, payload, action):
 
             if len(message.attachments):
                 embed.set_image(url=message.attachments[0].url)
-
-            if new_stars <= 0:
-                try:
-                    deletion = True
-                    star_message = await channel.fetch_message(msg_id)
-                    await star_message.delete()
-                except Exception:
-                    pass
-
-                if deletion:
-                    # Setup up pool connection
-                    pool = self.bot.db
-                    async with pool.acquire() as conn:
-
-                        # Insert the starboard message in the database
-                        try:
-                            update_query = """DELETE FROM starboard_messages WHERE root_message_id = $1 AND guild_id = $2"""
-                            await conn.execute(update_query, message.id, payload.guild_id)
-
-                        # Catch errors
-                        except asyncpg.PostgresError as e:
-                            print(
-                                f"PostGres Error: Starboard_Message Record Could Not Be Deleted For Guild {payload.guild_id}",
-                                e)
-
-                        # Update cache
-                        else:
-                            self.bot.delete_starboard_messages(payload.guild_id)
-
-                        # Release connection back to pool
-                        finally:
-                            await pool.release(conn)
-                        return
 
             if not stars:
                 star_message = await channel.send(embed=embed)
@@ -142,10 +108,6 @@ async def send_starboard_and_update_db(self, payload, action):
                     finally:
                         await pool.release(conn)
 
-        else:
-            if action == "added":
-                await message.remove_reaction(payload.emoji, payload.member)
-
 
 async def get_starboard_from_db(self, ctx, action):
     """Get the starboard record from DB"""
@@ -190,7 +152,7 @@ class Starboard(Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @group(name="starboard", case_insensitive=True, usage="`<setup|update|delete>`")
+    @group(name="starboarde", case_insensitive=True, usage="`<setup|update|delete>`")
     @bot_has_permissions(embed_links=True)
     @has_permissions(manage_guild=True)
     async def starboard(self, ctx):

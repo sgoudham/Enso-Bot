@@ -242,6 +242,7 @@ class Info(Cog):
     async def perms(self, ctx, *, item: Optional[Union[Member, Role]]):
         """View all permissions for any Member/Role!"""
 
+        # Defaults to author if no argument is given
         item = item if item else ctx.author
 
         if isinstance(item, Member):
@@ -308,7 +309,7 @@ class Info(Cog):
 
         await ctx.send(embed=embed)
 
-    @command(name="userinfo")
+    @command(name="userinfo", aliases=["ui"])
     @guild_only()
     @bot_has_permissions(embed_links=True)
     async def user_info(self, ctx, member: Optional[Member] = None):

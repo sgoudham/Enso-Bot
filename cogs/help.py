@@ -623,6 +623,8 @@ def error_handling(self, author):
 class Help(Cog):
     """Help Commands!"""
 
+    # TODO: ADD A PREFIX COMMAND THAT OVERRIDES PERMISSIONS
+
     def __init__(self, bot):
         self.bot = bot
 
@@ -638,7 +640,7 @@ class Help(Cog):
 
                 if entity is None:
                     clean = cmd.replace('@', '@\u200b')
-                    return await ctx.send(f"**Command or Category '{clean}' Not Found.**")
+                    return await self.bot.generate_embed(ctx, desc=f"Command or Category **{clean}** Not Found.")
                 elif isinstance(entity, commands.Command):
                     p = await HelpPaginator.from_command(ctx, entity)
                 else:

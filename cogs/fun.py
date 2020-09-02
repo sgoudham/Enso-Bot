@@ -388,7 +388,7 @@ class Fun(Cog):
             async with aiohttp.ClientSession() as session:
                 async with await session.get(url=url) as response:
 
-                    # When succesful, read data from json
+                    # When successful, read data from json
                     if response.status == 200:
                         insta = await response.json()
 

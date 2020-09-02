@@ -22,11 +22,17 @@ from discord.ext.commands import Cog, group, bot_has_permissions, has_permission
 
 async def send_starboard_and_update_db(self, payload, action):
     """Send the starboard embed and update database/cache"""
+    deletion = False
 
     if (starboard := self.bot.get_starboard(payload.guild_id)) and payload.emoji.name == "⭐":
         message = await self.bot.get_channel(payload.channel_id).fetch_message(payload.message_id)
 
-        if not message.author.bot and payload.member.id != message.author.id:
+        if action == "added":
+            check = not message.author.bot and payload.member.id != message.author.id
+        else:
+            check = not message.author.bot
+
+        if check:
             channel = self.bot.get_channel(starboard)
             msg_id, stars = await self.bot.check_starboard_messages_cache(message.id, payload.guild_id)
             new_stars = stars + 1 if action == "added" else stars - 1
@@ -46,34 +52,36 @@ async def send_starboard_and_update_db(self, payload, action):
 
             if new_stars <= 0:
                 try:
+                    deletion = True
                     star_message = await channel.fetch_message(msg_id)
                     await star_message.delete()
-                except NotFound:
+                except Exception:
                     pass
 
-                # Setup up pool connection
-                pool = self.bot.db
-                async with pool.acquire() as conn:
+                if deletion:
+                    # Setup up pool connection
+                    pool = self.bot.db
+                    async with pool.acquire() as conn:
 
-                    # Insert the starboard message in the database
-                    try:
-                        update_query = """DELETE FROM starboard_messages WHERE root_message_id = $1 AND guild_id = $2"""
-                        await conn.execute(update_query, message.id, payload.guild_id)
+                        # Insert the starboard message in the database
+                        try:
+                            update_query = """DELETE FROM starboard_messages WHERE root_message_id = $1 AND guild_id = $2"""
+                            await conn.execute(update_query, message.id, payload.guild_id)
 
-                    # Catch errors
-                    except asyncpg.PostgresError as e:
-                        print(
-                            f"PostGres Error: Starboard_Message Record Could Not Be Deleted For Guild {payload.guild_id}",
-                            e)
+                        # Catch errors
+                        except asyncpg.PostgresError as e:
+                            print(
+                                f"PostGres Error: Starboard_Message Record Could Not Be Deleted For Guild {payload.guild_id}",
+                                e)
 
-                    # Update cache
-                    else:
-                        self.bot.delete_starboard_messages(payload.guild_id)
+                        # Update cache
+                        else:
+                            self.bot.delete_starboard_messages(payload.guild_id)
 
-                    # Release connection back to pool
-                    finally:
-                        await pool.release(conn)
-                    return
+                        # Release connection back to pool
+                        finally:
+                            await pool.release(conn)
+                        return
 
             if not stars:
                 star_message = await channel.send(embed=embed)
@@ -182,7 +190,7 @@ class Starboard(Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @group(name="starboard", case_insensitive=True, usage="`<setup|update|delete>`")
+    @group(name="starboarde", case_insensitive=True, usage="`<setup|update|delete>`")
     @bot_has_permissions(embed_links=True)
     @has_permissions(manage_guild=True)
     async def starboard(self, ctx):

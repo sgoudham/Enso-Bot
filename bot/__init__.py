@@ -323,10 +323,9 @@ class Bot(commands.Bot):
                 # Store it in cache
                 else:
                     if result:
-                        self.starboard_messages_cache[root_message_id, guild_id] = {"channel_id": result["channel_id"],
-                                                                                    "star_message_id":
-                                                                                        result["star_message_id"],
-                                                                                    "stars": result["stars"]}
+                        self.starboard_messages_cache[root_message_id, guild_id] = {
+                            "star_message_id": result["star_message_id"],
+                            "stars": result["stars"]}
 
                         return self.starboard_messages_cache[root_message_id, guild_id]["star_message_id"], \
                                self.starboard_messages_cache[root_message_id, guild_id]["stars"]

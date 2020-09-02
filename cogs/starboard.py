@@ -152,7 +152,7 @@ class Starboard(Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @group(name="starboarde", case_insensitive=True, usage="`<setup|update|delete>`")
+    @group(name="starboard", case_insensitive=True, usage="`<setup|update|delete>`")
     @bot_has_permissions(embed_links=True)
     @has_permissions(manage_guild=True)
     async def starboard(self, ctx):

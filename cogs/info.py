@@ -1,5 +1,5 @@
 # Ensō~Chan - A Multi Purpose Discord Bot That Has Everything Your Server Needs!
-# Copyright (C) 2020  Goudham Suresh
+# Copyright (C) 2020  Hamothy
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ from discord.ext.commands import BucketType, cooldown, bot_has_permissions, guil
 from discord.ext.commands import command
 from psutil import Process, virtual_memory
 
-from bot.libs.paginator import SimpleMenu
+from cogs.libs.paginators import SimpleMenu
 
 # Using forzenset
 # Permissions to filter through

@@ -78,6 +78,8 @@ class Bot(commands.Bot):
         # Instance variables for cache
         self.enso_cache = {}
         self.modmail_cache = {}
+        self.starboard_cache = {}
+        self.starboard_messages_cache = {}
         self.member_cache = MyCoolCache(100)
 
         async def create_connection():
@@ -124,6 +126,31 @@ class Bot(commands.Bot):
                 # Catch errors
                 except asyncpg.PostgresError as e:
                     print("PostGres Error: Modmail Records Could Not Be Loaded Into Cache On Startup", e)
+
+                # Query to get all records of starboards within guilds
+                try:
+                    results = await conn.fetch("SELECT * FROM starboard")
+
+                    # Store the information for starboard within cache
+                    for row in results:
+                        self.starboard_cache[row["guild_id"]] = {"channel_id": row["channel_id"]}
+
+                # Catch errors
+                except asyncpg.PostgresError as e:
+                    print("PostGres Error: Starboard Records Could Not Be Loaded Into Cache On Startup", e)
+
+                # Query to get all records of starboard messages within guilds
+                try:
+                    results = await conn.fetch("SELECT * FROM starboard_messages")
+
+                    for row in results:
+                        self.starboard_messages_cache[(row["root_message_id"], row["guild_id"])] = {
+                            "star_message_id": row["star_message_id"],
+                            "stars": row["stars"]}
+
+                # Catch errors
+                except asyncpg.PostgresError as e:
+                    print("PostGres Error: Starboard Records Could Not Be Loaded Into Cache On Startup", e)
 
                 # Release connection back to pool
                 await pool.release(conn)
@@ -183,7 +210,134 @@ class Bot(commands.Bot):
 
         del self.enso_cache[guild_id]
 
+    async def check_cache(self, member_id, guild_id):
+        """Checks if member is in the member cache"""
+
+        # Return key-value pair if member is already in the cache
+        if (member_id, guild_id) in self.member_cache.cache:
+            return self.member_cache.cache[member_id, guild_id]
+
+        else:
+            # Setup pool connection
+            pool = self.db
+            async with pool.acquire() as conn:
+
+                # Get the author's/members row from the Members Table
+                try:
+                    select_query = """SELECT * FROM members WHERE member_id = $1 and guild_id = $2"""
+                    result = await conn.fetchrow(select_query, member_id, guild_id)
+
+                # Catch errors
+                except asyncpg.PostgresError as e:
+                    print(f"PostGres Error: Member {member_id} From Guild {guild_id}"
+                          "Record Could Not Be Retrieved When Checking Cache", e)
+
+                # Store it in cache
+                else:
+                    dict_items = {"married": result["married"],
+                                  "married_date": result["married_date"],
+                                  "muted_roles": result["muted_roles"],
+                                  "roles": result["roles"]}
+                    self.member_cache.store_cache((member_id, guild_id), dict_items)
+
+                    return self.member_cache.cache[member_id, guild_id]
+
+                # Release connection back to pool
+                finally:
+                    await pool.release(conn)
+
     # --------------------------------------------!End Cache Section!---------------------------------------------------
+
+    # --------------------------------------------!Starboard Section!---------------------------------------------------
+
+    def cache_store_starboard(self, guild_id, channel_id):
+        """Storing starboard within cache"""
+
+        self.starboard_cache[guild_id] = {"channel_id": channel_id}
+
+    def get_starboard(self, guild_id):
+        """Returning the starboard of the guild"""
+
+        starboard = self.starboard_cache.get(guild_id)
+        return starboard.get("channel_id") if starboard else None
+
+    def update_starboard(self, guild_id, channel_id):
+        """Update the starboard channel"""
+
+        self.starboard_cache[guild_id]["channel_id"] = channel_id
+
+    def delete_starboard(self, guild_id):
+        """Deleting the starboard of the guild"""
+
+        del self.starboard_cache[guild_id]
+
+    def delete_starboard_messages(self, guild_id):
+
+        # Array to store keys to be removed
+        keys_to_remove = []
+
+        # For every starboard message in cache
+        for (root_msg_id, guild_id) in self.starboard_messages_cache:
+            # if the guild_id passed in is equal to the guild_id within the cache
+            if guild_id == guild_id:
+                # Store key within array
+                keys_to_remove.append((root_msg_id, guild_id))
+
+        # Iterate through the array and then pop the keys from cache
+        for key in keys_to_remove:
+            self.starboard_messages_cache.pop(key)
+
+    def cache_store_starboard_message(self, root_message_id, guild_id, star_message_id):
+        """Store the starboard messages within cache"""
+
+        self.starboard_messages_cache[root_message_id, guild_id] = {"star_message_id": star_message_id,
+                                                                    "stars": 1}
+
+    def update_starboard_message(self, root_message_id, guild_id, reactions):
+        """Update the stored starboard message"""
+
+        self.starboard_messages_cache[root_message_id, guild_id]["stars"] = reactions
+
+    async def check_starboard_messages_cache(self, root_message_id, guild_id):
+        """Check if the message is already in the cache"""
+
+        # Return value if message is already in the cache
+        if (root_message_id, guild_id) in self.starboard_messages_cache:
+            return self.starboard_messages_cache[root_message_id, guild_id]["star_message_id"], \
+                   self.starboard_messages_cache[root_message_id, guild_id]["stars"]
+
+        else:
+            # Setup pool connection
+            pool = self.db
+            async with pool.acquire() as conn:
+
+                # Get the starboard row from the starboard_messages table
+                try:
+                    select_query = """SELECT * FROM starboard_messages WHERE root_message_id = $1 AND guild_id = $2"""
+                    result = await conn.fetchrow(select_query, root_message_id, guild_id)
+
+                # Catch errors
+                except asyncpg.PostgresError as e:
+                    print(e)
+
+                # Store it in cache
+                else:
+                    if result:
+                        self.starboard_messages_cache[root_message_id, guild_id] = {"channel_id": result["channel_id"],
+                                                                                    "star_message_id":
+                                                                                        result["star_message_id"],
+                                                                                    "stars": result["stars"]}
+
+                        return self.starboard_messages_cache[root_message_id, guild_id]["star_message_id"], \
+                               self.starboard_messages_cache[root_message_id, guild_id]["stars"]
+                    else:
+                        return None, 0
+
+                # Release connection back to pool
+                finally:
+                    await pool.release(conn)
+
+    # --------------------------------------------!EndStarbard Section!-------------------------------------------------
 
     # --------------------------------------------!Modmail Section!-----------------------------------------------------
 
@@ -507,6 +661,24 @@ class Bot(commands.Bot):
                 # Remove any/all members stored in cache from that guild
                 self.member_cache.remove_many(guild.id)
 
+            # Delete any starboard information upon leaving the guild
+            try:
+                delete = """DELETE FROM starboard WHERE guild_id = $1"""
+                rowcount = await conn.execute(delete, guild.id)
+
+            # Catch errors
+            except asyncpg.PostgresError as e:
+                print(
+                    f"PostGres Error: On Guild Remove Event Starboard/Starboard Messages Were Not Deleted For {guild.id}",
+                    e)
+
+            # Delete all information about the starboard and any messages stored
+            else:
+                print(rowcount, f"Starboard deleted successfully from Guild {guild}")
+                if self.get_starboard(guild.id):
+                    self.delete_starboard(guild.id)
+                    self.delete_starboard_messages(guild.id)
+
             # Release connection back to pool
             await pool.release(conn)
 
@@ -668,6 +840,8 @@ class Bot(commands.Bot):
 
         # Get the modlogs channel (channel or none)
         modlogs = self.get_modlog_for_guild(channel.guild.id)
+        # Get the starboard (record or none)
+        starboard = self.get_starboard(channel.guild.id)
 
         # Get the modmail record - (normal and logging channels)
         modmail_record = self.get_modmail(channel.guild.id)
@@ -699,6 +873,32 @@ class Bot(commands.Bot):
                 finally:
                     await pool.release(conn)
 
+        # Delete all of the starboard information when the channel is deleted from the guild
+        if channel.id == starboard:
+            # Setup pool connection
+            async with pool.acquire() as conn:
+
+                # Delete any starboard information upon leaving the guild
+                try:
+                    delete = """DELETE FROM starboard WHERE guild_id = $1"""
+                    rowcount = await conn.execute(delete, channel.guild.id)
+
+                # Catch errors
+                except asyncpg.PostgresError as e:
+                    print(
+                        f"PostGres Error: On Guild Remove Event Starboard/Starboard Messages Were Not Deleted For {channel.guild.id}",
+                        e)
+
+                # Delete all information about the starboard and any messages stored
+                else:
+                    print(rowcount, f"Starboard deleted successfully from Guild {channel.guild}")
+                    if self.get_starboard(channel.guild.id):
+                        self.delete_starboard(channel.guild.id)
+                        self.delete_starboard_messages(channel.guild.id)
+
+                # Release connection back to pool
+                await pool.release(conn)
+
         # If modmail channels are deleted, delete the entire system
         if channel.id == modmail_channel or channel.id == modmail_logging_channel:
             # Set up pool connection
@@ -721,44 +921,7 @@ class Bot(commands.Bot):
                 finally:
                     await pool.release(conn)
 
-        # --------------------------------------------!End Events Section!----------------------------------------------
-
-    async def check_cache(self, member_id, guild_id):
-        """Checks if member is in the member cache"""
-
-        # Return key-value pair if member is already in the cache
-        if (member_id, guild_id) in self.member_cache.cache:
-            return self.member_cache.cache[member_id, guild_id]
-
-        else:
-
-            # Setup pool connection
-            pool = self.db
-            async with pool.acquire() as conn:
-
-                # Get the author's/members row from the Members Table
-                try:
-                    select_query = """SELECT * FROM members WHERE member_id = $1 and guild_id = $2"""
-                    result = await conn.fetchrow(select_query, member_id, guild_id)
-
-                # Catch errors
-                except asyncpg.PostgresError as e:
-                    print(f"PostGres Error: Member {member_id} From Guild {guild_id}"
-                          "Record Could Not Be Retrieved When Checking Cache", e)
-
-                # Store it in cache
-                else:
-                    dict_items = {"married": result["married"],
-                                  "married_date": result["married_date"],
-                                  "muted_roles": result["muted_roles"],
-                                  "roles": result["roles"]}
-                    self.member_cache.store_cache((member_id, guild_id), dict_items)
-
-                    return self.member_cache.cache[(member_id, guild_id)]
-
-                # Release connection back to pool
-                finally:
-                    await pool.release(conn)
+    # --------------------------------------------!End Events Section!--------------------------------------------------
 
     def execute(self):
         """Load the cogs and then run the bot"""

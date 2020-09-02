@@ -185,9 +185,9 @@ class Guild(Cog):
 
         # Get status of mod
         if self.bot.get_roles_persist(ctx.guild.id) == 0:
-            desc += f"**{self.bot.tick} Role Persist**\n"
-        else:
             desc += f"**{self.bot.cross} Role Persist**\n"
+        else:
+            desc += f"**{self.bot.tick} Role Persist**\n"
 
         # Get status of modlogs
         ml_channel = self.bot.get_modlog_for_guild(ctx.guild.id)
@@ -746,7 +746,7 @@ class Guild(Cog):
         if isinstance(exc, BadArgument):
             text = "**Channel Not Detected... Aborting Process**"
             await self.bot.generate_embed(ctx, desc=text)
-        if isinstance(exc, MissingRequiredArgument):
+        elif isinstance(exc, MissingRequiredArgument):
             text = "Required Argument(s) Missing!" \
                    f"\nUse **{ctx.prefix}help** to find how to use **{ctx.command}**"
             await self.bot.generate_embed(ctx, desc=text)

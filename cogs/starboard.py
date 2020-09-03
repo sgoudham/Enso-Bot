@@ -91,7 +91,6 @@ async def send_starboard_and_update_db(self, payload, action):
                     else:
                         if new_stars >= self.bot.get_starboard_min_stars(payload.guild_id):
                             self.bot.cache_store_starboard_message(message.id, payload.guild_id, star_message.id)
-                            self.bot.update_starboard_message(message.id, payload.guild_id, new_stars)
                         else:
                             self.bot.cache_store_starboard_message(message.id, payload.guild_id, None)
 
@@ -102,7 +101,7 @@ async def send_starboard_and_update_db(self, payload, action):
             else:
                 if new_stars >= self.bot.get_starboard_min_stars(payload.guild_id) and not msg_id:
                     star_message = await channel.send(embed=embed)
-                else:
+                elif msg_id:
                     try:
                         star_message = await channel.fetch_message(msg_id)
                         await star_message.edit(embed=embed)

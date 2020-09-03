@@ -26,7 +26,7 @@ from typing import Optional
 import discord
 from discord import Embed, DMChannel
 from discord.ext import commands
-from discord.ext.commands import Cog, command, has_permissions, guild_only
+from discord.ext.commands import Cog, command, has_permissions, guild_only, is_owner
 
 
 class CannotPaginate(Exception):
@@ -63,7 +63,7 @@ class Pages:
         Our permissions for the channel.
     """
 
-    def __init__(self, ctx, *, entries, per_page=6, show_entry_count=True):
+    def __init__(self, ctx, *, entries, per_page=8, show_entry_count=True):
 
         self.bot = ctx.bot
         self.prefix = ctx.prefix
@@ -370,7 +370,7 @@ def _command_signature(cmd):
 
 
 class HelpPaginator(Pages):
-    def __init__(self, ctx, entries, *, per_page=8):
+    def __init__(self, ctx, entries, *, per_page=10):
         super().__init__(ctx, entries=entries, per_page=per_page)
         self.reaction_emojis.append(('\N{WHITE QUESTION MARK ORNAMENT}', self.show_bot_help))
         self.total = len(entries)
@@ -447,7 +447,7 @@ class HelpPaginator(Pages):
 
         entries = sorted(ctx.bot.commands, key=key)
         nested_pages = []
-        per_page = 6
+        per_page = 8
 
         # 0: (cog, desc, commands) (max len == 9)
         # 1: (cog, desc, commands) (max len == 9)
@@ -649,6 +649,27 @@ class Help(Cog):
             await p.paginate()
         except Exception as ex:
             await ctx.send(f"**{ex}**")
+
+    @command(name="forceprefix")
+    @guild_only()
+    @is_owner()
+    async def override_prefix(self, ctx, new: Optional[str] = None):
+        """Override the prefix in any given guild (Owner only)"""
+
+        # As long as a new prefix has been given and is less than 5 characters
+        if new and len(new) <= 5:
+            # Store the new prefix in the dictionary and update the database
+            await self.bot.storage_prefix_for_guild(ctx, new)
+
+        # Making sure that errors are handled if prefix is above 5 characters
+        elif new and len(new) > 5:
+            await self.bot.generate_embed(ctx, desc="The guild prefix must be less than or equal to **5** characters!")
+
+        # if no prefix was provided
+        elif not new:
+            # Grab the current prefix for the guild within the cached dictionary
+            await self.bot.generate_embed(ctx,
+                                          desc=f"**The current guild prefix is `{self.bot.get_prefix_for_guild(ctx.guild.id)}`**")
 
     @command(name="prefix")
     @guild_only()

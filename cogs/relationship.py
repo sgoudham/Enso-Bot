@@ -139,10 +139,6 @@ class Relationship(Cog):
                         db_member["married"] = ctx.author.id
                         db_member["married_date"] = message_time
 
-                    # Release connection back to pool
-                    finally:
-                        await pool.release(conn)
-
                 # Congratulate them!
                 desc = f"**Congratulations! ｡ﾟ( ﾟ^∀^ﾟ)ﾟ｡ {ctx.author.mention} and {member.mention} are now married to each other!**"
                 await self.bot.generate_embed(ctx, desc=desc)
@@ -234,10 +230,6 @@ class Relationship(Cog):
                         db_member = await self.bot.check_cache(member.id, ctx.guild.id)
                         db_member["married"] = None
                         db_member["married_date"] = None
-
-                    # Release connection back to pool
-                    finally:
-                        await pool.release(conn)
 
                 # Congratulate them!
                 desc = f"**૮( ´⁰▱๋⁰ )ა {ctx.author.mention} and {member.mention} are now divorced." \

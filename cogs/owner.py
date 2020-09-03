@@ -90,10 +90,6 @@ class Owner(Cog):
             else:
                 print(f"Record(s) Inserted Into Members")
 
-            # Release connection back to pool
-            finally:
-                await pool.release(conn)
-
     @command(name="cache", hidden=True)
     @is_owner()
     async def set_cache(self, ctx, size: Optional[int]):

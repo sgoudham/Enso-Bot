@@ -243,10 +243,6 @@ class Bot(commands.Bot):
 
                     return self.member_cache.cache[member_id, guild_id]
 
-                # Release connection back to pool
-                finally:
-                    await pool.release(conn)
-
     # --------------------------------------------!End Cache Section!---------------------------------------------------
 
     # --------------------------------------------!Starboard Section!---------------------------------------------------
@@ -351,10 +347,6 @@ class Bot(commands.Bot):
                     else:
                         return None, 0
 
-                # Release connection back to pool
-                finally:
-                    await pool.release(conn)
-
     # --------------------------------------------!EndStarboard Section!-------------------------------------------------
 
     # --------------------------------------------!Modmail Section!-----------------------------------------------------
@@ -411,10 +403,6 @@ class Bot(commands.Bot):
             else:
                 self.enso_cache[guild_id]["roles_persist"] = value
 
-            # Release connection back to pool
-            finally:
-                await pool.release(conn)
-
     # --------------------------------------------!End RolePersist Section!---------------------------------------------
 
     # --------------------------------------------!ModLogs Section!-----------------------------------------------------
@@ -448,10 +436,6 @@ class Bot(commands.Bot):
 
                 # Store in cache
                 self.enso_cache[ctx.guild.id]["modlogs"] = channel_id
-
-            # Release connection back to pool
-            finally:
-                await pool.release(conn)
 
     def remove_modlog_channel(self, guild_id):
         """Remove the value of modlog for the guild specified"""
@@ -491,10 +475,6 @@ class Bot(commands.Bot):
 
                 # Store in cache
                 self.enso_cache[ctx.guild.id]["prefix"] = prefix
-
-            # Release connection back to pool
-            finally:
-                await pool.release(conn)
 
     def get_prefix_for_guild(self, guild_id):
         """Get the prefix of the guild that the user is in"""
@@ -547,10 +527,6 @@ class Bot(commands.Bot):
                 result["muted_roles"] = role_ids
                 print(rowcount, f"Roles Added For User {member} in {ctx.guild}")
 
-            # Release connection back to pool
-            finally:
-                await pool.release(conn)
-
     async def clear_roles(self, member):
         """Clear the roles when the user has been unmuted"""
 
@@ -574,10 +550,6 @@ class Bot(commands.Bot):
             else:
                 result["muted_roles"] = None
                 print(rowcount, f"Roles Cleared For User {member} in {member.guild.name}")
-
-            # Release connection back to pool
-            finally:
-                await pool.release(conn)
 
     # --------------------------------------------!End Roles/Colour/Embed Section!--------------------------------------
 
@@ -849,10 +821,6 @@ class Bot(commands.Bot):
             else:
                 print(rowcount, f"{member} Left {member.guild.name}, Roles stored into Members")
 
-            # Release connection back to pool
-            finally:
-                await pool.release(conn)
-
     async def on_guild_channel_delete(self, channel):
         """Deleting modlogs/modmail channel if it's deleted in the guild"""
 
@@ -886,10 +854,6 @@ class Bot(commands.Bot):
                 # Delete channel from cache
                 else:
                     self.remove_modlog_channel(channel.guild.id)
-
-                # Release connection back to pool
-                finally:
-                    await pool.release(conn)
 
         # Delete all of the starboard information when the channel is deleted from the guild
         if channel.id == starboard:
@@ -934,10 +898,6 @@ class Bot(commands.Bot):
                 # Delete from cache
                 else:
                     self.delete_modmail(channel.guild.id)
-
-                # Release connection back to pool
-                finally:
-                    await pool.release(conn)
 
     # --------------------------------------------!End Events Section!--------------------------------------------------
 

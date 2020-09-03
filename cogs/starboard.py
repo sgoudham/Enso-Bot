@@ -20,14 +20,6 @@ from discord import TextChannel, Embed, NotFound
 from discord.ext.commands import Cog, group, bot_has_permissions, has_permissions
 
 
-def is_url_spoiler(self, text, url):
-    spoilers = self.spoilers.findall(text)
-    for spoiler in spoilers:
-        if url in spoiler:
-            return True
-    return False
-
-
 async def send_starboard_and_update_db(self, payload, action):
     """Send the starboard embed and update database/cache"""
 
@@ -52,6 +44,7 @@ async def send_starboard_and_update_db(self, payload, action):
                             value=f"**Channel:** {message.channel.mention}\n[Jump To Message]({message.jump_url})",
                             inline=False)
 
+            # Send spoiler attachments as links
             if message.attachments:
                 file = message.attachments[0]
                 spoiler = file.is_spoiler()
@@ -94,10 +87,6 @@ async def send_starboard_and_update_db(self, payload, action):
                         else:
                             self.bot.cache_store_starboard_message(message.id, payload.guild_id, None)
 
-                    # Release connection back to pool
-                    finally:
-                        await pool.release(conn)
-
             else:
                 if new_stars >= self.bot.get_starboard_min_stars(payload.guild_id) and not msg_id:
                     star_message = await channel.send(embed=embed)
@@ -137,10 +126,6 @@ async def send_starboard_and_update_db(self, payload, action):
                             self.bot.cache_store_starboard_message(message.id, payload.guild_id, star_message.id)
                         self.bot.update_starboard_message(message.id, payload.guild_id, new_stars)
 
-                    # Release connection back to pool
-                    finally:
-                        await pool.release(conn)
-
 
 async def get_starboard_from_db(self, ctx, action):
     """Get the starboard record from DB"""
@@ -170,10 +155,6 @@ async def get_starboard_from_db(self, ctx, action):
                        f"\nDo **{ctx.prefix}help starboard** to find out more!"
                 await self.bot.generate_embed(ctx, desc=text)
                 return None
-
-        # Release the connection back to the pool
-        finally:
-            await pool.release(conn)
 
         return not None
 
@@ -223,10 +204,6 @@ class Starboard(Cog):
                     # Update cache
                     self.bot.update_starboard_min_stars(ctx.guild.id, stars)
 
-                # Release connection back to pool
-                finally:
-                    await pool.release(conn)
-
         elif stars <= 0:
             await self.bot.generate_embed(ctx, desc="Minimum Stars Must Be Over or Equal to 1!")
 
@@ -255,15 +232,11 @@ class Starboard(Cog):
                 # Send confirmation message
                 else:
                     text = "**Starboard** is successfully set up!" \
-                           f"\nRefer to **{ctx.prefix}help modmail** for more information"
+                           f"\nRefer to **{ctx.prefix}help starboard** for more information"
                     await self.bot.generate_embed(ctx, desc=text)
 
                     # Store into cache
                     self.bot.cache_store_starboard(ctx.guild.id, starboard_channel.id, 1)
-
-                # Release connection back into pool
-                finally:
-                    await pool.release(conn)
 
     @starboard.command(name="update")
     @bot_has_permissions(embed_links=True)
@@ -296,10 +269,6 @@ class Starboard(Cog):
                     # Update cache
                     self.bot.update_starboard_channel(ctx.guild.id, starboard_channel.id)
 
-                # Release connection back to pool
-                finally:
-                    await pool.release(conn)
-
     @starboard.command(name="delete")
     @bot_has_permissions(embed_links=True)
     async def sb_delete(self, ctx):
@@ -328,21 +297,17 @@ class Starboard(Cog):
                     # Delete from cache
                     self.bot.delete_starboard(ctx.guild.id)
 
-                # Release connection back to pool
-                finally:
-                    await pool.release(conn)
-
-    @Cog.listener()
-    async def on_raw_reaction_remove(self, payload):
-        """Removing reaction when a star is removed from the message"""
-
-        await send_starboard_and_update_db(self, payload, action="removed")
-
     @Cog.listener()
     async def on_raw_reaction_add(self, payload):
         """Listening for star reactions for any guilds that have starboard enabled"""
 
         await send_starboard_and_update_db(self, payload, action="added")
+
+    @Cog.listener()
+    async def on_raw_reaction_remove(self, payload):
+        """Editing the message if a star reaction was removed"""
+
+        await send_starboard_and_update_db(self, payload, action="removed")
 
 
 def setup(bot):

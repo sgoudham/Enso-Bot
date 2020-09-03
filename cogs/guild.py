@@ -27,8 +27,9 @@ from discord.ext.commands import has_permissions, Cog, group, bot_has_permission
     command
 
 
-# Method to ask the user if they want to be anonymous or not
 def anon_or_not(self, author):
+    """Method to ask the user if they want to be anonymous or not"""
+
     # Set up embed to let the user how to start sending modmail
     AnonModMailEmbed = Embed(title="**Want to send it Anonymously?**",
                              colour=self.bot.admin_colour,
@@ -53,9 +54,9 @@ def anon_or_not(self, author):
     return AnonModMailEmbed
 
 
-# Method to send an embed to to let the user know to type into chat
 def send_instructions(self, author):
-    # Set up embed to let the user know that they have aborted the modmail
+    """Method to send an embed to to let the user know to type into chat"""
+
     SendModMailEmbed = Embed(title="**Please enter a message for it to be sent to the staff!**",
                              colour=self.bot.admin_colour,
                              timestamp=datetime.datetime.utcnow())
@@ -73,9 +74,9 @@ def send_instructions(self, author):
     return SendModMailEmbed
 
 
-# Method to let the user know that the message must be above 50 characters
 def error_handling(self, author):
-    # Set up embed to let the user know that the message must be above 50 characters
+    """Method to let the user know that the message must be above 50 characters"""
+
     ErrorHandlingEmbed = Embed(
         title="Uh Oh! Please make sure the message is above **50** and below **1024** characters!",
         colour=self.bot.admin_colour,
@@ -94,9 +95,9 @@ def error_handling(self, author):
     return ErrorHandlingEmbed
 
 
-# Method to send an embed into chat to let the user know that their mail has been sent successfully
 def message_sent_confirmation(self, author):
-    # Set up embed to let the user know that they have sent the mail
+    """Method to send an embed into chat to let the user know that their mail has been sent successfully"""
+
     ConfirmationEmbed = Embed(title="**Message relayed to Staff!!**",
                               colour=self.bot.admin_colour,
                               timestamp=datetime.datetime.utcnow())
@@ -114,8 +115,9 @@ def message_sent_confirmation(self, author):
     return ConfirmationEmbed
 
 
-# Method to actually allow the message to be sent to #mod-mail
 def send_modmail(self, msg, author):
+    """Method to actually allow the message to be sent to modmail logging channel"""
+
     embed = Embed(title="Modmail",
                   colour=self.bot.admin_colour,
                   timestamp=datetime.datetime.utcnow())
@@ -288,10 +290,6 @@ class Guild(Cog):
                     mod_log_setup = True
                     await self.bot.storage_modlog_for_guild(ctx, user_channel.id, mod_log_setup)
 
-            # Release the connection back to the pool
-            finally:
-                await pool.release(conn)
-
     @modlogs.command(name="update")
     async def mlupdate(self, ctx, user_channel: TextChannel):
         """Change the channel that your modlogs are sent to"""
@@ -320,10 +318,6 @@ class Guild(Cog):
                 else:
                     mod_log_setup = False
                     await self.bot.storage_modlog_for_guild(ctx, user_channel.id, mod_log_setup)
-
-            # Release the connection back to the pool
-            finally:
-                await pool.release(conn)
 
     @modlogs.command("delete")
     async def mldelete(self, ctx):
@@ -408,10 +402,6 @@ class Guild(Cog):
                     await self.bot.generate_embed(ctx, desc=text)
                     return
 
-            # Release the connection back to the pool
-            finally:
-                await pool.release(conn)
-
         # Set up embed to let the user how to start sending modmail
         desc = "React to this message if you want to send a message to the Staff Team!" \
                "\n\n**React with ✅**" \
@@ -454,10 +444,6 @@ class Guild(Cog):
                 # Store into cache
                 self.bot.cache_store_modmail(ctx.guild.id, modmail.id, modmail_message.id, modmail_logging.id)
 
-            # Release connection back into pool
-            finally:
-                await pool.release(conn)
-
     @mod_mail.command(name="update")
     async def mmupdate(self, ctx, modmail_logging_channel: TextChannel):
         """
@@ -486,10 +472,6 @@ class Guild(Cog):
                     await self.bot.generate_embed(ctx, desc=text)
                     return
 
-            # Release connection back to pool
-            finally:
-                await pool.release(conn)
-
         # Setup up pool connection and cursor
         async with pool.acquire() as conn:
 
@@ -510,10 +492,6 @@ class Guild(Cog):
 
                 # Update cache
                 self.bot.update_modmail(ctx.guild.id, modmail_logging_channel.id)
-
-            # Release connection back to pool
-            finally:
-                await pool.release(conn)
 
     @mod_mail.command(name="delete")
     async def mmdelete(self, ctx):
@@ -540,10 +518,6 @@ class Guild(Cog):
                     await self.bot.generate_embed(ctx, desc=text)
                     return
 
-            # Release connection back to pool
-            finally:
-                await pool.release(conn)
-
         # Setup up pool connection
         async with pool.acquire() as conn:
 
@@ -564,10 +538,6 @@ class Guild(Cog):
 
                 # Delete from cache
                 self.bot.delete_modmail(ctx.guild.id)
-
-            # Release connection back to pool
-            finally:
-                await pool.release(conn)
 
     @Cog.listener()
     async def on_raw_reaction_add(self, payload):

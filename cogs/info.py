@@ -532,6 +532,22 @@ class Info(Cog):
 
         await ctx.send(embed=embed)
 
+    @command(name="vote", aliases=["upvote"])
+    async def upvote(self, ctx):
+        """Upvote the bot on top.gg!"""
+
+        desc = "Click the link above to upvote me!\nIt would greatly help me out as it allows the bot to be " \
+               "noticed more on the website!\nIt's free and takes a maximum of 30 seconds to do. Thanks so much!"
+        embed = Embed(title="Upvote me on top.gg!",
+                      description=desc,
+                      url="https://top.gg/bot/716701699145728094/vote",
+                      colour=self.bot.random_colour(),
+                      timestamp=datetime.datetime.utcnow())
+        embed.set_thumbnail(url=self.bot.user.avatar_url)
+        embed.add_field(name="Developer", value=f"{self.bot.hammyMention} | Hamothy#5619", inline=False)
+
+        await ctx.send(embed=embed)
+
     @command(name="about")
     @bot_has_permissions(embed_links=True)
     async def checking_bot_stats(self, ctx):

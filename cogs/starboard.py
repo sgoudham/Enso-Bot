@@ -20,18 +20,24 @@ from discord import TextChannel, Embed, NotFound
 from discord.ext.commands import Cog, group, bot_has_permissions, has_permissions
 
 
+def is_url_spoiler(self, text, url):
+    spoilers = self.spoilers.findall(text)
+    for spoiler in spoilers:
+        if url in spoiler:
+            return True
+    return False
+
+
 async def send_starboard_and_update_db(self, payload, action):
     """Send the starboard embed and update database/cache"""
 
-    if (starboard := self.bot.get_starboard(payload.guild_id)) and payload.emoji.name == "⭐":
+    if (starboard := self.bot.get_starboard_channel(payload.guild_id)) and payload.emoji.name == "⭐":
         message = await self.bot.get_channel(payload.channel_id).fetch_message(payload.message_id)
 
-        if action == "added":
-            check = not message.author.bot and payload.member.id != message.author.id
-        else:
-            check = not message.author.bot
+        # Making sure the variables are right for each react event
+        user = payload.member.id if action == "added" else payload.user_id
 
-        if check:
+        if not message.author.bot and user != message.author.id:
             channel = self.bot.get_channel(starboard)
             msg_id, stars = await self.bot.check_starboard_messages_cache(message.id, payload.guild_id)
             new_stars = stars + 1 if action == "added" else stars - 1
@@ -46,11 +52,19 @@ async def send_starboard_and_update_db(self, payload, action):
                             value=f"**Channel:** {message.channel.mention}\n[Jump To Message]({message.jump_url})",
                             inline=False)
 
-            if len(message.attachments):
-                embed.set_image(url=message.attachments[0].url)
+            if message.attachments:
+                file = message.attachments[0]
+                spoiler = file.is_spoiler()
+                if not spoiler and file.url.lower().endswith(('png', 'jpeg', 'jpg', 'gif', 'webp')):
+                    embed.set_image(url=file.url)
+                elif spoiler:
+                    embed.add_field(name='Attachment', value=f'||[{file.filename}]({file.url})||', inline=False)
+                else:
+                    embed.add_field(name='Attachment', value=f'[{file.filename}]({file.url})', inline=False)
 
             if not stars:
-                star_message = await channel.send(embed=embed)
+                if new_stars >= self.bot.get_starboard_min_stars(payload.guild_id) and not msg_id:
+                    star_message = await channel.send(embed=embed)
 
                 # Setup up pool connection
                 pool = self.bot.db
@@ -58,9 +72,14 @@ async def send_starboard_and_update_db(self, payload, action):
 
                     # Insert the starboard message in the database
                     try:
-                        update_query = """INSERT INTO starboard_messages (root_message_id, guild_id, star_message_id)
-                                          VALUES ($1, $2, $3)"""
-                        await conn.execute(update_query, message.id, payload.guild_id, star_message.id)
+                        if new_stars >= self.bot.get_starboard_min_stars(payload.guild_id):
+                            update_query = """INSERT INTO starboard_messages (root_message_id, guild_id, star_message_id)
+                                              VALUES ($1, $2, $3)"""
+                            await conn.execute(update_query, message.id, payload.guild_id, star_message.id)
+                        else:
+                            update_query = """INSERT INTO starboard_messages (root_message_id, guild_id)
+                                                                          VALUES ($1, $2)"""
+                            await conn.execute(update_query, message.id, payload.guild_id)
 
                     # Catch errors
                     except asyncpg.PostgresError as e:
@@ -70,18 +89,24 @@ async def send_starboard_and_update_db(self, payload, action):
 
                     # Update cache
                     else:
-                        self.bot.cache_store_starboard_message(message.id, payload.guild_id, star_message.id)
+                        if new_stars >= self.bot.get_starboard_min_stars(payload.guild_id):
+                            self.bot.cache_store_starboard_message(message.id, payload.guild_id, star_message.id)
+                        else:
+                            self.bot.cache_store_starboard_message(message.id, payload.guild_id, None)
 
                     # Release connection back to pool
                     finally:
                         await pool.release(conn)
 
             else:
-                try:
-                    star_message = await channel.fetch_message(msg_id)
-                    await star_message.edit(embed=embed)
-                except NotFound:
-                    pass
+                if new_stars >= self.bot.get_starboard_min_stars(payload.guild_id) and not msg_id:
+                    star_message = await channel.send(embed=embed)
+                else:
+                    try:
+                        star_message = await channel.fetch_message(msg_id)
+                        await star_message.edit(embed=embed)
+                    except NotFound:
+                        pass
 
                 # Setup up pool connection
                 pool = self.bot.db
@@ -89,10 +114,16 @@ async def send_starboard_and_update_db(self, payload, action):
 
                     # Update the stars that the message has in the database
                     try:
-                        update_query = """UPDATE starboard_messages 
-                                          SET stars = $1
-                                          WHERE root_message_id = $2 AND guild_id = $3"""
-                        await conn.execute(update_query, new_stars, message.id, payload.guild_id)
+                        if new_stars >= self.bot.get_starboard_min_stars(payload.guild_id):
+                            update_query = """UPDATE starboard_messages 
+                                              SET stars = $1, star_message_id = $2
+                                              WHERE root_message_id = $3 AND guild_id = $4"""
+                            await conn.execute(update_query, new_stars, star_message.id, message.id, payload.guild_id)
+                        else:
+                            update_query = """UPDATE starboard_messages 
+                                              SET stars = $1
+                                              WHERE root_message_id = $2 AND guild_id = $3"""
+                            await conn.execute(update_query, new_stars, message.id, payload.guild_id)
 
                     # Catch errors
                     except asyncpg.PostgresError as e:
@@ -102,6 +133,8 @@ async def send_starboard_and_update_db(self, payload, action):
 
                     # Update cache
                     else:
+                        if new_stars >= self.bot.get_starboard_min_stars(payload.guild_id):
+                            self.bot.cache_store_starboard_message(message.id, payload.guild_id, star_message.id)
                         self.bot.update_starboard_message(message.id, payload.guild_id, new_stars)
 
                     # Release connection back to pool
@@ -134,7 +167,7 @@ async def get_starboard_from_db(self, ctx, action):
                 return None
             elif (action == "update" or action == "delete") and not result:
                 text = "**Starboard** Not Setup!" \
-                       f"\nDo **{ctx.prefix}help modlogs** to find out more!"
+                       f"\nDo **{ctx.prefix}help starboard** to find out more!"
                 await self.bot.generate_embed(ctx, desc=text)
                 return None
 
@@ -159,6 +192,43 @@ class Starboard(Cog):
         """
         Starboard! Let the community star messages!
         """
+
+    @starboard.command(name="stars")
+    @bot_has_permissions(embed_links=True)
+    async def sb_min_stars(self, ctx, stars: int):
+        """Update the minimum amount of stars needed for the message to appear on the starboard"""
+
+        if await get_starboard_from_db(self, ctx, "update") and stars > 0:
+            # Setup up pool connection
+            pool = self.bot.db
+            async with pool.acquire() as conn:
+
+                # Update the starboard min_stars in the database
+                try:
+                    update_query = """UPDATE starboard SET min_stars = $1 WHERE guild_id = $2 RETURNING channel_id"""
+                    await conn.execute(update_query, stars, ctx.guild.id)
+
+                # Catch errors
+                except asyncpg.PostgresError as e:
+                    print(f"PostGres Error: Starboard Record Could Not Be Updated For Guild {ctx.guild.id}", e)
+
+                # Send confirmation that the channel has been updated
+                else:
+                    star_channel = self.bot.get_starboard_channel(ctx.guild.id)
+                    channel = self.bot.get_channel(star_channel)
+                    text = "**Minimum Stars Updated!**" \
+                           f"\nMessages will now need {stars} :star: to appear in {channel.mention}"
+                    await self.bot.generate_embed(ctx, desc=text)
+
+                    # Update cache
+                    self.bot.update_starboard_min_stars(ctx.guild.id, stars)
+
+                # Release connection back to pool
+                finally:
+                    await pool.release(conn)
+
+        elif stars <= 0:
+            await self.bot.generate_embed(ctx, desc="Minimum Stars Must Be Over or Equal to 1!")
 
     @starboard.command(name="setup")
     @bot_has_permissions(embed_links=True)
@@ -224,7 +294,7 @@ class Starboard(Cog):
                     await self.bot.generate_embed(ctx, desc=text)
 
                     # Update cache
-                    self.bot.update_starboard(ctx.guild.id, starboard_channel.id)
+                    self.bot.update_starboard_channel(ctx.guild.id, starboard_channel.id)
 
                 # Release connection back to pool
                 finally:

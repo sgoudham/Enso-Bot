@@ -46,11 +46,11 @@ class TopGG(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.token = top_gg_auth
-        self.dblpy = dbl.DBLClient(self.bot, self.token)  # Autopost will post your guild count every 30 minutes
+        self.dblpy = dbl.DBLClient(self.bot, self.token)
 
         @tasks.loop(minutes=30, reconnect=True)
         async def post_updates():
-            """Post updates to bostlists"""
+            """Post updates to botlists"""
 
             await self.bot.wait_until_ready()
 

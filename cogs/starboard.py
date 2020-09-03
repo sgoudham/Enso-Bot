@@ -259,7 +259,7 @@ class Starboard(Cog):
                     await self.bot.generate_embed(ctx, desc=text)
 
                     # Store into cache
-                    self.bot.cache_store_starboard(ctx.guild.id, starboard_channel.id)
+                    self.bot.cache_store_starboard(ctx.guild.id, starboard_channel.id, 1)
 
                 # Release connection back into pool
                 finally:

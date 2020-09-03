@@ -623,8 +623,6 @@ def error_handling(self, author):
 class Help(Cog):
     """Help Commands!"""
 
-    # TODO: ADD A PREFIX COMMAND THAT OVERRIDES PERMISSIONS
-
     def __init__(self, bot):
         self.bot = bot
 
@@ -668,8 +666,8 @@ class Help(Cog):
         # if no prefix was provided
         elif not new:
             # Grab the current prefix for the guild within the cached dictionary
-            await self.bot.generate_embed(ctx,
-                                          desc=f"**The current guild prefix is `{self.bot.get_prefix_for_guild(ctx.guild.id)}`**")
+            prefix = self.bot.get_prefix_for_guild(ctx.guild.id)
+            await self.bot.generate_embed(ctx, desc=f"**The current guild prefix is `{prefix}`**")
 
     @command(name="prefix")
     @guild_only()
@@ -689,8 +687,8 @@ class Help(Cog):
         # if no prefix was provided
         elif not new:
             # Grab the current prefix for the guild within the cached dictionary
-            await self.bot.generate_embed(ctx,
-                                          desc=f"**The current guild prefix is `{self.bot.get_prefix_for_guild(ctx.guild.id)}`**")
+            prefix = self.bot.get_prefix_for_guild(ctx.guild.id)
+            await self.bot.generate_embed(ctx, desc=f"**The current guild prefix is `{prefix}`**")
 
     @command(name="support")
     async def support(self, ctx):

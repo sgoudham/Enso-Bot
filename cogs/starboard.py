@@ -205,7 +205,7 @@ class Starboard(Cog):
 
                 # Update the starboard min_stars in the database
                 try:
-                    update_query = """UPDATE starboard SET min_stars = $1 WHERE guild_id = $2 RETURNING channel_id"""
+                    update_query = """UPDATE starboard SET min_stars = $1 WHERE guild_id = $2"""
                     await conn.execute(update_query, stars, ctx.guild.id)
 
                 # Catch errors

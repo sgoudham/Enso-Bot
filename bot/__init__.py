@@ -133,7 +133,8 @@ class Bot(commands.Bot):
 
                     # Store the information for starboard within cache
                     for row in results:
-                        self.starboard_cache[row["guild_id"]] = {"channel_id": row["channel_id"]}
+                        self.starboard_cache[row["guild_id"]] = {"channel_id": row["channel_id"],
+                                                                 "min_stars": row["min_stars"]}
 
                 # Catch errors
                 except asyncpg.PostgresError as e:
@@ -250,21 +251,33 @@ class Bot(commands.Bot):
 
     # --------------------------------------------!Starboard Section!---------------------------------------------------
 
-    def cache_store_starboard(self, guild_id, channel_id):
+    def cache_store_starboard(self, guild_id, channel_id, min_stars):
         """Storing starboard within cache"""
 
-        self.starboard_cache[guild_id] = {"channel_id": channel_id}
+        self.starboard_cache[guild_id] = {"channel_id": channel_id,
+                                          "min_stars": min_stars}
 
-    def get_starboard(self, guild_id):
-        """Returning the starboard of the guild"""
+    def get_starboard_channel(self, guild_id):
+        """Returning the starboard channel of the guild"""
 
         starboard = self.starboard_cache.get(guild_id)
         return starboard.get("channel_id") if starboard else None
 
-    def update_starboard(self, guild_id, channel_id):
+    def get_starboard_min_stars(self, guild_id):
+        """Returning the starboard minimum stars of the guild"""
+
+        starboard = self.starboard_cache.get(guild_id)
+        return starboard.get("min_stars") if starboard else None
+
+    def update_starboard_channel(self, guild_id, channel_id):
         """Update the starboard channel"""
 
         self.starboard_cache[guild_id]["channel_id"] = channel_id
+
+    def update_starboard_min_stars(self, guild_id, min_stars):
+        """Update the starboard minimum stars"""
+
+        self.starboard_cache[guild_id]["min_stars"] = min_stars
 
     def delete_starboard(self, guild_id):
         """Deleting the starboard of the guild"""
@@ -288,6 +301,12 @@ class Bot(commands.Bot):
             self.starboard_messages_cache.pop(key)
 
     def cache_store_starboard_message(self, root_message_id, guild_id, star_message_id):
+        """Store the starboard messages within cache"""
+
+        self.starboard_messages_cache[root_message_id, guild_id] = {"star_message_id": star_message_id,
+                                                                    "stars": 1}
+
+    def update_starboard_message_stars(self, root_message_id, guild_id, star_message_id):
         """Store the starboard messages within cache"""
 
         self.starboard_messages_cache[root_message_id, guild_id] = {"star_message_id": star_message_id,
@@ -336,7 +355,7 @@ class Bot(commands.Bot):
                 finally:
                     await pool.release(conn)
 
-    # --------------------------------------------!EndStarbard Section!-------------------------------------------------
+    # --------------------------------------------!EndStarboard Section!-------------------------------------------------
 
     # --------------------------------------------!Modmail Section!-----------------------------------------------------
 
@@ -674,7 +693,7 @@ class Bot(commands.Bot):
             # Delete all information about the starboard and any messages stored
             else:
                 print(rowcount, f"Starboard deleted successfully from Guild {guild}")
-                if self.get_starboard(guild.id):
+                if self.get_starboard_channel(guild.id):
                     self.delete_starboard(guild.id)
                     self.delete_starboard_messages(guild.id)
 
@@ -840,7 +859,7 @@ class Bot(commands.Bot):
         # Get the modlogs channel (channel or none)
         modlogs = self.get_modlog_for_guild(channel.guild.id)
         # Get the starboard (record or none)
-        starboard = self.get_starboard(channel.guild.id)
+        starboard = self.get_starboard_channel(channel.guild.id)
 
         # Get the modmail record - (normal and logging channels)
         modmail_record = self.get_modmail(channel.guild.id)
@@ -891,7 +910,7 @@ class Bot(commands.Bot):
                 # Delete all information about the starboard and any messages stored
                 else:
                     print(rowcount, f"Starboard deleted successfully from Guild {channel.guild}")
-                    if self.get_starboard(channel.guild.id):
+                    if self.get_starboard_channel(channel.guild.id):
                         self.delete_starboard(channel.guild.id)
                         self.delete_starboard_messages(channel.guild.id)
 

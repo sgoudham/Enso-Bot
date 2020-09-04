@@ -26,6 +26,7 @@ from discord.ext.commands import when_mentioned_or
 
 from bot.libs.cache import MyCoolCache
 
+# Counter for cycling statuses
 counter = 0
 
 # Get DB information from .env
@@ -280,7 +281,7 @@ class Bot(commands.Bot):
 
         del self.starboard_cache[guild_id]
 
-    def delete_starboard_messages(self, guild_id):
+    def delete_starboard_messages(self, in_guild_id):
 
         # Array to store keys to be removed
         keys_to_remove = []
@@ -288,7 +289,7 @@ class Bot(commands.Bot):
         # For every starboard message in cache
         for (root_msg_id, guild_id) in self.starboard_messages_cache:
             # if the guild_id passed in is equal to the guild_id within the cache
-            if guild_id == guild_id:
+            if in_guild_id == guild_id:
                 # Store key within array
                 keys_to_remove.append((root_msg_id, guild_id))
 
@@ -302,16 +303,29 @@ class Bot(commands.Bot):
         self.starboard_messages_cache[root_message_id, guild_id] = {"star_message_id": star_message_id,
                                                                     "stars": 1}
 
-    def update_starboard_message_stars(self, root_message_id, guild_id, star_message_id):
-        """Store the starboard messages within cache"""
+    def update_starboard_message_id(self, root_message_id, guild_id, star_message_id):
+        """Update the stored starboard message"""
 
-        self.starboard_messages_cache[root_message_id, guild_id] = {"star_message_id": star_message_id,
-                                                                    "stars": 1}
+        self.starboard_messages_cache[root_message_id, guild_id]["star_message_id"] = star_message_id
 
-    def update_starboard_message(self, root_message_id, guild_id, reactions):
+    def del_starboard_star_message_id(self, root_message_id, guild_id):
+        """Set the star message id to None"""
+
+        self.starboard_messages_cache[root_message_id, guild_id]["star_message_id"] = None
+
+    def update_starboard_message_stars(self, root_message_id, guild_id, reactions):
         """Update the stored starboard message"""
 
         self.starboard_messages_cache[root_message_id, guild_id]["stars"] = reactions
+
+    def check_root_message_id(self, root_message_id, guild_id):
+        """Check if the original message is stored within the cache"""
+
+        # Return value if message is already in the cache
+        if (root_message_id, guild_id) in self.starboard_messages_cache:
+            return True
+        else:
+            return False
 
     async def check_starboard_messages_cache(self, root_message_id, guild_id):
         """Check if the message is already in the cache"""

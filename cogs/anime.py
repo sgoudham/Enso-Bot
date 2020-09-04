@@ -141,12 +141,6 @@ async def detailed_waifu_embed(self, waifu, author, ctx):
     bust = waifu["bust"]
     hip = waifu["hip"]
 
-    """height = f"{waifu['height']} cm"
-    weight = f"{waifu['weight']} kg"
-    waist = f"{waifu['waist']} cm"
-    bust = {waifu['bust']} cm"
-    hip = f"{waifu['hip']} cm"""
-
     # Only setting up description if waifu og_name has a value
     desc = f"**Waifu ID:** {waifu_id}\n"
     desc += f"**Original Name:** {og_name}\n" if og_name else f"**Original Name:** {self.bot.cross}\n"
@@ -279,7 +273,7 @@ class Anime(Cog):
     @airing.command(name="trash", aliases=["worst", "garbage"])
     @bot_has_permissions(embed_links=True, add_reactions=True)
     async def airing_trash(self, ctx):
-        """Get the most popular waifu’s from the airing anime"""
+        """Get the worst waifu’s from the airing anime"""
 
         # Variables to set up the reaction menu
         i = 0

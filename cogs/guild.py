@@ -204,7 +204,7 @@ class Guild(Cog):
         else:
             await self.bot.generate_embed(ctx, desc=f"**Role Persist is already disabled within {ctx.guild}!**")
 
-    @group(name="starboarde", case_insensitive=True, usage="`<setup|update|delete|stars>`")
+    @group(name="starboard", case_insensitive=True, usage="`<setup|update|delete|stars>`")
     @bot_has_permissions(embed_links=True)
     @has_permissions(manage_guild=True)
     async def starboard(self, ctx):

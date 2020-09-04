@@ -154,9 +154,6 @@ class Bot(commands.Bot):
                 except asyncpg.PostgresError as e:
                     print("PostGres Error: Starboard Records Could Not Be Loaded Into Cache On Startup", e)
 
-                # Release connection back to pool
-                await pool.release(conn)
-
         # Establish Database Connection
         self.loop.run_until_complete(create_connection())
         # Load Information Into Cache
@@ -623,9 +620,6 @@ class Bot(commands.Bot):
             else:
                 print(rowcount, f"Record(s) inserted successfully into Members from {guild}")
 
-            # Release connection back to pool
-            await pool.release(conn)
-
     async def on_guild_remove(self, guild):
         """
         Remove users in the database for the guild
@@ -682,9 +676,6 @@ class Bot(commands.Bot):
                 if self.get_starboard_channel(guild.id):
                     self.delete_starboard(guild.id)
                     self.delete_starboard_messages(guild.id)
-
-            # Release connection back to pool
-            await pool.release(conn)
 
     async def on_member_join(self, member):
         """
@@ -772,9 +763,6 @@ class Bot(commands.Bot):
             # Update cache
             else:
                 print(rowcount, f"Roles Cleared For {member} in {member.guild}")
-
-            # Release connection back to pool
-            await pool.release(conn)
 
         # Make sure the guild is Enso and send welcoming embed to the server
         if guild.id == self.enso_guild_ID:
@@ -888,12 +876,8 @@ class Bot(commands.Bot):
                 # Delete all information about the starboard and any messages stored
                 else:
                     print(rowcount, f"Starboard deleted successfully from Guild {channel.guild}")
-                    if self.get_starboard_channel(channel.guild.id):
-                        self.delete_starboard(channel.guild.id)
-                        self.delete_starboard_messages(channel.guild.id)
-
-                # Release connection back to pool
-                await pool.release(conn)
+                    self.delete_starboard(channel.guild.id)
+                    self.delete_starboard_messages(channel.guild.id)
 
         # If modmail channels are deleted, delete the entire system
         if channel.id == modmail_channel or channel.id == modmail_logging_channel:

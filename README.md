@@ -28,7 +28,14 @@
 |  daily  	| Get the daily waifu from MyWaifuList 	|  .waifu daily 	|    -    	|
 |  random 	|  Get a random waifu from MyWaifuList 	| .waifu random 	|   rnd   	|
 
-#### Anime Related:
+#### Anime:
+
+| Command 	|                   Description                  	|           Usage           	|     Aliases    	|
+|:-------:	|:----------------------------------------------:	|:-------------------------:	|:--------------:	|
+|  anime  	| Get detailed information about an anime series 	|     .anime(MWLAnimeID)    	| show \ series 	|
+|  waifu  	|  Get all the waifu's of the given anime series 	| .anime waifu (MWLAnimeID) 	|        -       	|
+
+#### Misc:
 
 |    Command    	|                       Description                      	|            Usage            	| Aliases 	|
 |:-------------:	|:------------------------------------------------------:	|:---------------------------:	|:-------:	|

@@ -424,13 +424,38 @@ class Anime(Cog):
 
     @group(name="anime", aliases=["series", "shows"],
            invoke_without_command=True, case_insensitive=True,
-           usage="`<MWLSeriesID>`")
+           usage="`<MWLAnimeID>`")
     @bot_has_permissions(embed_links=True)
     async def anime(self, ctx, term: int):
         """Returning information about a given series (MWL ID ONLY)"""
 
         anime = await get_from_api(self, ctx, f"series/{term}")
         await ctx.send(embed=anime_embed(self, anime))
+
+    @anime.command(name="waifu", usage="`<MWLAnimeID>`")
+    @bot_has_permissions(embed_links=True)
+    async def anime_waifus(self, ctx, term: int):
+        """Return the waifu's of the given anime (MWL ID ONLY)"""
+
+        i = 0
+        anime_waifus = {}
+        waifus = await get_from_api(self, ctx, f"series/{term}/waifus")
+
+        for item in waifus:
+            # Don't bother storing Hentai's or Games (Not yet until I figure out what data they send)
+            if item["type"] in ["Waifu", "Husbando"]:
+                anime_waifus[item["name"]] = {}
+                for value in item:
+                    store_dict(anime_waifus, item, value)
+
+        # Get the instance of the bot
+        bot = ctx.guild.get_member(self.bot.user.id)
+        # Get the permissions of the channel
+        perms = bot.permissions_in(ctx.message.channel)
+
+        # Send the menu to the display
+        menu = MWLMenu(i, perms, anime_waifus, self.bot)
+        await menu.start(ctx)
 
     @command("detailedwaifu", aliases=["dwaifu"], usage="`<MWLWaifuID>`")
     @bot_has_permissions(embed_links=True)

@@ -20,7 +20,7 @@ class Events(Cog):
             return
 
         # Processing the message
-        await self.bot.bot.process_commands(message)
+        await self.bot.process_commands(message)
 
     @Cog.listener()
     async def on_ready(self):

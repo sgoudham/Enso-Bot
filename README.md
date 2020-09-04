@@ -12,9 +12,29 @@
 
 ### The main use is to able to retrieve information on any waifu/anime you desire. Ensō~Chan enables you do that with a wide range of commands at your disposal 
 
-![](https://media.discordapp.net/attachments/721449922838134876/748603338194550804/unknown.png)
-![](https://media.discordapp.net/attachments/721449922838134876/748602416395452466/unknown.png)
-![](https://media.discordapp.net/attachments/721449922838134876/748609097183658144/unknown.png)
+#### Airing: 
+
+| Command 	|                  Description                 	|      Usage      	|      Aliases     	|
+|:-------:	|:--------------------------------------------:	|:---------------:	|:----------------:	|
+|  anime  	| Display's the current airing season of anime 	|  .airing anime  	|  shows \ series 	|
+|   best  	|      Get the best waifu's of the season      	|   .airing best  	|         -        	|
+| popular 	|  Get the most popular waifu's of this season 	| .airing popular 	|        pop       	|
+|  trash  	|     Get the worst waifu's of this season     	|  .airing trash  	| worst \ garbage 	|
+
+#### Waifu:
+
+| Command 	|              Description             	|     Usage     	| Aliases 	|
+|:-------:	|:------------------------------------:	|:-------------:	|:-------:	|
+|  daily  	| Get the daily waifu from MyWaifuList 	|  .waifu daily 	|    -    	|
+|  random 	|  Get a random waifu from MyWaifuList 	| .waifu random 	|   rnd   	|
+
+#### Anime Related:
+
+|    Command    	|                       Description                      	|            Usage            	| Aliases 	|
+|:-------------:	|:------------------------------------------------------:	|:---------------------------:	|:-------:	|
+| detailedwaifu 	|    Get detailed information about a waifu (ID Only)    	| .detailedwaifu <MWLWaifuID> 	|  dwaifu 	|
+|     search    	| Search the entire website (Anime\Waifu's\Husbando's) 	    |    .search <waifu\anime>   	|  lookup 	|
+|    profile    	|        Get the MWL profile of the user requested       	|     .profile <MWLUserID>    	|   user  	|
 
 #### More commands to come! View some examples [here!](https://imgur.com/a/sf4Y4yr)
 
@@ -28,6 +48,7 @@
 - Information Commands! (Server/User/Channel etc)
 - Modlogs System! (Logging Kicks/Bans/Mutes/Purges etc)
 - Fully Integrated Modmail System! (Sending Mail To Staff)
+- Starboard System! (Allow messages to be starred for everyone to see!)
 - And many more commands!
 
 

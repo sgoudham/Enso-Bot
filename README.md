@@ -16,7 +16,7 @@
 
 | Command 	|                  Description                 	|      Usage      	|      Aliases     	|
 |:-------:	|:--------------------------------------------:	|:---------------:	|:----------------:	|
-|  anime  	| Display's the current airing season of anime 	|  .airing anime  	|  shows \ series 	|
+|  anime  	| Display's the current airing season of anime 	|  .airing anime  	|  show \ series 	|
 |   best  	|      Get the best waifu's of the season      	|   .airing best  	|         -        	|
 | popular 	|  Get the most popular waifu's of this season 	| .airing popular 	|        pop       	|
 |  trash  	|     Get the worst waifu's of this season     	|  .airing trash  	| worst \ garbage 	|

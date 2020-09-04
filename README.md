@@ -12,7 +12,7 @@
 
 ### The main use is to able to retrieve information on any waifu/anime you desire. Ensō~Chan enables you do that with a wide range of commands at your disposal 
 
-#### Airing: 
+#### Airing:
 
 | Command 	|                  Description                 	|      Usage      	|      Aliases     	|
 |:-------:	|:--------------------------------------------:	|:---------------:	|:----------------:	|

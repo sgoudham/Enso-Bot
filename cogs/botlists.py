@@ -16,9 +16,11 @@
 
 import aiohttp
 import dbl
+import statcord
 from decouple import config
 from discord.ext import commands, tasks
 
+statcord_auth = config("STATCORD_AUTH")
 disforge_auth = config('DISFORGE_AUTH')
 disc_bots_gg_auth = config('DISCORD_BOTS_BOTS_AUTH')
 top_gg_auth = config('TOP_GG_AUTH')
@@ -37,16 +39,17 @@ async def post_bot_stats(self):
                            data={"servers": {len(self.guilds)}},
                            headers={'Authorization': disforge_auth})
 
-        await session.close()
 
-
-class TopGG(commands.Cog):
+class BotLists(commands.Cog):
     """Handles interactions with the top.gg API"""
 
     def __init__(self, bot):
         self.bot = bot
         self.token = top_gg_auth
         self.dblpy = dbl.DBLClient(self.bot, self.token)
+        self.key = f"statcord.com-{statcord_auth}"
+        self.api = statcord.Client(self.bot, self.key)
+        self.api.start_loop()
 
         @tasks.loop(minutes=30, reconnect=True)
         async def post_updates():
@@ -65,6 +68,10 @@ class TopGG(commands.Cog):
         # Start the background task(s)
         post_updates.start()
 
+    @commands.Cog.listener()
+    async def on_command(self, ctx):
+        self.api.command_run(ctx)
+
 
 def setup(bot):
-    bot.add_cog(TopGG(bot))
+    bot.add_cog(BotLists(bot))

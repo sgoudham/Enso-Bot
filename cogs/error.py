@@ -115,7 +115,7 @@ async def on_not_owner(ctx, perms):
 
 
 class Errors(Cog):
-    """Moderation Commands! (Kick/Ban/Mute etc)"""
+    """Global Error Event Handler!"""
 
     def __init__(self, bot):
         self.bot = bot

@@ -51,7 +51,7 @@ class BotLists(commands.Cog):
         self.api = statcord.Client(self.bot, self.key)
         self.api.start_loop()
 
-        @tasks.loop(minutes=30, reconnect=True)
+        @tasks.loop(hours=1, reconnect=True)
         async def post_updates():
             """Post updates to botlists"""
 

@@ -78,8 +78,6 @@ async def get_from_api(self, ctx, url):
             else:
                 await self.bot.generate_embed(ctx, desc="**Something went wrong with MyWaifuList!**")
 
-        await session.close()
-
     return _dict
 
 
@@ -418,9 +416,6 @@ class Anime(Cog):
                 # Send error if something went wrong internally/while grabbing data from API
                 else:
                     await self.bot.generate_embed(ctx, desc="**Something went wrong with MyWaifuList!**")
-
-            # Close session
-            await session.close()
 
         # As long as data is returned
         # Store all data from the api in dict

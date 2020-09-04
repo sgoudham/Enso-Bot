@@ -349,7 +349,7 @@ class Fun(Cog):
         url = "https://apis.duncte123.me/kpop"
         async with aiohttp.ClientSession() as session:
             async with await session.get(url=url) as response:
-                # When succesful, read data from json
+                # When successful, read data from json
                 if response.status == 200:
                     kpop = await response.json()
 
@@ -366,8 +366,6 @@ class Fun(Cog):
                     await self.bot.generate_embed(ctx,
                                                   desc="**You are being rate limited! You have spammed it too much :(**")
                     return
-
-            await session.close()
 
         embed = Embed(title=name,
                       description=band,
@@ -420,8 +418,6 @@ class Fun(Cog):
                         await self.bot.generate_embed(ctx,
                                                       desc="**You are being rate limited! You have spammed it too much :(**")
                         return
-
-                await session.close()
 
             # Setting bools to ticks/cross emojis
             verif = self.bot.tick if verified else self.bot.cross

@@ -20,5 +20,18 @@ from bot import Bot
 # Initiating Bot Object As Client
 client = Bot()
 
+
+@client.event
+async def on_message(message):
+    """Make sure bot messages are not tracked"""
+
+    # Ignoring messages that start with 2 ..
+    if message.content.startswith("..") or message.author.bot:
+        return
+
+    # Processing the message
+    await client.process_commands(message)
+
+
 # Run the bot
 client.execute()

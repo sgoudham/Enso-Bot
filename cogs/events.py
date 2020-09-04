@@ -12,17 +12,6 @@ class Events(Cog):
         self.bot = bot
 
     @Cog.listener()
-    async def on_message(self, message):
-        """Make sure bot messages are not tracked"""
-
-        # Ignoring messages that start with 2 ..
-        if message.content.startswith("..") or message.author.bot:
-            return
-
-        # Processing the message
-        await self.bot.process_commands(message)
-
-    @Cog.listener()
     async def on_ready(self):
         """Display startup message"""
 

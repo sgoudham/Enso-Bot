@@ -29,7 +29,7 @@ def search(self, bot):
     for key in self._dict.values():
 
         # Only setting up description if waifu og_name has a value
-        desc = f"{key['original_name']}" if key["original_name"] else Embed.Empty
+        desc = key['original_name'] if key["original_name"] else Embed.Empty
         # Only using image if it can be displayed, else display 404 image
         url = key["display_picture"] if key["display_picture"].endswith((".jpeg", ".png", ".jpg")) else not_found
 

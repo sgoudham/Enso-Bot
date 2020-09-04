@@ -32,9 +32,9 @@
 
 |    Command    	|                       Description                      	|            Usage            	| Aliases 	|
 |:-------------:	|:------------------------------------------------------:	|:---------------------------:	|:-------:	|
-| detailedwaifu 	|    Get detailed information about a waifu (ID Only)    	| .detailedwaifu <MWLWaifuID> 	|  dwaifu 	|
-|     search    	| Search the entire website (Anime\Waifu's\Husbando's) 	    |    .search <waifu\anime>   	|  lookup 	|
-|    profile    	|        Get the MWL profile of the user requested       	|     .profile <MWLUserID>    	|   user  	|
+| detailedwaifu 	|    Get detailed information about a waifu (ID Only)    	| .detailedwaifu (MWLWaifuID)	|  dwaifu 	|
+|     search    	| Search the entire website (Anime\Waifu's\Husbando's) 	    |    .search (waifu/anime)   	|  lookup 	|
+|    profile    	|        Get the MWL profile of the user requested       	|     .profile (MWLUserID)    	|   user  	|
 
 #### More commands to come! View some examples [here!](https://imgur.com/a/sf4Y4yr)
 

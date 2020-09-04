@@ -352,8 +352,11 @@ class Bot(commands.Bot):
                             "star_message_id": result["star_message_id"],
                             "stars": result["stars"]}
 
-                        return self.starboard_messages_cache[root_message_id, guild_id]["star_message_id"], \
-                               self.starboard_messages_cache[root_message_id, guild_id]["stars"]
+                        # Returning as separate variables for better readability
+                        star_message_id = self.starboard_messages_cache[root_message_id, guild_id]["star_message_id"]
+                        stars = self.starboard_messages_cache[root_message_id, guild_id]["stars"]
+
+                        return star_message_id, stars
                     else:
                         return None, 0
 

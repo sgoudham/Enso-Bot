@@ -98,7 +98,24 @@ class Starboard:
 
             # When the message is already in the database/cache, update the amount of reactions
             else:
-                self.bot.update_starboard_message_stars(message.id, payload.guild_id, new_stars)
+                # Setup up pool connection
+                pool = self.bot.db
+                async with pool.acquire() as conn:
+
+                    # Update the stars that the message has in the database and then store the message id's
+                    try:
+                        update = """UPDATE starboard_messages SET stars = $1, WHERE root_message_id = $2 AND guild_id = $3"""
+                        await conn.execute(update, new_stars, message.id, payload.guild_id)
+
+                    # Catch errors
+                    except asyncpg.PostgresError as e:
+                        print(
+                            f"PostGres Error: Starboard_Message Record Could Not Be Updated For Guild {payload.guild_id}",
+                            e)
+
+                    # Update cache
+                    else:
+                        self.bot.update_starboard_message_stars(message.id, payload.guild_id, new_stars)
 
     async def edit_starboard_message(self, payload, new_stars, msg_id, channel, message, embed):
         """Edit the message which is already on the starboard"""
@@ -181,6 +198,9 @@ class Starboard:
                 else:
                     self.bot.update_starboard_message_id(message.id, payload.guild_id, star_message.id)
                     self.bot.update_starboard_message_stars(message.id, payload.guild_id, new_stars)
+
+        elif not msg_id:
+            self.bot.update_starboard_message_stars(message.id, payload.guild_id, new_stars)
 
     async def send_starboard_and_update_db(self, payload, action):
         """Send the starboard embed and update database/cache"""

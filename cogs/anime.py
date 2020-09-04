@@ -504,15 +504,14 @@ class Anime(Cog):
         # Store all data from the api in dict
         if len(api_data["data"]) > 0:
             for item in api_data["data"]:
-                # Don't bother storing Hentai's or Games (Not yet until I figure out what data they send)
-                if item["type"] in ["Waifu", "Husbando", "TV", "ONA", "OVA"]:
-                    anime_or_waifu[item["name"]] = {}
-                    for value in item:
-                        store_dict(anime_or_waifu, item, value)
+                anime_or_waifu[item["name"]] = {}
+                for value in item:
+                    store_dict(anime_or_waifu, item, value)
 
         # When no waifu has been retrieved, send error message to the user
         else:
             await self.bot.generate_embed(ctx, desc="**Waifu/Anime Not Found!**")
+            return
 
         # Get the instance of the bot
         bot = ctx.guild.get_member(self.bot.user.id)

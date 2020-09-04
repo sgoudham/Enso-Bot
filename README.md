@@ -32,7 +32,7 @@
 
 | Command 	|                   Description                  	|           Usage           	|     Aliases    	|
 |:-------:	|:----------------------------------------------:	|:-------------------------:	|:--------------:	|
-|  anime  	| Get detailed information about an anime series 	|     .anime(MWLAnimeID)    	| show \ series 	|
+|  anime  	| Get detailed information about an anime series 	|     .anime (MWLAnimeID)    	| show \ series 	|
 |  waifu  	|  Get all the waifu's of the given anime series 	| .anime waifu (MWLAnimeID) 	|        -       	|
 
 #### Misc:

@@ -58,8 +58,7 @@ class Starboard:
 
                     # Update the stars that the message has in the database and then store the message id's
                     try:
-                        update = """UPDATE starboard_messages SET stars = $1, star_message_id = $2
-                                          WHERE root_message_id = $3 AND guild_id = $4"""
+                        update = """UPDATE starboard_messages SET stars = $1, star_message_id = $2 WHERE root_message_id = $3 AND guild_id = $4"""
                         await conn.execute(update, new_stars, star_message.id, message.id, payload.guild_id)
 
                     # Catch errors
@@ -104,7 +103,7 @@ class Starboard:
 
                     # Update the stars that the message has in the database and then store the message id's
                     try:
-                        update = """UPDATE starboard_messages SET stars = $1, WHERE root_message_id = $2 AND guild_id = $3"""
+                        update = """UPDATE starboard_messages SET stars = $1 WHERE root_message_id = $2 AND guild_id = $3"""
                         await conn.execute(update, new_stars, message.id, payload.guild_id)
 
                     # Catch errors

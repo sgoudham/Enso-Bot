@@ -81,6 +81,54 @@ async def get_from_api(self, ctx, url):
     return _dict
 
 
+def anime_embed(self, anime):
+    """Generate embed of single anime's"""
+
+    # Get all the data to be displayed in the embed
+    name = anime["name"]
+    anime_id = anime["id"]
+    og_name = anime["original_name"]
+    picture = anime["display_picture"]
+    url = anime["url"]
+    romaji_name = anime["romaji_name"]
+    release_date = anime["release_date"]
+    airing_start = anime["airing_start"]
+    airing_end = anime["airing_end"]
+    episode_count = anime["episode_count"]
+
+    # Only setting the description if original name is returned from the API
+    desc = og_name if og_name else Embed.Empty
+
+    # Only setting the series date information if they exist
+    rel_date = release_date if release_date else self.bot.cross
+    air_start = airing_start if airing_start else self.bot.cross
+    air_end = airing_end if airing_end else self.bot.cross
+    ep_count = episode_count if episode_count else self.bot.cross
+
+    fields = [("Airing Start Date", air_start, True),
+              ("Airing End Date", air_end, True),
+              ("\u200b", "\u200b", True),
+              ("Release Date", rel_date, True),
+              ("Episode Count", ep_count, True),
+              ("\u200b", "\u200b", True)]
+
+    embed = Embed(title=name, description=desc,
+                  url=url,
+                  colour=self.bot.random_colour())
+    embed.set_author(name=f"ID: {anime_id}")
+    embed.set_image(url=picture)
+    if romaji_name:
+        embed.set_footer(text=f"{romaji_name} | Powered by MyWaifuList")
+    else:
+        embed.set_footer(text="Powered By MyWaifuList")
+
+    # Add fields to the embed
+    for name, value, inline in fields:
+        embed.add_field(name=name, value=value, inline=inline)
+
+    return embed
+
+
 def waifu_embed(self, waifu, _type):
     """Generate embed of single waifu's"""
 
@@ -258,7 +306,7 @@ class Anime(Cog):
         """Printing out that Cog is ready on startup"""
         print(f"{self.__class__.__name__} Cog has been loaded!\n-----")
 
-    @group(name="airing", invoke_without_command=True, case_insensitive=True)
+    @group(name="airing", invoke_without_command=True, case_insensitive=True, usage="`anime|best|popular|trash`")
     @bot_has_permissions(embed_links=True, add_reactions=True)
     async def airing(self, ctx):
         """
@@ -373,6 +421,16 @@ class Anime(Cog):
 
         waifu = await get_from_api(self, ctx, "meta/random")
         await ctx.send(embed=waifu_embed(self, waifu, "random"))
+
+    @group(name="anime", aliases=["series", "shows"],
+           invoke_without_command=True, case_insensitive=True,
+           usage="`<MWLSeriesID>`")
+    @bot_has_permissions(embed_links=True)
+    async def anime(self, ctx, term: int):
+        """Returning information about a given series (MWL ID ONLY)"""
+
+        anime = await get_from_api(self, ctx, f"series/{term}")
+        await ctx.send(embed=anime_embed(self, anime))
 
     @command("detailedwaifu", aliases=["dwaifu"], usage="`<MWLWaifuID>`")
     @bot_has_permissions(embed_links=True)

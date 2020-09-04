@@ -376,7 +376,7 @@ class Anime(Cog):
         menu = MWLMenu(i, perms, airing_best, self.bot)
         await menu.start(ctx)
 
-    @airing.command(name="anime", aliases=["shows", "series"])
+    @airing.command(name="anime", aliases=["show", "series"])
     @bot_has_permissions(embed_links=True, add_reactions=True)
     async def anime(self, ctx):
         """Display the current airing anime"""

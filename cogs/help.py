@@ -648,7 +648,7 @@ class Help(Cog):
         except Exception as ex:
             await ctx.send(f"**{ex}**")
 
-    @command(name="forceprefix")
+    @command(name="forceprefix", hidden=True)
     @guild_only()
     @is_owner()
     async def override_prefix(self, ctx, new: Optional[str] = None):

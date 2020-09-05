@@ -100,29 +100,41 @@ async def post_from_api(self, i, ctx, term, _dict, url):
 
     # As long as data is returned
     # Store all data from the api in dict
-    if len(api_data["data"]) > 0:
+    if len(api_data["data"]) > 1:
         for item in api_data["data"]:
             _dict[item["name"]] = {}
             for value in item:
                 store_dict(_dict, item, value)
 
+        # Get the instance of the bot
+        bot = ctx.guild.get_member(self.bot.user.id)
+        # Get the permissions of the channel
+        perms = bot.permissions_in(ctx.message.channel)
+
+        # Send the menu to the display
+        menu = MWLMenu(i, perms, _dict, self.bot)
+
+        return menu
+
+    # Don't bother with pagination if only 1 item is returned by the API
+    elif len(api_data["data"]) == 1:
+        if api_data["data"][0]["type"] in ["Waifu", "Husbando"]:
+            await ctx.send(embed=waifu_embed(self, api_data["data"][0], False))
+            return False
+        else:
+            await ctx.send(embed=anime_embed(self, api_data["data"][0], False))
+            return False
+
     # When no waifu has been retrieved, send error message to the user
     else:
-        await self.bot.generate_embed(ctx, desc="**Waifu/Anime Not Found!**")
+        await self.bot.generate_embed(ctx, desc="**Waifu/Anime Not Found!\n"
+                                                "Tips for a good search:\n"
+                                                "- Use the full name!\n"
+                                                f"- Use `{ctx.prefix}bsearch` to try and get better results!**")
         return False
 
-    # Get the instance of the bot
-    bot = ctx.guild.get_member(self.bot.user.id)
-    # Get the permissions of the channel
-    perms = bot.permissions_in(ctx.message.channel)
 
-    # Send the menu to the display
-    menu = MWLMenu(i, perms, _dict, self.bot)
-
-    return menu
-
-
-def anime_embed(self, anime):
+def anime_embed(self, anime, detailed):
     """Generate embed of single anime's"""
 
     # Get all the data to be displayed in the embed
@@ -131,41 +143,43 @@ def anime_embed(self, anime):
     og_name = anime["original_name"]
     picture = anime["display_picture"]
     url = anime["url"]
+    _type = anime["type"]
     romaji_name = anime["romaji_name"]
-    release_date = anime["release_date"]
-    airing_start = anime["airing_start"]
-    airing_end = anime["airing_end"]
-    episode_count = anime["episode_count"]
 
     # Only setting the description if original name is returned from the API
     desc = og_name if og_name else Embed.Empty
-
-    # Only setting the series date information if they exist
-    rel_date = release_date if release_date else self.bot.cross
-    air_start = airing_start if airing_start else self.bot.cross
-    air_end = airing_end if airing_end else self.bot.cross
-    ep_count = episode_count if episode_count else self.bot.cross
-
-    fields = [("Airing Start Date", air_start, True),
-              ("Airing End Date", air_end, True),
-              ("\u200b", "\u200b", True),
-              ("Release Date", rel_date, True),
-              ("Episode Count", ep_count, True),
-              ("\u200b", "\u200b", True)]
-
     embed = Embed(title=name, description=desc,
                   url=url,
                   colour=self.bot.random_colour())
-    embed.set_author(name=f"ID: {anime_id}")
+    embed.set_author(name=f"{_type} | ID: {anime_id}")
     embed.set_image(url=picture)
     if romaji_name:
         embed.set_footer(text=f"{romaji_name} | Powered by MyWaifuList")
     else:
         embed.set_footer(text="Powered By MyWaifuList")
 
-    # Add fields to the embed
-    for name, value, inline in fields:
-        embed.add_field(name=name, value=value, inline=inline)
+    if detailed:
+        release_date = anime["release_date"]
+        airing_start = anime["airing_start"]
+        airing_end = anime["airing_end"]
+        episode_count = anime["episode_count"]
+
+        # Only setting the series date information if they exist
+        rel_date = release_date if release_date else self.bot.cross
+        air_start = airing_start if airing_start else self.bot.cross
+        air_end = airing_end if airing_end else self.bot.cross
+        ep_count = episode_count if episode_count else self.bot.cross
+
+        fields = [("Airing Start Date", air_start, True),
+                  ("Airing End Date", air_end, True),
+                  ("\u200b", "\u200b", True),
+                  ("Release Date", rel_date, True),
+                  ("Episode Count", ep_count, True),
+                  ("\u200b", "\u200b", True)]
+
+        # Add fields to the embed
+        for name, value, inline in fields:
+            embed.add_field(name=name, value=value, inline=inline)
 
     return embed
 
@@ -185,14 +199,17 @@ def waifu_embed(self, waifu, _type):
 
     # Set different values for description based on the command
     if _type == "random":
-        desc = f"{og_name} | Random {waifu_type}" if waifu["original_name"] else f"Random {waifu_type}"
+        author = f"Random {waifu_type} | ID: {waifu_id}"
     elif _type == "daily":
-        desc = f"{og_name} | Daily {waifu_type}" if waifu["original_name"] else f"Daily {waifu_type}"
+        author = f"Daily {waifu_type} | ID: {waifu_id}"
+    else:
+        author = f"{waifu_type} | ID: {waifu_id}"
 
+    desc = og_name if waifu["original_name"] else Embed.Empty
     embed = Embed(title=name, description=desc,
                   colour=self.bot.random_colour(),
                   url=url)
-    embed.set_author(name=f"ID: {waifu_id}")
+    embed.set_author(name=author)
     embed.set_image(url=picture)
     embed.set_footer(text=f"❤️ {likes} 🗑️ {trash} | Powered by MyWaifuList")
 
@@ -470,7 +487,7 @@ class Anime(Cog):
         """Returning information about a given series (MWL ID ONLY)"""
 
         anime = await get_from_api(self, ctx, f"series/{term}")
-        await ctx.send(embed=anime_embed(self, anime))
+        await ctx.send(embed=anime_embed(self, anime, True))
 
     @anime.command(name="waifu", usage="`<MWLAnimeID>`")
     @bot_has_permissions(embed_links=True)
@@ -481,21 +498,25 @@ class Anime(Cog):
         anime_waifus = {}
         waifus = await get_from_api(self, ctx, f"series/{term}/waifus")
 
-        for item in waifus:
-            # Don't bother storing Hentai's or Games (Not yet until I figure out what data they send)
-            if item["type"] in ["Waifu", "Husbando"]:
-                anime_waifus[item["name"]] = {}
-                for value in item:
-                    store_dict(anime_waifus, item, value)
+        if len(waifus) > 0:
+            for item in waifus:
+                # Don't bother storing Hentai's or Games (Not yet until I figure out what data they send)
+                if item["type"] in ["Waifu", "Husbando"]:
+                    anime_waifus[item["name"]] = {}
+                    for value in item:
+                        store_dict(anime_waifus, item, value)
 
-        # Get the instance of the bot
-        bot = ctx.guild.get_member(self.bot.user.id)
-        # Get the permissions of the channel
-        perms = bot.permissions_in(ctx.message.channel)
+            # Get the instance of the bot
+            bot = ctx.guild.get_member(self.bot.user.id)
+            # Get the permissions of the channel
+            perms = bot.permissions_in(ctx.message.channel)
 
-        # Send the menu to the display
-        menu = MWLMenu(i, perms, anime_waifus, self.bot)
-        await menu.start(ctx)
+            # Send the menu to the display
+            menu = MWLMenu(i, perms, anime_waifus, self.bot)
+            await menu.start(ctx)
+
+        else:
+            await self.bot.generate_embed(ctx, desc="**No Waifu's/Husbando's To Be Displayed!**")
 
     @command("detailedwaifu", aliases=["dwaifu"], usage="`<MWLWaifuID>`")
     @bot_has_permissions(embed_links=True)

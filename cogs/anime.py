@@ -334,9 +334,7 @@ class Anime(Cog):
     Searches might not return fully detailed results and images may be missing
     """
 
-    # TODO: ADD A DETAILED SERIES COMMAND
     # TODO: ADD AIRING SHOWS BY SEASON COMMAND
-    # TODO: ADD SERIES WAIFU COMMAND
 
     def __init__(self, bot):
         self.bot = bot

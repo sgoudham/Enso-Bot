@@ -81,6 +81,47 @@ async def get_from_api(self, ctx, url):
     return _dict
 
 
+async def post_from_api(self, i, ctx, term, _dict, url):
+    """Posting information to the API and getting data back"""
+
+    data = {"term": term,
+            'content-type': "application/json"}
+
+    # Searching API for waifu(s)
+    async with aiohttp.ClientSession() as session:
+        async with session.post(url, data=data, headers=self.headers) as resp:
+            # Store waifu's in dict when request is successful, else send an error
+            if resp.status == 200:
+                api_data = await resp.json()
+
+            # Send error if something went wrong internally/while grabbing data from API
+            else:
+                await self.bot.generate_embed(ctx, desc="**Something went wrong with MyWaifuList!**")
+
+    # As long as data is returned
+    # Store all data from the api in dict
+    if len(api_data["data"]) > 0:
+        for item in api_data["data"]:
+            _dict[item["name"]] = {}
+            for value in item:
+                store_dict(_dict, item, value)
+
+    # When no waifu has been retrieved, send error message to the user
+    else:
+        await self.bot.generate_embed(ctx, desc="**Waifu/Anime Not Found!**")
+        return False
+
+    # Get the instance of the bot
+    bot = ctx.guild.get_member(self.bot.user.id)
+    # Get the permissions of the channel
+    perms = bot.permissions_in(ctx.message.channel)
+
+    # Send the menu to the display
+    menu = MWLMenu(i, perms, _dict, self.bot)
+
+    return menu
+
+
 def anime_embed(self, anime):
     """Generate embed of single anime's"""
 
@@ -479,48 +520,30 @@ class Anime(Cog):
     @command(name="search", aliases=["lookup"], usage="`<waifu|anime>`")
     @bot_has_permissions(embed_links=True, add_reactions=True)
     async def search(self, ctx, *, term: str):
-        """Search the entire website! (Anime|Waifus|Husbandos)"""
+        """Search the entire website! (Anime|Manga|Waifus|Husbandos)"""
 
         # Local Variable i to allow the index of the embeds to be modified
         i = 0
 
         anime_or_waifu = {}
         url = "https://mywaifulist.moe/api/v1/search/"
-        data = {"term": term,
-                'content-type': "application/json"}
 
-        # Searching API for waifu(s)
-        async with aiohttp.ClientSession() as session:
-            async with session.post(url, data=data, headers=self.headers) as resp:
-                # Store waifu's in dict when request is successful, else send an error
-                if resp.status == 200:
-                    api_data = await resp.json()
+        if menu := await post_from_api(self, i, ctx, term, anime_or_waifu, url):
+            await menu.start(ctx)
 
-                # Send error if something went wrong internally/while grabbing data from API
-                else:
-                    await self.bot.generate_embed(ctx, desc="**Something went wrong with MyWaifuList!**")
+    @command(name="betasearch", aliases=["bsearch"], usage="`<waifu|anime>`")
+    @bot_has_permissions(embed_links=True, add_reactions=True)
+    async def beta_search(self, ctx, *, term: str):
+        """Search the entire website - more aggressive searching! (Anime|Manga|Waifus|Husbandos)"""
 
-        # As long as data is returned
-        # Store all data from the api in dict
-        if len(api_data["data"]) > 0:
-            for item in api_data["data"]:
-                anime_or_waifu[item["name"]] = {}
-                for value in item:
-                    store_dict(anime_or_waifu, item, value)
+        # Local Variable i to allow the index of the embeds to be modified
+        i = 0
 
-        # When no waifu has been retrieved, send error message to the user
-        else:
-            await self.bot.generate_embed(ctx, desc="**Waifu/Anime Not Found!**")
-            return
+        anime_or_waifu = {}
+        url = "https://mywaifulist.moe/api/v1/search/beta"
 
-        # Get the instance of the bot
-        bot = ctx.guild.get_member(self.bot.user.id)
-        # Get the permissions of the channel
-        perms = bot.permissions_in(ctx.message.channel)
-
-        # Send the menu to the display
-        menu = MWLMenu(i, perms, anime_or_waifu, self.bot)
-        await menu.start(ctx)
+        if menu := await post_from_api(self, i, ctx, term, anime_or_waifu, url):
+            await menu.start(ctx)
 
 
 def setup(bot):

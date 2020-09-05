@@ -335,6 +335,7 @@ class Anime(Cog):
     """
 
     # TODO: ADD AIRING SHOWS BY SEASON COMMAND
+    # TODO: ADD USER WAIFUS COMMAND
 
     def __init__(self, bot):
         self.bot = bot
@@ -417,7 +418,7 @@ class Anime(Cog):
 
     @airing.command(name="anime", aliases=["show", "series"])
     @bot_has_permissions(embed_links=True, add_reactions=True)
-    async def anime(self, ctx):
+    async def airing_anime(self, ctx):
         """Display the current airing anime"""
 
         # Local Variable i to allow the pages to be modified

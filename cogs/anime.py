@@ -530,7 +530,7 @@ class Anime(Cog):
         if menu := await post_from_api(self, i, ctx, term, anime_or_waifu, url):
             await menu.start(ctx)
 
-    @command(name="betasearch", aliases=["bsearch"], usage="`<waifu|anime>`")
+    @command(name="betasearch", aliases=["bsearch", "betalookup", "blookup"], usage="`<waifu|anime>`")
     @bot_has_permissions(embed_links=True, add_reactions=True)
     async def beta_search(self, ctx, *, term: str):
         """Search the entire website - more aggressive searching! (Anime|Manga|Waifus|Husbandos)"""

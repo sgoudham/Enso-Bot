@@ -24,6 +24,9 @@ from discord.ext.commands import command, guild_only, has_guild_permissions, bot
     cooldown, BucketType, Cog
 
 
+# TODO: CREATE A BITARRAY SO THAT THE MODLOG EVENTS ARE TOGGLEABLE
+# TODO: MAKE SURE THAT THE BITARRAY IS ONLY IMPLEMENTED AFTER ALL EVENTS ARE CODED
+
 async def send_to_modlogs(self, ctx, target, reason, action):
     """
     Function to send the moderation actions to modlogs channel
@@ -36,21 +39,17 @@ async def send_to_modlogs(self, ctx, target, reason, action):
 
     # Get the channel of the modlog within the guild
     if modlog := self.bot.get_modlog_for_guild(ctx.guild.id):
-
         channel = ctx.guild.get_channel(modlog)
 
+        desc = f"**Member -->{target.mention} | {target}\nID -->** {target.id}" \
+               f"\n\n**Auctioned By --> {ctx.author.mention} | {ctx.author}\nID -->** {ctx.author.id}"
         embed = Embed(title=f"Member {action}",
+                      description=desc,
                       colour=self.bot.admin_colour,
                       timestamp=datetime.datetime.utcnow())
-
         embed.set_thumbnail(url=target.avatar_url)
-
-        fields = [("Member", target.mention, False),
-                  ("Actioned by", ctx.author.mention, False),
-                  ("Reason", reason, False)]
-
-        for name, value, inline in fields:
-            embed.add_field(name=name, value=value, inline=inline)
+        embed.add_field(name="Reason", value=reason, inline=False)
+        embed.set_footer(text=f"Member {action}")
 
         await channel.send(embed=embed)
 
@@ -71,7 +70,7 @@ async def check(ctx, members):
         return True
 
     elif ctx.author in members:
-        await ctx.bot.generate_embed(ctx, desc="**❌ Forbidden Action ❌**")
+        await ctx.bot.generate_embed(ctx, desc=f"**{ctx.bot.cross} Forbidden Action {ctx.bot.cross}**")
         return True
 
 
@@ -102,7 +101,7 @@ async def ummute_members(self, ctx, targets, reason):
             await target.edit(roles=roles)
 
             # Send confirmation to the channel that the user is in
-            await self.bot.generate_embed(ctx, desc=f"✅ **{target}** Was Unmuted! ✅")
+            await self.bot.generate_embed(ctx, desc=f"{ctx.bot.tick} **{target}** Was Unmuted! {ctx.bot.tick}")
 
             await send_to_modlogs(self, ctx, target, reason, action="Unmuted")
 
@@ -126,7 +125,7 @@ async def mute_members(self, ctx, targets, reason, muted):
 
         # When user is already muted, send error message
         if muted in target.roles:
-            await self.bot.generate_embed(ctx, desc="**❌ User Is Already Muted! ❌**")
+            await self.bot.generate_embed(ctx, desc=f"**{ctx.bot.cross} User Is Already Muted! {ctx.bot.cross}**")
 
         else:
 
@@ -143,7 +142,7 @@ async def mute_members(self, ctx, targets, reason, muted):
                 await target.edit(roles=roles, reason=reason)
 
                 # Send confirmation to the channel that the user is in
-                embed = Embed(description=f"✅ **{target}** Was Muted! ✅",
+                embed = Embed(description=f"{ctx.bot.tick} **{target}** Was Muted! {ctx.bot.tick}",
                               colour=self.bot.admin_colour)
 
                 if self.bot.get_roles_persist(ctx.guild.id) == 0:
@@ -178,7 +177,7 @@ async def ban_members(self, ctx, targets, reason):
 
             await target.ban(reason=reason)
 
-            await self.bot.generate_embed(ctx, desc=f"✅ **{target}** Was Banned! ✅")
+            await self.bot.generate_embed(ctx, desc=f"{ctx.bot.tick} **{target}** Was Banned! {ctx.bot.tick}")
 
             await send_to_modlogs(self, ctx, target, reason, action="Banned")
 
@@ -203,7 +202,7 @@ async def unban_members(self, ctx, targets, reason):
 
     for target in targets:
         if target not in ban_ids:
-            await self.bot.generate_embed(ctx, desc="❌ **Member Is Not In Ban's List!** ❌")
+            await self.bot.generate_embed(ctx, desc=f"{ctx.bot.cross} **Member Is Not In Ban's List!** {ctx.bot.cross}")
 
         else:
             # Get the member and unban them
@@ -211,7 +210,7 @@ async def unban_members(self, ctx, targets, reason):
             await ctx.guild.unban(user, reason=reason)
 
             # Send confirmation to the channel that the user is in
-            await self.bot.generate_embed(ctx, desc=f"✅ **{user}** Was Unbanned! ✅")
+            await self.bot.generate_embed(ctx, desc=f"{ctx.bot.tick} **{user}** Was Unbanned! {ctx.bot.tick}")
 
             await send_to_modlogs(self, ctx, user, reason, action="Unbanned")
 
@@ -232,7 +231,7 @@ async def kick_members(self, ctx, targets, reason):
 
             await target.kick(reason=reason)
 
-            await self.bot.generate_embed(ctx, desc=f"✅ **{target}** Was Kicked! ✅")
+            await self.bot.generate_embed(ctx, desc=f"{ctx.bot.tick} **{target}** Was Kicked! {ctx.bot.tick}")
 
             await send_to_modlogs(self, ctx, target, reason, action="Kicked")
 
@@ -251,7 +250,7 @@ class Moderation(Cog):
     async def on_ready(self):
         print(f"{self.__class__.__name__} Cog has been loaded\n-----")
 
-    @command(name="kick", usage="`<member>...` `[reason]`")
+    @command(name="kickw", usage="`<member>...` `[reason]`")
     @guild_only()
     @has_guild_permissions(kick_members=True)
     @bot_has_guild_permissions(kick_members=True)
@@ -267,7 +266,7 @@ class Moderation(Cog):
                 # Send embed of the kicked member
                 await kick_members(self, ctx, members, reason)
 
-    @command(name="mute", usage="`<member>...` `[reason]`")
+    @command(name="mutew", usage="`<member>...` `[reason]`")
     @has_guild_permissions(manage_roles=True)
     @bot_has_guild_permissions(manage_roles=True)
     async def mute(self, ctx, members: Greedy[Member], *, reason: Optional[str] = "No Reason Given"):
@@ -293,7 +292,7 @@ class Moderation(Cog):
                 else:
                     await mute_members(self, ctx, members, reason, role)
 
-    @command(name="unmute", usage="`<member>...` `[reason]`")
+    @command(name="unmutew", usage="`<member>...` `[reason]`")
     @has_guild_permissions(manage_roles=True)
     @bot_has_guild_permissions(manage_roles=True)
     async def unmute(self, ctx, members: Greedy[Member], *, reason: Optional[str] = "No Reason Given"):
@@ -324,7 +323,7 @@ class Moderation(Cog):
                                           colour=self.bot.admin_colour)
                             await ctx.send(embed=embed)
 
-    @command(name="ban", usage="`<member>...` `[reason]`")
+    @command(name="banw", usage="`<member>...` `[reason]`")
     @guild_only()
     @has_guild_permissions(ban_members=True)
     @bot_has_guild_permissions(ban_members=True)
@@ -339,7 +338,7 @@ class Moderation(Cog):
             with ctx.typing():
                 await ban_members(self, ctx, members, reason)
 
-    @command(name="force", aliases=["powerban", "ultraban"], usage="`<member>...` `[reason]`")
+    @command(name="forcebanw", aliases=["powerban", "ultraban"], usage="`<member>...` `[reason]`")
     @guild_only()
     @has_guild_permissions(ban_members=True)
     @bot_has_guild_permissions(ban_members=True)
@@ -364,7 +363,7 @@ class Moderation(Cog):
 
                     await send_to_modlogs(self, ctx, target, reason, action="Power Banned")
 
-    @command(name="unban", usage="`<member>...` `[reason]`")
+    @command(name="unbanw", usage="`<member>...` `[reason]`")
     @guild_only()
     @has_guild_permissions(ban_members=True)
     @bot_has_guild_permissions(ban_members=True)
@@ -378,7 +377,7 @@ class Moderation(Cog):
             with ctx.typing():
                 await unban_members(self, ctx, members, reason)
 
-    @command(name="purge")
+    @command(name="purgew")
     @guild_only()
     @has_guild_permissions(manage_messages=True)
     @bot_has_guild_permissions(manage_messages=True, read_message_history=True)
@@ -435,7 +434,6 @@ class Moderation(Cog):
         """Logging Bulk Message Deletion from Server"""
 
         if modlogs := self.bot.get_modlog_for_guild(payload.guild_id):
-            # Get the modlogs channel
             modlogs_channel = self.bot.get_channel(modlogs)
 
             deleted_msgs_channel = self.bot.get_channel(payload.channel_id)
@@ -447,6 +445,7 @@ class Moderation(Cog):
                 colour=self.bot.admin_colour,
                 timestamp=datetime.datetime.utcnow())
             embed.set_author(name=deleted_msgs_channel.guild.name, icon_url=deleted_msgs_channel.guild.icon_url)
+            embed.set_footer(text="Bulk Message Deletion")
 
             await modlogs_channel.send(embed=embed)
 
@@ -456,16 +455,21 @@ class Moderation(Cog):
 
         if member == self.bot.user: return
 
+        removed_at = datetime.datetime.utcnow()
         if modlogs := self.bot.get_modlog_for_guild(member.guild.id):
-            # Get the modlogs channel
             modlogs_channel = self.bot.get_channel(modlogs)
 
-            embed = Embed(description=f"**{member.mention}** | **{member}**",
+            embed = Embed(title="Member Removed",
+                          description=f"**Member --> {member.mention} | {member}"
+                                      f"\nID -->** {member.id}",
                           colour=self.bot.admin_colour,
-                          timestamp=datetime.datetime.utcnow())
-            embed.set_author(name="Member Left", icon_url=member.avatar_url)
+                          timestamp=removed_at)
+            embed.add_field(name="Account Creation Date",
+                            value=member.created_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"), inline=True)
+            embed.add_field(name="Member Left Date", value=removed_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"),
+                            inline=True)
             embed.set_thumbnail(url=member.avatar_url)
-            embed.set_footer(text=f"ID: {member.id}")
+            embed.set_footer(text=f"Member Left")
 
             await modlogs_channel.send(embed=embed)
 
@@ -475,19 +479,21 @@ class Moderation(Cog):
 
         if member == self.bot.user: return
 
+        joined_at = datetime.datetime.utcnow()
         if modlogs := self.bot.get_modlog_for_guild(member.guild.id):
-            # Get the modlogs channel
             modlogs_channel = self.bot.get_channel(modlogs)
 
-            embed = Embed(description=f"**{member.mention}** | **{member}**",
+            embed = Embed(title="Member Joined",
+                          description=f"**Member --> {member.mention} | {member}"
+                                      f"\nID -->** {member.id}",
                           colour=self.bot.admin_colour,
-                          timestamp=datetime.datetime.utcnow())
+                          timestamp=joined_at)
             embed.add_field(name="Account Creation Date",
-                            value=member.created_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"),
-                            inline=False)
-            embed.set_author(name="Member Joined", icon_url=member.avatar_url)
+                            value=member.created_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"), inline=True)
+            embed.add_field(name="Member Joined Date", value=joined_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"),
+                            inline=True)
             embed.set_thumbnail(url=member.avatar_url)
-            embed.set_footer(text=f"ID: {member.id}")
+            embed.set_footer(text=f"Member Joined")
 
             await modlogs_channel.send(embed=embed)
 
@@ -497,15 +503,20 @@ class Moderation(Cog):
 
         if user == self.bot.user: return
 
+        banned_at = datetime.datetime.utcnow()
         if modlogs := self.bot.get_modlog_for_guild(guild.id):
-            # Get the modlogs channel
             modlogs_channel = self.bot.get_channel(modlogs)
 
-            embed = Embed(description=f"{user.mention} | **{user}**",
+            embed = Embed(title="Member Banned",
+                          description=f"**Member --> {user.mention} | {user}"
+                                      f"\nID -->** {user.id}",
                           colour=self.bot.admin_colour,
-                          timestamp=datetime.datetime.utcnow())
-            embed.set_author(name="Member Banned", icon_url=user.avatar_url)
-            embed.set_footer(text=f"ID: {user.id}")
+                          timestamp=banned_at)
+            embed.add_field(name="Account Creation Date",
+                            value=user.created_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"), inline=True)
+            embed.add_field(name="Member Banned Date", value=banned_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"),
+                            inline=True)
+            embed.set_footer(text="Member Banned")
             embed.set_thumbnail(url=user.avatar_url)
 
             await modlogs_channel.send(embed=embed)
@@ -514,15 +525,20 @@ class Moderation(Cog):
     async def on_member_unban(self, guild, user):
         """Logs Member Unbans to Server"""
 
+        unbanned_at = datetime.datetime.utcnow()
         if modlogs := self.bot.get_modlog_for_guild(guild.id):
-            # Get the modlogs channel
             modlogs_channel = self.bot.get_channel(modlogs)
 
-            embed = Embed(description=f"{user.mention} | **{user}**",
+            embed = Embed(title="Member Unbanned",
+                          description=f"**Member --> {user.mention} | {user}"
+                                      f"\nID -->** {user.id}",
                           colour=self.bot.admin_colour,
-                          timestamp=datetime.datetime.utcnow())
-            embed.set_author(name="Member Unbanned", icon_url=user.avatar_url)
-            embed.set_footer(text=f"ID: {user.id}")
+                          timestamp=unbanned_at)
+            embed.add_field(name="Account Creation Date",
+                            value=user.created_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"), inline=True)
+            embed.add_field(name="Member Unbanned Date", value=unbanned_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"),
+                            inline=True)
+            embed.set_footer(text="Member Unbanned")
             embed.set_thumbnail(url=user.avatar_url)
 
             await modlogs_channel.send(embed=embed)
@@ -534,12 +550,12 @@ class Moderation(Cog):
         if before == self.bot.user: return
 
         if modlogs := self.bot.get_modlog_for_guild(after.guild.id):
-            # Get the modlogs channel
             modlogs_channel = self.bot.get_channel(modlogs)
 
             # Logging Nickname Updates
             if before.nick != after.nick:
-                embed = Embed(description=f"**{after.mention}'s Nickname Changed**",
+                embed = Embed(description=f"**Nickname Updated"
+                                          f"\nID -->** {after.id}",
                               colour=self.bot.admin_colour,
                               timestamp=datetime.datetime.utcnow())
                 embed.set_author(name=after, icon_url=after.avatar_url)
@@ -547,7 +563,7 @@ class Moderation(Cog):
                                 value=before.nick, inline=False)
                 embed.add_field(name="After",
                                 value=after.nick, inline=False)
-                embed.set_footer(text=f"ID: {after.id}")
+                embed.set_footer(text="Nickname Updated")
 
                 await modlogs_channel.send(embed=embed)
 
@@ -559,37 +575,47 @@ class Moderation(Cog):
 
                 # As long as roles were added to the Member, log the role(s) that were given
                 if len(new_roles) >= 1:
-                    new_roles_string = ", ".join(f"`{r.name}`" for r in new_roles)
+                    new_roles_string = " **|** ".join(r.mention for r in new_roles)
 
                     # Change the description of the embed depending on how many roles were added
                     if len(new_roles) == 1:
-                        desc = f"**{after.mention} was given the role {new_roles_string}**"
+                        desc = f"**Role Added --> {new_roles_string}**"
+                        footer = "Role Added"
                     else:
-                        desc = f"**Roles Added To {after.mention}\nRoles: {new_roles_string}**"
+                        desc = f"**Roles Added --> {new_roles_string}**"
+                        footer = "Roles Added"
 
-                    embed = Embed(description=desc,
+                    embed = Embed(title=footer,
+                                  description=f"**Member --> {after.mention} | {after}"
+                                              f"\nID -->** {after.id}"
+                                              f"\n\n{desc}",
                                   colour=self.bot.admin_colour,
                                   timestamp=datetime.datetime.utcnow())
                     embed.set_author(name=after, icon_url=after.avatar_url)
-                    embed.set_footer(text=f"ID: {after.id}")
+                    embed.set_footer(text=footer)
 
                     await modlogs_channel.send(embed=embed)
 
                 # As long as roles were removed from the member, log the role(s) that were removed
                 if len(old_roles) >= 1:
-                    old_roles_string = ", ".join(f"`{r.name}`" for r in old_roles)
+                    old_roles_string = " **|** ".join(r.mention for r in old_roles)
 
                     # Change the description of the embed depending on how many roles were removed
                     if len(old_roles) == 1:
-                        desc = f"**{after.mention} was removed from the role {old_roles_string}**"
+                        desc = f"**Role Removed --> {old_roles_string}**"
+                        footer = "Role Removed"
                     else:
-                        desc = f"**Roles Removed From {after.mention}\nRoles: {old_roles_string}**"
+                        desc = f"**Roles Removed --> {old_roles_string}**"
+                        footer = "Roles Removed"
 
-                    embed = Embed(description=desc,
+                    embed = Embed(title=footer,
+                                  description=f"**Member --> {after.mention} | {after}"
+                                              f"\nID -->** {after.id}"
+                                              f"\n\n{desc}",
                                   colour=self.bot.admin_colour,
                                   timestamp=datetime.datetime.utcnow())
                     embed.set_author(name=after, icon_url=after.avatar_url)
-                    embed.set_footer(text=f"ID: {after.id}")
+                    embed.set_footer(text=footer)
 
                     await modlogs_channel.send(embed=embed)
 
@@ -608,19 +634,21 @@ class Moderation(Cog):
 
         # When no modlogs channel is returned, do nothing
         if channel:
-            # Get the modlogs channel
             modlogs_channel = self.bot.get_channel(channel)
 
             # Logging Message Content Edits
             # Not logging any message edits from bots
             if before.content != after.content and not after.author.bot:
-                desc = f"**Message Edited Within** <#{after.channel.id}>\n[Jump To Message]({after.jump_url})"
+                desc = f"**Channel -->** <#{after.channel.id}>" \
+                       f"\n**Message ID -->** {after.id}" \
+                       f"\n**Edited Message -->** [Jump To Message]({after.jump_url})"
 
                 # When the message context exceeds 500 characters, only display the first 500 characters in the logs
                 before_value = f"{before.content[:500]} ..." if len(before.content) >= 500 else before.content
                 after_value = f"{after.content[:500]} ..." if len(after.content) >= 500 else after.content
 
-                embed = Embed(description=desc,
+                embed = Embed(title="Message Edited",
+                              description=desc,
                               colour=self.bot.admin_colour,
                               timestamp=datetime.datetime.utcnow())
                 embed.set_author(name=after.author, icon_url=after.author.avatar_url)
@@ -628,7 +656,7 @@ class Moderation(Cog):
                                 value=before_value, inline=False)
                 embed.add_field(name="After",
                                 value=after_value, inline=False)
-                embed.set_footer(text=f"ID: {after.author.id}")
+                embed.set_footer(text="Message Edited")
 
                 await modlogs_channel.send(embed=embed)
 
@@ -647,15 +675,17 @@ class Moderation(Cog):
         # Only log this message edit when the message does not exist within the internal cache
         # and modlogs channel is set up
         if channel and not payload.cached_message:
-            # Get the modlogs channel
             modlogs_channel = self.bot.get_channel(channel)
 
-            desc = f"**Message Edited Within {msg_channel.mention}\nMessage Content Not Displayable**"
-            embed = Embed(description=desc,
+            desc = f"**Channel -->** {msg_channel.mention}" \
+                   f"\n**Message ID -->** {payload.message_id}" \
+                   f"\n**Message Content -->** N/A"
+            embed = Embed(title="Raw Message Edited",
+                          description=desc,
                           colour=self.bot.admin_colour,
                           timestamp=datetime.datetime.utcnow())
             embed.set_author(name=modlogs_channel.guild.name, icon_url=modlogs_channel.guild.icon_url)
-            embed.set_footer(text=f"Message ID: {payload.message_id}")
+            embed.set_footer(text="Raw Message Edited")
 
             await modlogs_channel.send(embed=embed)
 
@@ -668,24 +698,31 @@ class Moderation(Cog):
 
         # When no modlogs channel is returned, do nothing
         if channel and not message.author.bot:
-            # Get the modlogs channel
             modlogs_channel = self.bot.get_channel(channel)
 
             if not message.attachments:
-                desc = f"**Message Sent By {message.author.mention} Deleted In {message.channel.mention}" \
-                       f"\nMessage Content:**\n{message.content}"
+                desc = f"**Channel --> {message.channel.mention}**" \
+                       f"\n**Author ID -->** {message.author.id}" \
+                       f"\n**Message ID -->** {message.id}"
+                fields = [("Message Content", message.content, False)]
             else:
-                attach_string = "".join(
-                    f"\n**Attachment Link(s):** [Here]({attach.proxy_url})"
-                    for attach in message.attachments)
-                desc = f"**Message Sent By {message.author.mention} Deleted In {message.channel.mention}" \
-                       f"\n\nMessage Content:**\n{message.content}{attach_string}"
+                attach_string = "".join(f"[Here]({attach.proxy_url})" for attach in message.attachments)
+                desc = f"**Channel --> {message.channel.mention}**" \
+                       f"\n**Author ID -->** {message.author.id}" \
+                       f"\n**Message ID -->** {message.id}"
+                fields = [("Message Content", message.content, False),
+                          ("Attachment Link(s)", attach_string, False)]
 
-            embed = Embed(description=desc,
+            embed = Embed(title="Message Deleted",
+                          description=desc,
                           colour=self.bot.admin_colour,
                           timestamp=datetime.datetime.utcnow())
             embed.set_author(name=message.author, icon_url=message.author.avatar_url)
-            embed.set_footer(text=f"Author ID: {message.author.id} | Message ID: {message.id}")
+            embed.set_footer(text="Message Deleted")
+
+            # Add fields to the embed
+            for name, value, inline in fields:
+                embed.add_field(name=name, value=value, inline=inline)
 
             await modlogs_channel.send(embed=embed)
 
@@ -704,15 +741,17 @@ class Moderation(Cog):
         # Only log this message deletion when the message does not exist within the internal cache
         # and modlogs channel is set up
         if channel and not payload.cached_message:
-            # Get the modlogs channel
             modlogs_channel = self.bot.get_channel(channel)
 
-            desc = f"**Message Deleted Within {msg_channel.mention}\nMessage Content Not Displayable**"
-            embed = Embed(description=desc,
+            desc = f"**Channel -->** {msg_channel.mention}" \
+                   f"\n**Message ID -->** {payload.message_id}" \
+                   f"\n**Message Content -->** N/A"
+            embed = Embed(title="Raw Message Deleted",
+                          description=desc,
                           colour=self.bot.admin_colour,
                           timestamp=datetime.datetime.utcnow())
             embed.set_author(name=modlogs_channel.guild.name, icon_url=modlogs_channel.guild.icon_url)
-            embed.set_footer(text=f"Message ID: {payload.message_id}")
+            embed.set_footer(text="Raw Message Deleted")
 
             await modlogs_channel.send(embed=embed)
 
@@ -723,14 +762,13 @@ class Moderation(Cog):
         deleted_at = datetime.datetime.utcnow()
 
         if modlogs := self.bot.get_modlog_for_guild(channel.guild.id):
-            # Get the modlogs channel
             modlogs_channel = self.bot.get_channel(modlogs)
 
             category = channel.category if channel.category else self.bot.cross
 
             desc = f"**Channel Deleted |** #{channel.name}\n" \
                    f"**Category |** {category}\n" \
-                   f"**Position |** {channel.position}\n"
+                   f"**Position |** #{channel.position} / {len(channel.guild.channels)}\n"
             embed = Embed(description=desc,
                           colour=self.bot.admin_colour,
                           timestamp=datetime.datetime.utcnow())
@@ -750,14 +788,13 @@ class Moderation(Cog):
         """Logging channel creations within the guild"""
 
         if modlogs := self.bot.get_modlog_for_guild(channel.guild.id):
-            # Get the modlogs channel
             modlogs_channel = self.bot.get_channel(modlogs)
 
             category = channel.category if channel.category else self.bot.cross
 
             desc = f"**Channel Created |** {channel.mention}\n" \
                    f"**Category |** {category}\n" \
-                   f"**Position |** {channel.position}\n"
+                   f"**Position |** #{channel.position} / {len(channel.guild.channels)}\n"
             embed = Embed(description=desc,
                           colour=self.bot.admin_colour,
                           timestamp=datetime.datetime.utcnow())
@@ -765,34 +802,103 @@ class Moderation(Cog):
                             value=channel.created_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"),
                             inline=True)
             embed.set_author(name=modlogs_channel.guild.name, icon_url=modlogs_channel.guild.icon_url)
-            embed.set_footer(text="Channel Deleted")
+            embed.set_footer(text="Channel Created")
 
             await modlogs_channel.send(embed=embed)
 
-    """@Cog.listener()
+    @Cog.listener()
     async def on_guild_channel_update(self, before, after):
-        """"""
+        """Logging channel updates"""
 
         if modlogs := self.bot.get_modlog_for_guild(after.guild.id):
-            # Get the modlogs channel
             modlogs_channel = self.bot.get_channel(modlogs)
 
-            category = after.category if after.category else self.bot.cross
+            # Logging Channel Name Updates
+            if before.name != after.name:
+                embed = Embed(description=f"**Channel Name Changed**",
+                              colour=self.bot.admin_colour,
+                              timestamp=datetime.datetime.utcnow())
+                embed.set_author(name=after.guild, icon_url=after.guild.icon_url)
+                embed.add_field(name="Before",
+                                value=f"#{before.name}", inline=False)
+                embed.add_field(name="After",
+                                value=after.mention, inline=False)
+                embed.set_footer(text=f"ID: {after.id}")
 
-            desc = f"**Channel Created |** {channel.mention}\n" \
-                   f"**Category |** {category}\n" \
-                   f"**Position |** {channel.position}\n"
-            embed = Embed(description=desc,
-                          colour=self.bot.admin_colour,
-                          timestamp=datetime.datetime.utcnow())
-            embed.add_field(name="Created Date",
-                            value=channel.created_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"),
-                            inline=True)
-            embed.set_author(name=modlogs_channel.guild.name, icon_url=modlogs_channel.guild.icon_url)
-            embed.set_footer(text="Channel Deleted")
+                await modlogs_channel.send(embed=embed)
 
-            await modlogs_channel.send(embed=embed)Logging channel updates within the guild"""
+            # Logging Channel Position Updates
+            if before.position != after.position:
+                embed = Embed(description=f"**{after.mention} Position Changed**",
+                              colour=self.bot.admin_colour,
+                              timestamp=datetime.datetime.utcnow())
+                embed.set_author(name=after.guild, icon_url=after.guild.icon_url)
+                embed.add_field(name="Before",
+                                value=f"#{before.position} / {len(before.guild.channels)}", inline=False)
+                embed.add_field(name="After",
+                                value=f"#{after.position} / {len(after.guild.channels)}", inline=False)
+                embed.set_footer(text=f"ID: {after.id}")
+
+                await modlogs_channel.send(embed=embed)
+
+            # Logging any roles added/removed from channel permissions
+            if before.changed_roles != after.changed_roles:
+                new_roles = [roles for roles in after.changed_roles]
+                old_roles = [roles for roles in before.changed_roles]
+
+                def role_string(roles):
+                    # Check if the amount of roles is above 20
+                    if len(roles) > 20:
+                        # Retrieve the length of the remaining roles
+                        length = len(roles) - 20
+
+                        # Store the first 20 roles in a string (highest to lowest)
+                        string = f"{' **|** '.join(map(str, (role.mention for role in list(reversed(roles))[:20])))} and **{length}** more"
+                        return string
+
+                    else:
+                        # Display all roles as it is lower than 20
+                        string = f"{' **|** '.join(map(str, (role.mention for role in list(reversed(roles[1:])))))}"
+                        return string
+
+                embed = Embed(description=f"**{after.mention} Role Overrides Updated**",
+                              colour=self.bot.admin_colour,
+                              timestamp=datetime.datetime.utcnow())
+                embed.set_author(name=after.guild, icon_url=after.guild.icon_url)
+                embed.add_field(name="Before",
+                                value=role_string(old_roles) or after.guild.default_role.mention, inline=False)
+                embed.add_field(name="After",
+                                value=role_string(new_roles) or after.guild.default_role.mention, inline=False)
+                embed.set_footer(text=f"ID: {after.id}")
+
+                await modlogs_channel.send(embed=embed)
 
 
 def setup(bot):
     bot.add_cog(Moderation(bot))
+
+
+"""
+print(before.overwrites)
+print(after.overwrites)
+
+before_diffkeys = [k for k in before.overwrites if
+                   before.overwrites[k].pair() != after.overwrites[k].pair()]
+after_diffkeys = [k for k in after.overwrites if after.overwrites[k].pair() != before.overwrites[k].pair()]
+
+before_array = []
+after_array = []
+for k in before_diffkeys:
+    for pair in k.permissions:
+        before_array += [pair]
+
+for k in after_diffkeys:
+    for pair in k.permissions:
+        after_array += [pair]
+
+old_roles = [p for p in before_array if p in after_array]
+after_roles = [p for p in after_array if p in before_array]
+
+print(old_roles)
+print(after_roles)
+"""

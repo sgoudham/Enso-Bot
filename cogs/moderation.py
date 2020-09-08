@@ -250,7 +250,7 @@ class Moderation(Cog):
     async def on_ready(self):
         print(f"{self.__class__.__name__} Cog has been loaded\n-----")
 
-    @command(name="kickw", usage="`<member>...` `[reason]`")
+    @command(name="kick", usage="`<member>...` `[reason]`")
     @guild_only()
     @has_guild_permissions(kick_members=True)
     @bot_has_guild_permissions(kick_members=True)
@@ -266,7 +266,7 @@ class Moderation(Cog):
                 # Send embed of the kicked member
                 await kick_members(self, ctx, members, reason)
 
-    @command(name="mutew", usage="`<member>...` `[reason]`")
+    @command(name="mute", usage="`<member>...` `[reason]`")
     @has_guild_permissions(manage_roles=True)
     @bot_has_guild_permissions(manage_roles=True)
     async def mute(self, ctx, members: Greedy[Member], *, reason: Optional[str] = "No Reason Given"):
@@ -292,7 +292,7 @@ class Moderation(Cog):
                 else:
                     await mute_members(self, ctx, members, reason, role)
 
-    @command(name="unmutew", usage="`<member>...` `[reason]`")
+    @command(name="unmute", usage="`<member>...` `[reason]`")
     @has_guild_permissions(manage_roles=True)
     @bot_has_guild_permissions(manage_roles=True)
     async def unmute(self, ctx, members: Greedy[Member], *, reason: Optional[str] = "No Reason Given"):
@@ -323,7 +323,7 @@ class Moderation(Cog):
                                           colour=self.bot.admin_colour)
                             await ctx.send(embed=embed)
 
-    @command(name="banw", usage="`<member>...` `[reason]`")
+    @command(name="ban", usage="`<member>...` `[reason]`")
     @guild_only()
     @has_guild_permissions(ban_members=True)
     @bot_has_guild_permissions(ban_members=True)
@@ -338,7 +338,7 @@ class Moderation(Cog):
             with ctx.typing():
                 await ban_members(self, ctx, members, reason)
 
-    @command(name="forcebanw", aliases=["powerban", "ultraban"], usage="`<member>...` `[reason]`")
+    @command(name="forceban", aliases=["powerban", "ultraban"], usage="`<member>...` `[reason]`")
     @guild_only()
     @has_guild_permissions(ban_members=True)
     @bot_has_guild_permissions(ban_members=True)
@@ -363,7 +363,7 @@ class Moderation(Cog):
 
                     await send_to_modlogs(self, ctx, target, reason, action="Power Banned")
 
-    @command(name="unbanw", usage="`<member>...` `[reason]`")
+    @command(name="unban", usage="`<member>...` `[reason]`")
     @guild_only()
     @has_guild_permissions(ban_members=True)
     @bot_has_guild_permissions(ban_members=True)
@@ -377,7 +377,7 @@ class Moderation(Cog):
             with ctx.typing():
                 await unban_members(self, ctx, members, reason)
 
-    @command(name="purgew")
+    @command(name="purge")
     @guild_only()
     @has_guild_permissions(manage_messages=True)
     @bot_has_guild_permissions(manage_messages=True, read_message_history=True)

@@ -223,7 +223,6 @@ async def detailed_waifu_embed(self, waifu, author, ctx):
 
     # Get all the data to be displayed in the embed
     name = waifu["name"]
-    _type = waifu["type"]
     waifu_id = waifu["id"]
     url = waifu["url"]
     picture = waifu["display_picture"]
@@ -282,7 +281,7 @@ async def detailed_waifu_embed(self, waifu, author, ctx):
     # Only using image if it can be displayed, else display 404 image
     picture_url = picture if picture.endswith((".jpeg", ".png", ".jpg")) else not_found
     # Different titles depending on if author was given or not
-    title = f"True Love | {name}" if author else f"Detailed {_type} | {name}"
+    title = f"True Love | {name}" if author else f"Detailed Waifu | {name}"
 
     detailed = Embed(title=title, description=desc,
                      colour=self.bot.random_colour(),

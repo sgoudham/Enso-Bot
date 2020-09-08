@@ -203,7 +203,7 @@ class Info(Cog):
 
         # Description of the embed
         desc = f"{role.mention} " \
-               f"**<-- Colour:** {str(role.colour)} | **Position:** {role.position}"
+               f"**<-- Colour:** {str(role.colour)} | **Position:** #{role.position} / #{len(ctx.guild.roles)}"
 
         # Set up Embed
         embed = Embed(title=f"{role.name}",

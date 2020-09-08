@@ -43,10 +43,8 @@ def search(self, bot):
         if key["type"] in ["Waifu", "Husbando"]:
             embed.set_footer(text=f"❤️ {key['likes']} 🗑️ {key['trash']} | Powered by MyWaifuList")
         else:
-            if key['romaji_name']:
-                embed.set_footer(text=f"{key['romaji_name']} | Powered by MyWaifuList")
-            else:
-                embed.set_footer(text="Powered by MyWaifuList")
+            embed.set_footer(text=f"{key['romaji_name']} | Powered by MyWaifuList" if key[
+                "romaji_name"] else "Powered by MyWaifuList")
 
         embeds.append(embed)
 

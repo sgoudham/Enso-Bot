@@ -710,7 +710,7 @@ class Moderation(Cog):
                 desc = f"**Channel --> {message.channel.mention}**" \
                        f"\n**Author ID -->** {message.author.id}" \
                        f"\n**Message ID -->** {message.id}"
-                fields = [("Message Content", message.content, False),
+                fields = [("Message Content", message.content or "View Attachment", False),
                           ("Attachment Link(s)", attach_string, False)]
 
             embed = Embed(title="Message Deleted",

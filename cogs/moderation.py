@@ -919,7 +919,8 @@ class Moderation(Cog):
 
                            f"**Default Notifications -->** {get_notifs(before.default_notifications)}\n"
                            f"**AFK Channel -->** {before.afk_channel.mention if before.afk_channel else '#N/A'} **|** {before.afk_timeout}s\n",
-                           False),
+                           True),
+                          ("\u200b", "\u200b", True),
                           ("After",
                            f"**Guild Name -->** {after}\n"
                            f"**Region -->** {get_region(str(after.region))}\n\n"
@@ -930,7 +931,7 @@ class Moderation(Cog):
 
                            f"**Default Notifications -->** {get_notifs(after.default_notifications)}\n"
                            f"**AFK Channel -->** {after.afk_channel.mention if after.afk_channel else '#N/A'} **|** {after.afk_timeout}s\n",
-                           False)]
+                           True)]
 
                 embed = Embed(title="Guild Updated",
                               description=f"**Owner --> {after.owner.mention} |** {after.owner}\n"

@@ -5,15 +5,22 @@ def string_list(types, n, instance):
         # Retrieve the length of the remaining roles
         length = len(types) - n
 
-        # Store the first nn roles in a string called "roles" (highest to lowest)
-        role = f"{' **|** '.join(_type.mention for _type in list(reversed(types))[:n])} and **{length}** more"
+        if instance == "Emoji":
+            # Store the first 20 emojis in a string
+            string = f"{' '.join(map(str, (types[:n])))} and **{length}** more..."
+        else:
+            # Store the first n roles/members in a string called "roles" (highest to lowest)
+            string = f"{' **|** '.join(_type.mention for _type in list(reversed(types))[:n])} and **{length}** more"
 
     else:
         if instance == "Role":
             # Display all roles as it is lower than n provided
-            role = f"{' **|** '.join(role.mention for role in list(reversed(types[1:])))}"
+            string = f"{' **|** '.join(role.mention for role in list(reversed(types[1:])))}"
+        elif instance == "Emoji":
+            # Display all the emojis in the server as it is less than 20
+            string = " ".join(map(str, types))
         else:
-            # Display all roles as it is lower than n provided
-            role = f"{' **|** '.join(role.mention for role in list(reversed(types)))}"
+            # Display all members as it is lower than n provided
+            string = f"{' **|** '.join(role.mention for role in list(reversed(types)))}"
 
-    return role
+    return string

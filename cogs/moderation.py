@@ -681,8 +681,8 @@ class Moderation(Cog):
                        f"\n**Edited Message -->** [Jump To Message]({after.jump_url})"
 
                 # When the message context exceeds 500 characters, only display the first 500 characters in the logs
-                before_value = f"{before.content[:500]} ..." if len(before.content) >= 500 else before.content
-                after_value = f"{after.content[:500]} ..." if len(after.content) >= 500 else after.content
+                before_value = f"{before.content[:1000]} ..." if len(before.content) >= 1000 else before.content
+                after_value = f"{after.content[:1000]} ..." if len(after.content) >= 1000 else after.content
 
                 embed = Embed(title="Message Edited",
                               description=desc,
@@ -801,10 +801,8 @@ class Moderation(Cog):
         if modlogs := self.bot.get_modlog_for_guild(channel.guild.id):
             modlogs_channel = self.bot.get_channel(modlogs)
 
-            category = channel.category if channel.category else self.bot.cross
-
             desc = f"**Channel Deleted |** #{channel.name}\n" \
-                   f"**Category |** {category}\n" \
+                   f"**Category |** {channel.category or self.bot.cross}\n" \
                    f"**Position |** #{channel.position} / {len(channel.guild.channels)}\n"
             embed = Embed(description=desc,
                           colour=self.bot.admin_colour,
@@ -827,10 +825,8 @@ class Moderation(Cog):
         if modlogs := self.bot.get_modlog_for_guild(channel.guild.id):
             modlogs_channel = self.bot.get_channel(modlogs)
 
-            category = channel.category if channel.category else self.bot.cross
-
             desc = f"**Channel Created |** {channel.mention}\n" \
-                   f"**Category |** {category}\n" \
+                   f"**Category |** {channel.category or self.bot.cross}\n" \
                    f"**Position |** #{channel.position} / {len(channel.guild.channels)}\n"
             embed = Embed(description=desc,
                           colour=self.bot.admin_colour,
@@ -907,15 +903,9 @@ class Moderation(Cog):
 
             # TODO: REMEMBER TO TRY AND LOG CHANNEL OVERWRITES
 
-
-def setup(bot):
-    bot.add_cog(Moderation(bot))
-
-
-"""
-@Cog.listener()
+    @Cog.listener()
     async def on_guild_update(self, before, after):
-        Logging guild updates
+        """Logging guild updates"""
 
         if modlogs := self.bot.get_modlog_for_guild(after.guild.id):
             modlogs_channel = self.bot.get_channel(modlogs)
@@ -924,6 +914,13 @@ def setup(bot):
             if before.name != after.name or before.verification_level != after.verification_level \
                     or before.afk_channel != after.afk.channel:
                 pass
+
+
+def setup(bot):
+    bot.add_cog(Moderation(bot))
+
+
+"""
 
 @Cog.listener()
     async def on_guild_integrations_update(self, guild):

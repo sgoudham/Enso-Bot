@@ -907,9 +907,15 @@ class Moderation(Cog):
 
             # TODO: REMEMBER TO TRY AND LOG CHANNEL OVERWRITES
 
-    @Cog.listener()
+
+def setup(bot):
+    bot.add_cog(Moderation(bot))
+
+
+"""
+@Cog.listener()
     async def on_guild_update(self, before, after):
-        """Logging guild updates"""
+        Logging guild updates
 
         if modlogs := self.bot.get_modlog_for_guild(after.guild.id):
             modlogs_channel = self.bot.get_channel(modlogs)
@@ -918,13 +924,6 @@ class Moderation(Cog):
             if before.name != after.name or before.verification_level != after.verification_level \
                     or before.afk_channel != after.afk.channel:
                 pass
-
-
-def setup(bot):
-    bot.add_cog(Moderation(bot))
-
-
-"""
 
 @Cog.listener()
     async def on_guild_integrations_update(self, guild):

@@ -15,8 +15,6 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 import datetime
-import os
-import pathlib
 import string
 from asyncio.subprocess import Process
 from platform import python_version
@@ -30,9 +28,10 @@ from discord.ext.commands import BucketType, cooldown, bot_has_permissions, guil
 from discord.ext.commands import command
 from psutil import Process, virtual_memory
 
+from cogs.libs.functions import string_list
 from cogs.libs.paginators import SimpleMenu
 
-# Using forzenset
+# Using frozenset
 # Permissions to filter through
 Perms = frozenset(
     {
@@ -88,13 +87,13 @@ def get_region(disc_region, region_dict):
             pass
 
 
-def add_perms(embed, list):
+def add_perms(embed, _list):
     """Add all the permission in the list to embed fields"""
 
     i = 0
-    while i < len(list):
-        embed.add_field(name=str(list[i].split(":")[0]).strip(),
-                        value=f"<{list[i].split('<')[1]}",
+    while i < len(_list):
+        embed.add_field(name=str(_list[i].split(":")[0]).strip(),
+                        value=f"<{_list[i].split('<')[1]}",
                         inline=True)
         i += 1
 
@@ -110,43 +109,6 @@ def detect_perms(message, fset):
     # Filter the permission out if it's in the frozenset
     filtered = filter(lambda perm: perm not in fset, message)
     return ", ".join(filtered)
-
-
-async def line_count():
-    """Getting the line count of the project"""
-
-    code = 0
-    comments = 0
-    blank = 0
-    file_amount = 0
-    ENV = "venv"
-
-    for path, _, files in os.walk("."):
-        if ".local" in path:
-            continue
-        for name in files:
-            file_dir = str(pathlib.PurePath(path, name))
-            # Ignoring the venv directory
-            if not name.endswith(".py") or ENV in file_dir:
-                continue
-            file_amount += 1
-            with open(file_dir, "r", encoding="utf-8") as file:
-                for line in file:
-                    if line.strip().startswith("#"):
-                        comments += 1
-                    elif not line.strip():
-                        blank += 1
-                    else:
-                        code += 1
-
-    # Adding up the total lines of code
-    total = comments + blank + code
-
-    return f"Code: {code}\n" \
-           f"Commentary: {comments}\n" \
-           f"Blank: {blank}\n" \
-           f"Total: {total}\n" \
-           f"Files: {file_amount}"
 
 
 class Info(Cog):
@@ -177,24 +139,9 @@ class Info(Cog):
         perms = ",".join(map(lambda x: x[0].replace("_", " "), filtered))
 
         # Capitalise every word in the array and filter out the permissions that are defined within the frozenset
-        permission = string.capwords("".join(map(str, detect_perms(perms, Perms))))
-
-        # Accounting for the edge case where the user has no key permissions to be displayed
-        permissions = "No Key Permissions" if permission == "" else permission
-
-        if len(role.members) > 30:
-            # Retrieve the length of the members within the role
-            length = len(role.members) - 30
-
-            # Store the first 30 members in a string called "roles" (highest to lowest)
-            member = f"{' **|** '.join(member.mention for member in list(reversed(role.members))[:30])} and **{length}** more"
-
-        else:
-            # Display all members within the roles as it is lower than 30
-            member = f"{' **|** '.join(member.mention for member in list(reversed(role.members)))}"
-
-        # Accounting for the edge case the role has no members
-        members = "No Members In Role" if member == "" else member
+        permission = string.capwords("".join(detect_perms(perms, Perms)))
+        # Get all members within role
+        member = string_list(role.members, 30, "Member")
 
         # Using emotes to represent bools
         mentionable = self.bot.tick if role.mention else self.bot.cross
@@ -203,7 +150,7 @@ class Info(Cog):
 
         # Description of the embed
         desc = f"{role.mention} " \
-               f"**<-- Colour:** {str(role.colour)} | **Position -->** #{role.position} / {len(ctx.guild.roles)}"
+               f"**<-- Colour:** {str(role.colour)} **| Position -->** #{role.position} / {len(ctx.guild.roles)}"
 
         # Set up Embed
         embed = Embed(title=f"{role.name}",
@@ -226,8 +173,8 @@ class Info(Cog):
              f"\nHumans: {len(list(filter(lambda m: not m.bot, role.members)))}" +
              f"\nBots: {len(list(filter(lambda m: m.bot, role.members)))}", True),
 
-            ("List of Members", members, False),
-            ("Key Permissions", permissions, False)
+            (f"List of Members ({len(role.members)})", member or "No Members In Role", False),
+            ("Key Permissions", permission or "No Key Permissions", False)
         ]
 
         # Add fields to the embed
@@ -286,23 +233,11 @@ class Info(Cog):
 
         # More readable name
         guild_roles = ctx.guild.roles
-
-        if len(guild_roles) > 50:
-            # Retrieve the length of the remaining roles
-            length = len(guild_roles) - 50
-
-            # Store the first 50 roles in a string called "roles" (highest to lowest)
-            role = f"{' **|** '.join(role.mention for role in list(reversed(guild_roles))[:50])} and **{length}** more"
-
-        else:
-            # Display all roles as it is lower than 20
-            role = f"{' **|** '.join(role.mention for role in list(reversed(guild_roles[1:])))}"
-
-        # Accounting for the edge case where the user has no roles to be displayed
-        roles = "Guild Has No Roles" if role == "" else role
+        # Get all guild roles
+        role = string_list(guild_roles, 50, "Role")
 
         embed = Embed(title=f"{ctx.guild}'s Roles --> {len(ctx.guild.roles)}",
-                      description=roles,
+                      description=role or "Guild Has No Roles",
                       color=self.bot.random_colour(),
                       timestamp=datetime.datetime.utcnow())
         embed.set_footer(text=f"Guild ID: {ctx.guild.id}", icon_url=ctx.guild.icon_url)
@@ -321,51 +256,31 @@ class Info(Cog):
 
         # Get the member avatar
         userAvatar = member.avatar_url
-
-        # Check if user roles is greater than 20
-        if len(member.roles) > 20:
-            # Retrieve the length of the remaining roles
-            length = len(member.roles) - 20
-
-            # Store the first 20 roles in a string called "roles" (highest to lowest)
-            role = f"{' **|** '.join(role.mention for role in list(reversed(member.roles))[:20])} and **{length}** more"
-
-        else:
-            # Display all roles as it is lower than 20
-            role = f"{' **|** '.join(role.mention for role in list(reversed(member.roles[1:])))}"
-
-        # Accounting for the edge case where the user has no roles to be displayed
-        roles = "No Roles" if role == "" else role
+        # Get total member roles
+        role = string_list(member.roles, 20, "Role")
 
         # Returns the permissions that the user has within the guild
         filtered = filter(lambda x: x[1], member.guild_permissions)
         # Replace all "_" with " " in each item and join them together
         perms = ",".join(map(lambda x: x[0].replace("_", " "), filtered))
-
         # Capitalise every word in the array and filter out the permissions that are defined within the frozenset
         permission = string.capwords("".join(map(str, detect_perms(perms, Perms))))
 
-        # Accounting for the edge case where the user has no key permissions to be displayed
-        permissions = "No Key Permissions" if permission == "" else permission
-
-        # Set up the embed to display everything about the user
         embed = Embed(
             title=f"**User Information**",
             colour=self.bot.random_colour(),
-            timestamp=datetime.datetime.utcnow()
-        )
+            timestamp=datetime.datetime.utcnow())
         embed.set_thumbnail(url=userAvatar)
         embed.set_footer(text=f"ID: {member.id}", icon_url=userAvatar)
 
-        # Define fields to be added into the embed
         embed_fields = [("Name", member.mention, True),
                         ("Tag", member.name, True),
                         ("Discrim", f"#{member.discriminator}", True),
                         ("Registered", member.created_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"), True),
                         ("Joined", member.joined_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"), True),
                         ("Top Role", member.top_role.mention, False),
-                        ("Roles", roles, False),
-                        ("Key Permissions", permissions, False),
+                        ("Roles", role or "No Roles", False),
+                        ("Key Permissions", permission or "No Key Permissions", False),
                         ("Status", str(member.status).title(), True),
                         ("Boosting Server", bool(member.premium_since), True),
                         ("Bot", member.bot, True)]
@@ -374,7 +289,6 @@ class Info(Cog):
         for name, value, inline in embed_fields:
             embed.add_field(name=name, value=value, inline=inline)
 
-        # Send the embed to the channel that the command was triggered in
         await ctx.send(embed=embed)
 
     @command(name="serverinfo", aliases=["si", "guildinfo", "gi"])
@@ -392,32 +306,10 @@ class Info(Cog):
 
         # Retrieve the top role of the guild
         top_role = ctx.guild.roles[-1]
-
-        # Check if the amount of roles is above 20
-        if len(ctx.guild.roles) > 20:
-            # Retrieve the length of the remaining roles
-            length = len(ctx.guild.roles) - 20
-
-            # Store the first 20 roles in a string called "roles" (highest to lowest)
-            role_string = f"{' **|** '.join(role.mention for role in list(reversed(ctx.guild.roles))[:20])} and **{length}** more"
-
-        else:
-            # Display all roles as it is lower than 20
-            role_string = f"{' **|** '.join(role.mention for role in list(reversed(ctx.guild.roles[1:])))}"
-
-        # Check if the list of emojis returned are greater than 20
-        if len(ctx.guild.emojis) > 20:
-            # Display the first 20 emojis with a length specified telling the user how many emojis were not shown
-            length = len(ctx.guild.emojis) - 20
-
-            # Store the first 20 emojis in a string
-            emojis = f"{' '.join(map(str, ctx.guild.emojis[:20]))} and **{length}** more..."
-
-        else:
-            # Display all the emojis in the server as it is less than 20
-            emojis = " ".join(map(str, ctx.guild.emojis))
-
-        emojis = "No Emoji's Available" if emojis == "" else emojis
+        # Get total guild roles
+        role_string = string_list(ctx.guild.roles, 20, "Role")
+        # Get total emojis
+        emojis = string_list(ctx.guild.emojis, 20, "Emoji")
 
         # Defining a dictionary of the statuses
         member_status = {
@@ -445,34 +337,36 @@ class Info(Cog):
         embed.set_footer(text=f"ID: {guild_id}", icon_url=guild_icon)
 
         # Get the list of banned users from the server
-        bans = len(await ctx.guild.bans()) if perms.ban_members else "No Perms <:xMark:746834944629932032>"
-
+        bans = len(await ctx.guild.bans()) if perms.ban_members else f"No Perms {self.bot.cross}"
         # Get the list of invites created for the server
-        invites = len(await ctx.guild.invites()) if perms.manage_guild else "No Perms <:xMark:746834944629932032>"
+        invites = len(await ctx.guild.invites()) if perms.manage_guild else f"No Perms {self.bot.cross}"
 
         # Define fields to be added into the embed
         fields = [("Owner", ctx.guild.owner.mention, True),
                   ("Created", ctx.guild.created_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"), False),
                   ("Region", get_region(str(ctx.guild.region), region), False),
-                  ("Statuses", f"🟢 {statuses[0]} \n🟠 {statuses[1]} \n🔴 {statuses[2]} \n⚪ {statuses[3]}", False),
+                  ("Statuses", f"<a:online:753214525272096831>  {statuses[0]}  "
+                               f"<a:idle:753214548756004924>  {statuses[1]}  "
+                               f"<a:dnd:753214555999567953>  {statuses[2]}  "
+                               f"<a:offline:753214562970501171>  {statuses[3]}  ", False),
 
                   (f"Members ({len(ctx.guild.members)})",
-                   f"\nHumans: {len(list(filter(lambda m: not m.bot, ctx.guild.members)))}" +
-                   f"\nBots: {len(list(filter(lambda m: m.bot, ctx.guild.members)))}" +
+                   f"\nHumans: {len(list(filter(lambda m: not m.bot, ctx.guild.members)))}"
+                   f"\nBots: {len(list(filter(lambda m: m.bot, ctx.guild.members)))}"
                    f"\nBanned: {bans}", True),
 
                   (f"Channels ({len(ctx.guild.channels)})",
-                   f"\nText: {len(ctx.guild.text_channels)}" +
-                   f"\nVoice: {len(ctx.guild.voice_channels)}" +
+                   f"\nText: {len(ctx.guild.text_channels)}"
+                   f"\nVoice: {len(ctx.guild.voice_channels)}"
                    f"\nCategories: {len(ctx.guild.categories)}", True),
 
                   ("Misc",
-                   f"Invites: {invites}" +
-                   f"\nVerif Level: {ctx.guild.verification_level.name.capitalize()}" +
+                   f"Invites: {invites}"
+                   f"\nVerif Level: {ctx.guild.verification_level.name.capitalize()}"
                    f"\nNitro Boosters: {len(ctx.guild.premium_subscribers)}", True),
                   ("Top Role", top_role.mention, False),
-                  (f"Roles ({len(ctx.guild.roles)})", role_string, True),
-                  (f"Emojis ({len(ctx.guild.emojis)})", emojis, False)]
+                  (f"Roles ({len(ctx.guild.roles)})", role_string or "No Roles In Guild", True),
+                  (f"Emojis ({len(ctx.guild.emojis)})", emojis or "No Emojis In Guild", False)]
 
         # Add fields to the embed
         for name, value, inline in fields:
@@ -488,15 +382,12 @@ class Info(Cog):
 
         # Get information about the channel
         channel = ctx.channel if not channel else channel
-        category = channel.category.name if channel.category else self.bot.cross
         perms_synced = self.bot.tick if channel.permissions_synced else self.bot.cross
-        topic = channel.topic if channel.topic else self.bot.cross
         nsfw = self.bot.tick if channel.is_nsfw() else self.bot.cross
 
         # Set up Embed
-        desc = f"**Guild:** {ctx.guild}" \
-               f"\n**Category:** {category}" \
-               f"\n**Topic:** {topic}"
+        desc = f"**Guild -->** {ctx.guild}" \
+               f"\n**Position -->** {f'#{channel.position} / {len(ctx.guild.channels)}'}"
         embed = Embed(title=f"Statistics For #{channel.name}",
                       description=desc,
                       timestamp=datetime.datetime.utcnow(),
@@ -505,8 +396,10 @@ class Info(Cog):
         embed.set_footer(text=f"ID: {channel.id}")
 
         # Setting up fields
-        fields = [("Position", channel.position, False),
-                  ("Permissions Synced?", perms_synced, True),
+        fields = [("Category", channel.category or self.bot.cross, True),
+                  ("Topic", channel.topic or self.bot.cross, True),
+                  ("\u200b", "\u200b", True),
+                  ("Perms Synced?", perms_synced, True),
                   ("Nsfw?", nsfw, True),
                   ("Creation At", channel.created_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"), False)]
 
@@ -598,7 +491,7 @@ class Info(Cog):
              f"\nCommands: {len(self.bot.commands)}"
              f"\nUsers: {len(self.bot.users):,}", True),
 
-            ("Line Count", await line_count(), True),
+            ("Line Count", self.bot.line_count, True),
             ("Uptime", frmt_uptime, False),
             ("Memory Usage", f"{mem_usage:,.2f} / {mem_total:,.2f} MiB ({mem_of_total:.2f}%)", False)]
 

@@ -23,7 +23,7 @@ from discord import Member, Embed, DMChannel, NotFound
 from discord.ext.commands import command, guild_only, has_guild_permissions, bot_has_guild_permissions, Greedy, \
     cooldown, BucketType, Cog
 
-from cogs.libs.functions import string_list, get_region
+from cogs.libs.functions import string_list, get_region, get_content_filter, get_notifs
 
 # TODO: CREATE A BITARRAY SO THAT THE MODLOG EVENTS ARE TOGGLEABLE
 # TODO: MAKE SURE THAT THE BITARRAY IS ONLY IMPLEMENTED AFTER ALL EVENTS ARE CODED
@@ -874,29 +874,21 @@ class Moderation(Cog):
                 new_roles = [roles for roles in after.changed_roles]
                 old_roles = [roles for roles in before.changed_roles]
 
-                def role_string(roles):
-                    # Check if the amount of roles is above 20
-                    if len(roles) > 20:
-                        # Retrieve the length of the remaining roles
-                        length = len(roles) - 20
+                # Get total new_roles in the channel
+                new_role_string = string_list(new_roles, 20, "Role")
+                # Get total old_roles in the channel
+                old_role_string = string_list(old_roles, 20, "Role")
 
-                        # Store the first 20 roles in a string (highest to lowest)
-                        string = f"{' **|** '.join(role.mention for role in list(reversed(roles))[:20])} and **{length}** more"
-                        return string
-
-                    else:
-                        # Display all roles as it is lower than 20
-                        string = f"{' **|** '.join(role.mention for role in list(reversed(roles[1:])))}"
-                        return string
-
-                embed = Embed(description=f"**{after.mention} Role Overrides Updated**",
+                embed = Embed(title="Role Overrides Updated",
+                              description=f"**Channel -->** {after.mention}\n"
+                                          f"**ID -->** {after.id}",
                               colour=self.bot.admin_colour,
                               timestamp=datetime.datetime.utcnow())
                 embed.set_author(name=after.guild, icon_url=after.guild.icon_url)
                 embed.add_field(name="Before",
-                                value=role_string(old_roles) or after.guild.default_role.mention, inline=False)
+                                value=old_role_string or after.guild.default_role.mention, inline=False)
                 embed.add_field(name="After",
-                                value=role_string(new_roles) or after.guild.default_role.mention, inline=False)
+                                value=new_role_string or after.guild.default_role.mention, inline=False)
                 embed.set_footer(text="Role Overrides Updated")
 
                 await modlogs_channel.send(embed=embed)
@@ -910,24 +902,35 @@ class Moderation(Cog):
         if modlogs := self.bot.get_modlog_for_guild(after.id):
             modlogs_channel = self.bot.get_channel(modlogs)
 
-            # Logging guild updates
-            if before.name != after.name or before.verification_level != after.verification_level \
-                    or before.afk_channel != after.afk_channel or before.mfa_level != after.mfa_level \
-                    or before.icon_url != after.icon_url or before.default_notifications != after.default_notifications \
-                    or before.region != after.region:
+            attributes = ["name", "verification_level", "afk_channel", "mfa_level", "icon_url",
+                          "default_notifications", "region", "explicit_content_filter"]
+
+            if any(getattr(before, x) != getattr(after, x) for x in attributes):
 
                 # TODO: ADD LOGGING FOR THE ABOVE IF STATEMENTS.
 
                 fields = [("Before",
-                           f"**Guild Name -->** {before.name}\n"
-                           f"**Region -->** {get_region(str(before.region))}\n"
-                           f"**Verification Level -->** {before.verification_level.name.capitalize()}\n"
-                           f"**AFK Channel -->** #{before.afk_channel or 'N/A'} **|** {before.afk_timeout}s\n", False),
+                           f"**Guild Name -->** {before}\n"
+                           f"**Region -->** {get_region(str(before.region))}\n\n"
+
+                           f"**2-Factor Authentication -->** {self.bot.tick if before.mfa_level == 1 else self.bot.cross}\n"
+                           f"**Explicit Content Filter -->** {get_content_filter(before.explicit_content_filter.name)}\n"
+                           f"**Verification Level -->** {before.verification_level.name.capitalize()}\n\n"
+
+                           f"**Default Notifications -->** {get_notifs(before.default_notifications)}\n"
+                           f"**AFK Channel -->** {before.afk_channel.mention if before.afk_channel else '#N/A'} **|** {before.afk_timeout}s\n",
+                           False),
                           ("After",
-                           f"**Guild Name -->** {after.name}\n"
-                           f"**Region -->** {get_region(str(after.region))}\n"
-                           f"**Verification Level -->** {after.verification_level.name.capitalize()}\n"
-                           f"**AFK Channel -->** #{after.afk_channel or 'N/A'} **|** {after.afk_timeout}s\n", False)]
+                           f"**Guild Name -->** {after}\n"
+                           f"**Region -->** {get_region(str(after.region))}\n\n"
+
+                           f"**2-Factor Authentication -->** {self.bot.tick if after.mfa_level == 1 else self.bot.cross}\n"
+                           f"**Explicit Content Filter -->** {get_content_filter(after.explicit_content_filter.name)}\n"
+                           f"**Verification Level -->** {after.verification_level.name.capitalize()}\n\n"
+
+                           f"**Default Notifications -->** {get_notifs(after.default_notifications)}\n"
+                           f"**AFK Channel -->** {after.afk_channel.mention if after.afk_channel else '#N/A'} **|** {after.afk_timeout}s\n",
+                           False)]
 
                 embed = Embed(title="Guild Updated",
                               description=f"**Owner --> {after.owner.mention} |** {after.owner}\n"

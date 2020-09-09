@@ -28,7 +28,7 @@ from discord.ext.commands import BucketType, cooldown, bot_has_permissions, guil
 from discord.ext.commands import command
 from psutil import Process, virtual_memory
 
-from cogs.libs.functions import string_list
+from cogs.libs.functions import string_list, get_region
 from cogs.libs.paginators import SimpleMenu
 
 # Using frozenset
@@ -54,37 +54,6 @@ Perms = frozenset(
         "change nickname"
     }
 )
-
-region = {
-    "eu-central": ":flag_eu: Central Europe",
-    "europe": ":flag_eu: Central Europe",
-    "singapore": ":flag_sg: Singapore",
-    "india": ":flag_in: India",
-    "japan": ":flag_jp: Japan",
-    "us-central": ":flag_us: U.S. Central",
-    "sydney": ":flag_au: Sydney",
-    "us-east": ":flag_us: U.S. East",
-    "us-south": ":flag_us: U.S. South",
-    "us-west": ":flag_us: U.S. West",
-    "eu-west": ":flag_eu: Western Europe",
-    "vip-us-east": ":flag_us: VIP U.S. East",
-    "london": ":flag_gb: London",
-    "amsterdam": ":flag_nl: Amsterdam",
-    "hongkong": ":flag_hk: Hong Kong",
-    "russia": ":flag_ru: Russia",
-    "southafrica": ":flag_za:  South Africa",
-    "brazil": ":flag_br: Brazil"
-}
-
-
-def get_region(disc_region, region_dict):
-    """Return Nicer Looking Region String"""
-
-    for key in region_dict:
-        if key == disc_region:
-            return region_dict[key]
-        else:
-            pass
 
 
 def add_perms(embed, _list):
@@ -344,7 +313,7 @@ class Info(Cog):
         # Define fields to be added into the embed
         fields = [("Owner", ctx.guild.owner.mention, True),
                   ("Created", ctx.guild.created_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"), False),
-                  ("Region", get_region(str(ctx.guild.region), region), False),
+                  ("Region", get_region(str(ctx.guild.region)), False),
                   ("Statuses", f"<a:online:753214525272096831>  {statuses[0]}  "
                                f"<a:idle:753214548756004924>  {statuses[1]}  "
                                f"<a:dnd:753214555999567953>  {statuses[2]}  "

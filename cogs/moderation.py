@@ -834,7 +834,7 @@ class Moderation(Cog):
                               colour=self.bot.admin_colour,
                               timestamp=datetime.datetime.utcnow())
                 embed.set_footer(text="Channel Updated")
-
+                
                 # Add fields to the embed
                 for name, value, inline in fields:
                     embed.add_field(name=name, value=value, inline=inline)

@@ -14,6 +14,7 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 import os
+import pathlib
 import random
 
 import asyncpg as asyncpg
@@ -51,6 +52,7 @@ class Bot(commands.Bot):
 
         super().__init__(command_prefix=get_prefix, case_insensitive=True, **options)
         self.db = None
+        self.line_count = None
         self.description = 'All current available commands within Ensō~Chan',
         self.owner_id = 154840866496839680  # Your unique User ID
         self.admin_colour = Colour(0x62167a)  # Admin Embed Colour
@@ -92,6 +94,42 @@ class Bot(commands.Bot):
                 password=password,
                 database=db,
                 loop=self.loop)
+
+        async def line_count():
+            """Getting the line count of the project"""
+
+            code = 0
+            comments = 0
+            blank = 0
+            file_amount = 0
+            ENV = "venv"
+
+            for path, _, files in os.walk("."):
+                if ".local" in path:
+                    continue
+                for name in files:
+                    file_dir = str(pathlib.PurePath(path, name))
+                    # Ignoring the venv directory
+                    if not name.endswith(".py") or ENV in file_dir:
+                        continue
+                    file_amount += 1
+                    with open(file_dir, "r", encoding="utf-8") as file:
+                        for line in file:
+                            if line.strip().startswith("#"):
+                                comments += 1
+                            elif not line.strip():
+                                blank += 1
+                            else:
+                                code += 1
+
+            # Adding up the total lines of code
+            total = comments + blank + code
+
+            self.line_count = f"Code: {code}\n" \
+                              f"Commentary: {comments}\n" \
+                              f"Blank: {blank}\n" \
+                              f"Total: {total}\n" \
+                              f"Files: {file_amount}"
 
         async def startup_cache_log():
             """Store the guilds/modmail systems in cache from the database on startup"""
@@ -155,6 +193,8 @@ class Bot(commands.Bot):
 
         # Establish Database Connection
         self.loop.run_until_complete(create_connection())
+        # Get line count of project
+        self.loop.run_until_complete(line_count())
         # Load Information Into Cache
         self.loop.run_until_complete(startup_cache_log())
 

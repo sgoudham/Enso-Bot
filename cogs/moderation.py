@@ -23,7 +23,7 @@ from discord import Member, Embed, DMChannel, NotFound
 from discord.ext.commands import command, guild_only, has_guild_permissions, bot_has_guild_permissions, Greedy, \
     cooldown, BucketType, Cog
 
-from cogs.libs.functions import string_list
+from cogs.libs.functions import string_list, get_region
 
 # TODO: CREATE A BITARRAY SO THAT THE MODLOG EVENTS ARE TOGGLEABLE
 # TODO: MAKE SURE THAT THE BITARRAY IS ONLY IMPLEMENTED AFTER ALL EVENTS ARE CODED
@@ -91,7 +91,7 @@ async def ummute_members(self, ctx, targets, reason):
 
     2 embeds will be sent, one to the channel that the user is in
     And if the user has the modlogs channel setup, an embed will be logged there
-
+c3
     """
 
     for target in targets:
@@ -333,7 +333,7 @@ class Moderation(Cog):
                                           colour=self.bot.admin_colour)
                             await ctx.send(embed=embed)
 
-    @command(name="ban", usage="`<member>...` `[reason]`")
+    @command(name="banw", usage="`<member>...` `[reason]`")
     @guild_only()
     @has_guild_permissions(ban_members=True)
     @bot_has_guild_permissions(ban_members=True)
@@ -741,7 +741,7 @@ class Moderation(Cog):
                 desc = f"**Channel --> {message.channel.mention}**" \
                        f"\n**Author ID -->** {message.author.id}" \
                        f"\n**Message ID -->** {message.id}"
-                fields = [("Message Content", message.content, False)]
+                fields = [("Message Content", message.content or "No Content", False)]
             else:
                 attach_string = "".join(f"[Here]({attach.proxy_url})" for attach in message.attachments)
                 desc = f"**Channel --> {message.channel.mention}**" \
@@ -907,13 +907,41 @@ class Moderation(Cog):
     async def on_guild_update(self, before, after):
         """Logging guild updates"""
 
-        if modlogs := self.bot.get_modlog_for_guild(after.guild.id):
+        if modlogs := self.bot.get_modlog_for_guild(after.id):
             modlogs_channel = self.bot.get_channel(modlogs)
 
-            # Logging Channel Name/Category/Position Updates
+            # Logging guild updates
             if before.name != after.name or before.verification_level != after.verification_level \
-                    or before.afk_channel != after.afk.channel:
-                pass
+                    or before.afk_channel != after.afk_channel or before.mfa_level != after.mfa_level \
+                    or before.icon_url != after.icon_url or before.default_notifications != after.default_notifications \
+                    or before.region != after.region:
+
+                # TODO: ADD LOGGING FOR THE ABOVE IF STATEMENTS.
+
+                fields = [("Before",
+                           f"**Guild Name -->** {before.name}\n"
+                           f"**Region -->** {get_region(str(before.region))}\n"
+                           f"**Verification Level -->** {before.verification_level.name.capitalize()}\n"
+                           f"**AFK Channel -->** #{before.afk_channel or 'N/A'} **|** {before.afk_timeout}s\n", False),
+                          ("After",
+                           f"**Guild Name -->** {after.name}\n"
+                           f"**Region -->** {get_region(str(after.region))}\n"
+                           f"**Verification Level -->** {after.verification_level.name.capitalize()}\n"
+                           f"**AFK Channel -->** #{after.afk_channel or 'N/A'} **|** {after.afk_timeout}s\n", False)]
+
+                embed = Embed(title="Guild Updated",
+                              description=f"**Owner --> {after.owner.mention} |** {after.owner}\n"
+                                          f"**ID -->** {after.id}",
+                              colour=self.bot.admin_colour,
+                              timestamp=datetime.datetime.utcnow())
+                embed.set_thumbnail(url=after.icon_url)
+                embed.set_footer(text="Guild Updated")
+
+                # Add fields to the embed
+                for name, value, inline in fields:
+                    embed.add_field(name=name, value=value, inline=inline)
+
+                await modlogs_channel.send(embed=embed)
 
 
 def setup(bot):

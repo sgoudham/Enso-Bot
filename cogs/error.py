@@ -41,8 +41,9 @@ async def on_bot_forbidden(ctx, perms, args2):
     # Convert list into string of the missing permissions
     missing_perms = string.capwords(", ".join(args2.missing_perms).replace("_", " "))
 
-    embed = Embed(description=f"❌ I Need **{missing_perms}** Permission(s) to Execute This Command! ❌",
-                  colour=ctx.bot.admin_colour)
+    embed = Embed(
+        description=f"{ctx.bot.cross} I Need **{missing_perms}** Permission(s) to Execute This Command! {ctx.bot.cross}",
+        colour=ctx.bot.admin_colour)
 
     await send_error(ctx, perms, embed)
 
@@ -50,7 +51,7 @@ async def on_bot_forbidden(ctx, perms, args2):
 async def on_command_forbidden(ctx, perms):
     """Handles Forbidden Error"""
 
-    embed = Embed(description="**❌ I Don't Have Permissions To Execute This Command ❌**",
+    embed = Embed(description=f"**{ctx.bot.cross} I Don't Have Permissions To Execute This Command {ctx.bot.cross}**",
                   colour=ctx.bot.admin_colour)
 
     await send_error(ctx, perms, embed)
@@ -59,7 +60,7 @@ async def on_command_forbidden(ctx, perms):
 async def on_command_bad_argument(ctx, perms):
     """Handles Bad Argument Errors (Argument can't be read properly)"""
 
-    embed = Embed(description="**❌ Uh oh! Couldn't find anyone to mention! Try again! ❌**",
+    embed = Embed(description=f"**{ctx.bot.cross} Uh oh! Couldn't find anyone to mention! Try again! {ctx.bot.cross}**",
                   colour=ctx.bot.admin_colour)
 
     await send_error(ctx, perms, embed)
@@ -68,7 +69,7 @@ async def on_command_bad_argument(ctx, perms):
 async def on_command_not_found(ctx, perms):
     """Handles the command not found error"""
 
-    embed = Embed(description=f"Command Not Found! ❌ Please use **{ctx.prefix}help** to see all commands",
+    embed = Embed(description=f"Command Not Found! {ctx.bot.cross} Please use **{ctx.prefix}help** to see all commands",
                   colour=ctx.bot.admin_colour)
 
     await send_error(ctx, perms, embed)
@@ -89,8 +90,9 @@ async def on_command_permission(ctx, perms, args2):
     # Convert list into string of the missing permissions
     missing_perms = string.capwords(", ".join(args2.missing_perms).replace("_", " "))
 
-    embed = Embed(description=f"❌ Uh oh! You Need **{missing_perms}** Permission(s) To Execute This Command! ❌",
-                  colour=ctx.bot.admin_colour)
+    embed = Embed(
+        description=f"{ctx.bot.cross} Uh oh! You Need **{missing_perms}** Permission(s) To Execute This Command! {ctx.bot.cross}",
+        colour=ctx.bot.admin_colour)
 
     await send_error(ctx, perms, embed)
 
@@ -108,7 +110,7 @@ async def on_command_missing_argument(ctx, perms):
 async def on_not_owner(ctx, perms):
     """Handles the error when the user is not the owner and tries to invoke owner only command"""
 
-    embed = Embed(description="**❌ Owner Only Command ❌**",
+    embed = Embed(description=f"**{ctx.bot.cross} Owner Only Command {ctx.bot.cross}**",
                   colour=ctx.bot.admin_colour)
 
     await send_error(ctx, perms, embed)

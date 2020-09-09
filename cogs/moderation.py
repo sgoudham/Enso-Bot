@@ -23,9 +23,19 @@ from discord import Member, Embed, DMChannel, NotFound
 from discord.ext.commands import command, guild_only, has_guild_permissions, bot_has_guild_permissions, Greedy, \
     cooldown, BucketType, Cog
 
+from cogs.libs.functions import string_list
 
 # TODO: CREATE A BITARRAY SO THAT THE MODLOG EVENTS ARE TOGGLEABLE
 # TODO: MAKE SURE THAT THE BITARRAY IS ONLY IMPLEMENTED AFTER ALL EVENTS ARE CODED
+
+# Defining a dictionary of the statuses to emojis
+member_status = {
+    "online": "<a:online:753214525272096831>",
+    "idle": "<a:idle:753214548756004924>",
+    "dnd": "<a:dnd:753214555999567953>",
+    "offline": "<a:offline:753214562970501171>"
+}
+
 
 async def send_to_modlogs(self, ctx, target, reason, action):
     """
@@ -459,9 +469,9 @@ class Moderation(Cog):
         if modlogs := self.bot.get_modlog_for_guild(member.guild.id):
             modlogs_channel = self.bot.get_channel(modlogs)
 
-            embed = Embed(title="Member Removed",
-                          description=f"**Member --> {member.mention} | {member}"
-                                      f"\nID -->** {member.id}",
+            embed = Embed(title="Member Left",
+                          description=f"**Member --> {member.mention} |** {member}"
+                                      f"\n**ID -->** {member.id}",
                           colour=self.bot.admin_colour,
                           timestamp=removed_at)
             embed.add_field(name="Account Creation Date",
@@ -484,8 +494,8 @@ class Moderation(Cog):
             modlogs_channel = self.bot.get_channel(modlogs)
 
             embed = Embed(title="Member Joined",
-                          description=f"**Member --> {member.mention} | {member}"
-                                      f"\nID -->** {member.id}",
+                          description=f"**Member --> {member.mention} |** {member}"
+                                      f"\n**ID -->** {member.id}",
                           colour=self.bot.admin_colour,
                           timestamp=joined_at)
             embed.add_field(name="Account Creation Date",
@@ -508,8 +518,8 @@ class Moderation(Cog):
             modlogs_channel = self.bot.get_channel(modlogs)
 
             embed = Embed(title="Member Banned",
-                          description=f"**Member --> {user.mention} | {user}"
-                                      f"\nID -->** {user.id}",
+                          description=f"**Member --> {user.mention} |** {user}"
+                                      f"\n**ID -->** {user.id}",
                           colour=self.bot.admin_colour,
                           timestamp=banned_at)
             embed.add_field(name="Account Creation Date",
@@ -530,8 +540,8 @@ class Moderation(Cog):
             modlogs_channel = self.bot.get_channel(modlogs)
 
             embed = Embed(title="Member Unbanned",
-                          description=f"**Member --> {user.mention} | {user}"
-                                      f"\nID -->** {user.id}",
+                          description=f"**Member --> {user.mention} |** {user}"
+                                      f"\n**ID -->** {user.id}",
                           colour=self.bot.admin_colour,
                           timestamp=unbanned_at)
             embed.add_field(name="Account Creation Date",
@@ -553,23 +563,47 @@ class Moderation(Cog):
             modlogs_channel = self.bot.get_channel(modlogs)
 
             # Logging Nickname Updates
-            if before.nick != after.nick:
-                embed = Embed(description=f"**Nickname Updated"
-                                          f"\nID -->** {after.id}",
+            if before.nick != after.nick or before.status != after.status or before.activity != after.activity:
+
+                # Getting emoji of status from dict
+                for key, value in member_status.items():
+                    if key == str(before.status):
+                        before_status = value
+                    if key == str(after.status):
+                        after_status = value
+
+                # Getting status of the member
+                before_activity = f"{before.activity.emoji or '' if before.activity.type.name == 'custom' else ''} {before.activity.name}" if before.activity else "None"
+                after_activity = f"{after.activity.emoji or '' if after.activity.type.name == 'custom' else ''} {after.activity.name}" if after.activity else "None"
+
+                fields = [("Before",
+                           f"**Nickname -->** {before.nick or 'None'}\n"
+                           f"**Status -->** {before_status or 'None'}\n"
+                           f"**Activity -->** {before_activity}\n", False),
+                          ("After",
+                           f"**Nickname -->** {after.nick or 'None'}\n"
+                           f"**Status -->** {after_status or 'None'}\n"
+                           f"**Activity -->** {after_activity}\n", False)]
+
+                embed = Embed(title="Member Updated",
+                              description=f"**Member --> {after.mention} |** {after}"
+                                          f"\n**ID -->** {after.id}",
                               colour=self.bot.admin_colour,
                               timestamp=datetime.datetime.utcnow())
                 embed.set_author(name=after, icon_url=after.avatar_url)
-                embed.add_field(name="Before",
-                                value=before.nick, inline=False)
-                embed.add_field(name="After",
-                                value=after.nick, inline=False)
-                embed.set_footer(text="Nickname Updated")
+                embed.set_footer(text="Member Updated")
+
+                # Add fields to the embed
+                for name, value, inline in fields:
+                    embed.add_field(name=name, value=value, inline=inline)
 
                 await modlogs_channel.send(embed=embed)
 
             # Logging Role additions/removals from Members
             if after.roles != before.roles:
-                after_roles_string = " **|** ".join(r.mention for r in after.roles[1:])
+
+                # Grab total list of roles that the user has after additions/removal
+                role = string_list(after.roles, 30, "Role")
 
                 # Retrieve the roles that were added/removed to/from the Member
                 new_roles = [roles for roles in after.roles if roles not in before.roles]
@@ -588,13 +622,13 @@ class Moderation(Cog):
                         footer = "Roles Added"
 
                     embed = Embed(title=footer,
-                                  description=f"**Member --> {after.mention} | {after}"
-                                              f"\nID -->** {after.id}",
+                                  description=f"**Member --> {after.mention} |** {after}"
+                                              f"\n**ID -->** {after.id}",
                                   colour=self.bot.admin_colour,
                                   timestamp=datetime.datetime.utcnow())
                     embed.set_author(name=after, icon_url=after.avatar_url)
                     embed.add_field(name=field[0], value=field[1], inline=field[2])
-                    embed.add_field(name="All Roles", value=after_roles_string, inline=False)
+                    embed.add_field(name="All Roles", value=role or "No Roles", inline=False)
                     embed.set_footer(text=footer)
 
                     await modlogs_channel.send(embed=embed)
@@ -605,19 +639,20 @@ class Moderation(Cog):
 
                     # Change the description of the embed depending on how many roles were removed
                     if len(old_roles) == 1:
-                        desc = f"**Role Removed --> {old_roles_string}**"
+                        field = ("Role Removed", old_roles_string, False)
                         footer = "Role Removed"
                     else:
-                        desc = f"**Roles Removed --> {old_roles_string}**"
+                        field = ("Roles Removed", old_roles_string, False)
                         footer = "Roles Removed"
 
                     embed = Embed(title=footer,
-                                  description=f"**Member --> {after.mention} | {after}"
-                                              f"\nID -->** {after.id}"
-                                              f"\n\n{desc}",
+                                  description=f"**Member --> {after.mention} |** {after}"
+                                              f"\n**ID -->** {after.id}",
                                   colour=self.bot.admin_colour,
                                   timestamp=datetime.datetime.utcnow())
                     embed.set_author(name=after, icon_url=after.avatar_url)
+                    embed.add_field(name=field[0], value=field[1], inline=field[2])
+                    embed.add_field(name="All Roles", value=role or "No Roles", inline=False)
                     embed.set_footer(text=footer)
 
                     await modlogs_channel.send(embed=embed)
@@ -815,18 +850,16 @@ class Moderation(Cog):
 
         if modlogs := self.bot.get_modlog_for_guild(after.guild.id):
             modlogs_channel = self.bot.get_channel(modlogs)
-            before_category = before.category if before.category else self.bot.cross
-            after_category = after.category if after.category else self.bot.cross
 
             # Logging Channel Name/Category/Position Updates
             if before.name != after.name or before.category != after.category or before.position != after.position:
                 fields = [("Before",
                            f"**Channel Updated -->** #{before}\n"
-                           f"**Category -->** {before_category}\n"
+                           f"**Category -->** {before.category or self.bot.cross}\n"
                            f"**Position -->** #{before.position} / {len(before.guild.channels)}\n", False),
                           ("After",
                            f"**Channel Updated -->** #{after}\n"
-                           f"**Category -->** {after_category}\n"
+                           f"**Category -->** {after.category or self.bot.cross}\n"
                            f"**Position -->** #{after.position} / {len(after.guild.channels)}\n", False)]
 
                 embed = Embed(title="Channel Updated",
@@ -834,7 +867,7 @@ class Moderation(Cog):
                               colour=self.bot.admin_colour,
                               timestamp=datetime.datetime.utcnow())
                 embed.set_footer(text="Channel Updated")
-                
+
                 # Add fields to the embed
                 for name, value, inline in fields:
                     embed.add_field(name=name, value=value, inline=inline)

@@ -569,6 +569,8 @@ class Moderation(Cog):
 
             # Logging Role additions/removals from Members
             if after.roles != before.roles:
+                after_roles_string = " **|** ".join(r.mention for r in after.roles[1:])
+
                 # Retrieve the roles that were added/removed to/from the Member
                 new_roles = [roles for roles in after.roles if roles not in before.roles]
                 old_roles = [roles for roles in before.roles if roles not in after.roles]
@@ -579,19 +581,20 @@ class Moderation(Cog):
 
                     # Change the description of the embed depending on how many roles were added
                     if len(new_roles) == 1:
-                        desc = f"**Role Added --> {new_roles_string}**"
+                        field = ("Role Added", new_roles_string, False)
                         footer = "Role Added"
                     else:
-                        desc = f"**Roles Added --> {new_roles_string}**"
+                        field = ("Roles Added", new_roles_string, False)
                         footer = "Roles Added"
 
                     embed = Embed(title=footer,
                                   description=f"**Member --> {after.mention} | {after}"
-                                              f"\nID -->** {after.id}"
-                                              f"\n\n{desc}",
+                                              f"\nID -->** {after.id}",
                                   colour=self.bot.admin_colour,
                                   timestamp=datetime.datetime.utcnow())
                     embed.set_author(name=after, icon_url=after.avatar_url)
+                    embed.add_field(name=field[0], value=field[1], inline=field[2])
+                    embed.add_field(name="All Roles", value=after_roles_string, inline=False)
                     embed.set_footer(text=footer)
 
                     await modlogs_channel.send(embed=embed)
@@ -812,32 +815,29 @@ class Moderation(Cog):
 
         if modlogs := self.bot.get_modlog_for_guild(after.guild.id):
             modlogs_channel = self.bot.get_channel(modlogs)
+            before_category = before.category if before.category else self.bot.cross
+            after_category = after.category if after.category else self.bot.cross
 
-            # Logging Channel Name Updates
-            if before.name != after.name:
-                embed = Embed(description=f"**Channel Name Changed**",
+            # Logging Channel Name/Category/Position Updates
+            if before.name != after.name or before.category != after.category or before.position != after.position:
+                fields = [("Before",
+                           f"**Channel Updated -->** #{before}\n"
+                           f"**Category -->** {before_category}\n"
+                           f"**Position -->** #{before.position} / {len(before.guild.channels)}\n", False),
+                          ("After",
+                           f"**Channel Updated -->** #{after}\n"
+                           f"**Category -->** {after_category}\n"
+                           f"**Position -->** #{after.position} / {len(after.guild.channels)}\n", False)]
+
+                embed = Embed(title="Channel Updated",
+                              description=f"**ID -->** {after.id}",
                               colour=self.bot.admin_colour,
                               timestamp=datetime.datetime.utcnow())
-                embed.set_author(name=after.guild, icon_url=after.guild.icon_url)
-                embed.add_field(name="Before",
-                                value=f"#{before.name}", inline=False)
-                embed.add_field(name="After",
-                                value=after.mention, inline=False)
-                embed.set_footer(text=f"ID: {after.id}")
+                embed.set_footer(text="Channel Updated")
 
-                await modlogs_channel.send(embed=embed)
-
-            # Logging Channel Position Updates
-            if before.position != after.position:
-                embed = Embed(description=f"**{after.mention} Position Changed**",
-                              colour=self.bot.admin_colour,
-                              timestamp=datetime.datetime.utcnow())
-                embed.set_author(name=after.guild, icon_url=after.guild.icon_url)
-                embed.add_field(name="Before",
-                                value=f"#{before.position} / {len(before.guild.channels)}", inline=False)
-                embed.add_field(name="After",
-                                value=f"#{after.position} / {len(after.guild.channels)}", inline=False)
-                embed.set_footer(text=f"ID: {after.id}")
+                # Add fields to the embed
+                for name, value, inline in fields:
+                    embed.add_field(name=name, value=value, inline=inline)
 
                 await modlogs_channel.send(embed=embed)
 
@@ -853,12 +853,12 @@ class Moderation(Cog):
                         length = len(roles) - 20
 
                         # Store the first 20 roles in a string (highest to lowest)
-                        string = f"{' **|** '.join(map(str, (role.mention for role in list(reversed(roles))[:20])))} and **{length}** more"
+                        string = f"{' **|** '.join(role.mention for role in list(reversed(roles))[:20])} and **{length}** more"
                         return string
 
                     else:
                         # Display all roles as it is lower than 20
-                        string = f"{' **|** '.join(map(str, (role.mention for role in list(reversed(roles[1:])))))}"
+                        string = f"{' **|** '.join(role.mention for role in list(reversed(roles[1:])))}"
                         return string
 
                 embed = Embed(description=f"**{after.mention} Role Overrides Updated**",
@@ -873,12 +873,22 @@ class Moderation(Cog):
 
                 await modlogs_channel.send(embed=embed)
 
+            # TODO: REMEMBER TO TRY AND LOG CHANNEL OVERWRITES
+
 
 def setup(bot):
     bot.add_cog(Moderation(bot))
 
 
 """
+
+@Cog.listener()
+    async def on_guild_integrations_update(self, guild):
+        Logging updates to integrations
+
+        if modlogs := self.bot.get_modlog_for_guild(guild.id):
+            modlogs_channel = self.bot.get_channel(modlogs)
+
 print(before.overwrites)
 print(after.overwrites)
 

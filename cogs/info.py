@@ -168,7 +168,7 @@ class Info(Cog):
 
     @command(name="roleinfo", aliases=["ri"])
     @guild_only()
-    async def role_info(self, ctx, role: Role):
+    async def role_info(self, ctx, *, role: Role):
         """Retrieve information about any role!"""
 
         # Returns the permissions that the user has within the guild
@@ -187,11 +187,11 @@ class Info(Cog):
             length = len(role.members) - 30
 
             # Store the first 30 members in a string called "roles" (highest to lowest)
-            member = f"{' **|** '.join(map(str, (member.mention for member in list(reversed(role.members))[:30])))} and **{length}** more"
+            member = f"{' **|** '.join(member.mention for member in list(reversed(role.members))[:30])} and **{length}** more"
 
         else:
             # Display all members within the roles as it is lower than 30
-            member = f"{' **|** '.join(map(str, (member.mention for member in list(reversed(role.members)))))}"
+            member = f"{' **|** '.join(member.mention for member in list(reversed(role.members)))}"
 
         # Accounting for the edge case the role has no members
         members = "No Members In Role" if member == "" else member
@@ -203,7 +203,7 @@ class Info(Cog):
 
         # Description of the embed
         desc = f"{role.mention} " \
-               f"**<-- Colour:** {str(role.colour)} | **Position:** #{role.position} / #{len(ctx.guild.roles)}"
+               f"**<-- Colour:** {str(role.colour)} | **Position -->** #{role.position} / {len(ctx.guild.roles)}"
 
         # Set up Embed
         embed = Embed(title=f"{role.name}",
@@ -292,16 +292,16 @@ class Info(Cog):
             length = len(guild_roles) - 50
 
             # Store the first 50 roles in a string called "roles" (highest to lowest)
-            role = f"{' **|** '.join(map(str, (role.mention for role in list(reversed(guild_roles))[:50])))} and **{length}** more"
+            role = f"{' **|** '.join(role.mention for role in list(reversed(guild_roles))[:50])} and **{length}** more"
 
         else:
             # Display all roles as it is lower than 20
-            role = f"{' **|** '.join(map(str, (role.mention for role in list(reversed(guild_roles[1:])))))}"
+            role = f"{' **|** '.join(role.mention for role in list(reversed(guild_roles[1:])))}"
 
         # Accounting for the edge case where the user has no roles to be displayed
         roles = "Guild Has No Roles" if role == "" else role
 
-        embed = Embed(title=f"{ctx.guild}'s Roles({len(ctx.guild.roles)})",
+        embed = Embed(title=f"{ctx.guild}'s Roles --> {len(ctx.guild.roles)}",
                       description=roles,
                       color=self.bot.random_colour(),
                       timestamp=datetime.datetime.utcnow())
@@ -328,11 +328,11 @@ class Info(Cog):
             length = len(member.roles) - 20
 
             # Store the first 20 roles in a string called "roles" (highest to lowest)
-            role = f"{' **|** '.join(map(str, (role.mention for role in list(reversed(member.roles))[:20])))} and **{length}** more"
+            role = f"{' **|** '.join(role.mention for role in list(reversed(member.roles))[:20])} and **{length}** more"
 
         else:
             # Display all roles as it is lower than 20
-            role = f"{' **|** '.join(map(str, (role.mention for role in list(reversed(member.roles[1:])))))}"
+            role = f"{' **|** '.join(role.mention for role in list(reversed(member.roles[1:])))}"
 
         # Accounting for the edge case where the user has no roles to be displayed
         roles = "No Roles" if role == "" else role
@@ -399,11 +399,11 @@ class Info(Cog):
             length = len(ctx.guild.roles) - 20
 
             # Store the first 20 roles in a string called "roles" (highest to lowest)
-            role_string = f"{' **|** '.join(map(str, (role.mention for role in list(reversed(ctx.guild.roles))[:20])))} and **{length}** more"
+            role_string = f"{' **|** '.join(role.mention for role in list(reversed(ctx.guild.roles))[:20])} and **{length}** more"
 
         else:
             # Display all roles as it is lower than 20
-            role_string = f"{' **|** '.join(map(str, (role.mention for role in list(reversed(ctx.guild.roles[1:])))))}"
+            role_string = f"{' **|** '.join(role.mention for role in list(reversed(ctx.guild.roles[1:])))}"
 
         # Check if the list of emojis returned are greater than 20
         if len(ctx.guild.emojis) > 20:

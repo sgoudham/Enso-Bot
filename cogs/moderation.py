@@ -19,7 +19,7 @@ from datetime import timedelta
 from typing import Optional
 
 import discord
-from discord import Member, Embed, DMChannel, NotFound
+from discord import Member, Embed, DMChannel, NotFound, User
 from discord.ext.commands import command, guild_only, has_guild_permissions, bot_has_guild_permissions, Greedy, \
     cooldown, BucketType, Cog
 
@@ -208,21 +208,20 @@ async def unban_members(self, ctx, targets, reason):
 
     # Get the list of banned users from the server
     bans = await ctx.guild.bans()
-    ban_ids = list(map(lambda m: m.user.id, bans))
+    ban_users = list(map(lambda m: m.user, bans))
 
     for target in targets:
-        if target not in ban_ids:
+        if target not in ban_users:
             await self.bot.generate_embed(ctx, desc=f"{ctx.bot.cross} **Member Is Not In Ban's List!** {ctx.bot.cross}")
 
         else:
             # Get the member and unban them
-            user = await self.bot.fetch_user(target)
-            await ctx.guild.unban(user, reason=reason)
+            await ctx.guild.unban(target, reason=reason)
 
             # Send confirmation to the channel that the user is in
-            await self.bot.generate_embed(ctx, desc=f"{ctx.bot.tick} **{user}** Was Unbanned! {ctx.bot.tick}")
+            await self.bot.generate_embed(ctx, desc=f"{ctx.bot.tick} **{target}** Was Unbanned! {ctx.bot.tick}")
 
-            await send_to_modlogs(self, ctx, user, reason, action="Unbanned")
+            await send_to_modlogs(self, ctx, target, reason, action="Unbanned")
 
 
 async def kick_members(self, ctx, targets, reason):
@@ -364,12 +363,14 @@ class Moderation(Cog):
             # Power ban users from guilds without them being in there
             for user in users:
                 if user in ban_ids:
-                    await self.bot.generate_embed(ctx, desc="❌ **Member Is Already Banned!** ❌")
+                    await self.bot.generate_embed(ctx,
+                                                  desc=f"{self.bot.cross} **Member Is Already Banned!** {self.bot.cross}")
                 else:
                     await ctx.guild.ban(discord.Object(id=user))
                     target = await self.bot.fetch_user(user)
                     # Send confirmation to the channel that the user is in
-                    await self.bot.generate_embed(ctx, desc=f"✅ **{target}** Was Power Banned! ✅")
+                    await self.bot.generate_embed(ctx,
+                                                  desc=f"{self.bot.tick} **{target}** Was Power Banned! {self.bot.tick}")
 
                     await send_to_modlogs(self, ctx, target, reason, action="Power Banned")
 
@@ -378,7 +379,7 @@ class Moderation(Cog):
     @has_guild_permissions(ban_members=True)
     @bot_has_guild_permissions(ban_members=True)
     @cooldown(1, 1, BucketType.user)
-    async def unban(self, ctx, members: Greedy[int], *, reason: Optional[str] = "No Reason Given"):
+    async def unban(self, ctx, members: Greedy[User], *, reason: Optional[str] = "No Reason Given"):
         """
         Unban Member(s) from Server
         Multiple Members can be Unbanned At Once
@@ -680,19 +681,32 @@ class Moderation(Cog):
                        f"\n**Message ID -->** {after.id}" \
                        f"\n**Edited Message -->** [Jump To Message]({after.jump_url})"
 
-                # When the message context exceeds 500 characters, only display the first 500 characters in the logs
-                before_value = f"{before.content[:1000]} ..." if len(before.content) >= 1000 else before.content
-                after_value = f"{after.content[:1000]} ..." if len(after.content) >= 1000 else after.content
+                # Allowing messages of all sizes to be logged
+                def message_fields(status):
+                    if status == "Before":
+                        if len(before.content) <= 1024:
+                            fields = [(f"Before", before.content, False)]
+                        else:
+                            fields = [(f"Before Message Content #1", before.content[:1000], False),
+                                      (f"Before Message Content #2", before.content[1000:], False)]
+                    else:
+                        if len(after.content) <= 1024:
+                            fields = [(f"After", after.content, False)]
+                        else:
+                            fields = [(f"After Message Content #1", after.content[:1000], False),
+                                      (f"After Message Content #2", after.content[1000:], False)]
+
+                    # Add fields to the embed
+                    for name, value, inline in fields:
+                        embed.add_field(name=name, value=value, inline=inline)
 
                 embed = Embed(title="Message Edited",
                               description=desc,
                               colour=self.bot.admin_colour,
                               timestamp=datetime.datetime.utcnow())
                 embed.set_author(name=after.author, icon_url=after.author.avatar_url)
-                embed.add_field(name="Before",
-                                value=before_value or "No Content", inline=False)
-                embed.add_field(name="After",
-                                value=after_value or "No Content", inline=False)
+                message_fields("Before")
+                message_fields("After")
                 embed.set_footer(text="Message Edited")
 
                 await modlogs_channel.send(embed=embed)
@@ -737,18 +751,23 @@ class Moderation(Cog):
         if channel and not message.author.bot:
             modlogs_channel = self.bot.get_channel(channel)
 
+            # Allowing messages of all sizes to be logged
+            if len(message.content) <= 1024:
+                fields = [("Message Content", message.content or "View Attachment", False)]
+            else:
+                fields = [("Message Content #1", message.content[:1000], False),
+                          ("Message Content #2", message.content[1000:], False)]
+
             if not message.attachments:
                 desc = f"**Channel --> {message.channel.mention}**" \
                        f"\n**Author ID -->** {message.author.id}" \
                        f"\n**Message ID -->** {message.id}"
-                fields = [("Message Content", message.content or "No Content", False)]
             else:
                 attach_string = "".join(f"[Here]({attach.proxy_url})" for attach in message.attachments)
                 desc = f"**Channel --> {message.channel.mention}**" \
                        f"\n**Author ID -->** {message.author.id}" \
                        f"\n**Message ID -->** {message.id}"
-                fields = [("Message Content", message.content or "View Attachment", False),
-                          ("Attachment Link(s)", attach_string, False)]
+                fields += [("Attachment Link(s)", attach_string, False)]
 
             embed = Embed(title="Message Deleted",
                           description=desc,
@@ -989,6 +1008,72 @@ class Moderation(Cog):
                                 value=f"[Link To Icon]({after.icon_url})", inline=False)
                 embed.set_image(url=after.icon_url)
                 embed.set_footer(text="Icon Updated")
+
+                await modlogs_channel.send(embed=embed)
+
+    @Cog.listener()
+    async def on_guild_emojis_update(self, guild, before, after):
+        """Logging any emoji updates"""
+
+        if modlogs := self.bot.get_modlog_for_guild(guild.id):
+            modlogs_channel = self.bot.get_channel(modlogs)
+
+            # Retrieve the emoji that were removed/added to the guild
+            new_emojis = [emojis for emojis in after if emojis not in before]
+            old_emojis = [emojis for emojis in before if emojis not in after]
+
+            # Assuming that only one emoji is returned all the time
+            new_emojis_string = str(new_emojis[0])
+            old_emojis_string = str(old_emojis[0])
+
+            if len(new_emojis) == 1:
+                field = ("")
+
+            # As long as roles were added to the Member, log the role(s) that were given
+            if len(new_emojis) >= 1:
+                new_roles_string = " **|** ".join(str(r) for r in new_emojis)
+
+                # Change the description of the embed depending on how many roles were added
+                if len(new_emojis) == 1:
+                    field = ("Role Added", new_roles_string, False)
+                    footer = "Role Added"
+                else:
+                    field = ("Roles Added", new_roles_string, False)
+                    footer = "Roles Added"
+
+                embed = Embed(title=footer,
+                              description=f"**Member --> {after.mention} |** {after}"
+                                          f"\n**ID -->** {after.id}",
+                              colour=self.bot.admin_colour,
+                              timestamp=datetime.datetime.utcnow())
+                embed.set_author(name=after, icon_url=after.avatar_url)
+                embed.add_field(name=field[0], value=field[1], inline=field[2])
+                embed.add_field(name="All Roles", value=role or "No Roles", inline=False)
+                embed.set_footer(text=footer)
+
+                await modlogs_channel.send(embed=embed)
+
+            # As long as roles were removed from the member, log the role(s) that were removed
+            if len(old_roles) >= 1:
+                old_roles_string = " **|** ".join(r.mention for r in old_roles)
+
+                # Change the description of the embed depending on how many roles were removed
+                if len(old_roles) == 1:
+                    field = ("Role Removed", old_roles_string, False)
+                    footer = "Role Removed"
+                else:
+                    field = ("Roles Removed", old_roles_string, False)
+                    footer = "Roles Removed"
+
+                embed = Embed(title=footer,
+                              description=f"**Member --> {after.mention} |** {after}"
+                                          f"\n**ID -->** {after.id}",
+                              colour=self.bot.admin_colour,
+                              timestamp=datetime.datetime.utcnow())
+                embed.set_author(name=after, icon_url=after.avatar_url)
+                embed.add_field(name=field[0], value=field[1], inline=field[2])
+                embed.add_field(name="All Roles", value=role or "No Roles", inline=False)
+                embed.set_footer(text=footer)
 
                 await modlogs_channel.send(embed=embed)
 

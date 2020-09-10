@@ -333,7 +333,7 @@ class Moderation(Cog):
                                           colour=self.bot.admin_colour)
                             await ctx.send(embed=embed)
 
-    @command(name="banw", usage="`<member>...` `[reason]`")
+    @command(name="ban", usage="`<member>...` `[reason]`")
     @guild_only()
     @has_guild_permissions(ban_members=True)
     @bot_has_guild_permissions(ban_members=True)
@@ -907,7 +907,7 @@ class Moderation(Cog):
 
             if any(getattr(before, x) != getattr(after, x) for x in attributes):
 
-                # TODO: ADD LOGGING FOR THE ABOVE IF STATEMENTS.
+                # TODO: ADD LOGGING FOR ROLES/EMOJIS/FEATURES/SPLASH URLS ETC ETC.
 
                 fields = [("Before",
                            f"**Guild Name -->** {before}\n"

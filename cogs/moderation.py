@@ -690,9 +690,9 @@ class Moderation(Cog):
                               timestamp=datetime.datetime.utcnow())
                 embed.set_author(name=after.author, icon_url=after.author.avatar_url)
                 embed.add_field(name="Before",
-                                value=before_value, inline=False)
+                                value=before_value or "No Content", inline=False)
                 embed.add_field(name="After",
-                                value=after_value, inline=False)
+                                value=after_value or "No Content", inline=False)
                 embed.set_footer(text="Message Edited")
 
                 await modlogs_channel.send(embed=embed)

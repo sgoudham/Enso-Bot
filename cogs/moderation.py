@@ -1051,7 +1051,7 @@ class Moderation(Cog):
                           timestamp=datetime.datetime.utcnow())
             embed.set_author(name=guild, icon_url=guild.icon_url)
             embed.add_field(name=field[0], value=field[1], inline=field[2])
-            embed.add_field(name="All Emojis", value=emojis or "No Emojis", inline=False)
+            embed.add_field(name=f"All Emojis --> {len(guild.emojis)}", value=emojis or "No Emojis", inline=False)
             embed.set_thumbnail(url=str(url))
             embed.set_footer(text=field[0])
 

@@ -899,12 +899,10 @@ class Moderation(Cog):
     async def on_guild_update(self, before, after):
         """Logging guild updates"""
 
-        # TODO: ADD LOGGING FOR ROLES/EMOJIS/FEATURES/SPLASH URLS ETC ETC.
-
         if modlogs := self.bot.get_modlog_for_guild(after.id):
             modlogs_channel = self.bot.get_channel(modlogs)
 
-            attributes = ["name", "verification_level", "afk_channel", "mfa_level", "icon_url",
+            attributes = ["name", "verification_level", "afk_channel", "mfa_level",
                           "default_notifications", "region", "explicit_content_filter"]
             if any(getattr(before, x) != getattr(after, x) for x in attributes):
 
@@ -937,7 +935,7 @@ class Moderation(Cog):
                                           f"**ID -->** {after.id}",
                               colour=self.bot.admin_colour,
                               timestamp=datetime.datetime.utcnow())
-                embed.set_thumbnail(url=after.icon_url)
+                embed.set_author(name=after, icon_url=after.icon_url)
                 embed.set_footer(text="Guild Updated")
 
                 # Add fields to the embed
@@ -946,7 +944,7 @@ class Moderation(Cog):
 
                 await modlogs_channel.send(embed=embed)
 
-            if before.banner != after.banner:
+            if before.banner_url != after.banner_url:
                 embed = Embed(title="Banner Updated",
                               colour=self.bot.admin_colour,
                               timestamp=datetime.datetime.utcnow())
@@ -955,6 +953,42 @@ class Moderation(Cog):
                                 value=f"[Link To New Banner]({after.banner_url})", inline=False)
                 embed.set_image(url=after.banner_url)
                 embed.set_footer(text="Banner Updated")
+
+                await modlogs_channel.send(embed=embed)
+
+            if before.discovery_splash_url != after.discovery_splash_url:
+                embed = Embed(title="Discovery Splash Updated",
+                              colour=self.bot.admin_colour,
+                              timestamp=datetime.datetime.utcnow())
+                embed.set_author(name=after, icon_url=after.icon_url)
+                embed.add_field(name="New Discovery Splash",
+                                value=f"[Link To New Discovery Splash]({after.discovery_splash_url})", inline=False)
+                embed.set_image(url=after.discovery_splash_url)
+                embed.set_footer(text="Discovery Splash Updated")
+
+                await modlogs_channel.send(embed=embed)
+
+            if before.splash_url != after.splash_url:
+                embed = Embed(title="Splash Updated",
+                              colour=self.bot.admin_colour,
+                              timestamp=datetime.datetime.utcnow())
+                embed.set_author(name=after, icon_url=after.icon_url)
+                embed.add_field(name="New Splash",
+                                value=f"[Link To New Splash]({after.splash_url})", inline=False)
+                embed.set_image(url=after.splash_url)
+                embed.set_footer(text="Splash Updated")
+
+                await modlogs_channel.send(embed=embed)
+
+            if before.icon_url != after.icon_url:
+                embed = Embed(title="Icon Updated",
+                              colour=self.bot.admin_colour,
+                              timestamp=datetime.datetime.utcnow())
+                embed.set_author(name=after, icon_url=after.icon_url)
+                embed.add_field(name="New Icon",
+                                value=f"[Link To Icon]({after.icon_url})", inline=False)
+                embed.set_image(url=after.icon_url)
+                embed.set_footer(text="Icon Updated")
 
                 await modlogs_channel.send(embed=embed)
 

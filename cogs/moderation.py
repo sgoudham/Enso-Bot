@@ -1041,7 +1041,7 @@ class Moderation(Cog):
                 url = old_emojis[0].url
 
             # Get total emojis
-            emojis = string_list(after, 50, "Emoji")
+            emojis = string_list(after, 30, "Emoji")
             embed = Embed(title=field[0],
                           description=f"**ID -->** {emoji_id}"
                                       f"\n**Animated? -->** {animated}"

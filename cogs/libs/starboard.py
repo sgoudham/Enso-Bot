@@ -183,9 +183,7 @@ class Starboard:
 
                 # Update the stars that the message has in the database and set the star message id to None
                 try:
-                    update = """UPDATE starboard_messages 
-                                      SET stars = $1
-                                      WHERE root_message_id = $2 AND guild_id = $3"""
+                    update = """UPDATE starboard_messages SET stars = $1 WHERE root_message_id = $2 AND guild_id = $3"""
                     await conn.execute(update, new_stars, message.id, payload.guild_id)
 
                 # Catch errors

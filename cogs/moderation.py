@@ -1023,59 +1023,39 @@ class Moderation(Cog):
             old_emojis = [emojis for emojis in before if emojis not in after]
 
             # Assuming that only one emoji is returned all the time
-            new_emojis_string = str(new_emojis[0])
-            old_emojis_string = str(old_emojis[0])
+            new_emojis_string = str(new_emojis[0]) if new_emojis else None
+            old_emojis_string = str(old_emojis[0]) if old_emojis else None
 
+            # Determining whether emoji was added or removed
             if len(new_emojis) == 1:
-                field = ("")
+                field = ("Emoji Added", new_emojis_string, False)
+                emoji_id = new_emojis[0].id
+                animated = self.bot.tick if new_emojis[0].animated else self.bot.cross
+                managed = self.bot.tick if new_emojis[0].managed else self.bot.cross
+                url = new_emojis[0].url
+            if len(old_emojis) == 1:
+                field = ("Emoji Removed", old_emojis_string, False)
+                emoji_id = old_emojis[0].id
+                animated = self.bot.tick if old_emojis[0].animated else self.bot.cross
+                managed = self.bot.tick if old_emojis[0].managed else self.bot.cross
+                url = old_emojis[0].url
 
-            # As long as roles were added to the Member, log the role(s) that were given
-            if len(new_emojis) >= 1:
-                new_roles_string = " **|** ".join(str(r) for r in new_emojis)
+            # Get total emojis
+            emojis = string_list(after, 50, "Emoji")
+            embed = Embed(title=field[0],
+                          description=f"**ID -->** {emoji_id}"
+                                      f"\n**Animated? -->** {animated}"
+                                      f"\n**Managed? -->** {managed}",
+                          colour=self.bot.admin_colour,
+                          url=str(url),
+                          timestamp=datetime.datetime.utcnow())
+            embed.set_author(name=guild, icon_url=guild.icon_url)
+            embed.add_field(name=field[0], value=field[1], inline=field[2])
+            embed.add_field(name="All Emojis", value=emojis or "No Emojis", inline=False)
+            embed.set_thumbnail(url=str(url))
+            embed.set_footer(text=field[0])
 
-                # Change the description of the embed depending on how many roles were added
-                if len(new_emojis) == 1:
-                    field = ("Role Added", new_roles_string, False)
-                    footer = "Role Added"
-                else:
-                    field = ("Roles Added", new_roles_string, False)
-                    footer = "Roles Added"
-
-                embed = Embed(title=footer,
-                              description=f"**Member --> {after.mention} |** {after}"
-                                          f"\n**ID -->** {after.id}",
-                              colour=self.bot.admin_colour,
-                              timestamp=datetime.datetime.utcnow())
-                embed.set_author(name=after, icon_url=after.avatar_url)
-                embed.add_field(name=field[0], value=field[1], inline=field[2])
-                embed.add_field(name="All Roles", value=role or "No Roles", inline=False)
-                embed.set_footer(text=footer)
-
-                await modlogs_channel.send(embed=embed)
-
-            # As long as roles were removed from the member, log the role(s) that were removed
-            if len(old_roles) >= 1:
-                old_roles_string = " **|** ".join(r.mention for r in old_roles)
-
-                # Change the description of the embed depending on how many roles were removed
-                if len(old_roles) == 1:
-                    field = ("Role Removed", old_roles_string, False)
-                    footer = "Role Removed"
-                else:
-                    field = ("Roles Removed", old_roles_string, False)
-                    footer = "Roles Removed"
-
-                embed = Embed(title=footer,
-                              description=f"**Member --> {after.mention} |** {after}"
-                                          f"\n**ID -->** {after.id}",
-                              colour=self.bot.admin_colour,
-                              timestamp=datetime.datetime.utcnow())
-                embed.set_author(name=after, icon_url=after.avatar_url)
-                embed.add_field(name=field[0], value=field[1], inline=field[2])
-                embed.add_field(name="All Roles", value=role or "No Roles", inline=False)
-                embed.set_footer(text=footer)
-
-                await modlogs_channel.send(embed=embed)
+            await modlogs_channel.send(embed=embed)
 
 
 def setup(bot):

@@ -1061,7 +1061,7 @@ class Moderation(Cog):
             elif before is not after:
                 for b, a in zip(before, after):
                     if b.name != a.name:
-                        embed = Embed(title="Name Updated",
+                        embed = Embed(title="Emoji Name Updated",
                                       description=f"**ID -->** {a.id}"
                                                   f"\n**Name -->** {a.name}"
                                                   f"\n**Animated? -->** {a.animated}"
@@ -1071,7 +1071,7 @@ class Moderation(Cog):
                                       timestamp=datetime.datetime.utcnow())
                         embed.set_author(name=guild, icon_url=guild.icon_url)
                         embed.set_thumbnail(url=str(a.url))
-                        embed.set_footer(text="Name Updated")
+                        embed.set_footer(text="Emoji Name Updated")
 
                         await modlogs_channel.send(embed=embed)
                         break

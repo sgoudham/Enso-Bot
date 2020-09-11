@@ -1018,44 +1018,63 @@ class Moderation(Cog):
         if modlogs := self.bot.get_modlog_for_guild(guild.id):
             modlogs_channel = self.bot.get_channel(modlogs)
 
-            # Retrieve the emoji that were removed/added to the guild
-            new_emojis = [emojis for emojis in after if emojis not in before]
-            old_emojis = [emojis for emojis in before if emojis not in after]
+            # Logging emoji additions/deletions
+            if before != after:
+                # Retrieve the emoji that were removed/added to the guild
+                new_emojis = [emojis for emojis in after if emojis not in before]
+                old_emojis = [emojis for emojis in before if emojis not in after]
 
-            # Assuming that only one emoji is returned all the time
-            new_emojis_string = str(new_emojis[0]) if new_emojis else None
-            old_emojis_string = str(old_emojis[0]) if old_emojis else None
+                # Determining whether emoji was added or removed
+                if len(new_emojis) == 1:
+                    text = "Emoji Added"
+                    emoji_id = new_emojis[0].id
+                    name = new_emojis[0].name
+                    animated = self.bot.tick if new_emojis[0].animated else self.bot.cross
+                    managed = self.bot.tick if new_emojis[0].managed else self.bot.cross
+                    url = new_emojis[0].url
+                if len(old_emojis) == 1:
+                    text = "Emoji Removed"
+                    emoji_id = old_emojis[0].id
+                    name = old_emojis[0].name
+                    animated = self.bot.tick if old_emojis[0].animated else self.bot.cross
+                    managed = self.bot.tick if old_emojis[0].managed else self.bot.cross
+                    url = old_emojis[0].url
 
-            # Determining whether emoji was added or removed
-            if len(new_emojis) == 1:
-                field = ("Emoji Added", new_emojis_string, False)
-                emoji_id = new_emojis[0].id
-                animated = self.bot.tick if new_emojis[0].animated else self.bot.cross
-                managed = self.bot.tick if new_emojis[0].managed else self.bot.cross
-                url = new_emojis[0].url
-            if len(old_emojis) == 1:
-                field = ("Emoji Removed", old_emojis_string, False)
-                emoji_id = old_emojis[0].id
-                animated = self.bot.tick if old_emojis[0].animated else self.bot.cross
-                managed = self.bot.tick if old_emojis[0].managed else self.bot.cross
-                url = old_emojis[0].url
+                # Get total emojis
+                emojis = string_list(after, 30, "Emoji")
+                embed = Embed(title=text,
+                              description=f"**ID -->** {emoji_id}"
+                                          f"\n**Name -->** {name}"
+                                          f"\n**Animated? -->** {animated}"
+                                          f"\n**Managed? -->** {managed}",
+                              colour=self.bot.admin_colour,
+                              url=str(url),
+                              timestamp=datetime.datetime.utcnow())
+                embed.set_author(name=guild, icon_url=guild.icon_url)
+                embed.add_field(name=f"All Emojis --> {len(guild.emojis)}", value=emojis or "No Emojis", inline=False)
+                embed.set_thumbnail(url=str(url))
+                embed.set_footer(text=text)
 
-            # Get total emojis
-            emojis = string_list(after, 30, "Emoji")
-            embed = Embed(title=field[0],
-                          description=f"**ID -->** {emoji_id}"
-                                      f"\n**Animated? -->** {animated}"
-                                      f"\n**Managed? -->** {managed}",
-                          colour=self.bot.admin_colour,
-                          url=str(url),
-                          timestamp=datetime.datetime.utcnow())
-            embed.set_author(name=guild, icon_url=guild.icon_url)
-            embed.add_field(name=field[0], value=field[1], inline=field[2])
-            embed.add_field(name=f"All Emojis --> {len(guild.emojis)}", value=emojis or "No Emojis", inline=False)
-            embed.set_thumbnail(url=str(url))
-            embed.set_footer(text=field[0])
+                await modlogs_channel.send(embed=embed)
 
-            await modlogs_channel.send(embed=embed)
+            # Log emoji name updates
+            elif before is not after:
+                for b, a in zip(before, after):
+                    if b.name != a.name:
+                        embed = Embed(title="Name Updated",
+                                      description=f"**ID -->** {a.id}"
+                                                  f"\n**Name -->** {a.name}"
+                                                  f"\n**Animated? -->** {a.animated}"
+                                                  f"\n**Managed? -->** {a.managed}",
+                                      colour=self.bot.admin_colour,
+                                      url=str(a.url),
+                                      timestamp=datetime.datetime.utcnow())
+                        embed.set_author(name=guild, icon_url=guild.icon_url)
+                        embed.set_thumbnail(url=str(a.url))
+                        embed.set_footer(text="Name Updated")
+
+                        await modlogs_channel.send(embed=embed)
+                        break
 
 
 def setup(bot):

@@ -1061,11 +1061,14 @@ class Moderation(Cog):
             elif before is not after:
                 for b, a in zip(before, after):
                     if b.name != a.name:
+                        animated = self.bot.tick if a.animated else self.bot.cross
+                        managed = self.bot.tick if a.managed else self.bot.cross
+                        
                         embed = Embed(title="Emoji Name Updated",
                                       description=f"**ID -->** {a.id}"
                                                   f"\n**Name -->** {a.name}"
-                                                  f"\n**Animated? -->** {a.animated}"
-                                                  f"\n**Managed? -->** {a.managed}",
+                                                  f"\n**Animated? -->** {animated}"
+                                                  f"\n**Managed? -->** {managed}",
                                       colour=self.bot.admin_colour,
                                       url=str(a.url),
                                       timestamp=datetime.datetime.utcnow())

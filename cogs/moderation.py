@@ -866,7 +866,7 @@ class Moderation(Cog):
             modlogs_channel = self.bot.get_channel(modlogs)
 
             # Logging Channel Name/Category/Position Updates
-            if before.name != after.name or before.category != after.category or before.position != after.position:
+            if before.name != after.name or before.category != after.category:
                 fields = [("Before",
                            f"**Channel Updated -->** #{before}\n"
                            f"**Category -->** {before.category or self.bot.cross}\n"

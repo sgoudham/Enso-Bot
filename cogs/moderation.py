@@ -880,6 +880,7 @@ class Moderation(Cog):
                               description=f"**ID -->** {after.id}",
                               colour=self.bot.admin_colour,
                               timestamp=datetime.datetime.utcnow())
+                embed.set_author(name=after.guild, icon_url=after.guild.icon_url)
                 embed.set_footer(text="Channel Updated")
 
                 # Add fields to the embed
@@ -1063,7 +1064,7 @@ class Moderation(Cog):
                     if b.name != a.name:
                         animated = self.bot.tick if a.animated else self.bot.cross
                         managed = self.bot.tick if a.managed else self.bot.cross
-                        
+
                         embed = Embed(title="Emoji Name Updated",
                                       description=f"**ID -->** {a.id}"
                                                   f"\n**Name -->** {a.name}"

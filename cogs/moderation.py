@@ -562,34 +562,29 @@ class Moderation(Cog):
         if modlogs := self.bot.get_modlog_for_guild(after.guild.id):
             modlogs_channel = self.bot.get_channel(modlogs)
 
-            # Logging nickname changes
+            # Logging nickname changes or custom activity updates
             if before.nick != after.nick or (
                     before.activity != after.activity and (
                     after.activity.type == discord.ActivityType.custom if after.activity else None)):
 
-                # Getting emoji of status from dict
-                for key, value in member_status.items():
-                    if key == str(before.status):
-                        before_status = value
-                    if key == str(after.status):
-                        after_status = value
+                # Get the status of the member
+                after_status = member_status[str(after.status)]
 
                 # Getting activity
                 after_activity = f"{after.activity.emoji or ''} {after.activity.name}"
                 before_activity = f"{before.activity.emoji or ''} {before.activity.name}"
 
                 fields = [("Before",
-                           f"**Nickname -->** {before.nick or 'None'}\n"
-                           f"**Status -->** {before_status or 'None'}\n"
-                           f"**Activity -->** {before_activity}\n", False),
+                           f"**Nickname -->** {before.nick or None}\n"
+                           f"**Activity -->** {before_activity}", False),
                           ("After",
-                           f"**Nickname -->** {after.nick or 'None'}\n"
-                           f"**Status -->** {after_status or 'None'}\n"
-                           f"**Activity -->** {after_activity}\n", False)]
+                           f"**Nickname -->** {after.nick or None}\n"
+                           f"**Activity -->** {after_activity}", False)]
 
                 embed = Embed(title="Member Updated",
                               description=f"**Member --> {after.mention} |** {after}"
-                                          f"\n**ID -->** {after.id}",
+                                          f"\n**ID -->** {after.id}"
+                                          f"\n**Status -->** {after_status}",
                               colour=self.bot.admin_colour,
                               timestamp=datetime.datetime.utcnow())
                 embed.set_author(name=after, icon_url=after.avatar_url)

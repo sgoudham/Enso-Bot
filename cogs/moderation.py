@@ -15,6 +15,7 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 import datetime
+import string
 from datetime import timedelta
 from typing import Optional
 
@@ -23,7 +24,7 @@ from discord import Member, Embed, DMChannel, NotFound, User
 from discord.ext.commands import command, guild_only, has_guild_permissions, bot_has_guild_permissions, Greedy, \
     cooldown, BucketType, Cog
 
-from cogs.libs.functions import string_list, get_region, get_content_filter, get_notifs
+from cogs.libs.functions import string_list, get_region, get_content_filter, get_notifs, detect_perms, perms
 
 # TODO: CREATE A BITARRAY SO THAT THE MODLOG EVENTS ARE TOGGLEABLE
 # TODO: MAKE SURE THAT THE BITARRAY IS ONLY IMPLEMENTED AFTER ALL EVENTS ARE CODED
@@ -558,13 +559,11 @@ class Moderation(Cog):
     async def on_member_update(self, before, after):
         """Logging Member Profile Updates"""
 
-        if before == self.bot.user: return
-
         if modlogs := self.bot.get_modlog_for_guild(after.guild.id):
             modlogs_channel = self.bot.get_channel(modlogs)
 
-            # Logging Member Updates when nickname changes
-            if before.nick != after.nick and not after.bot:
+            # Logging nickname changes
+            if before.nick != after.nick or before.status != after.status:
 
                 # Getting emoji of status from dict
                 for key, value in member_status.items():
@@ -677,7 +676,7 @@ class Moderation(Cog):
             # Logging Message Content Edits
             # Not logging any message edits from bots
             if before.content != after.content and not after.author.bot:
-                desc = f"**Channel -->** <#{after.channel.id}>" \
+                desc = f"**Channel --> {after.channel.mention} |** #{after.channel}" \
                        f"\n**Message ID -->** {after.id}" \
                        f"\n**Edited Message -->** [Jump To Message]({after.jump_url})"
 
@@ -728,7 +727,7 @@ class Moderation(Cog):
         if channel and not payload.cached_message:
             modlogs_channel = self.bot.get_channel(channel)
 
-            desc = f"**Channel -->** {msg_channel.mention}" \
+            desc = f"**Channel --> {msg_channel.mention} |** #{msg_channel}" \
                    f"\n**Message ID -->** {payload.message_id}" \
                    f"\n**Message Content -->** N/A"
             embed = Embed(title="Raw Message Edited",
@@ -759,7 +758,7 @@ class Moderation(Cog):
                           ("Message Content #2", message.content[1000:], False)]
 
             if not message.attachments:
-                desc = f"**Channel --> {message.channel.mention}**" \
+                desc = f"**Channel --> {message.channel.mention} |** #{message.channel}" \
                        f"\n**Author ID -->** {message.author.id}" \
                        f"\n**Message ID -->** {message.id}"
             else:
@@ -799,7 +798,7 @@ class Moderation(Cog):
         if channel and not payload.cached_message:
             modlogs_channel = self.bot.get_channel(channel)
 
-            desc = f"**Channel -->** {msg_channel.mention}" \
+            desc = f"**Channel --> {msg_channel.mention} |** #{msg_channel}" \
                    f"\n**Message ID -->** {payload.message_id}" \
                    f"\n**Message Content -->** N/A"
             embed = Embed(title="Raw Message Deleted",
@@ -1079,6 +1078,109 @@ class Moderation(Cog):
 
                         await modlogs_channel.send(embed=embed)
                         break
+
+    @Cog.listener()
+    async def on_guild_role_create(self, role):
+        """Logging role creations"""
+
+        if modlogs := self.bot.get_modlog_for_guild(role.guild.id):
+            modlogs_channel = self.bot.get_channel(modlogs)
+
+            # Returns the permissions that the role has within the guild
+            filtered = filter(lambda x: x[1], role.permissions)
+            # Replace all "_" with " " in each item and join them together
+            _perms = ",".join(map(lambda x: x[0].replace("_", " "), filtered))
+
+            # Capitalise every word in the array and filter out the permissions that are defined within the frozenset
+            permission = string.capwords("".join(detect_perms(_perms, perms)))
+
+            # Using emotes to represent bools
+            mentionable = self.bot.tick if role.mention else self.bot.cross
+            hoisted = self.bot.tick if role.hoist else self.bot.cross
+            managed = self.bot.tick if role.managed else self.bot.cross
+
+            # Description of the embed
+            desc = f"{role.mention} **<-- Colour:** {str(role.colour)}" \
+                   f"\n**Position -->** #{role.position} / {len(role.guild.roles)}" \
+                   f"\n**ID -->** {role.id}"
+
+            # Set up Embed
+            embed = Embed(title=f"Role Created",
+                          description=desc,
+                          colour=role.colour,
+                          timestamp=datetime.datetime.utcnow())
+            embed.set_author(name=role.guild, icon_url=role.guild.icon_url)
+            embed.set_footer(text=f"Role Created")
+
+            # Setting up fields
+            fields = [
+                ("Creation At", role.created_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"), True),
+
+                (f"Misc",
+                 f"\nMentionable?: {mentionable}"
+                 f"\nHoisted?: {hoisted}"
+                 f"\nManaged?: {managed}", True),
+
+                ("Key Permissions", permission or "No Key Permissions", False)
+            ]
+
+            # Add fields to the embed
+            for name, value, inline in fields:
+                embed.add_field(name=name, value=value, inline=inline)
+
+            await modlogs_channel.send(embed=embed)
+
+    @Cog.listener()
+    async def on_guild_role_delete(self, role):
+        """Logging role deletions"""
+
+        if modlogs := self.bot.get_modlog_for_guild(role.guild.id):
+            deleted_at = datetime.datetime.utcnow()
+            modlogs_channel = self.bot.get_channel(modlogs)
+
+            # Returns the permissions that the role has within the guild
+            filtered = filter(lambda x: x[1], role.permissions)
+            # Replace all "_" with " " in each item and join them together
+            _perms = ",".join(map(lambda x: x[0].replace("_", " "), filtered))
+            # Capitalise every word in the array and filter out the permissions that are defined within the frozenset
+            permission = string.capwords("".join(detect_perms(_perms, perms)))
+
+            # Using emotes to represent bools
+            mentionable = self.bot.tick if role.mention else self.bot.cross
+            hoisted = self.bot.tick if role.hoist else self.bot.cross
+            managed = self.bot.tick if role.managed else self.bot.cross
+
+            # Description of the embed
+            desc = f"@{role} **<-- Colour:** {str(role.colour)}" \
+                   f"\n**Position -->** #{role.position} / {len(role.guild.roles)}" \
+                   f"\n**ID -->** {role.id}"
+
+            # Set up Embed
+            embed = Embed(title=f"Role Deleted",
+                          description=desc,
+                          colour=role.colour,
+                          timestamp=datetime.datetime.utcnow())
+            embed.set_author(name=role.guild, icon_url=role.guild.icon_url)
+            embed.set_footer(text=f"Role Deleted")
+
+            # Setting up fields
+            fields = [
+                ("Creation At", role.created_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"), True),
+                ("Deletion At", deleted_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"), True),
+
+                (f"Misc",
+                 f"\nMentionable?: {mentionable}"
+                 f"\nHoisted?: {hoisted}"
+                 f"\nManaged?: {managed}", True),
+
+                ("Key Permissions Before Deletion", permission or "This Role Had No Key Permissions", False)
+            ]
+
+            # Add fields to the embed
+            for name, value, inline in fields:
+                embed.add_field(name=name, value=value, inline=inline)
+
+            await modlogs_channel.send(embed=embed)
 
 
 def setup(bot):

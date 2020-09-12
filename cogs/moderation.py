@@ -575,8 +575,8 @@ class Moderation(Cog):
                         after_status = value
 
                 # Getting activity
-                after_activity = f"{after.activity.emoji or '' if after.activity.type.name == 'custom' else ''} {after.activity.name}" if after.activity else "None"
-                before_activity = f"{before.activity.emoji or '' if before.activity.type.name == 'custom' else ''} {before.activity.name}" if before.activity else "None"
+                after_activity = f"{after.activity.emoji or ''} {after.activity.name}"
+                before_activity = f"{before.activity.emoji or ''} {before.activity.name}"
 
                 fields = [("Before",
                            f"**Nickname -->** {before.nick or 'None'}\n"

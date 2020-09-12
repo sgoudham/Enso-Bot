@@ -563,7 +563,7 @@ class Moderation(Cog):
             modlogs_channel = self.bot.get_channel(modlogs)
 
             # Logging nickname changes
-            if before.nick != after.nick or before.activity != after.activity:
+            if before.nick != after.nick:
 
                 # Getting emoji of status from dict
                 for key, value in member_status.items():

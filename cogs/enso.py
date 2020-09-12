@@ -354,8 +354,9 @@ class Enso(Cog):
         verif = await ctx.fetch_message(728424149692842115)
         await verif.edit(embed=embed)
 
-    @command(name="wasp", hidden=True)
-    async def sb_wasp(self, ctx):
+    @command(name="giggle", hidden=True, aliases=["laugh"])
+    @bot_has_permissions(use_external_emojis=True)
+    async def laugh(self, ctx):
 
         await ctx.message.delete()
         await ctx.send("<a:sb_kyuuOhohoho:749414466940043274>")

@@ -563,7 +563,9 @@ class Moderation(Cog):
             modlogs_channel = self.bot.get_channel(modlogs)
 
             # Logging nickname changes
-            if before.nick != after.nick:
+            if before.nick != after.nick or (
+                    before.activity != after.activity and (
+                    after.activity.type == discord.ActivityType.custom if after.activity else None)):
 
                 # Getting emoji of status from dict
                 for key, value in member_status.items():
@@ -572,13 +574,14 @@ class Moderation(Cog):
                     if key == str(after.status):
                         after_status = value
 
-                # Getting status of the member
+                # Getting activity
                 after_activity = f"{after.activity.emoji or '' if after.activity.type.name == 'custom' else ''} {after.activity.name}" if after.activity else "None"
+                before_activity = f"{before.activity.emoji or '' if before.activity.type.name == 'custom' else ''} {before.activity.name}" if before.activity else "None"
 
                 fields = [("Before",
                            f"**Nickname -->** {before.nick or 'None'}\n"
                            f"**Status -->** {before_status or 'None'}\n"
-                           f"**Activity -->** {after_activity}\n", False),
+                           f"**Activity -->** {before_activity}\n", False),
                           ("After",
                            f"**Nickname -->** {after.nick or 'None'}\n"
                            f"**Status -->** {after_status or 'None'}\n"

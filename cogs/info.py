@@ -28,32 +28,8 @@ from discord.ext.commands import BucketType, cooldown, bot_has_permissions, guil
 from discord.ext.commands import command
 from psutil import Process, virtual_memory
 
-from cogs.libs.functions import string_list, get_region
+from cogs.libs.functions import string_list, get_region, perms, detect_perms
 from cogs.libs.paginators import SimpleMenu
-
-# Using frozenset
-# Permissions to filter through
-Perms = frozenset(
-    {
-        "create instant invite",
-        "add reactions",
-        "view audit log",
-        "priority speaker",
-        "stream",
-        "read messages",
-        "send messages",
-        "send tts messages",
-        "embed links",
-        "attach links",
-        "read message history",
-        "external emojis",
-        "view guild insights",
-        "connect",
-        "speak",
-        "use voice activation",
-        "change nickname"
-    }
-)
 
 
 def add_perms(embed, _list):
@@ -67,17 +43,6 @@ def add_perms(embed, _list):
         i += 1
 
     return embed
-
-
-def detect_perms(message, fset):
-    """Filter out permissions that are not important"""
-
-    # Split the message individual permissions
-    message = message.split(",")
-
-    # Filter the permission out if it's in the frozenset
-    filtered = filter(lambda perm: perm not in fset, message)
-    return ", ".join(filtered)
 
 
 class Info(Cog):
@@ -102,13 +67,13 @@ class Info(Cog):
     async def role_info(self, ctx, *, role: Role):
         """Retrieve information about any role!"""
 
-        # Returns the permissions that the user has within the guild
+        # Returns the permissions that the role has within the guild
         filtered = filter(lambda x: x[1], role.permissions)
         # Replace all "_" with " " in each item and join them together
-        perms = ",".join(map(lambda x: x[0].replace("_", " "), filtered))
+        _perms = ",".join(map(lambda x: x[0].replace("_", " "), filtered))
 
         # Capitalise every word in the array and filter out the permissions that are defined within the frozenset
-        permission = string.capwords("".join(detect_perms(perms, Perms)))
+        permission = string.capwords("".join(detect_perms(_perms, perms)))
         # Get all members within role
         member = string_list(role.members, 30, "Member")
 
@@ -118,11 +83,12 @@ class Info(Cog):
         managed = self.bot.tick if role.managed else self.bot.cross
 
         # Description of the embed
-        desc = f"{role.mention} " \
-               f"**<-- Colour:** {str(role.colour)} **| Position -->** #{role.position} / {len(ctx.guild.roles)}"
+        desc = f"{role.mention} **|** @{role} **<-- Colour:** {str(role.colour)}" \
+               f"\n**Position -->** #{role.position} / {len(ctx.guild.roles)}" \
+               f"\n** ID -->** {role.id}"
 
         # Set up Embed
-        embed = Embed(title=f"{role.name}",
+        embed = Embed(title=f"@{role.name} Information",
                       description=desc,
                       colour=role.colour,
                       timestamp=datetime.datetime.utcnow())
@@ -133,14 +99,14 @@ class Info(Cog):
         fields = [
             ("Creation At", role.created_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"), True),
 
-            (f"Misc",
-             f"\nMentionable?: {mentionable}" +
-             f"\nHoisted?: {hoisted}" +
-             f"\nManaged?: {managed}", True),
-
             (f"Members ({len(role.members)})",
              f"\nHumans: {len(list(filter(lambda m: not m.bot, role.members)))}" +
              f"\nBots: {len(list(filter(lambda m: m.bot, role.members)))}", True),
+
+            (f"Misc",
+             f"\nMentionable?: {mentionable}"
+             f"\nHoisted?: {hoisted}"
+             f"\nManaged?: {managed}", True),
 
             (f"List of Members ({len(role.members)})", member or "No Members In Role", False),
             ("Key Permissions", permission or "No Key Permissions", False)
@@ -233,7 +199,7 @@ class Info(Cog):
         # Replace all "_" with " " in each item and join them together
         perms = ",".join(map(lambda x: x[0].replace("_", " "), filtered))
         # Capitalise every word in the array and filter out the permissions that are defined within the frozenset
-        permission = string.capwords("".join(map(str, detect_perms(perms, Perms))))
+        permission = string.capwords("".join(map(str, detect_perms(perms, perms))))
 
         embed = Embed(
             title=f"**User Information**",

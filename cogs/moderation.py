@@ -563,32 +563,28 @@ class Moderation(Cog):
             modlogs_channel = self.bot.get_channel(modlogs)
 
             # Logging nickname changes or custom activity updates
-            if before.nick != after.nick or (
-                    before.activity != after.activity and (
-                    after.activity.type == discord.ActivityType.custom if after.activity else None)):
+            if before.nick != after.nick:
 
                 # Get the status of the member
                 after_status = member_status[str(after.status)]
-
                 # Getting activity
-                after_activity = f"{after.activity.emoji or ''} {after.activity.name}" if after.activity else None
-                before_activity = f"{before.activity.emoji or ''} {before.activity.name}" if before.activity else None
+                after_activity = f"{after.activity.emoji or '' if after.activity.type == discord.ActivityType.custom else ''}" \
+                                 f"{after.activity.name}" if after.activity else None
 
                 fields = [("Before",
-                           f"**Nickname -->** {before.nick or None}\n"
-                           f"**Activity -->** {before_activity}", False),
+                           f"**Nickname -->** {before.nick or None}", False),
                           ("After",
-                           f"**Nickname -->** {after.nick or None}\n"
-                           f"**Activity -->** {after_activity}", False)]
+                           f"**Nickname -->** {after.nick or None}", False)]
 
-                embed = Embed(title="Member Updated",
+                embed = Embed(title="Member Nickname Updated",
                               description=f"**Member --> {after.mention} |** {after}"
                                           f"\n**ID -->** {after.id}"
+                                          f"\n\n**Activity -->** {after_activity}"
                                           f"\n**Status -->** {after_status}",
                               colour=self.bot.admin_colour,
                               timestamp=datetime.datetime.utcnow())
                 embed.set_author(name=after, icon_url=after.avatar_url)
-                embed.set_footer(text="Member Updated")
+                embed.set_footer(text="Member Nickname Updated")
 
                 # Add fields to the embed
                 for name, value, inline in fields:

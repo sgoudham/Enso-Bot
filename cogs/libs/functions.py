@@ -14,6 +14,29 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 
+# Using frozenset
+# Permissions to filter through
+perms = frozenset(
+    {
+        "create instant invite",
+        "add reactions",
+        "view audit log",
+        "priority speaker",
+        "stream",
+        "read messages",
+        "send messages",
+        "send tts messages",
+        "embed links",
+        "attach links",
+        "read message history",
+        "external emojis",
+        "view guild insights",
+        "connect",
+        "speak",
+        "use voice activation",
+        "change nickname"
+    }
+)
 
 # List of regions mapped to emojis
 region = {
@@ -49,6 +72,17 @@ notifs = {
     "all_messages": "<:greenTick:746834932936212570> For All Messages",
     "only_mentions": "<:greenTick:746834932936212570> For All Mentions"
 }
+
+
+def detect_perms(message, fset):
+    """Filter out permissions that are not important"""
+
+    # Split the message individual permissions
+    message = message.split(",")
+
+    # Filter the permission out if it's in the frozenset
+    filtered = filter(lambda perm: perm not in fset, message)
+    return ", ".join(filtered)
 
 
 def string_list(types, n, instance):

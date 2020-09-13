@@ -27,7 +27,7 @@ from PIL.ImageOps import invert
 from discord import Embed, Role, File
 from discord import Member, TextChannel
 from discord import __version__ as discord_version
-from discord.ext.commands import bot_has_permissions, guild_only, Cog, group
+from discord.ext.commands import bot_has_permissions, guild_only, Cog, group, cooldown, BucketType
 from discord.ext.commands import command
 from psutil import Process, virtual_memory
 
@@ -465,6 +465,7 @@ class Info(Cog):
 
     @get_user_avatar.command(name="greyscale", aliases=["gs"])
     @bot_has_permissions(embed_links=True)
+    @cooldown(1, 2, BucketType.user)
     async def greyscale_user_avatar(self, ctx, *, member: Optional[Member] = None):
         """Get the greyscale avatar of the member"""
 
@@ -491,6 +492,7 @@ class Info(Cog):
 
     @get_user_avatar.command(name="invert", aliases=["negative"])
     @bot_has_permissions(embed_links=True)
+    @cooldown(1, 2, BucketType.user)
     async def greyscale_user_avatar(self, ctx, *, member: Optional[Member] = None):
         """Get the inverted avatar of the member"""
 

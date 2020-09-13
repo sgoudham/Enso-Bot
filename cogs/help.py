@@ -29,7 +29,7 @@ from typing import Optional
 import discord
 from discord import Embed, DMChannel
 from discord.ext import commands
-from discord.ext.commands import Cog, command, has_permissions, guild_only, is_owner
+from discord.ext.commands import Cog, command, has_permissions, guild_only, is_owner, bot_has_permissions
 
 
 class CannotPaginate(Exception):
@@ -737,6 +737,39 @@ class Help(Cog):
 
         await ctx.send(embed=embed)
 
+    @command(name="source")
+    @bot_has_permissions(embed_links=True)
+    async def _bot_source(self, ctx):
+        """Link to the source code for Enso!"""
+
+        embed = Embed(title=f"<:github:741000905364603010> Source Code | Ensō~Chan {self.bot.version}",
+                      description="**Click above me to view my source code!**",
+                      url="https://github.com/sgoudham/Enso-Bot",
+                      colour=self.bot.admin_colour,
+                      timestamp=datetime.datetime.utcnow())
+        embed.set_thumbnail(url=self.bot.user.avatar_url)
+        embed.add_field(name="Developer", value=f"{self.bot.hammyMention} | Hamothy#5619", inline=False)
+        embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+
+        await ctx.send(embed=embed)
+
+    @command(name="vote", aliases=["upvote"])
+    @bot_has_permissions(embed_links=True)
+    async def upvote(self, ctx):
+        """Upvote the bot on top.gg!"""
+
+        desc = "Click the link above to upvote me!\nIt would greatly help me out as it allows the bot to be " \
+               "noticed more on the website!\nIt's free and takes a maximum of 30 seconds to do. Thanks so much!"
+        embed = Embed(title="Upvote me on top.gg!",
+                      description=desc,
+                      url="https://top.gg/bot/716701699145728094/vote",
+                      colour=self.bot.random_colour(),
+                      timestamp=datetime.datetime.utcnow())
+        embed.set_thumbnail(url=self.bot.user.avatar_url)
+        embed.add_field(name="Developer", value=f"{self.bot.hammyMention} | Hamothy#5619", inline=False)
+
+        await ctx.send(embed=embed)
+
     @command(name="eval", hidden=True)
     @is_owner()
     async def _eval(self, ctx, *, body):
@@ -807,6 +840,7 @@ class Help(Cog):
             await ctx.message.add_reaction('\u2705')
 
     @command(name="support")
+    @bot_has_permissions(embed_links=True)
     async def support(self, ctx):
         """Joining Support Server And Sending Feedback"""
 
@@ -835,6 +869,7 @@ class Help(Cog):
         await ctx.send(embed=embed)
 
     @command(name="feedback")
+    @bot_has_permissions(embed_links=True)
     async def feedback(self, ctx):
         """Sending Feedback to Support Server"""
 

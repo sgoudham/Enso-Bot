@@ -593,7 +593,7 @@ class Moderation(Cog):
                 await modlogs_channel.send(embed=embed)
 
             # Logging Role additions/removals from Members
-            if after.roles != before.roles:
+            if before.roles != after.roles:
 
                 # Grab total list of roles that the user has after additions/removal
                 role = string_list(after.roles, 30, "Role")
@@ -1175,6 +1175,13 @@ class Moderation(Cog):
                 embed.add_field(name=name, value=value, inline=inline)
 
             await modlogs_channel.send(embed=embed)
+
+    @Cog.listener()
+    async def on_guild_role_update(self, before, after):
+        """Logging any updates to roles"""
+
+        if modlogs := self.bot.get_modlog_for_guild(after.guild.id):
+            modlogs_channel = self.bot.get_channel(modlogs)
 
 
 def setup(bot):

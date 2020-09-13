@@ -128,7 +128,6 @@ class Fun(Cog):
         await ctx.send(random.choice(responses))
 
     @command(name="comp")
-    @cooldown(1, 1, BucketType.user)
     async def compliment(self, ctx, member: Member):
         """Give Compliments to Members"""
 
@@ -178,7 +177,6 @@ class Fun(Cog):
         await ctx.send(random.choice(responses))
 
     @command(name="flip")
-    @cooldown(1, 1, BucketType.user)
     async def flip(self, ctx):
         """Flip a Coin (Huge pp/Smol pp)"""
 
@@ -189,7 +187,6 @@ class Fun(Cog):
         await ctx.send(f"{ctx.author.mention} {random.choice(pp_array)}")
 
     @command(name="digby", hidden=True)
-    @cooldown(1, 1, BucketType.user)
     @bot_has_permissions(embed_links=True)
     async def digby(self, ctx):
         """Pictures of Digby!"""
@@ -318,7 +315,6 @@ class Fun(Cog):
                     await self.bot.generate_embed(ctx, desc=desc)
 
     @command(name="8ball")
-    @cooldown(1, 1, BucketType.user)
     async def _8ball(self, ctx, *, question):
         """8ball Responses!"""
 
@@ -450,7 +446,7 @@ class Fun(Cog):
         await ctx.send(embed=embed)
 
     @command(name="homies")
-    @cooldown(1, 10, BucketType.user)
+    @cooldown(1, 5, BucketType.user)
     @bot_has_permissions(attach_files=True)
     async def homies(self, ctx, *, text):
         """Summoning the Homies"""
@@ -458,7 +454,6 @@ class Fun(Cog):
         # Make sure the text entered is less than 20 characters
         if len(text) >= 20:
             await self.bot.generate_embed(ctx, desc="Please make sure the prompt is below **20** characters!")
-            return
         else:
 
             # Define the text to be drawn on the top and the bottom
@@ -472,7 +467,7 @@ class Fun(Cog):
             await ctx.send(file=discord.File(file, "homies.png"))
 
     @command(name="grayscale", aliases=["gs"])
-    @cooldown(1, 5, BucketType.user)
+    @cooldown(1, 2, BucketType.user)
     @bot_has_permissions(attach_files=True)
     async def grayscale(self, ctx):
         """Display grayscale version of image uploaded"""
@@ -495,7 +490,7 @@ class Fun(Cog):
             await self.bot.generate_embed(ctx, desc="**Image Not Detected!**")
 
     @command(name="invert", aliases=["negative"])
-    @cooldown(1, 5, BucketType.user)
+    @cooldown(1, 2, BucketType.user)
     @bot_has_permissions(attach_files=True)
     async def invert(self, ctx):
         """Display inverted version of image uploaded"""
@@ -519,7 +514,6 @@ class Fun(Cog):
             await self.bot.generate_embed(ctx, desc="**Image Not Detected!**")
 
     @command(name="owo", aliases=["uwu"])
-    @cooldown(1, 1, BucketType.user)
     @bot_has_permissions(manage_messages=True)
     async def owo(self, ctx, *, text):
         """Converts given text to 'OwO' format"""

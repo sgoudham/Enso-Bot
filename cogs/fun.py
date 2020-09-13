@@ -25,6 +25,7 @@ from typing import Optional
 import aiohttp
 import discord
 from PIL import Image, ImageDraw, ImageFont
+from PIL.ImageOps import invert
 from aiohttp import request
 from discord import Member, Embed
 from discord.ext import commands
@@ -489,6 +490,30 @@ class Fun(Cog):
                 await ctx.message.delete()
                 # Send Grayscale Image
                 await ctx.send(file=discord.File(file, "gs.png"))
+
+        else:
+            await self.bot.generate_embed(ctx, desc="**Image Not Detected!**")
+
+    @command(name="invert", aliases=["negative"])
+    @cooldown(1, 5, BucketType.user)
+    @bot_has_permissions(attach_files=True)
+    async def invert(self, ctx):
+        """Display inverted version of image uploaded"""
+
+        if ctx.message.attachments:
+            for attachments in ctx.message.attachments:
+                attach = await attachments.read()
+                image = Image.open(io.BytesIO(attach)).convert('RGB')
+                inverted = invert(image)
+
+                # Save new grayscale image as bytes
+                file = io.BytesIO()
+                inverted.save(file, format='PNG')
+                file.seek(0)
+
+                await ctx.message.delete()
+                # Send Grayscale Image
+                await ctx.send(file=discord.File(file, "inverted.png"))
 
         else:
             await self.bot.generate_embed(ctx, desc="**Image Not Detected!**")

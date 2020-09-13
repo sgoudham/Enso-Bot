@@ -23,6 +23,7 @@ from time import time
 from typing import Optional, Union
 
 from PIL import Image
+from PIL.ImageOps import invert
 from discord import Embed, Role, File
 from discord import Member, TextChannel
 from discord import __version__ as discord_version
@@ -438,7 +439,8 @@ class Info(Cog):
 
         await ctx.send(embed=stats)
 
-    @group(name="avatar", invoke_without_command=True, case_insensitive=True, usage="`[member]|<greyscale> [member]`")
+    @group(name="avatar", invoke_without_command=True, case_insensitive=True,
+           usage="`[member]|greyscale|invert`")
     @bot_has_permissions(embed_links=True)
     async def get_user_avatar(self, ctx, *, member: Optional[Member] = None):
         """
@@ -480,6 +482,33 @@ class Info(Cog):
         # Send image in an embed
         f = File(file, "image.png")
         embed = Embed(title=f"{member}'s Avatar | Greyscale",
+                      colour=self.bot.admin_colour,
+                      timestamp=datetime.datetime.utcnow())
+        embed.set_image(url="attachment://image.png")
+        embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+
+        await ctx.send(file=f, embed=embed)
+
+    @get_user_avatar.command(name="invert", aliases=["negative"])
+    @bot_has_permissions(embed_links=True)
+    async def greyscale_user_avatar(self, ctx, *, member: Optional[Member] = None):
+        """Get the inverted avatar of the member"""
+
+        # Get member mentioned or set to author
+        member = ctx.author if not member else member
+
+        attach = await member.avatar_url.read()
+        image = Image.open(io.BytesIO(attach)).convert('RGB')
+        inverted = invert(image)
+
+        # Save new inverted image as bytes
+        file = io.BytesIO()
+        inverted.save(file, format='PNG')
+        file.seek(0)
+
+        # Send image in an embed
+        f = File(file, "image.png")
+        embed = Embed(title=f"{member}'s Avatar | Inverted",
                       colour=self.bot.admin_colour,
                       timestamp=datetime.datetime.utcnow())
         embed.set_image(url="attachment://image.png")

@@ -488,7 +488,8 @@ class Fun(Cog):
 
                 await ctx.message.delete()
                 # Send Grayscale Image
-                await ctx.send(file=discord.File(file, "gp.png"))
+                await ctx.send(file=discord.File(file, "gs.png"))
+
         else:
             await self.bot.generate_embed(ctx, desc="**Image Not Detected!**")
 

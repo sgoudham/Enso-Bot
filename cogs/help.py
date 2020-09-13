@@ -723,13 +723,27 @@ class Help(Cog):
             prefix = self.bot.get_prefix_for_guild(ctx.guild.id)
             await self.bot.generate_embed(ctx, desc=f"**The current guild prefix is `{prefix}`**")
 
+    @command(name="invite", aliases=["inv"])
+    @has_permissions(embed_links=True)
+    async def get_invite(self, ctx):
+        """Give the invite of the bot to the user"""
+
+        embed = Embed(title="Invite For Ensō~Chan",
+                      description="Click the link above to invite Ensō~Chan into your server!",
+                      url="https://discord.com/oauth2/authorize?client_id=716701699145728094&permissions=1543892087&scope=bot",
+                      colour=self.bot.random_colour(),
+                      timestamp=datetime.datetime.utcnow())
+        embed.set_footer(text="Thank you for considering to invite Ensō~Chan!")
+
+        await ctx.send(embed=embed)
+
     @command(name="eval", hidden=True)
     @is_owner()
     async def _eval(self, ctx, *, body):
         """
         Evaluates python code
         Gracefully yoinked from (https://github.com/fourjr/eval-bot)"""
-        
+
         env = {
             'ctx': ctx,
             'bot': self.bot,

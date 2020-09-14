@@ -572,9 +572,9 @@ class Moderation(Cog):
                                  f"{after.activity.name}" if after.activity else None
 
                 fields = [("Nickname Before",
-                           f"**Nickname -->** {before.nick or None}", False),
+                           f"{before.nick or None}", False),
                           ("Nickname After",
-                           f"**Nickname -->** {after.nick or None}", False)]
+                           f"{after.nick or None}", False)]
 
                 embed = Embed(title="Member Nickname Updated",
                               description=f"**Member --> {after.mention} |** {after}"
@@ -746,10 +746,10 @@ class Moderation(Cog):
 
             # Allowing messages of all sizes to be logged
             if len(message.content) <= 1024:
-                fields = [("Message Content", message.content or "View Attachment", False)]
+                fields = [("Deleted Message Content", message.content or "View Attachment", False)]
             else:
-                fields = [("Message Content #1", message.content[:1000], False),
-                          ("Message Content #2", message.content[1000:], False)]
+                fields = [("Deleted Message Content #1", message.content[:1000], False),
+                          ("Deleted Message Content #2", message.content[1000:], False)]
 
             if not message.attachments:
                 desc = f"**Channel --> {message.channel.mention} |** #{message.channel}" \

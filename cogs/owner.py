@@ -13,12 +13,48 @@
 
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
+
 import asyncio
+import inspect
+import io
+import textwrap
+import traceback
+from contextlib import redirect_stdout
 from typing import Optional
 
 import asyncpg
 from discord import Member
 from discord.ext.commands import Cog, command, is_owner
+
+
+def cleanup_code(content):
+    """Automatically removes code blocks from the code."""
+    # remove ```py\n```
+    if content.startswith('```') and content.endswith('```'):
+        return '\n'.join(content.split('\n')[1:-1])
+
+    # remove `foo`
+    return content.strip('` \n')
+
+
+def paginate(text: str):
+    """Simple generator that paginates text."""
+    last = 0
+    pages = []
+    for curr in range(0, len(text)):
+        if curr % 1980 == 0:
+            pages.append(text[last:curr])
+            last = curr
+            appd_index = curr
+    if appd_index != len(text) - 1:
+        pages.append(text[last:curr])
+    return list(filter(lambda a: a != '', pages))
+
+
+def get_syntax_error(e):
+    if e.text is None:
+        return f'```py\n{e.__class__.__name__}: {e}\n```'
+    return f'```py\n{e.text}{"^":>{e.offset}}\n{e.__class__.__name__}: {e}```'
 
 
 class Owner(Cog):
@@ -44,6 +80,26 @@ class Owner(Cog):
 
         await self.bot.generate_embed(ctx, desc="**Leaving the guild... Bye Bye uvu**")
         await ctx.guild.leave()
+
+    @command(name="forceprefix", hidden=True)
+    @is_owner()
+    async def override_prefix(self, ctx, new: Optional[str] = None):
+        """Override the prefix in any given guild (Owner only)"""
+
+        # As long as a new prefix has been given and is less than 5 characters
+        if new and len(new) <= 5:
+            # Store the new prefix in the dictionary and update the database
+            await self.bot.storage_prefix_for_guild(ctx, new)
+
+        # Making sure that errors are handled if prefix is above 5 characters
+        elif new and len(new) > 5:
+            await self.bot.generate_embed(ctx, desc="The guild prefix must be less than or equal to **5** characters!")
+
+        # if no prefix was provided
+        elif not new:
+            # Grab the current prefix for the guild within the cached dictionary
+            prefix = self.bot.get_prefix_for_guild(ctx.guild.id)
+            await self.bot.generate_embed(ctx, desc=f"**The current guild prefix is `{prefix}`**")
 
     @command(name="restart", hidden=True)
     @is_owner()
@@ -114,6 +170,75 @@ class Owner(Cog):
             await self.bot.generate_embed(ctx, desc=f"Current Records Stored Within Cache: **{cache_len}**"
                                                     f"\nCurrent Queue Length: **{queue_len}**"
                                                     f"\nMax Size Of Cache: **{max_cache_len}**")
+
+    @command(name="eval", hidden=True)
+    @is_owner()
+    async def _eval(self, ctx, *, body):
+        """
+        Evaluates python code
+        Gracefully yoinked from (https://github.com/fourjr/eval-bot)"""
+
+        env = {
+            'ctx': ctx,
+            'bot': self.bot,
+            'channel': ctx.channel,
+            'author': ctx.author,
+            'guild': ctx.guild,
+            'message': ctx.message,
+            'source': inspect.getsource
+        }
+
+        env.update(globals())
+
+        body = cleanup_code(body)
+        stdout = io.StringIO()
+        err = out = None
+
+        to_compile = f'async def func():\n{textwrap.indent(body, "  ")}'
+
+        try:
+            exec(to_compile, env)
+        except Exception as e:
+            err = await ctx.send(f'```py\n{e.__class__.__name__}: {e}\n```')
+            return await ctx.message.add_reaction('\u2049')
+
+        func = env['func']
+        try:
+            with redirect_stdout(stdout):
+                ret = await func()
+        except Exception as e:
+            value = stdout.getvalue()
+            err = await ctx.send(f'```py\n{value}{traceback.format_exc()}\n```')
+        else:
+            value = stdout.getvalue()
+            if ret is None:
+                if value:
+                    try:
+                        out = await ctx.send(f'```py\n{value}\n```')
+                    except:
+                        paginated_text = paginate(value)
+                        for page in paginated_text:
+                            if page == paginated_text[-1]:
+                                out = await ctx.send(f'```py\n{page}\n```')
+                                break
+                            await ctx.send(f'```py\n{page}\n```')
+            else:
+                try:
+                    out = await ctx.send(f'```py\n{value}{ret}\n```')
+                except:
+                    paginated_text = paginate(f"{value}{ret}")
+                    for page in paginated_text:
+                        if page == paginated_text[-1]:
+                            out = await ctx.send(f'```py\n{page}\n```')
+                            break
+                        await ctx.send(f'```py\n{page}\n```')
+
+        if out:
+            await ctx.message.add_reaction('\u2705')  # tick
+        elif err:
+            await ctx.message.add_reaction('\u2049')  # x
+        else:
+            await ctx.message.add_reaction('\u2705')
 
 
 def setup(bot):

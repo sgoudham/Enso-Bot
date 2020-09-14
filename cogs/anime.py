@@ -19,7 +19,7 @@ import datetime
 import aiohttp
 from decouple import config
 from discord import Embed
-from discord.ext.commands import Cog, group, bot_has_permissions, command
+from discord.ext.commands import Cog, group, bot_has_permissions, command, BadArgument, MissingRequiredArgument
 
 from cogs.libs.paginators import SimpleMenu, MWLMenu
 
@@ -481,7 +481,7 @@ class Anime(Cog):
 
     @group(name="anime", aliases=["series", "shows"],
            invoke_without_command=True, case_insensitive=True,
-           usage="`<MWLAnimeID>`")
+           usage="`<MWLAnimeID>|waifu <MWLWaifuID>`")
     @bot_has_permissions(embed_links=True)
     async def anime(self, ctx, term: int):
         """Returning information about a given series (MWL ID ONLY)"""
@@ -564,6 +564,21 @@ class Anime(Cog):
 
         if menu := await post_from_api(self, i, ctx, term, anime_or_waifu, url):
             await menu.start(ctx)
+
+    @anime.error
+    @anime_waifus.error
+    @mwl_user_profile.error
+    @detailed_waifu.error
+    async def mlsetup_command_error(self, ctx, exc):
+        """Catching error if ID is not recognised"""
+
+        if isinstance(exc, BadArgument):
+            text = "**MyWaifuList ID Not Detected... Aborting Process**"
+            await self.bot.generate_embed(ctx, desc=text)
+        elif isinstance(exc, MissingRequiredArgument):
+            text = "Required Argument(s) Missing!" \
+                   f"\nUse **{ctx.prefix}help** to find how to use **{ctx.command}**"
+            await self.bot.generate_embed(ctx, desc=text)
 
 
 def setup(bot):

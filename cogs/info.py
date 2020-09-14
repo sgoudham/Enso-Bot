@@ -461,7 +461,7 @@ class Info(Cog):
     @get_user_avatar.command(name="invert", aliases=["negative"])
     @bot_has_permissions(embed_links=True)
     @cooldown(1, 2, BucketType.user)
-    async def greyscale_user_avatar(self, ctx, *, member: Optional[Member] = None):
+    async def invert_user_avatar(self, ctx, *, member: Optional[Member] = None):
         """Get the inverted avatar of the member"""
 
         # Get member mentioned or set to author

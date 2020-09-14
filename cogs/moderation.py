@@ -571,9 +571,9 @@ class Moderation(Cog):
                 after_activity = f"{after.activity.emoji or '' if after.activity.type == discord.ActivityType.custom else ''}" \
                                  f"{after.activity.name}" if after.activity else None
 
-                fields = [("Before",
+                fields = [("Nickname Before",
                            f"**Nickname -->** {before.nick or None}", False),
-                          ("After",
+                          ("Nickname After",
                            f"**Nickname -->** {after.nick or None}", False)]
 
                 embed = Embed(title="Member Nickname Updated",
@@ -608,11 +608,11 @@ class Moderation(Cog):
 
                     # Change the description of the embed depending on how many roles were added
                     if len(new_roles) == 1:
-                        field = ("Role Added", new_roles_string, False)
-                        footer = "Role Added"
+                        field = ("Member Role Added", new_roles_string, False)
+                        footer = "Member Role Added"
                     else:
-                        field = ("Roles Added", new_roles_string, False)
-                        footer = "Roles Added"
+                        field = ("Member Roles Added", new_roles_string, False)
+                        footer = "Member Roles Added"
 
                     embed = Embed(title=footer,
                                   description=f"**Member --> {after.mention} |** {after}"
@@ -632,11 +632,11 @@ class Moderation(Cog):
 
                     # Change the description of the embed depending on how many roles were removed
                     if len(old_roles) == 1:
-                        field = ("Role Removed", old_roles_string, False)
-                        footer = "Role Removed"
+                        field = ("Member Role Removed", old_roles_string, False)
+                        footer = "Member Role Removed"
                     else:
-                        field = ("Roles Removed", old_roles_string, False)
-                        footer = "Roles Removed"
+                        field = ("Member Roles Removed", old_roles_string, False)
+                        footer = "Member Roles Removed"
 
                     embed = Embed(title=footer,
                                   description=f"**Member --> {after.mention} |** {after}"
@@ -678,13 +678,13 @@ class Moderation(Cog):
                 def message_fields(status):
                     if status == "Before":
                         if len(before.content) <= 1024:
-                            fields = [(f"Before", before.content, False)]
+                            fields = [(f"Edited Message Before", before.content, False)]
                         else:
                             fields = [(f"Before Message Content #1", before.content[:1000], False),
                                       (f"Before Message Content #2", before.content[1000:], False)]
                     else:
                         if len(after.content) <= 1024:
-                            fields = [(f"After", after.content, False)]
+                            fields = [(f"Edited Message After", after.content, False)]
                         else:
                             fields = [(f"After Message Content #1", after.content[:1000], False),
                                       (f"After Message Content #2", after.content[1000:], False)]
@@ -860,11 +860,11 @@ class Moderation(Cog):
 
             # Logging Channel Name/Category/Position Updates
             if before.name != after.name or before.category != after.category:
-                fields = [("Before",
+                fields = [("Channel Before",
                            f"**Channel Updated -->** #{before}\n"
                            f"**Category -->** {before.category or self.bot.cross}\n"
                            f"**Position -->** #{before.position} / {len(before.guild.channels)}\n", False),
-                          ("After",
+                          ("Channel After",
                            f"**Channel Updated -->** #{after}\n"
                            f"**Category -->** {after.category or self.bot.cross}\n"
                            f"**Position -->** #{after.position} / {len(after.guild.channels)}\n", False)]
@@ -898,9 +898,9 @@ class Moderation(Cog):
                               colour=self.bot.admin_colour,
                               timestamp=datetime.datetime.utcnow())
                 embed.set_author(name=after.guild, icon_url=after.guild.icon_url)
-                embed.add_field(name="Before",
+                embed.add_field(name="Channel Roles Before",
                                 value=old_role_string or after.guild.default_role.mention, inline=False)
-                embed.add_field(name="After",
+                embed.add_field(name="Channel Roles After",
                                 value=new_role_string or after.guild.default_role.mention, inline=False)
                 embed.set_footer(text="Role Overrides Updated")
 
@@ -919,7 +919,7 @@ class Moderation(Cog):
                           "default_notifications", "region", "explicit_content_filter"]
             if any(getattr(before, x) != getattr(after, x) for x in attributes):
 
-                fields = [("Before",
+                fields = [("Guild Before",
                            f"**Guild Name -->** {before}\n"
                            f"**Region -->** {get_region(str(before.region))}\n\n"
 
@@ -931,7 +931,7 @@ class Moderation(Cog):
                            f"**AFK Channel -->** {before.afk_channel.mention if before.afk_channel else '#N/A'} **|** {before.afk_timeout}s\n",
                            True),
                           ("\u200b", "\u200b", True),
-                          ("After",
+                          ("Guild After",
                            f"**Guild Name -->** {after}\n"
                            f"**Region -->** {get_region(str(after.region))}\n\n"
 
@@ -1080,16 +1080,13 @@ class Moderation(Cog):
         if modlogs := self.bot.get_modlog_for_guild(role.guild.id):
             modlogs_channel = self.bot.get_channel(modlogs)
 
-            # Returns the permissions that the role has within the guild
-            filtered = filter(lambda x: x[1], role.permissions)
             # Replace all "_" with " " in each item and join them together
-            _perms = ",".join(map(lambda x: x[0].replace("_", " "), filtered))
-
-            # Capitalise every word in the array and filter out the permissions that are defined within the frozenset
-            permission = string.capwords("".join(detect_perms(_perms, perms)))
+            _perms = ", ".join(map(lambda x: x[0].replace("_", " "), role.permissions))
+            # Capitalise every word in the array
+            permission = string.capwords(_perms)
 
             # Using emotes to represent bools
-            mentionable = self.bot.tick if role.mention else self.bot.cross
+            mentionable = self.bot.tick if role.mentionable else self.bot.cross
             hoisted = self.bot.tick if role.hoist else self.bot.cross
             managed = self.bot.tick if role.managed else self.bot.cross
 
@@ -1101,7 +1098,7 @@ class Moderation(Cog):
             # Set up Embed
             embed = Embed(title=f"Role Created",
                           description=desc,
-                          colour=role.colour,
+                          colour=self.bot.admin_colour,
                           timestamp=datetime.datetime.utcnow())
             embed.set_author(name=role.guild, icon_url=role.guild.icon_url)
             embed.set_footer(text=f"Role Created")
@@ -1115,7 +1112,7 @@ class Moderation(Cog):
                  f"\nHoisted?: {hoisted}"
                  f"\nManaged?: {managed}", True),
 
-                ("Key Permissions", permission or "No Key Permissions", False)
+                ("All Permissions", permission or "No Permissions", False)
             ]
 
             # Add fields to the embed
@@ -1140,7 +1137,7 @@ class Moderation(Cog):
             permission = string.capwords("".join(detect_perms(_perms, perms)))
 
             # Using emotes to represent bools
-            mentionable = self.bot.tick if role.mention else self.bot.cross
+            mentionable = self.bot.tick if role.mentionable else self.bot.cross
             hoisted = self.bot.tick if role.hoist else self.bot.cross
             managed = self.bot.tick if role.managed else self.bot.cross
 
@@ -1152,7 +1149,7 @@ class Moderation(Cog):
             # Set up Embed
             embed = Embed(title=f"Role Deleted",
                           description=desc,
-                          colour=role.colour,
+                          colour=self.bot.admin_colour,
                           timestamp=datetime.datetime.utcnow())
             embed.set_author(name=role.guild, icon_url=role.guild.icon_url)
             embed.set_footer(text=f"Role Deleted")
@@ -1167,7 +1164,7 @@ class Moderation(Cog):
                  f"\nHoisted?: {hoisted}"
                  f"\nManaged?: {managed}", True),
 
-                ("Key Permissions Before Deletion", permission or "This Role Had No Key Permissions", False)
+                ("All Permissions Before Deletion", permission or "No Permissions", False)
             ]
 
             # Add fields to the embed
@@ -1182,6 +1179,139 @@ class Moderation(Cog):
 
         if modlogs := self.bot.get_modlog_for_guild(after.guild.id):
             modlogs_channel = self.bot.get_channel(modlogs)
+
+            attributes = ["name", "hoist", "managed", "mentionable", "colour"]
+            if any(getattr(before, x) != getattr(after, x) for x in attributes):
+
+                # Using emotes to represent bools
+                b_mentionable = self.bot.tick if before.mentionable else self.bot.cross
+                b_hoisted = self.bot.tick if before.hoist else self.bot.cross
+                b_managed = self.bot.tick if before.managed else self.bot.cross
+                # Using emotes to represent bools
+                a_mentionable = self.bot.tick if after.mentionable else self.bot.cross
+                a_hoisted = self.bot.tick if after.hoist else self.bot.cross
+                a_managed = self.bot.tick if after.managed else self.bot.cross
+
+                fields = [("Role Before",
+                           f"**Name -->** {before.mention} **|** @{before}"
+                           f"\n**Colour -->** {str(before.colour)}"
+                           f"\n\n**Mentionable? -->** {b_mentionable}"
+                           f"\n**Hoisted? -->** {b_hoisted}"
+                           f"\n**Managed? -->** {b_managed}",
+                           True),
+                          ("Role After",
+                           f"**Name -->** {after.mention} **|** @{after}"
+                           f"\n**Colour -->** {str(after.colour)}"
+                           f"\n\n**Mentionable? -->** {a_mentionable}"
+                           f"\n**Hoisted? -->** {a_hoisted}"
+                           f"\n**Managed? -->** {a_managed}",
+                           True)]
+
+                # Set up Embed
+                embed = Embed(title=f"Role Updated",
+                              description=f"**ID -->** {after.id}",
+                              colour=self.bot.admin_colour,
+                              timestamp=datetime.datetime.utcnow())
+                embed.set_author(name=after.guild, icon_url=after.guild.icon_url)
+                embed.set_footer(text=f"Role Updated")
+
+                # Add fields to the embed
+                for name, value, inline in fields:
+                    embed.add_field(name=name, value=value, inline=inline)
+
+                await modlogs_channel.send(embed=embed)
+
+            # Logging permission changes to roles
+            if before.permissions != after.permissions:
+                # Returns the permissions that the role has within the guild
+                after_filtered = list(filter(lambda x: x[1], after.permissions))
+                before_filtered = list(filter(lambda x: x[1], before.permissions))
+                after_perms = string.capwords(", ".join(map(lambda x: x[0].replace("_", " "), after_filtered)))
+
+                # Retrieve the permissions that were enabled/disabled from the role
+                new_perm = [perms for perms in after_filtered if perms not in before_filtered]
+                old_perm = [perms for perms in before_filtered if perms not in after_filtered]
+
+                # Log the new permissions that were enabled for the role
+                if len(new_perm) >= 1 and not old_perm:
+                    new_perm_string = string.capwords(", ".join(map(lambda x: x[0].replace("_", " "), new_perm)))
+
+                    # Change the description of the embed depending on how many permissions were enabled
+                    if len(new_perm) == 1:
+                        field = ("Role Permission Added", new_perm_string, False)
+                        footer = "Role Permission Added"
+                    else:
+                        field = ("Role Permissions Added", new_perm_string, False)
+                        footer = "Role Permissions Added"
+
+                    embed = Embed(title=footer,
+                                  description=f"{after.mention} **|** @{after} **<-- Colour:** {str(after.colour)}"
+                                              f"\n**Position -->** #{after.position} / {len(after.guild.roles)}"
+                                              f"\n** ID -->** {after.id}",
+                                  colour=self.bot.admin_colour,
+                                  timestamp=datetime.datetime.utcnow())
+                    embed.set_author(name=after.guild, icon_url=after.guild.icon_url)
+                    embed.add_field(name=field[0], value=field[1], inline=field[2])
+                    embed.add_field(name="All Permissions", value=after_perms or "No Permissions", inline=False)
+                    embed.set_footer(text=footer)
+
+                    await modlogs_channel.send(embed=embed)
+
+                # As long as permissions were disabled, log them
+                if len(old_perm) >= 1 and not new_perm:
+                    old_perm_string = string.capwords(", ".join(map(lambda x: x[0].replace("_", " "), old_perm)))
+
+                    # Change the description of the embed depending on how many permissions were disabled
+                    if len(old_perm) == 1:
+                        field = ("Role Permission Removed", old_perm_string, False)
+                        footer = "Role Permission Removed"
+                    else:
+                        field = ("Role Permissions Removed", old_perm_string, False)
+                        footer = "Role Permissions Removed"
+
+                    embed = Embed(title=footer,
+                                  description=f"{after.mention} **|** @{after} **<-- Colour:** {str(after.colour)}"
+                                              f"\n**Position -->** #{after.position} / {len(after.guild.roles)}"
+                                              f"\n** ID -->** {after.id}",
+                                  colour=self.bot.admin_colour,
+                                  timestamp=datetime.datetime.utcnow())
+                    embed.set_author(name=after.guild, icon_url=after.guild.icon_url)
+                    embed.add_field(name=field[0], value=field[1], inline=field[2])
+                    embed.add_field(name="All Permissions", value=after_perms or "No Permissions", inline=False)
+                    embed.set_footer(text=footer)
+
+                    await modlogs_channel.send(embed=embed)
+
+                # Log the different permissions that were enabled and disabled
+                if len(old_perm) >= 1 and len(new_perm) >= 1:
+                    new_perm_string = string.capwords(", ".join(map(lambda x: x[0].replace("_", " "), new_perm)))
+                    old_perm_string = string.capwords(", ".join(map(lambda x: x[0].replace("_", " "), old_perm)))
+
+                    # Change the description of the embed depending on how many permissions were enabled
+                    if len(new_perm) == 1:
+                        new_field = ("Role Permission Added", new_perm_string, False)
+                    else:
+                        new_field = ("Role Permissions Added", new_perm_string, False)
+
+                    # Change the description of the embed depending on how many permissions were disabled
+                    if len(old_perm) == 1:
+                        old_field = ("Role Permission Removed", old_perm_string, False)
+                    else:
+                        old_field = ("Role Permissions Removed", old_perm_string, False)
+
+                    embed = Embed(title="Role Permissions Updated",
+                                  description=f"{after.mention} **|** @{after} **<-- Colour:** {str(after.colour)}"
+                                              f"\n**Position -->** #{after.position} / {len(after.guild.roles)}"
+                                              f"\n** ID -->** {after.id}",
+                                  colour=self.bot.admin_colour,
+                                  timestamp=datetime.datetime.utcnow())
+                    embed.set_author(name=after.guild, icon_url=after.guild.icon_url)
+                    embed.add_field(name=new_field[0], value=new_field[1], inline=new_field[2])
+                    embed.add_field(name=old_field[0], value=old_field[1], inline=old_field[2])
+                    embed.add_field(name="All Permissions", value=after_perms or "No Permissions", inline=False)
+                    embed.set_footer(text="Role Permissions Updated")
+
+                    await modlogs_channel.send(embed=embed)
 
 
 def setup(bot):

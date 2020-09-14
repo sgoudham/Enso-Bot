@@ -1193,14 +1193,14 @@ class Moderation(Cog):
                 a_managed = self.bot.tick if after.managed else self.bot.cross
 
                 fields = [("Role Before",
-                           f"**Name -->** {before.mention} **|** @{before}"
+                           f"**Name -->** @{before}"
                            f"\n**Colour -->** {str(before.colour)}"
                            f"\n\n**Mentionable? -->** {b_mentionable}"
                            f"\n**Hoisted? -->** {b_hoisted}"
                            f"\n**Managed? -->** {b_managed}",
                            True),
                           ("Role After",
-                           f"**Name -->** {after.mention} **|** @{after}"
+                           f"**Name -->** @{after}"
                            f"\n**Colour -->** {str(after.colour)}"
                            f"\n\n**Mentionable? -->** {a_mentionable}"
                            f"\n**Hoisted? -->** {a_hoisted}"

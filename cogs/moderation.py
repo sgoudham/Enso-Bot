@@ -1209,7 +1209,8 @@ class Moderation(Cog):
 
                 # Set up Embed
                 embed = Embed(title=f"Role Updated",
-                              description=f"**ID -->** {after.id}",
+                              description=f"**Name --> {after.mention} |** @{after}"
+                                          f"**ID -->** {after.id}",
                               colour=self.bot.admin_colour,
                               timestamp=datetime.datetime.utcnow())
                 embed.set_author(name=after.guild, icon_url=after.guild.icon_url)

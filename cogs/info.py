@@ -65,63 +65,7 @@ class Info(Cog):
 
         await self.bot.generate_embed(ctx, desc=f"Pong! **{round(self.bot.latency * 1000)}ms**")
 
-    @command(name="roleinfo", aliases=["ri"])
-    @guild_only()
-    async def role_info(self, ctx, *, role: Role):
-        """Retrieve information about any role!"""
-
-        # Returns the permissions that the role has within the guild
-        filtered = filter(lambda x: x[1], role.permissions)
-        # Replace all "_" with " " in each item and join them together
-        _perms = ",".join(map(lambda x: x[0].replace("_", " "), filtered))
-
-        # Capitalise every word in the array and filter out the permissions that are defined within the frozenset
-        permission = string.capwords("".join(detect_perms(_perms, perms)))
-        # Get all members within role
-        member = string_list(role.members, 30, "Member")
-
-        # Using emotes to represent bools
-        mentionable = self.bot.tick if role.mention else self.bot.cross
-        hoisted = self.bot.tick if role.hoist else self.bot.cross
-        managed = self.bot.tick if role.managed else self.bot.cross
-
-        # Description of the embed
-        desc = f"{role.mention} **|** @{role} **<-- Colour:** {str(role.colour)}" \
-               f"\n**Position -->** #{role.position} / {len(ctx.guild.roles)}" \
-               f"\n** ID -->** {role.id}"
-
-        # Set up Embed
-        embed = Embed(title=f"@{role.name} Information",
-                      description=desc,
-                      colour=role.colour,
-                      timestamp=datetime.datetime.utcnow())
-        embed.set_thumbnail(url=ctx.guild.icon_url)
-        embed.set_footer(text=f"ID: {role.id}")
-
-        # Setting up fields
-        fields = [
-            ("Creation At", role.created_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"), True),
-
-            (f"Members ({len(role.members)})",
-             f"\nHumans: {len(list(filter(lambda m: not m.bot, role.members)))}" +
-             f"\nBots: {len(list(filter(lambda m: m.bot, role.members)))}", True),
-
-            (f"Misc",
-             f"\nMentionable?: {mentionable}"
-             f"\nHoisted?: {hoisted}"
-             f"\nManaged?: {managed}", True),
-
-            (f"List of Members ({len(role.members)})", member or "No Members In Role", False),
-            ("Key Permissions", permission or "No Key Permissions", False)
-        ]
-
-        # Add fields to the embed
-        for name, value, inline in fields:
-            embed.add_field(name=name, value=value, inline=inline)
-
-        await ctx.send(embed=embed)
-
-    @command(name="permissions", aliases=["perms"], usage="`[Member|Role]`")
+    @command(name="permissions", aliases=["perms"], usage="`[member|role]`")
     @guild_only()
     @bot_has_permissions(embed_links=True, add_reactions=True)
     async def perms(self, ctx, *, item: Optional[Union[Member, Role]]):
@@ -163,6 +107,62 @@ class Info(Cog):
 
         menu = SimpleMenu(0, item, perms, [first, second], self)
         await menu.start(ctx)
+
+    @command(name="roleinfo", aliases=["ri"])
+    @guild_only()
+    async def role_info(self, ctx, *, role: Role):
+        """Retrieve information about any role!"""
+
+        # Returns the permissions that the role has within the guild
+        filtered = filter(lambda x: x[1], role.permissions)
+        # Replace all "_" with " " in each item and join them together
+        _perms = ",".join(map(lambda x: x[0].replace("_", " "), filtered))
+
+        # Capitalise every word in the array and filter out the permissions that are defined within the frozenset
+        permission = string.capwords("".join(detect_perms(_perms, perms)))
+        # Get all members within role
+        member = string_list(role.members, 30, "Member")
+
+        # Using emotes to represent bools
+        mentionable = self.bot.tick if role.mentionable else self.bot.cross
+        hoisted = self.bot.tick if role.hoist else self.bot.cross
+        managed = self.bot.tick if role.managed else self.bot.cross
+
+        # Description of the embed
+        desc = f"{role.mention} **|** @{role} **<-- Colour:** {str(role.colour)}" \
+               f"\n**Position -->** #{role.position} / {len(ctx.guild.roles)}" \
+               f"\n** ID -->** {role.id}"
+
+        # Set up Embed
+        embed = Embed(title=f"@{role.name} Information",
+                      description=desc,
+                      colour=role.colour,
+                      timestamp=datetime.datetime.utcnow())
+        embed.set_thumbnail(url=ctx.guild.icon_url)
+        embed.set_footer(text=f"ID: {role.id}")
+
+        # Setting up fields
+        fields = [
+            ("Creation At", role.created_at.strftime("%a, %b %d, %Y\n%I:%M:%S %p"), True),
+
+            (f"Members ({len(role.members)})",
+             f"\nHumans: {len(list(filter(lambda m: not m.bot, role.members)))}" +
+             f"\nBots: {len(list(filter(lambda m: m.bot, role.members)))}", True),
+
+            (f"Misc",
+             f"\nMentionable?: {mentionable}"
+             f"\nHoisted?: {hoisted}"
+             f"\nManaged?: {managed}", True),
+
+            (f"List of Members ({len(role.members)})", member or "No Members In Role", False),
+            ("Key Permissions", permission or "No Key Permissions", False)
+        ]
+
+        # Add fields to the embed
+        for name, value, inline in fields:
+            embed.add_field(name=name, value=value, inline=inline)
+
+        await ctx.send(embed=embed)
 
     @command(name="rolelist", aliases=["rl"])
     @guild_only()
@@ -344,38 +344,6 @@ class Info(Cog):
         # Add fields to the embed
         for name, value, inline in fields:
             embed.add_field(name=name, value=value, inline=inline)
-
-        await ctx.send(embed=embed)
-
-    @command(name="source")
-    @bot_has_permissions(embed_links=True)
-    async def _bot_source(self, ctx):
-        """Link to the source code for Enso!"""
-
-        embed = Embed(title=f"<:github:741000905364603010> Source Code | Ensō~Chan {self.bot.version}",
-                      description="**Click above me to view my source code!**",
-                      url="https://github.com/sgoudham/Enso-Bot",
-                      colour=self.bot.admin_colour,
-                      timestamp=datetime.datetime.utcnow())
-        embed.set_thumbnail(url=self.bot.user.avatar_url)
-        embed.add_field(name="Developer", value=f"{self.bot.hammyMention} | Hamothy#5619", inline=False)
-        embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
-
-        await ctx.send(embed=embed)
-
-    @command(name="vote", aliases=["upvote"])
-    async def upvote(self, ctx):
-        """Upvote the bot on top.gg!"""
-
-        desc = "Click the link above to upvote me!\nIt would greatly help me out as it allows the bot to be " \
-               "noticed more on the website!\nIt's free and takes a maximum of 30 seconds to do. Thanks so much!"
-        embed = Embed(title="Upvote me on top.gg!",
-                      description=desc,
-                      url="https://top.gg/bot/716701699145728094/vote",
-                      colour=self.bot.random_colour(),
-                      timestamp=datetime.datetime.utcnow())
-        embed.set_thumbnail(url=self.bot.user.avatar_url)
-        embed.add_field(name="Developer", value=f"{self.bot.hammyMention} | Hamothy#5619", inline=False)
 
         await ctx.send(embed=embed)
 

@@ -52,15 +52,26 @@ async def send_to_modlogs(self, ctx, target, reason, action):
     if modlog := self.bot.get_modlog_for_guild(ctx.guild.id):
         channel = ctx.guild.get_channel(modlog)
 
-        desc = f"**Member -->{target.mention} | {target}\nID -->** {target.id}" \
-               f"\n\n**Auctioned By --> {ctx.author.mention} | {ctx.author}\nID -->** {ctx.author.id}"
-        embed = Embed(title=f"Member {action}",
-                      description=desc,
-                      colour=self.bot.admin_colour,
-                      timestamp=datetime.datetime.utcnow())
-        embed.set_thumbnail(url=target.avatar_url)
-        embed.add_field(name="Reason", value=reason, inline=False)
-        embed.set_footer(text=f"Member {action}")
+        if isinstance(target, User):
+            desc = f"**User -->** {target}\n**ID -->** {target.id}" \
+                   f"\n\n**Auctioned By --> {ctx.author.mention} | {ctx.author}\nID -->** {ctx.author.id}"
+            embed = Embed(title=f"User {action}",
+                          description=desc,
+                          colour=self.bot.admin_colour,
+                          timestamp=datetime.datetime.utcnow())
+            embed.set_thumbnail(url=target.avatar_url)
+            embed.add_field(name="Reason", value=reason, inline=False)
+            embed.set_footer(text=f"User {action}")
+        else:
+            desc = f"**Member --> {target.mention} |** {target}\n**ID -->** {target.id}" \
+                   f"\n\n**Auctioned By --> {ctx.author.mention} | {ctx.author}\nID -->** {ctx.author.id}"
+            embed = Embed(title=f"Member {action}",
+                          description=desc,
+                          colour=self.bot.admin_colour,
+                          timestamp=datetime.datetime.utcnow())
+            embed.set_thumbnail(url=target.avatar_url)
+            embed.add_field(name="Reason", value=reason, inline=False)
+            embed.set_footer(text=f"Member {action}")
 
         await channel.send(embed=embed)
 
@@ -172,7 +183,7 @@ async def mute_members(self, ctx, targets, reason, muted):
                 await self.bot.generate_embed(ctx, desc=f"**{target.mention} Could Not Be Muted!**")
 
 
-async def ban_members(self, ctx, targets, reason):
+async def ban_members(self, ctx, users, reason):
     """
 
     Method to allow members to be banned
@@ -182,22 +193,41 @@ async def ban_members(self, ctx, targets, reason):
 
     """
 
-    for target in targets:
-        if (ctx.guild.me.top_role.position > target.top_role.position
-                and not target.guild_permissions.administrator):
+    # Get the list of banned users from the server
+    bans = await ctx.guild.bans()
+    banned_members = list(map(lambda m: m.user, bans))
 
-            await target.ban(reason=reason)
+    for user in users:
+        # Make sure that the user not banned already
+        if user in banned_members:
+            await self.bot.generate_embed(ctx, desc=f"{ctx.bot.cross} **Member Is Already Banned!** {ctx.bot.cross}")
+            continue
 
-            await self.bot.generate_embed(ctx, desc=f"{ctx.bot.tick} **{target}** Was Banned! {ctx.bot.tick}")
+        # Ban
+        if user in ctx.guild.members:
+            member = ctx.guild.get_member(user.id)
+            if (ctx.guild.me.top_role.position > member.top_role.position
+                    and not member.guild_permissions.administrator):
 
-            await send_to_modlogs(self, ctx, target, reason, action="Banned")
+                await member.ban(reason=reason)
+                await self.bot.generate_embed(ctx, desc=f"{ctx.bot.tick} **{member}** Was Banned! {ctx.bot.tick}")
 
-        # Send error message if the User could not be banned
+                await send_to_modlogs(self, ctx, member, reason, action="Banned")
+
+            # Send error message if the User could not be banned
+            else:
+                await self.bot.generate_embed(ctx, desc=f"**{member} Could Not Be Banned!**")
         else:
-            await self.bot.generate_embed(ctx, desc=f"**{target.mention} Could Not Be Banned!**")
+            await ctx.guild.ban(discord.Object(id=user.id), reason=reason)
+
+            # Send confirmation to the channel that the user is in
+            await self.bot.generate_embed(ctx,
+                                          desc=f"{self.bot.tick} **{user}** Was Power Banned! {self.bot.tick}")
+
+            await send_to_modlogs(self, ctx, user, reason, action="Power Banned")
 
 
-async def unban_members(self, ctx, targets, reason):
+async def unban_members(self, ctx, users, reason):
     """
 
     Method to allow members to be unbanned
@@ -211,18 +241,17 @@ async def unban_members(self, ctx, targets, reason):
     bans = await ctx.guild.bans()
     ban_users = list(map(lambda m: m.user, bans))
 
-    for target in targets:
-        if target not in ban_users:
-            await self.bot.generate_embed(ctx, desc=f"{ctx.bot.cross} **Member Is Not In Ban's List!** {ctx.bot.cross}")
+    for user in users:
+        if user not in ban_users:
+            await self.bot.generate_embed(ctx, desc=f"{ctx.bot.cross} **Member Is Not Banned!** {ctx.bot.cross}")
 
         else:
-            # Get the member and unban them
-            await ctx.guild.unban(target, reason=reason)
+            await ctx.guild.unban(discord.Object(id=user.id), reason=reason)
 
             # Send confirmation to the channel that the user is in
-            await self.bot.generate_embed(ctx, desc=f"{ctx.bot.tick} **{target}** Was Unbanned! {ctx.bot.tick}")
+            await self.bot.generate_embed(ctx, desc=f"{ctx.bot.tick} **{user}** Was Unbanned! {ctx.bot.tick}")
 
-            await send_to_modlogs(self, ctx, target, reason, action="Unbanned")
+            await send_to_modlogs(self, ctx, user, reason, action="Unbanned")
 
 
 async def kick_members(self, ctx, targets, reason):
@@ -279,6 +308,7 @@ class Moderation(Cog):
     @command(name="mute", usage="`<member>...` `[reason]`")
     @has_guild_permissions(manage_roles=True)
     @bot_has_guild_permissions(manage_roles=True)
+    @cooldown(1, 1, BucketType.user)
     async def mute(self, ctx, members: Greedy[Member], *, reason: Optional[str] = "No Reason Given"):
         """
         Mute Member(s) from Server
@@ -292,7 +322,7 @@ class Moderation(Cog):
                 role = discord.utils.get(ctx.guild.roles, name="Muted")
 
                 # Create muted role when no muted role exists and mute member(s)
-                if role is None:
+                if not role:
                     muted = await ctx.guild.create_role(name="Muted")
                     for channel in ctx.guild.channels:
                         await channel.set_permissions(muted, send_messages=False)
@@ -305,6 +335,7 @@ class Moderation(Cog):
     @command(name="unmute", usage="`<member>...` `[reason]`")
     @has_guild_permissions(manage_roles=True)
     @bot_has_guild_permissions(manage_roles=True)
+    @cooldown(1, 1, BucketType.user)
     async def unmute(self, ctx, members: Greedy[Member], *, reason: Optional[str] = "No Reason Given"):
         """
         Unmute Member(s) from Server
@@ -315,30 +346,25 @@ class Moderation(Cog):
         if not await check(ctx, members):
             with ctx.typing():
                 role = discord.utils.get(ctx.guild.roles, name="Muted")
-
-                if role is None:
-                    embed = Embed(description="**❌ No Muted Role Was Found! ❌**",
-                                  colour=self.bot.admin_colour)
-                    await ctx.send(embed=embed)
+                if not role:
+                    desc = f"**{self.bot.cross} No Muted Role Was Found! {self.bot.cross}**"
+                    await self.bot.generate_embed(ctx, desc=desc)
 
                 else:
-
                     for member in members:
                         if role in member.roles:
                             await ummute_members(self, ctx, members, reason)
                             unmute = True
-
                         if role not in member.roles and unmute is False:
-                            embed = Embed(description=f"**❌ {member.mention} Is Not Muted! ❌**",
-                                          colour=self.bot.admin_colour)
-                            await ctx.send(embed=embed)
+                            desc = f"**{self.bot.cross} {member.mention} Is Not Muted! {self.bot.cross}**"
+                            await self.bot.generate_embed(ctx, desc=desc)
 
     @command(name="ban", usage="`<member>...` `[reason]`")
     @guild_only()
     @has_guild_permissions(ban_members=True)
     @bot_has_guild_permissions(ban_members=True)
     @cooldown(1, 1, BucketType.user)
-    async def ban(self, ctx, members: Greedy[Member], *, reason: Optional[str] = "No Reason Given"):
+    async def ban(self, ctx, members: Greedy[User], *, reason: Optional[str] = "No Reason Given"):
         """
         Ban Member(s) from Server
         Multiple Members can be banned at once
@@ -347,33 +373,6 @@ class Moderation(Cog):
         if not await check(ctx, members):
             with ctx.typing():
                 await ban_members(self, ctx, members, reason)
-
-    @command(name="forceban", aliases=["powerban", "ultraban"], usage="`<member>...` `[reason]`")
-    @guild_only()
-    @has_guild_permissions(ban_members=True)
-    @bot_has_guild_permissions(ban_members=True)
-    @cooldown(1, 1, BucketType.user)
-    async def force_ban(self, ctx, users: Greedy[int], *, reason: Optional[str] = "No Reason Given"):
-        """Ban User(s) from Server (MUST PROVIDE ID)"""
-
-        if not await check(ctx, users):
-            # Get the list of banned users from the server
-            bans = await ctx.guild.bans()
-            ban_ids = list(map(lambda m: m.user.id, bans))
-
-            # Power ban users from guilds without them being in there
-            for user in users:
-                if user in ban_ids:
-                    await self.bot.generate_embed(ctx,
-                                                  desc=f"{self.bot.cross} **Member Is Already Banned!** {self.bot.cross}")
-                else:
-                    await ctx.guild.ban(discord.Object(id=user))
-                    target = await self.bot.fetch_user(user)
-                    # Send confirmation to the channel that the user is in
-                    await self.bot.generate_embed(ctx,
-                                                  desc=f"{self.bot.tick} **{target}** Was Power Banned! {self.bot.tick}")
-
-                    await send_to_modlogs(self, ctx, target, reason, action="Power Banned")
 
     @command(name="unban", usage="`<member>...` `[reason]`")
     @guild_only()
@@ -431,14 +430,13 @@ class Moderation(Cog):
 
     @ban.error
     @unban.error
-    @force_ban.error
     async def ban_command_error(self, ctx, exc):
         """Catching error if channel is not recognised"""
 
         error = getattr(exc, "original", exc)
 
         if isinstance(error, NotFound):
-            text = "**❌ User Not Detected... Aborting Process** ❌"
+            text = f"**{self.bot.cross} User Not Detected... Aborting Process** {self.bot.cross}"
             await self.bot.generate_embed(ctx, desc=text)
 
     @Cog.listener()

@@ -384,6 +384,7 @@ class Moderation(Cog):
         Unban Member(s) from Server
         Multiple Members can be Unbanned At Once
         """
+        
         if not await check(ctx, members):
             with ctx.typing():
                 await unban_members(self, ctx, members, reason)

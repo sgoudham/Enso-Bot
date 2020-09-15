@@ -418,14 +418,12 @@ class Info(Cog):
 
         # Get member mentioned or set to author
         member = ctx.author if not member else member
-
         # Get the member avatar
         userAvatar = str(member.avatar_url)
 
-        embed = Embed(title=f"{member}'s Avatar",
-                      url=userAvatar,
-                      colour=self.bot.admin_colour,
+        embed = Embed(colour=self.bot.admin_colour,
                       timestamp=datetime.datetime.utcnow())
+        embed.set_author(name=f"{member}'s Avatar", icon_url=member.avatar_url, url=userAvatar)
         embed.set_image(url=userAvatar)
         embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
@@ -449,16 +447,16 @@ class Info(Cog):
         file.seek(0)
 
         # Send image in an embed
-        f = File(file, "image.png")
-        embed = Embed(title=f"{member}'s Avatar | Greyscale",
-                      colour=self.bot.admin_colour,
+        f = File(file, "greyscale.png")
+        embed = Embed(colour=self.bot.admin_colour,
                       timestamp=datetime.datetime.utcnow())
-        embed.set_image(url="attachment://image.png")
+        embed.set_author(name=f"{member}'s Avatar | Greyscale", icon_url=member.avatar_url)
+        embed.set_image(url="attachment://greyscale.png")
         embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
         await ctx.send(file=f, embed=embed)
 
-    @get_user_avatar.command(name="invert", aliases=["negative"])
+    @get_user_avatar.command(name="invert", aliases=["negative", "inverted"])
     @bot_has_permissions(embed_links=True)
     @cooldown(1, 2, BucketType.user)
     async def invert_user_avatar(self, ctx, *, member: Optional[Member] = None):
@@ -467,6 +465,7 @@ class Info(Cog):
         # Get member mentioned or set to author
         member = ctx.author if not member else member
 
+        # Invert the image
         attach = await member.avatar_url.read()
         image = Image.open(io.BytesIO(attach)).convert('RGB')
         inverted = invert(image)
@@ -477,11 +476,11 @@ class Info(Cog):
         file.seek(0)
 
         # Send image in an embed
-        f = File(file, "image.png")
-        embed = Embed(title=f"{member}'s Avatar | Inverted",
-                      colour=self.bot.admin_colour,
+        f = File(file, "inverted.png")
+        embed = Embed(colour=self.bot.admin_colour,
                       timestamp=datetime.datetime.utcnow())
-        embed.set_image(url="attachment://image.png")
+        embed.set_author(name=f"{member}'s Avatar | Inverted", icon_url=member.avatar_url)
+        embed.set_image(url="attachment://inverted.png")
         embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
         await ctx.send(file=f, embed=embed)

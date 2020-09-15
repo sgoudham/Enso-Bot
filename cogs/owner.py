@@ -180,6 +180,7 @@ class Owner(Cog):
 
         env = {
             'ctx': ctx,
+            'self': self,
             'bot': self.bot,
             'channel': ctx.channel,
             'author': ctx.author,

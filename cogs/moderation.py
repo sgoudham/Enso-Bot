@@ -24,7 +24,7 @@ from discord import Member, Embed, DMChannel, NotFound, User
 from discord.ext.commands import command, guild_only, has_guild_permissions, bot_has_guild_permissions, Greedy, \
     cooldown, BucketType, Cog
 
-from cogs.libs.functions import string_list, get_region, get_content_filter, get_notifs, detect_perms, perms
+from cogs.libs.functions import string_list, get_region, get_content_filter, get_notifs
 
 # TODO: CREATE A BITARRAY SO THAT THE MODLOG EVENTS ARE TOGGLEABLE
 # TODO: MAKE SURE THAT THE BITARRAY IS ONLY IMPLEMENTED AFTER ALL EVENTS ARE CODED
@@ -1133,9 +1133,9 @@ class Moderation(Cog):
             # Returns the permissions that the role has within the guild
             filtered = filter(lambda x: x[1], role.permissions)
             # Replace all "_" with " " in each item and join them together
-            _perms = ",".join(map(lambda x: x[0].replace("_", " "), filtered))
+            _perms = ", ".join(map(lambda x: x[0].replace("_", " "), filtered))
             # Capitalise every word in the array and filter out the permissions that are defined within the frozenset
-            permission = string.capwords("".join(detect_perms(_perms, perms)))
+            permission = string.capwords(_perms)
 
             # Using emotes to represent bools
             mentionable = self.bot.tick if role.mentionable else self.bot.cross
@@ -1321,15 +1321,6 @@ def setup(bot):
 
 
 """
-@Cog.listener()
-    async def on_voice_state_update(self, member, before, after):
-        Logging voice channel updates
-
-        if modlogs := self.bot.get_modlog_for_guild(member.guild.id):
-            modlogs_channel = self.bot.get_channel(modlogs)
-
-            if before.channel != after.channel:
-                embed = Embed()
 
 @Cog.listener()
     async def on_guild_integrations_update(self, guild):

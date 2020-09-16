@@ -384,7 +384,7 @@ class Moderation(Cog):
         Unban Member(s) from Server
         Multiple Members can be Unbanned At Once
         """
-        
+
         if not await check(ctx, members):
             with ctx.typing():
                 await unban_members(self, ctx, members, reason)
@@ -1079,8 +1079,10 @@ class Moderation(Cog):
         if modlogs := self.bot.get_modlog_for_guild(role.guild.id):
             modlogs_channel = self.bot.get_channel(modlogs)
 
+            # Returns the permissions that the role has within the guild
+            filtered = filter(lambda x: x[1], role.permissions)
             # Replace all "_" with " " in each item and join them together
-            _perms = ", ".join(map(lambda x: x[0].replace("_", " "), role.permissions))
+            _perms = ", ".join(map(lambda x: x[0].replace("_", " "), filtered))
             # Capitalise every word in the array
             permission = string.capwords(_perms)
 
@@ -1319,6 +1321,15 @@ def setup(bot):
 
 
 """
+@Cog.listener()
+    async def on_voice_state_update(self, member, before, after):
+        Logging voice channel updates
+
+        if modlogs := self.bot.get_modlog_for_guild(member.guild.id):
+            modlogs_channel = self.bot.get_channel(modlogs)
+
+            if before.channel != after.channel:
+                embed = Embed()
 
 @Cog.listener()
     async def on_guild_integrations_update(self, guild):

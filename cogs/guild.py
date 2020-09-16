@@ -15,11 +15,12 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 import datetime
+import string
 
 import asyncpg
 from discord import Embed, TextChannel
 from discord.ext.commands import has_permissions, Cog, group, bot_has_permissions, BadArgument, MissingRequiredArgument, \
-    command
+    command, MissingPermissions
 
 from cogs.libs.modmail import Modmail
 from cogs.libs.starboard import Starboard
@@ -530,6 +531,11 @@ class Guild(Cog):
         elif isinstance(exc, MissingRequiredArgument):
             text = "Required Argument(s) Missing!" \
                    f"\nUse **{ctx.prefix}help** to find how to use **{ctx.command}**"
+            await self.bot.generate_embed(ctx, desc=text)
+        elif isinstance(exc, MissingPermissions):
+            missing_perms = string.capwords(", ".join(exc.missing_perms).replace("_", " "))
+
+            text = f"{self.bot.cross} Uh oh! You Need **{missing_perms}** Permission(s) To Execute This Command! {self.bot.cross}"
             await self.bot.generate_embed(ctx, desc=text)
 
 

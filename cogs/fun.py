@@ -127,7 +127,7 @@ class Fun(Cog):
         # Sending out a random insult from the array "responses"
         await ctx.send(random.choice(responses))
 
-    @command(name="comp")
+    @command(name="compliment", aliases=["comp"])
     async def compliment(self, ctx, member: Member):
         """Give Compliments to Members"""
 
@@ -477,13 +477,11 @@ class Fun(Cog):
                 attach = await attachments.read()
                 image = Image.open(io.BytesIO(attach)).convert('LA')
 
-                # Save new grayscale image as bytes
                 file = io.BytesIO()
                 image.save(file, format='PNG')
                 file.seek(0)
 
                 await ctx.message.delete()
-                # Send Grayscale Image
                 await ctx.send(file=discord.File(file, "gs.png"))
 
         else:

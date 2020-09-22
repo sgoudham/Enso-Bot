@@ -100,8 +100,8 @@ def enso_people():
 
     return ['hammy', 'hussein', 'inna', 'kate', 'calvin',
             'lukas', 'stitch', 'corona', 'ging', 'ash',
-            'gria', 'lilu', 'ifrah', 'skye', 'chloe',
-            'connor', 'taz', 'ryder', 'rin', 'izzy',
+            'lilu', 'ifrah', 'skye', 'chloe',
+            'connor', 'taz', 'rin', 'izzy',
             'david', 'clarity', 'angel', "studentjon", "anton"]
 
 

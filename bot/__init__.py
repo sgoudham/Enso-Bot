@@ -50,7 +50,9 @@ class Bot(commands.Bot):
                 return "."
             return when_mentioned_or(self.get_prefix_for_guild(message.guild.id))(bot, message)
 
-        super().__init__(command_prefix=get_prefix, case_insensitive=True, **options)
+        intents = discord.Intents.default()
+        intents.members = True
+        super().__init__(intents=intents, command_prefix=get_prefix, case_insensitive=True, **options)
         self.db = None
         self.line_count = None
         self.description = 'All current available commands within Ensō~Chan',

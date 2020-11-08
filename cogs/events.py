@@ -1,7 +1,6 @@
 import datetime
 
 import asyncpg
-from discord import Embed
 from discord.ext.commands import Cog
 
 
@@ -202,35 +201,6 @@ class Events(Cog):
             # Update cache
             else:
                 print(rowcount, f"Roles Cleared For {member} in {member.guild}")
-
-        # Make sure the guild is Enso and send welcoming embed to the server
-        if guild.id == self.bot.enso_guild_ID:
-            new_people = guild.get_channel(self.bot.enso_newpeople_ID)
-
-            server_icon = guild.icon_url
-            welcome_gif = "https://cdn.discordapp.com/attachments/669808733337157662/730186321913446521/NewPeople.gif"
-
-            embed = Embed(title="\n**Welcome To Ensō!**",
-                          colour=self.bot.admin_colour,
-                          timestamp=datetime.datetime.utcnow())
-
-            embed.set_thumbnail(url=server_icon)
-            embed.set_image(url=welcome_gif)
-            embed.add_field(
-                name=self.bot.blank_space,
-                value=f"Hello {member.mention}! We hope you enjoy your stay in this server!",
-                inline=False)
-            embed.add_field(
-                name=self.bot.blank_space,
-                value=f"Be sure to check out our <#669815048658747392> channel to read the rules and <#683490529862090814> channel to get caught up with any changes! ",
-                inline=False)
-            embed.add_field(
-                name=self.bot.blank_space,
-                value=f"Last but not least, feel free to go into <#669775971297132556> to introduce yourself!",
-                inline=False)
-
-            # Send embed to #newpeople
-            await new_people.send(embed=embed)
 
     @Cog.listener()
     async def on_member_remove(self, member):

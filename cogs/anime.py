@@ -500,7 +500,6 @@ class Anime(Cog):
 
         if len(waifus) > 0:
             for item in waifus:
-                # Don't bother storing Hentai's or Games (Not yet until I figure out what data they send)
                 if item["type"] in ["Waifu", "Husbando"]:
                     anime_waifus[item["id"]] = {}
                     for value in item:

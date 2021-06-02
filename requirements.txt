@@ -73,7 +73,7 @@ stevedore==3.2.0
 tenorpy==1.0.3
 typing-extensions==3.7.4.2
 tzlocal==2.1
-urllib3==1.25.9
+urllib3==1.26.5
 validators==0.17.1
 virtualenv==20.0.27
 virtualenv-clone==0.5.4

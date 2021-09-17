@@ -13,3 +13,5 @@ out/
 .classpath
 .factorypath
 /old/
+/desktop.ini
+/.jpb/persistence-units.xml

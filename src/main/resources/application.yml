@@ -1,0 +1,22 @@
+micronaut:
+  application:
+    name: enso
+datasources:
+  default:
+    url: jdbc:postgresql://${HOST}:${PORT}/postgres
+    driverClassName: org.postgresql.Driver
+    username: ${USERNAME}
+    password: ${PASSWORD}
+    schema-generate: NONE
+    dialect: POSTGRES
+jpa:
+  default:
+    entity-scan:
+      packages: me.goudham.entity
+    properties:
+      hibernate:
+        hbm2ddl:
+          auto: update
+        show_sql: true
+bot:
+  token: ${TOKEN}

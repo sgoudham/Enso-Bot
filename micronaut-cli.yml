@@ -1,0 +1,6 @@
+applicationType: default
+defaultPackage: me.goudham
+testFramework: junit
+sourceLanguage: java
+buildTool: maven
+features: [ annotation-api, app-name, data, data-jpa, graalvm, hamcrest, http-client, java, java-application, jdbc-hikari, junit, maven, mockito, netty-server, postgres, readme, shade, slf4j-simple, testcontainers, yaml ]

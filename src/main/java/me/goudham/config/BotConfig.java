@@ -28,7 +28,7 @@ public class BotConfig {
     }
 
     @Singleton
-    public Guild guild(JDA jda) {
+    public Guild ownerGuild(JDA jda) {
         Guild ownerGuild = jda.getGuildById(guildId);
         if (ownerGuild == null) {
             throw new RuntimeException("Owner Guild Not Found");
@@ -37,7 +37,7 @@ public class BotConfig {
     }
 
     @Singleton
-    public JDA jda() throws LoginException, InterruptedException {
+    public JDA jda() throws LoginException {
         return JDABuilder
                 .createDefault(token)
                 .setActivity(Activity.playing("With Hamothy"))
@@ -52,7 +52,6 @@ public class BotConfig {
                                 GatewayIntent.GUILD_MESSAGE_REACTIONS
                         )
                 ).enableCache(CacheFlag.VOICE_STATE)
-                .build()
-                .awaitReady();
+                .build();
     }
 }

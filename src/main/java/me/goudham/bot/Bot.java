@@ -1,5 +1,5 @@
 package me.goudham.bot;
 
 public interface Bot {
-    void startup();
+    void startup() throws InterruptedException;
 }

@@ -7,20 +7,21 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 
 @Singleton
-public class Enso implements Bot {
-    private final JDA bot;
+public class EnsoBot implements Bot {
+    private final JDA jda;
     private final Guild guild;
     private final CommandManager commandManager;
 
     @Inject
-    public Enso(JDA bot, Guild guild, CommandManager commandManager) {
-        this.bot = bot;
+    public EnsoBot(JDA jda, Guild guild, CommandManager commandManager) {
+        this.jda = jda;
         this.guild = guild;
         this.commandManager = commandManager;
     }
 
     @Override
-    public void startup() {
+    public void startup() throws InterruptedException {
+        jda.awaitReady();
         commandManager.registerSlashCommands(guild);
     }
 }

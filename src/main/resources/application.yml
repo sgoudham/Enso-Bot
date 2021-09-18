@@ -20,3 +20,5 @@ jpa:
         show_sql: true
 bot:
   token: ${TOKEN}
+  guild:
+    id: 621621615930638336

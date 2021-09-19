@@ -12,7 +12,6 @@ import me.goudham.entity.Guilds;
 
 @Repository
 public abstract class GuildsRepository implements CrudRepository<Guilds, Long> {
-
     private final EntityManager entityManager;
 
     public GuildsRepository(EntityManager entityManager) {

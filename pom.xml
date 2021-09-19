@@ -20,7 +20,6 @@
         <micronaut.version>3.0.1</micronaut.version>
         <micronaut.data.version>3.0.1</micronaut.data.version>
         <exec.mainClass>me.goudham.Application</exec.mainClass>
-        <micronaut.runtime>netty</micronaut.runtime>
     </properties>
 
     <repositories>
@@ -38,7 +37,7 @@
     <dependencies>
         <dependency>
             <groupId>io.micronaut</groupId>
-            <artifactId>micronaut-inject</artifactId>
+            <artifactId>micronaut-inject-java</artifactId>
             <scope>compile</scope>
         </dependency>
         <dependency>

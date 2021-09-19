@@ -1,10 +1,10 @@
 package me.goudham.command;
 
+import io.micronaut.context.ApplicationContext;
 import io.micronaut.context.BeanContext;
 import io.micronaut.core.annotation.AnnotationValue;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.inject.BeanDefinition;
-import io.micronaut.inject.qualifiers.Qualifiers;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import java.lang.annotation.Annotation;
@@ -15,8 +15,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
+import me.goudham.bot.command.ISlashCommand;
 import me.goudham.command.annotation.Choice;
-import me.goudham.command.annotation.Command;
 import me.goudham.command.annotation.Option;
 import me.goudham.command.annotation.SubCommand;
 import me.goudham.command.annotation.SubCommandGroup;
@@ -30,19 +30,22 @@ import net.dv8tion.jda.api.interactions.commands.build.SubcommandGroupData;
 @Introspected
 public class SlashCommandLoader implements CommandLoader {
     private final BeanContext beanContext;
+    private final ApplicationContext applicationContext;
 
     @Inject
-    public SlashCommandLoader(BeanContext beanContext) {
+    public SlashCommandLoader(BeanContext beanContext, ApplicationContext applicationContext) {
         this.beanContext = beanContext;
+        this.applicationContext = applicationContext;
+
     }
 
     @Override
-    public List<CommandData> loadIntoMapAndReturnCommands(Map<String, BeanDefinition<?>> commandMap) {
-        Collection<BeanDefinition<?>> beanDefinitions = beanContext.getBeanDefinitions(Qualifiers.byStereotype(Command.class));
+    public List<CommandData> loadIntoMapAndReturnCommands(Map<String, ISlashCommand> commandMap) {
+        Collection<BeanDefinition<ISlashCommand>> beanDefinitions = beanContext.getBeanDefinitions(ISlashCommand.class);
         List<CommandData> commandDataList = new ArrayList<>();
 
-        for (BeanDefinition<?> beanDefinition : beanDefinitions) {
-            AnnotationValue<Annotation> slashCommand = beanDefinition.getDeclaredAnnotation("me.goudham.command.annotation.Command");
+        for (BeanDefinition<ISlashCommand> beanDefinition : beanDefinitions) {
+            AnnotationValue<Annotation> slashCommand = beanDefinition.getDeclaredAnnotation("me.goudham.command.annotation.SlashCommand");
             if (slashCommand != null) {
                 String name = slashCommand.stringValue("name").orElseThrow();
                 String description = slashCommand.stringValue("description").orElseThrow();
@@ -60,9 +63,9 @@ public class SlashCommandLoader implements CommandLoader {
                 if (optionData != null) commandData.addOptions(optionData);
 
                 commandDataList.add(commandData);
-                commandMap.put(name, beanDefinition);
+                commandMap.put(name, applicationContext.getBean(beanDefinition));
             } else {
-                throw new RuntimeException();
+                throw new RuntimeException("Slash Command Annotation For " + beanDefinition + " Was Null");
             }
         }
 

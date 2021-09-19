@@ -5,7 +5,7 @@ datasources:
   default:
     url: jdbc:postgresql://${HOST}:${PORT}/postgres
     driverClassName: org.postgresql.Driver
-    username: ${USERNAME}
+    username: ${USER}
     password: ${PASSWORD}
     schema-generate: NONE
     dialect: POSTGRES

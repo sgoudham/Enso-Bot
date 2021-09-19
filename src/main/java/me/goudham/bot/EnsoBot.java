@@ -3,6 +3,7 @@ package me.goudham.bot;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import me.goudham.command.CommandManager;
+import me.goudham.listener.SlashCommandListener;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 
@@ -22,6 +23,11 @@ public class EnsoBot implements Bot {
     @Override
     public void startup() throws InterruptedException {
         jda.awaitReady();
+        addEventListeners();
         commandManager.registerSlashCommands(guild);
+    }
+
+    private void addEventListeners() {
+        jda.addEventListener(new SlashCommandListener(commandManager));
     }
 }

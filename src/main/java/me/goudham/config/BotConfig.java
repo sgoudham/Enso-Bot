@@ -8,6 +8,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import java.util.List;
 import javax.security.auth.login.LoginException;
+import me.goudham.listener.OnReadyListener;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
@@ -46,6 +47,7 @@ public class BotConfig {
         return JDABuilder
                 .createDefault(token)
                 .setActivity(Activity.playing("With Hamothy"))
+                .addEventListeners(new OnReadyListener())
                 .enableIntents(
                         List.of(
                                 GatewayIntent.GUILD_MEMBERS,

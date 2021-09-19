@@ -3,6 +3,7 @@ package me.goudham.config;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Value;
 import io.micronaut.core.annotation.Introspected;
+import io.micronaut.core.annotation.Order;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import java.util.List;
@@ -28,7 +29,10 @@ public class BotConfig {
     }
 
     @Singleton
-    public Guild ownerGuild(JDA jda) {
+    @Order(2)
+    public Guild ownerGuild(JDA jda) throws InterruptedException {
+        jda.awaitStatus(JDA.Status.CONNECTED);
+
         Guild ownerGuild = jda.getGuildById(guildId);
         if (ownerGuild == null) {
             throw new RuntimeException("Owner Guild Not Found");
@@ -37,11 +41,11 @@ public class BotConfig {
     }
 
     @Singleton
+    @Order(1)
     public JDA jda() throws LoginException {
         return JDABuilder
                 .createDefault(token)
                 .setActivity(Activity.playing("With Hamothy"))
-                .addEventListeners()
                 .enableIntents(
                         List.of(
                                 GatewayIntent.GUILD_MEMBERS,

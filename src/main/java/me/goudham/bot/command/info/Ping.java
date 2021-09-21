@@ -1,4 +1,4 @@
-package me.goudham.bot.command.misc;
+package me.goudham.bot.command.info;
 
 import jakarta.inject.Inject;
 import me.goudham.bot.command.ISlashCommand;

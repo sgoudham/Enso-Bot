@@ -1,15 +1,15 @@
 package me.goudham.command.annotation;
 
 import jakarta.inject.Qualifier;
-import java.lang.annotation.ElementType;
+import jakarta.inject.Singleton;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 
+@Singleton
 @Qualifier
-@Target(ElementType.ANNOTATION_TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface SubCommand {
+    String commandParent() default "";
     String name();
     String description();
     Option[] options() default {};

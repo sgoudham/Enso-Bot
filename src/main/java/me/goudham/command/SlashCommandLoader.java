@@ -71,11 +71,9 @@ public class SlashCommandLoader implements CommandLoader {
                 if (subCommandGroups.length < 1 && !noHandleMethod) {
                     List<OptionData> optionData = loadOptions(slashCommand);
                     if (optionData != null) commandData.addOptions(optionData);
-
                     storeIntoCommandMap(commandMap, slashCommandIntrospection, name, "handle");
                 } else {
                     List<SubcommandData> subCommandList = new ArrayList<>();
-
                     for (BeanMethod<Object, Object> subCommandMethod : subCommands) {
                         AnnotationValue<SubCommand> subCommand = subCommandMethod.getDeclaredAnnotation(SubCommand.class);
                         if (subCommand != null) {
@@ -86,7 +84,6 @@ public class SlashCommandLoader implements CommandLoader {
                             storeIntoCommandMap(commandMap, slashCommandIntrospection, subCommandPath, subCommandMethod.getName());
                         }
                     }
-
                     commandData.addSubcommands(subCommandList);
                 }
                 commandDataList.add(commandData);
@@ -119,7 +116,6 @@ public class SlashCommandLoader implements CommandLoader {
                         storeIntoCommandMap(commandMap, subCommandGroupIntrospection, subCommandPath, subCommandMethod.getName());
                     }
                 }
-
                 subcommandGroupData.addSubcommands(subCommandList);
                 commandData.addSubcommandGroups(subcommandGroupData);
             } else {
@@ -211,7 +207,7 @@ public class SlashCommandLoader implements CommandLoader {
 
     private void storeIntoCommandMap(Map<String, Pair<Object, ExecutableMethod<Object, Object>>> commandMap, BeanIntrospection<Object> beanIntrospection, String commandPath, String methodName) {
         Class<Object> clazz = beanIntrospection.getBeanType();
-        Object bean = beanContext.getBean(clazz);
+        Object beanInstance = beanContext.getBean(clazz);
 
         ExecutableMethod<Object, Object> executableMethod = null;
         try {
@@ -220,6 +216,6 @@ public class SlashCommandLoader implements CommandLoader {
             e.printStackTrace();
         }
 
-        commandMap.put(commandPath, new ImmutablePair<>(bean, executableMethod));
+        commandMap.put(commandPath, new ImmutablePair<>(beanInstance, executableMethod));
     }
 }

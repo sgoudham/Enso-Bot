@@ -65,7 +65,7 @@ public class SlashCommandLoader implements CommandLoader {
 
                 boolean noHandleMethod = slashCommandIntrospection.getBeanMethods().stream().noneMatch(method -> method.getName().equals("handle"));
                 if (subCommands.size() > 1 && !noHandleMethod) {
-                    throw new RuntimeException("Cannot Have Main Command And Sub Commands In " + slashCommandIntrospection);
+                    throw new RuntimeException("Cannot Have Multiple Methods Including Main Handler In -> " + slashCommandIntrospection);
                 }
 
                 if (subCommandGroups.length < 1 && !noHandleMethod) {
@@ -79,15 +79,10 @@ public class SlashCommandLoader implements CommandLoader {
                     for (BeanMethod<Object, Object> subCommandMethod : subCommands) {
                         AnnotationValue<SubCommand> subCommand = subCommandMethod.getDeclaredAnnotation(SubCommand.class);
                         if (subCommand != null) {
-                            String subCommandName = subCommand.stringValue("name").orElseThrow();
-                            String subCommandDescription = subCommand.stringValue("description").orElseThrow();
-                            List<OptionData> optionDataList = loadOptions(subCommand);
-
-                            SubcommandData subcommandData = new SubcommandData(subCommandName, subCommandDescription);
-                            if (optionDataList != null) subcommandData.addOptions(optionDataList);
+                            SubcommandData subcommandData = getSubCommandData(subCommand);
                             subCommandList.add(subcommandData);
 
-                            String subCommandPath = name + "/" + subCommandName;
+                            String subCommandPath = name + "/" + subcommandData.getName();
                             storeIntoCommandMap(commandMap, slashCommandIntrospection, subCommandPath, subCommandMethod.getName());
                         }
                     }
@@ -117,15 +112,10 @@ public class SlashCommandLoader implements CommandLoader {
                 for (BeanMethod<Object, Object> subCommandMethod : subCommands) {
                     AnnotationValue<SubCommand> subCommand = subCommandMethod.getDeclaredAnnotation(SubCommand.class);
                     if (subCommand != null) {
-                        String subCommandName = subCommand.stringValue("name").orElseThrow();
-                        String subCommandDescription = subCommand.stringValue("description").orElseThrow();
-                        List<OptionData> optionDataList = loadOptions(subCommand);
-
-                        SubcommandData subcommandData = new SubcommandData(subCommandName, subCommandDescription);
-                        if (optionDataList != null) subcommandData.addOptions(optionDataList);
+                        SubcommandData subcommandData = getSubCommandData(subCommand);
                         subCommandList.add(subcommandData);
 
-                        String subCommandPath = parent + "/" + name + "/" + subCommandName;
+                        String subCommandPath = parent + "/" + name + "/" + subcommandData.getName();
                         storeIntoCommandMap(commandMap, subCommandGroupIntrospection, subCommandPath, subCommandMethod.getName());
                     }
                 }
@@ -138,6 +128,17 @@ public class SlashCommandLoader implements CommandLoader {
         }
 
         return commandDataList;
+    }
+
+    private SubcommandData getSubCommandData(AnnotationValue<SubCommand> subCommand) {
+        String subCommandName = subCommand.stringValue("name").orElseThrow();
+        String subCommandDescription = subCommand.stringValue("description").orElseThrow();
+        List<OptionData> optionDataList = loadOptions(subCommand);
+
+        SubcommandData subcommandData = new SubcommandData(subCommandName, subCommandDescription);
+        if (optionDataList != null) subcommandData.addOptions(optionDataList);
+
+        return subcommandData;
     }
 
     private List<OptionData> loadOptions(AnnotationValue<?> slashCommand) {

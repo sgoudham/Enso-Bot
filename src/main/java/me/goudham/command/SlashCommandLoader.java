@@ -214,8 +214,8 @@ public class SlashCommandLoader implements CommandLoader {
         ExecutableMethod<Object, Object> executableMethod = null;
         try {
             executableMethod = beanContext.getExecutableMethod(clazz, methodName, SlashCommandEvent.class);
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+        } catch (NoSuchMethodException nsme) {
+            nsme.printStackTrace();
         }
 
         commandMap.put(commandPath, new ImmutablePair<>(beanInstance, executableMethod));

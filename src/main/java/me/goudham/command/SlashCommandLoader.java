@@ -3,11 +3,12 @@ package me.goudham.command;
 import io.micronaut.context.ApplicationContext;
 import io.micronaut.context.BeanContext;
 import io.micronaut.core.annotation.AnnotationValue;
-import io.micronaut.inject.BeanDefinition;
-import io.micronaut.inject.qualifiers.Qualifiers;
+import io.micronaut.core.beans.BeanIntrospection;
+import io.micronaut.core.beans.BeanIntrospector;
+import io.micronaut.core.beans.BeanMethod;
+import io.micronaut.inject.ExecutableMethod;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -17,14 +18,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
-import java.util.stream.Collectors;
 import me.goudham.command.annotation.Choice;
 import me.goudham.command.annotation.Option;
 import me.goudham.command.annotation.SlashCommand;
 import me.goudham.command.annotation.SubCommand;
 import me.goudham.command.annotation.SubCommandGroup;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
-import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -36,58 +35,75 @@ import net.dv8tion.jda.internal.utils.tuple.Pair;
 @Singleton
 public class SlashCommandLoader implements CommandLoader {
     private final BeanContext beanContext;
-    private final ApplicationContext applicationContext;
 
     @Inject
     public SlashCommandLoader(BeanContext beanContext, ApplicationContext applicationContext) {
         this.beanContext = beanContext;
-        this.applicationContext = applicationContext;
-
     }
 
     @Override
-    public List<CommandData> loadIntoMapAndReturnCommands(Map<String, Pair<Object, Method>> commandMap) {
-        Collection<BeanDefinition<?>> slashCommandDefinitions = beanContext.getBeanDefinitions(Qualifiers.byStereotype(SlashCommand.class));
-        Collection<BeanDefinition<?>> subCommandGroupDefinitions = beanContext.getBeanDefinitions(Qualifiers.byStereotype(SubCommandGroup.class));
-        Collection<BeanDefinition<?>> subCommandDefinitions = beanContext.getBeanDefinitions(Qualifiers.byStereotype(SubCommand.class));
+    public List<CommandData> loadIntoMapAndReturnCommands(Map<String, Pair<Object, ExecutableMethod<Object, Object>>> commandMap) {
         Map<String, CommandData> commandDataMap = new HashMap<>();
         List<CommandData> commandDataList = new ArrayList<>();
+        Collection<BeanIntrospection<Object>> slashCommandIntrospections = BeanIntrospector.forClassLoader(ClassLoader.getSystemClassLoader()).findIntrospections(SlashCommand.class);
+        Collection<BeanIntrospection<Object>> subCommandGroupIntrospections = BeanIntrospector.forClassLoader(ClassLoader.getSystemClassLoader()).findIntrospections(SubCommandGroup.class);
 
-        for (BeanDefinition<?> slashCommandDefinition : slashCommandDefinitions) {
-            AnnotationValue<SlashCommand> slashCommand = slashCommandDefinition.getDeclaredAnnotation(SlashCommand.class);
+        for (BeanIntrospection<Object> slashCommandIntrospection : slashCommandIntrospections) {
+            AnnotationValue<SlashCommand> slashCommand = slashCommandIntrospection.getDeclaredAnnotation(SlashCommand.class);
+            Collection<BeanMethod<Object, Object>> subCommands = slashCommandIntrospection.getBeanMethods();
+
             if (slashCommand != null) {
                 String name = slashCommand.stringValue("name").orElseThrow();
                 String description = slashCommand.stringValue("description").orElseThrow();
                 boolean isVisible = slashCommand.booleanValue("isVisible").orElseThrow();
                 String[] subCommandGroups = slashCommand.stringValues("subCommandGroups");
-                String[] subCommands = slashCommand.stringValues("subCommands");
 
-                CommandData commandData = new CommandData(name, description);
-                commandData.setDefaultEnabled(isVisible);
+                CommandData commandData = new CommandData(name, description).setDefaultEnabled(isVisible);
+                Arrays.stream(subCommandGroups)
+                        .map(subCommandGroup -> name + "/" + subCommandGroup)
+                        .forEach(subCommandGroupName -> commandDataMap.put(subCommandGroupName, commandData));
 
-                if (subCommandGroups.length == 0 && subCommands.length == 0) {
+                boolean noHandleMethod = slashCommandIntrospection.getBeanMethods().stream().noneMatch(method -> method.getName().equals("handle"));
+                if (subCommands.size() > 1 && !noHandleMethod) {
+                    throw new RuntimeException("Cannot Have Main Command And Sub Commands In " + slashCommandIntrospection);
+                }
+
+                if (subCommandGroups.length < 1 && !noHandleMethod) {
                     List<OptionData> optionData = loadOptions(slashCommand);
                     if (optionData != null) commandData.addOptions(optionData);
 
-                    storeIntoCommandMap(commandMap, slashCommandDefinition, name, "handle");
-                    commandDataMap.put(name, commandData);
+                    storeIntoCommandMap(commandMap, slashCommandIntrospection, name, "handle");
                 } else {
-                    Arrays.stream(subCommandGroups)
-                            .map(subCommandGroup -> name + "/" + subCommandGroup)
-                            .forEach(subCommandGroupName -> commandDataMap.put(subCommandGroupName, commandData));
-                    Arrays.stream(subCommands)
-                            .map(subCommand -> name + "/" + subCommand)
-                            .forEach(subCommandName -> commandDataMap.put(subCommandName, commandData));
-                }
+                    List<SubcommandData> subCommandList = new ArrayList<>();
 
+                    for (BeanMethod<Object, Object> subCommandMethod : subCommands) {
+                        AnnotationValue<SubCommand> subCommand = subCommandMethod.getDeclaredAnnotation(SubCommand.class);
+                        if (subCommand != null) {
+                            String subCommandName = subCommand.stringValue("name").orElseThrow();
+                            String subCommandDescription = subCommand.stringValue("description").orElseThrow();
+                            List<OptionData> optionDataList = loadOptions(subCommand);
+
+                            SubcommandData subcommandData = new SubcommandData(subCommandName, subCommandDescription);
+                            if (optionDataList != null) subcommandData.addOptions(optionDataList);
+                            subCommandList.add(subcommandData);
+
+                            String subCommandPath = name + "/" + subCommandName;
+                            storeIntoCommandMap(commandMap, slashCommandIntrospection, subCommandPath, subCommandMethod.getName());
+                        }
+                    }
+
+                    commandData.addSubcommands(subCommandList);
+                }
                 commandDataList.add(commandData);
             } else {
-                throw new RuntimeException("Slash Command Annotation For " + slashCommandDefinition + " Was Null");
+                throw new RuntimeException("Slash Command Annotation For " + slashCommandIntrospection + " Was Null");
             }
         }
 
-        for (BeanDefinition<?> subCommandGroupDefinition : subCommandGroupDefinitions) {
-            AnnotationValue<SubCommandGroup> subCommandGroup = subCommandGroupDefinition.getDeclaredAnnotation(SubCommandGroup.class);
+        for (BeanIntrospection<Object> subCommandGroupIntrospection : subCommandGroupIntrospections) {
+            AnnotationValue<SubCommandGroup> subCommandGroup = subCommandGroupIntrospection.getDeclaredAnnotation(SubCommandGroup.class);
+            Collection<BeanMethod<Object, Object>> subCommands = subCommandGroupIntrospection.getBeanMethods();
+
             if (subCommandGroup != null) {
                 String parent = subCommandGroup.stringValue("parent").orElseThrow();
                 String name = subCommandGroup.stringValue("name").orElseThrow();
@@ -97,74 +113,30 @@ public class SlashCommandLoader implements CommandLoader {
                 CommandData commandData = commandDataMap.get(commandPath);
                 SubcommandGroupData subcommandGroupData = new SubcommandGroupData(name, description);
 
-                Class<?> beanType = subCommandGroupDefinition.getBeanType();
                 List<SubcommandData> subCommandList = new ArrayList<>();
-                List<Method> subCommands = Arrays.stream(beanType.getDeclaredMethods())
-                        .filter(method -> method.isAnnotationPresent(SubCommand.class))
-                        .collect(Collectors.toList());
+                for (BeanMethod<Object, Object> subCommandMethod : subCommands) {
+                    AnnotationValue<SubCommand> subCommand = subCommandMethod.getDeclaredAnnotation(SubCommand.class);
+                    if (subCommand != null) {
+                        String subCommandName = subCommand.stringValue("name").orElseThrow();
+                        String subCommandDescription = subCommand.stringValue("description").orElseThrow();
+                        List<OptionData> optionDataList = loadOptions(subCommand);
 
-                for (Method subCommand : subCommands) {
-                    SubCommand annotation = subCommand.getDeclaredAnnotation(SubCommand.class);
-                    String subCommandName = annotation.name();
-                    String subCommandDescription = annotation.description();
-                    List<OptionData> optionDataList = Arrays.stream(annotation.options())
-                            .map(option -> {
-                                OptionData optionData = new OptionData(option.optionType(), option.name(), option.description(), option.isRequired());
-                                List<Command.Choice> choiceDataList = Arrays.stream(option.choices())
-                                        .map(choice -> {
-                                            int intValue = (int) choice.intValue();
-                                            double doubleValue = choice.doubleValue();
-                                            String stringValue = choice.stringValue();
+                        SubcommandData subcommandData = new SubcommandData(subCommandName, subCommandDescription);
+                        if (optionDataList != null) subcommandData.addOptions(optionDataList);
+                        subCommandList.add(subcommandData);
 
-                                            Command.Choice choiceData = null;
-                                            if (intValue != 0) {
-                                                choiceData = new Command.Choice(name, intValue);
-                                            } else if (!Double.isNaN(doubleValue)) {
-                                                choiceData = new Command.Choice(name, doubleValue);
-                                            } else if (!stringValue.isBlank()) {
-                                                choiceData = new Command.Choice(name, stringValue);
-                                            }
-
-                                            return choiceData;
-                                        }).collect(Collectors.toList());
-                                return optionData.addChoices(choiceDataList);
-                            }).collect(Collectors.toList());
-
-                    SubcommandData subcommandData = new SubcommandData(subCommandName, subCommandDescription);
-                    subcommandData.addOptions(optionDataList);
-                    subCommandList.add(subcommandData);
-
-                    String subCommandPath = parent + "/" + name + "/" + subCommandName;
-                    storeIntoCommandMap(commandMap, subCommandGroupDefinition, subCommandPath, subCommandName);
-                    commandDataMap.put(subCommandPath, commandData);
+                        String subCommandPath = parent + "/" + name + "/" + subCommandName;
+                        storeIntoCommandMap(commandMap, subCommandGroupIntrospection, subCommandPath, subCommandMethod.getName());
+                    }
                 }
 
                 subcommandGroupData.addSubcommands(subCommandList);
                 commandData.addSubcommandGroups(subcommandGroupData);
             } else {
-                throw new RuntimeException("Sub Command Annotation For " + subCommandGroupDefinition + " Was Null");
+                throw new RuntimeException("SubCommandGroup Annotation For " + subCommandGroupIntrospection + " Was Null");
             }
         }
 
-        for (BeanDefinition<?> subCommandDefinition : subCommandDefinitions) {
-            AnnotationValue<SubCommand> subCommand = subCommandDefinition.getDeclaredAnnotation(SubCommand.class);
-            if (subCommand != null) {
-                String commandParent = subCommand.stringValue("commandParent").orElseThrow();
-                String name = subCommand.stringValue("name").orElseThrow();
-                String description = subCommand.stringValue("description").orElseThrow();
-                String commandPath = commandParent + "/" + name;
-
-                CommandData commandData = commandDataMap.get(commandPath);
-                SubcommandData subcommandData = new SubcommandData(name, description);
-                List<OptionData> optionData = loadOptions(subCommand);
-                if (optionData != null) subcommandData.addOptions(optionData);
-
-                storeIntoCommandMap(commandMap, subCommandDefinition, commandPath, "handle");
-                commandData.addSubcommands(subcommandData);
-            } else {
-                throw new RuntimeException("Sub Command Annotation For " + subCommandDefinition + " Was Null");
-            }
-        }
         return commandDataList;
     }
 
@@ -236,17 +208,17 @@ public class SlashCommandLoader implements CommandLoader {
         return null;
     }
 
-    private void storeIntoCommandMap(Map<String, Pair<Object, Method>> commandMap, BeanDefinition<?> beanDefinition, String commandPath, String methodName) {
-        Class<?> clazz = beanDefinition.getBeanType();
-        Object bean = applicationContext.getBean(clazz);
+    private void storeIntoCommandMap(Map<String, Pair<Object, ExecutableMethod<Object, Object>>> commandMap, BeanIntrospection<Object> beanIntrospection, String commandPath, String methodName) {
+        Class<Object> clazz = beanIntrospection.getBeanType();
+        Object bean = beanContext.getBean(clazz);
 
-        Method method = null;
+        ExecutableMethod<Object, Object> executableMethod = null;
         try {
-            method = clazz.getMethod(methodName, SlashCommandEvent.class);
+            executableMethod = beanContext.getExecutableMethod(clazz, methodName, SlashCommandEvent.class);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
 
-        commandMap.put(commandPath, new ImmutablePair<>(bean, method));
+        commandMap.put(commandPath, new ImmutablePair<>(bean, executableMethod));
     }
 }

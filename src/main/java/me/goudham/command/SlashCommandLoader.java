@@ -1,6 +1,5 @@
 package me.goudham.command;
 
-import io.micronaut.context.ApplicationContext;
 import io.micronaut.context.BeanContext;
 import io.micronaut.core.annotation.AnnotationValue;
 import io.micronaut.core.beans.BeanIntrospection;
@@ -34,15 +33,17 @@ import net.dv8tion.jda.internal.utils.tuple.Pair;
 
 @Singleton
 public class SlashCommandLoader implements CommandLoader {
+    private final Map<String, Pair<Object, ExecutableMethod<Object, Object>>> commandMap;
     private final BeanContext beanContext;
 
     @Inject
-    public SlashCommandLoader(BeanContext beanContext, ApplicationContext applicationContext) {
+    public SlashCommandLoader(Map<String, Pair<Object, ExecutableMethod<Object, Object>>> commandMap, BeanContext beanContext) {
+        this.commandMap = commandMap;
         this.beanContext = beanContext;
     }
 
     @Override
-    public List<CommandData> loadIntoMapAndReturnCommands(Map<String, Pair<Object, ExecutableMethod<Object, Object>>> commandMap) {
+    public List<CommandData> loadCommands() {
         Map<String, CommandData> commandDataMap = new HashMap<>();
         List<CommandData> commandDataList = new ArrayList<>();
         Collection<BeanIntrospection<Object>> slashCommandIntrospections = BeanIntrospector.forClassLoader(ClassLoader.getSystemClassLoader()).findIntrospections(SlashCommand.class);
@@ -71,7 +72,7 @@ public class SlashCommandLoader implements CommandLoader {
                 if (subCommandGroups.length < 1 && !noHandleMethod) {
                     List<OptionData> optionData = loadOptions(slashCommand);
                     if (optionData != null) commandData.addOptions(optionData);
-                    storeIntoCommandMap(commandMap, slashCommandIntrospection, name, "handle");
+                    storeIntoCommandMap(slashCommandIntrospection, name, "handle");
                 } else {
                     List<SubcommandData> subCommandList = new ArrayList<>();
                     for (BeanMethod<Object, Object> subCommandMethod : subCommands) {
@@ -81,7 +82,7 @@ public class SlashCommandLoader implements CommandLoader {
                             subCommandList.add(subcommandData);
 
                             String subCommandPath = name + "/" + subcommandData.getName();
-                            storeIntoCommandMap(commandMap, slashCommandIntrospection, subCommandPath, subCommandMethod.getName());
+                            storeIntoCommandMap(slashCommandIntrospection, subCommandPath, subCommandMethod.getName());
                         }
                     }
                     commandData.addSubcommands(subCommandList);
@@ -113,7 +114,7 @@ public class SlashCommandLoader implements CommandLoader {
                         subCommandList.add(subcommandData);
 
                         String subCommandPath = parent + "/" + name + "/" + subcommandData.getName();
-                        storeIntoCommandMap(commandMap, subCommandGroupIntrospection, subCommandPath, subCommandMethod.getName());
+                        storeIntoCommandMap(subCommandGroupIntrospection, subCommandPath, subCommandMethod.getName());
                     }
                 }
                 subcommandGroupData.addSubcommands(subCommandList);
@@ -123,6 +124,7 @@ public class SlashCommandLoader implements CommandLoader {
             }
         }
 
+        commandDataMap.clear();
         return commandDataList;
     }
 
@@ -205,7 +207,7 @@ public class SlashCommandLoader implements CommandLoader {
         return null;
     }
 
-    private void storeIntoCommandMap(Map<String, Pair<Object, ExecutableMethod<Object, Object>>> commandMap, BeanIntrospection<Object> beanIntrospection, String commandPath, String methodName) {
+    private void storeIntoCommandMap(BeanIntrospection<Object> beanIntrospection, String commandPath, String methodName) {
         Class<Object> clazz = beanIntrospection.getBeanType();
         Object beanInstance = beanContext.getBean(clazz);
 

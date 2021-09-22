@@ -4,9 +4,12 @@ import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Value;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Order;
+import io.micronaut.inject.ExecutableMethod;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.security.auth.login.LoginException;
 import me.goudham.listener.OnReadyListener;
 import net.dv8tion.jda.api.JDA;
@@ -15,12 +18,18 @@ import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
+import net.dv8tion.jda.internal.utils.tuple.Pair;
 
 @Factory
 @Introspected
 public class BotConfig {
     private final String token;
     private final String guildId;
+
+    @Singleton
+    public Map<String, Pair<Object, ExecutableMethod<Object, Object>>> commandMap() {
+        return new HashMap<>();
+    }
 
     @Inject
     public BotConfig(@Value("${bot.token}") String token,

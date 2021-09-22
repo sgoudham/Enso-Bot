@@ -1,10 +1,9 @@
 package me.goudham.command;
 
 import io.micronaut.core.annotation.Introspected;
+import io.micronaut.inject.ExecutableMethod;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +16,7 @@ import net.dv8tion.jda.internal.utils.tuple.Pair;
 @Singleton
 @Introspected
 public class SlashCommandManager implements CommandManager {
-    private final Map<String, Pair<Object, Method>> commandMap = new HashMap<>();
+    private final Map<String, Pair<Object, ExecutableMethod<Object, Object>>> commandMap = new HashMap<>();
     private final CommandLoader commandLoader;
 
     @Inject
@@ -35,14 +34,11 @@ public class SlashCommandManager implements CommandManager {
     @Override
     public void handleSlashCommandEvent(SlashCommandEvent slashCommandEvent) {
         String commandPath = slashCommandEvent.getCommandPath();
-        Pair<Object, Method> slashCommandPair = commandMap.get(commandPath);
-        Object bean = slashCommandPair.getLeft();
-        Method method = slashCommandPair.getRight();
 
-        try {
-            method.invoke(bean, slashCommandEvent);
-        } catch (IllegalAccessException | InvocationTargetException exp) {
-           exp.printStackTrace();
-        }
+        Pair<Object, ExecutableMethod<Object, Object>> slashCommandPair = commandMap.get(commandPath);
+        Object bean = slashCommandPair.getLeft();
+        ExecutableMethod<Object, Object> method = slashCommandPair.getRight();
+
+        method.invoke(bean, slashCommandEvent);
     }
 }

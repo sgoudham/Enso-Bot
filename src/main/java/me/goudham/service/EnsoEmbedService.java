@@ -8,7 +8,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 
 @Singleton
-public class EnsoEmbedGenerator implements EmbedGenerator {
+public class EnsoEmbedService implements EmbedService {
     private final Random random = new Random();
 
     @Override

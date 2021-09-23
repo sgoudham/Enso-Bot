@@ -22,3 +22,7 @@ bot:
   token: ${TOKEN}
   guild:
     id: 621621615930638336
+  config:
+    registerCommands: false
+    registerCommandsGlobally: false
+    registerCommandsForGuild: true

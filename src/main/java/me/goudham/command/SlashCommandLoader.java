@@ -33,6 +33,8 @@ import net.dv8tion.jda.internal.utils.tuple.Pair;
 
 @Singleton
 public class SlashCommandLoader implements CommandLoader {
+    private final Collection<BeanIntrospection<Object>> slashCommandIntrospections = BeanIntrospector.forClassLoader(ClassLoader.getSystemClassLoader()).findIntrospections(SlashCommand.class);
+    private final Collection<BeanIntrospection<Object>> subCommandGroupIntrospections = BeanIntrospector.forClassLoader(ClassLoader.getSystemClassLoader()).findIntrospections(SubCommandGroup.class);
     private final Map<String, Pair<Object, ExecutableMethod<Object, Object>>> commandMap;
     private final BeanContext beanContext;
 
@@ -43,11 +45,66 @@ public class SlashCommandLoader implements CommandLoader {
     }
 
     @Override
-    public List<CommandData> loadCommands() {
+    public void populateCommandMap() {
+        for (BeanIntrospection<Object> slashCommandIntrospection : slashCommandIntrospections) {
+            AnnotationValue<SlashCommand> slashCommand = slashCommandIntrospection.getDeclaredAnnotation(SlashCommand.class);
+            Collection<BeanMethod<Object, Object>> subCommands = slashCommandIntrospection.getBeanMethods();
+
+            boolean noHandleMethod = subCommands.stream().noneMatch(method -> method.getName().equals("handle"));
+            if (subCommands.size() > 1 && !noHandleMethod) {
+                throw new RuntimeException("Cannot Have Multiple Methods Including Main 'handle' Method In -> " + slashCommandIntrospection);
+            }
+
+            if (slashCommand != null) {
+                String name = slashCommand.stringValue("name").orElseThrow();
+                String[] subCommandGroups = slashCommand.stringValues("subCommandGroups");
+
+                if (subCommandGroups.length < 1 && !noHandleMethod) {
+                    storeIntoCommandMap(slashCommandIntrospection, name, "handle");
+                } else {
+                    for (BeanMethod<Object, Object> subCommandMethod : subCommands) {
+                        AnnotationValue<SubCommand> subCommand = subCommandMethod.getDeclaredAnnotation(SubCommand.class);
+                        if (subCommand != null) {
+                            String subCommandName = subCommand.stringValue("name").orElseThrow();
+                            String subCommandPath = name + "/" + subCommandName;
+                            storeIntoCommandMap(slashCommandIntrospection, subCommandPath, subCommandMethod.getName());
+                        }
+                    }
+                }
+
+            } else {
+                throw new RuntimeException("Slash Command Annotation For " + slashCommandIntrospection + " Was Null");
+            }
+        }
+
+        for (BeanIntrospection<Object> subCommandGroupIntrospection : subCommandGroupIntrospections) {
+            AnnotationValue<SubCommandGroup> subCommandGroup = subCommandGroupIntrospection.getDeclaredAnnotation(SubCommandGroup.class);
+            Collection<BeanMethod<Object, Object>> subCommands = subCommandGroupIntrospection.getBeanMethods();
+
+            if (subCommandGroup != null) {
+                String parent = subCommandGroup.stringValue("parent").orElseThrow();
+                String name = subCommandGroup.stringValue("name").orElseThrow();
+
+                for (BeanMethod<Object, Object> subCommandMethod : subCommands) {
+                    AnnotationValue<SubCommand> subCommand = subCommandMethod.getDeclaredAnnotation(SubCommand.class);
+                    if (subCommand != null) {
+                        String subCommandName = subCommand.stringValue("name").orElseThrow();
+                        String subCommandPath = parent + "/" + name + "/" + subCommandName;
+                        storeIntoCommandMap(subCommandGroupIntrospection, subCommandPath, subCommandMethod.getName());
+                    }
+                }
+
+            } else {
+                throw new RuntimeException("SubCommandGroup Annotation For " + subCommandGroupIntrospection + " Was Null");
+            }
+        }
+    }
+
+
+    @Override
+    public List<CommandData> registerSlashCommands() {
         Map<String, CommandData> commandDataMap = new HashMap<>();
         List<CommandData> commandDataList = new ArrayList<>();
-        Collection<BeanIntrospection<Object>> slashCommandIntrospections = BeanIntrospector.forClassLoader(ClassLoader.getSystemClassLoader()).findIntrospections(SlashCommand.class);
-        Collection<BeanIntrospection<Object>> subCommandGroupIntrospections = BeanIntrospector.forClassLoader(ClassLoader.getSystemClassLoader()).findIntrospections(SubCommandGroup.class);
 
         for (BeanIntrospection<Object> slashCommandIntrospection : slashCommandIntrospections) {
             AnnotationValue<SlashCommand> slashCommand = slashCommandIntrospection.getDeclaredAnnotation(SlashCommand.class);
@@ -64,9 +121,9 @@ public class SlashCommandLoader implements CommandLoader {
                         .map(subCommandGroup -> name + "/" + subCommandGroup)
                         .forEach(subCommandGroupName -> commandDataMap.put(subCommandGroupName, commandData));
 
-                boolean noHandleMethod = slashCommandIntrospection.getBeanMethods().stream().noneMatch(method -> method.getName().equals("handle"));
+                boolean noHandleMethod = subCommands.stream().noneMatch(method -> method.getName().equals("handle"));
                 if (subCommands.size() > 1 && !noHandleMethod) {
-                    throw new RuntimeException("Cannot Have Multiple Methods Including Main Handler In -> " + slashCommandIntrospection);
+                    throw new RuntimeException("Cannot Have Multiple Methods Including Main 'handle' Method In -> " + slashCommandIntrospection);
                 }
 
                 if (subCommandGroups.length < 1 && !noHandleMethod) {

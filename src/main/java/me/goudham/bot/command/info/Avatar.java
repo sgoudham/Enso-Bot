@@ -1,4 +1,4 @@
-package me.goudham.bot.command.info.avatar;
+package me.goudham.bot.command.info;
 
 import io.micronaut.context.annotation.Executable;
 import jakarta.inject.Inject;

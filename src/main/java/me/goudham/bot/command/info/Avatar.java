@@ -3,9 +3,7 @@ package me.goudham.bot.command.info;
 import io.micronaut.context.annotation.Executable;
 import jakarta.inject.Inject;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import javax.imageio.ImageIO;
 import me.goudham.command.annotation.Option;
@@ -50,8 +48,13 @@ public class Avatar {
         BufferedImage inputImage = ImageIO.read(new URL(user.getEffectiveAvatarUrl()));
         imageService.invertImage(inputImage);
 
-        InputStream byteArrayInputStream = new ByteArrayInputStream(imageService.toByteArray(inputImage, "png"));
-        slashCommandEvent.reply("**" + user.getName() + "'s Avatar\nFilter Applied -> Negative**").addFile(byteArrayInputStream, "invert.png").queue();
+        MessageEmbed avatarEmbed = embedService.getBaseEmbed()
+                .setAuthor(user.getName() + "'s Avatar\nFilter Applied -> Negative")
+                .setImage("attachment://invert.png")
+                .build();
+
+        byte[] imageByteArray = imageService.toByteArray(inputImage, "png");
+        slashCommandEvent.replyEmbeds(avatarEmbed).addFile(imageByteArray, "invert.png").queue();
     }
 
     @Executable
@@ -74,8 +77,13 @@ public class Avatar {
         BufferedImage inputImage = ImageIO.read(new URL(user.getEffectiveAvatarUrl()));
         BufferedImage grayscaleImage = imageService.toGrayscaleImage(inputImage);
 
-        InputStream byteArrayInputStream = new ByteArrayInputStream(imageService.toByteArray(grayscaleImage, "png"));
-        slashCommandEvent.reply("**" + user.getName() + "'s Avatar\nFilter Applied -> Grayscale**").addFile(byteArrayInputStream, "grayscale.png").queue();
+        MessageEmbed avatarEmbed = embedService.getBaseEmbed()
+                .setAuthor(user.getName() + "'s Avatar\nFilter Applied -> Grayscale")
+                .setImage("attachment://grayscale.png")
+                .build();
+
+        byte[] imageByteArray = imageService.toByteArray(grayscaleImage, "png");
+        slashCommandEvent.replyEmbeds(avatarEmbed).addFile(imageByteArray, "grayscale.png").queue();
     }
 
     @Executable

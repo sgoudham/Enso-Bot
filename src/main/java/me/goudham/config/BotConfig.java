@@ -26,16 +26,16 @@ public class BotConfig {
     private final String token;
     private final String guildId;
 
-    @Singleton
-    public Map<String, Pair<Object, ExecutableMethod<Object, Object>>> commandMap() {
-        return new HashMap<>();
-    }
-
     @Inject
     public BotConfig(@Value("${bot.token}") String token,
                      @Value("${bot.guild.id}") String guildId) {
         this.token = token;
         this.guildId = guildId;
+    }
+
+    @Singleton
+    public Map<String, Pair<Object, ExecutableMethod<Object, Object>>> commandMap() {
+        return new HashMap<>();
     }
 
     @Singleton

@@ -17,7 +17,7 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 
-@SlashCommand(name = "avatar", description = "Display your avatar", isVisible = true)
+@SlashCommand(name = "avatar", description = "Display your avatar")
 public class Avatar {
     private final EmbedService embedService;
     private final ImageService imageService;

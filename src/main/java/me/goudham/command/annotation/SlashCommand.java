@@ -16,7 +16,7 @@ import java.lang.annotation.Target;
 public @interface SlashCommand {
     String name();
     String description();
-    boolean isVisible();
+    boolean isVisible() default true;
     String[] subCommandGroups() default {};
     Option[] options() default {};
 }

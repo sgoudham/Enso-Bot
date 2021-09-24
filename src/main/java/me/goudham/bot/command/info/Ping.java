@@ -7,7 +7,7 @@ import me.goudham.service.EmbedService;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 
-@SlashCommand(name = "ping", description = "Display the latency of the bot", isVisible = true)
+@SlashCommand(name = "ping", description = "Display the latency of the bot")
 public class Ping {
     private final EmbedService embedService;
 

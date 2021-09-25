@@ -11,7 +11,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.security.auth.login.LoginException;
+import me.goudham.command.CommandHandler;
 import me.goudham.listener.OnReadyListener;
+import me.goudham.listener.SlashCommandListener;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
@@ -39,24 +41,15 @@ public class BotConfig {
     }
 
     @Singleton
-    @Order(2)
-    public Guild ownerGuild(JDA jda) throws InterruptedException {
-        jda.awaitStatus(JDA.Status.CONNECTED);
-
-        Guild ownerGuild = jda.getGuildById(guildId);
-        if (ownerGuild == null) {
-            throw new RuntimeException("Owner Guild Not Found");
-        }
-        return ownerGuild;
-    }
-
-    @Singleton
     @Order(1)
-    public JDA jda() throws LoginException {
+    public JDA jda(CommandHandler commandHandler) throws LoginException {
         return JDABuilder
                 .createDefault(token)
                 .setActivity(Activity.playing("With Hamothy"))
-                .addEventListeners(new OnReadyListener())
+                .addEventListeners(
+                        new OnReadyListener(),
+                        new SlashCommandListener(commandHandler)
+                )
                 .enableIntents(
                         List.of(
                                 GatewayIntent.GUILD_MEMBERS,
@@ -68,5 +61,17 @@ public class BotConfig {
                         )
                 ).enableCache(CacheFlag.VOICE_STATE)
                 .build();
+    }
+
+    @Singleton
+    @Order(2)
+    public Guild ownerGuild(JDA jda) throws InterruptedException {
+        jda.awaitStatus(JDA.Status.CONNECTED);
+
+        Guild ownerGuild = jda.getGuildById(guildId);
+        if (ownerGuild == null) {
+            throw new RuntimeException("Owner Guild Not Found");
+        }
+        return ownerGuild;
     }
 }

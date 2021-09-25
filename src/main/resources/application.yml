@@ -3,10 +3,10 @@ micronaut:
     name: enso
 datasources:
   default:
-    url: jdbc:postgresql://${HOST}:${PORT}/postgres
+    url: jdbc:postgresql://${ENSO_HOST}:${ENSO_PORT}/postgres
     driverClassName: org.postgresql.Driver
-    username: ${USER}
-    password: ${PASSWORD}
+    username: ${ENSO_USER}
+    password: ${ENSO_PASSWORD}
     schema-generate: NONE
     dialect: POSTGRES
 jpa:
@@ -19,7 +19,7 @@ jpa:
           auto: update
         show_sql: true
 bot:
-  token: ${TOKEN}
+  token: ${ENSO_TOKEN}
   guild:
     id: 621621615930638336
   config:

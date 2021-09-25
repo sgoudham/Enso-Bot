@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface SlashCommand {
     String name();
-    String description();
+    String description() default "";
     boolean isVisible() default true;
     String[] subCommandGroups() default {};
     Option[] options() default {};

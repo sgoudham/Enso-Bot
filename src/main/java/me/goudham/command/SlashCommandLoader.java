@@ -112,7 +112,7 @@ public class SlashCommandLoader implements CommandLoader {
 
             if (slashCommand != null) {
                 String name = slashCommand.stringValue("name").orElseThrow();
-                String description = slashCommand.stringValue("description").orElseThrow();
+                String description = slashCommand.stringValue("description").orElse("No Description");
                 boolean isVisible = slashCommand.booleanValue("isVisible").orElse(true);
                 String[] subCommandGroups = slashCommand.stringValues("subCommandGroups");
 

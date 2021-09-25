@@ -60,7 +60,12 @@ public class BotConfig {
                                 GatewayIntent.GUILD_MESSAGE_REACTIONS
                         )
                 )
-                .enableCache(CacheFlag.VOICE_STATE)
+                .enableCache(
+                        CacheFlag.ONLINE_STATUS,
+                        CacheFlag.VOICE_STATE,
+                        CacheFlag.EMOTE,
+                        CacheFlag.ACTIVITY
+                )
                 .build()
                 .awaitReady();
     }

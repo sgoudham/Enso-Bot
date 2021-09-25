@@ -63,8 +63,9 @@ public class BotConfig {
                 .enableCache(
                         CacheFlag.ONLINE_STATUS,
                         CacheFlag.VOICE_STATE,
-                        CacheFlag.EMOTE,
-                        CacheFlag.ACTIVITY
+                        CacheFlag.ROLE_TAGS,
+                        CacheFlag.ACTIVITY,
+                        CacheFlag.EMOTE
                 )
                 .build()
                 .awaitReady();

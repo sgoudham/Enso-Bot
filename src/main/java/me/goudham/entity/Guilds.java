@@ -8,6 +8,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "guilds", schema = "public")
 public class Guilds {
+
     @Id
     @Column(name = "guild_id", unique = true, nullable = false)
     private Long guildId;

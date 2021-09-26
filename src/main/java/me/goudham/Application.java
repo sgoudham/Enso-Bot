@@ -1,12 +1,12 @@
 package me.goudham;
 
 import io.micronaut.context.ApplicationContext;
-import me.goudham.bot.EnsoBot;
+import me.goudham.bot.Bot;
 
 public class Application {
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
         ApplicationContext applicationContext = ApplicationContext.run();
-        EnsoBot ensoBot = applicationContext.getBean(EnsoBot.class);
+        Bot ensoBot = applicationContext.getBean(Bot.class);
         ensoBot.startup();
 
 //        GuildsRepository bean = run.getBean(GuildsRepository.class);

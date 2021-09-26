@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.Random;
 import me.goudham.command.annotation.Option;
 import me.goudham.command.annotation.SlashCommand;
+import me.goudham.domain.Pair;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
-import org.graalvm.collections.Pair;
 
 @SlashCommand(
         name = "owo",
@@ -28,16 +28,16 @@ public class OwO {
 
     public OwO() {
         this.prefixAndSuffixList = List.of(
-                Pair.create("H-hewwo?? ", " :D"),
-                Pair.create("Huohhhh. ", " >_<"),
-                Pair.create("Huohhhh. ", " >_>"),
-                Pair.create("UwU ", " ʕ•̫͡•ʔ"),
-                Pair.create("UwU ", " ;-;"),
-                Pair.create("OwO ", " :P"),
-                Pair.create("OwO ", " (；ω；)"),
-                Pair.create("OWO ", " x3"),
-                Pair.create("Haiiii! ", " ÙωÙ"),
-                Pair.create("HIII! ", " （＾ｖ＾）")
+                new Pair<>("H-hewwo?? ", " :D"),
+                new Pair<>("Huohhhh. ", " >_<"),
+                new Pair<>("Huohhhh. ", " >_>"),
+                new Pair<>("UwU ", " ʕ•̫͡•ʔ"),
+                new Pair<>("UwU ", " ;-;"),
+                new Pair<>("OwO ", " :P"),
+                new Pair<>("OwO ", " (；ω；)"),
+                new Pair<>("OWO ", " x3"),
+                new Pair<>("Haiiii! ", " ÙωÙ"),
+                new Pair<>("HIII! ", " （＾ｖ＾）")
         );
     }
 
@@ -65,8 +65,8 @@ public class OwO {
         }
 
         Pair<String, String> randomPrefixAndSuffix = getRandomPrefixAndSuffix();
-        outputText.insert(0, randomPrefixAndSuffix.getLeft());
-        outputText.append(randomPrefixAndSuffix.getRight());
+        outputText.insert(0, randomPrefixAndSuffix.left());
+        outputText.append(randomPrefixAndSuffix.right());
 
         slashCommandEvent.reply(outputText.toString()).queue();
     }

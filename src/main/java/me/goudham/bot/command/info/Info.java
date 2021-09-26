@@ -2,21 +2,25 @@ package me.goudham.bot.command.info;
 
 import io.micronaut.context.annotation.Executable;
 import jakarta.inject.Inject;
-import java.awt.Color;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.StringJoiner;
 import me.goudham.command.annotation.Option;
 import me.goudham.command.annotation.SlashCommand;
 import me.goudham.command.annotation.SubCommand;
 import me.goudham.domain.Constants;
 import me.goudham.service.EmbedService;
+import me.goudham.service.InfoUtil;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.Region;
+import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.GuildChannel;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -26,10 +30,12 @@ import org.jetbrains.annotations.NotNull;
 @SlashCommand(name = "info")
 public class Info {
     private final EmbedService embedService;
+    private final InfoUtil infoUtil;
 
     @Inject
-    public Info(EmbedService embedService) {
+    public Info(EmbedService embedService, InfoUtil infoUtil) {
         this.embedService = embedService;
+        this.infoUtil = infoUtil;
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -51,13 +57,13 @@ public class Info {
         Member member = optionalMember == null ? slashCommandEvent.getMember() : optionalMember.getAsMember();
 
         MessageEmbed messageEmbed = embedService.getBaseEmbed()
-                .setTitle(getMemberOnlineStatus(member) + " " + member.getUser().getAsTag() + " " + getMemberBadges(member))
-                .setColor(getMemberColour(member))
+                .setTitle(infoUtil.getMemberOnlineStatus(member) + " " + member.getUser().getAsTag() + " " + infoUtil.getMemberBadges(member))
+                .setColor(infoUtil.getMemberColour(member))
                 .setThumbnail(member.getUser().getEffectiveAvatarUrl() + "?size=4096")
-                .addField("Registered", getRegisteredDate(member), false)
-                .addField("Joined", getJoinedDate(member), false)
-                .addField("Top Role", getTopRole(member), false)
-                .addField("Roles (" + member.getRoles().size() + ")", getMemberRoles(member, 20), false)
+                .addField("Registered", infoUtil.getCreationDate(member), false)
+                .addField("Joined", infoUtil.getJoinedDate(member), false)
+                .addField("Top Role", infoUtil.getTopRole(member), false)
+                .addField("Roles (" + member.getRoles().size() + ")", infoUtil.getMemberRoles(member, 20), false)
                 .setFooter("ID: " + member.getId())
                 .build();
 
@@ -97,14 +103,19 @@ public class Info {
         }
 
         Task<List<Member>> membersWithRoles = guild.findMembersWithRoles(role);
-        String roleColour = role.getColor() == null ? "N/A" : getColorAsHex(role.getColor());
+        String roleColour = role.getColor() == null ? "N/A" : infoUtil.getColorAsHex(role.getColor());
 
         String isMentionable = role.isMentionable() ? Constants.CHECK : Constants.CROSS;
         String isHoisted = role.isHoisted() ? Constants.CHECK : Constants.CROSS;
         String isManaged = role.isManaged() ? Constants.CHECK : Constants.CROSS;
-        String miscString = "Mentionable: " + isMentionable
-                + "\n" + "Hoisted: " + isHoisted
-                + "\n" + "Managed: " + isManaged;
+        String miscString = """
+                Mentionable: $isMentionable
+                Hoisted: $isHoisted
+                Managed: $isManaged
+                """
+                .replace("$isMentionable", isMentionable)
+                .replace("$isHoisted", isHoisted)
+                .replace("$isManaged", isManaged);
 
         EnumSet<Permission> permissions = role.getPermissions(slashCommandEvent.getGuildChannel());
         System.out.println(permissions);
@@ -114,14 +125,14 @@ public class Info {
             long botCount = members.stream().filter(member -> member.getUser().isBot()).count();
 
             MessageEmbed messageEmbed = embedService.getBaseEmbed()
-                    .setTitle(role.getName() + " Information")
+                    .setTitle("@" + role.getName() + " Information")
                     .setDescription(role.getAsMention() + "\n" + "**Colour:** " + roleColour)
                     .setColor(role.getColor())
                     .setThumbnail(guild.getIconUrl() + "?size=4096")
-                    .addField("Creation At", getCreationDate(role), false)
+                    .addField("Creation At", infoUtil.getCreationDate(role), false)
                     .addField("Members (" + members.size() + ")", "Humans: " + humanCount + "\nBots: " + botCount, true)
                     .addField("Misc", miscString, true)
-                    .addField("List of Members (" + members.size() + ")", getListOfMembers(members, 20), false)
+                    .addField("List of Members (" + members.size() + ")", infoUtil.getListOfMembers(members, 20), false)
                     .setFooter("ID: " + role.getId())
                     .build();
 
@@ -129,99 +140,131 @@ public class Info {
         });
     }
 
-    private @NotNull String getColorAsHex (@NotNull Color color) {
-        return "#" + Integer.toHexString(color.getRGB()).toUpperCase();
-    }
+    @SuppressWarnings("ConstantConditions")
+    @Executable
+    @SubCommand(
+            name = "channel",
+            description = "Retrieve the current channel or another channel's information",
+            options = {
+                    @Option(
+                            optionType = OptionType.CHANNEL,
+                            name = "channel",
+                            description = "A channel within the server",
+                            isRequired = false
+                    )
+            }
+    )
+    public void channelCommand(@NotNull SlashCommandEvent slashCommandEvent) {
+        OptionMapping optionalChannel = slashCommandEvent.getOption("channel");
+        JDA jda = slashCommandEvent.getJDA();
+        MessageEmbed messageEmbed;
 
-    private Color getMemberColour(@NotNull Member member) {
-        return member.getColor() == null ? Color.BLACK : member.getColor();
-    }
+        if (optionalChannel == null) {
+            ChannelType channelType = slashCommandEvent.getChannelType();
+            if (channelType == ChannelType.TEXT) {
+                messageEmbed = handleTextChannel(slashCommandEvent.getTextChannel());
+            } else {
+                slashCommandEvent.reply("Channel Type Not Supported").queue();
+                return;
+            }
+        } else {
+            ChannelType channelType = optionalChannel.getChannelType();
+            GuildChannel guildChannel = optionalChannel.getAsGuildChannel();
 
-    private @NotNull String getMemberBadges(@NotNull Member member) {
-        User user = member.getUser();
-        String memberBadges = "";
-
-        if (user.isBot()) memberBadges += Constants.BADGE_BOT;
-        if (member.getTimeBoosted() != null) memberBadges += Constants.BADGE_SERVER_BOOST;
-
-        memberBadges += user.getFlags().toString()
-                .substring(1, user.getFlags().toString().length() - 1)
-                .replace(",", "")
-                .replace("PARTNER", Constants.BADGE_PARTNER)
-                .replace("HYPESQUAD_BRAVERY", Constants.BADGE_BRAVERY)
-                .replace("HYPESQUAD_BRILLIANCE", Constants.BADGE_BRILLIANCE)
-                .replace("HYPESQUAD_BALANCE", Constants.BADGE_BALANCE)
-                .replace("VERIFIED_DEVELOPER", Constants.BADGE_EARLY_VERIFIED_BOT_DEVELOPER)
-                .replace("EARLY_SUPPORTER", Constants.BADGE_EARLY_SUPPORTER)
-                .replace("SYSTEM", Constants.BADGE_STAFF)
-                .replace("BUG_HUNTER_LEVEL_1", Constants.BADGE_BUG_HUNTER)
-                .replace("BUG_HUNTER_LEVEL_2", Constants.BADGE_BUG_HUNTER)
-                .replace("VERIFIED_BOT", Constants.BADGE_VERIFIED_BOT);
-
-        return memberBadges;
-    }
-
-    private @NotNull String getMemberOnlineStatus(@NotNull Member member) {
-        return member.getOnlineStatus().toString()
-                .replace("ONLINE", Constants.STATUS_ONLINE)
-                .replace("IDLE", Constants.STATUS_IDLE)
-                .replace("DO_NOT_DISTURB", Constants.STATUS_DND)
-                .replace("OFFLINE", Constants.STATUS_OFFLINE)
-                .replace("STREAMING", Constants.STATUS_STREAMING);
-    }
-
-    private @NotNull String getTopRole(@NotNull Member member) {
-        List<Role> memberRoles = member.getRoles();
-        if (memberRoles.isEmpty()) return "No Roles";
-
-        return memberRoles.get(0).getAsMention();
-    }
-
-    private String getListOfMembers(@NotNull List<Member> members, int limit) {
-        StringJoiner memberJoiner = new StringJoiner(" **|** ");
-        if (members.isEmpty()) return "No Members In Role";
-
-        members.stream()
-                .limit(limit)
-                .forEach(member -> memberJoiner.add(member.getAsMention()));
-
-        if (members.size() > limit) {
-            int leftOverMembers = members.size() - limit;
-            memberJoiner.add(" and ** " + leftOverMembers + " ** more ");
+            if (channelType == ChannelType.TEXT) {
+                messageEmbed = handleTextChannel(jda.getTextChannelById(guildChannel.getId()));
+            } else if (channelType == ChannelType.VOICE) {
+                messageEmbed = handleVoiceChannel(jda.getVoiceChannelById(guildChannel.getId()));
+            } else {
+                slashCommandEvent.reply("Channel Type Not Supported").queue();
+                return;
+            }
         }
 
-        return memberJoiner.toString();
+        slashCommandEvent.replyEmbeds(messageEmbed).queue();
     }
 
-    private String getMemberRoles(@NotNull Member member, int limit) {
-        StringJoiner memberRolesJoiner = new StringJoiner(" **|** ");
-        List<Role> memberRoles = member.getRoles();
-        if (memberRoles.isEmpty()) return "No Roles";
+    @Executable
+    @SubCommand(
+            name = "server",
+            description = "Retrieve information about the current server you are in"
+    )
+    public void serverCommand(SlashCommandEvent slashCommandEvent) {
+        Guild guild = slashCommandEvent.getGuild();
+    }
 
-        memberRoles.stream()
-                .limit(limit)
-                .forEach(role -> memberRolesJoiner.add(role.getAsMention()));
-
-        if (memberRoles.size() > limit) {
-            int leftOverRoles = memberRoles.size() - limit;
-            memberRolesJoiner.add(" and ** " + leftOverRoles + " ** more ");
+    private @NotNull MessageEmbed handleVoiceChannel(@NotNull VoiceChannel voiceChannel) {
+        String region;
+        if (voiceChannel.getRegion() == Region.AUTOMATIC) {
+            region = "\uD83C\uDFF3️\u200D\uD83C\uDF08 " + voiceChannel.getRegion().getName();
+        } else {
+            region = voiceChannel.getRegion().getEmoji() + " " + voiceChannel.getRegion().getName();
         }
+        String userLimit = voiceChannel.getUserLimit() == 0 ? "No Limit" : String.valueOf(voiceChannel.getUserLimit());
+        String bitrate = voiceChannel.getBitrate() + "bit/s";
+        String isSynced = voiceChannel.isSynced() ? Constants.CHECK : Constants.CROSS;
+        String category = voiceChannel.getParent() == null ? "No Category" : voiceChannel.getParent().getName();
+        String position = "#" + voiceChannel.getPosition();
+        String miscString = "Synced: " + isSynced;
+        String description = """
+                $channelMention
+                **Category:** $category
+                **Position:** $position
+                **Bitrate:** $bitrate
+                **User Limit:** $userLimit
+                **Region:** $region
+                """
+                .replace("$channelMention", voiceChannel.getAsMention())
+                .replace("$category", category)
+                .replace("$position", position)
+                .replace("$bitrate", bitrate)
+                .replace("$userLimit", userLimit)
+                .replace("$region", region);
 
-        return memberRolesJoiner.toString();
+
+        return embedService.getBaseEmbed()
+                .setTitle("\uD83D\uDD08" + voiceChannel.getName() + " Information")
+                .setDescription(description)
+                .setThumbnail(voiceChannel.getGuild().getIconUrl())
+                .addField("Creation At", infoUtil.getCreationDate(voiceChannel), false)
+                .addField("Misc", miscString, false)
+                .setFooter("ID: " + voiceChannel.getId())
+                .build();
     }
 
-    private @NotNull String getCreationDate(@NotNull Role role) {
-        long timeCreated = role.getTimeCreated().toInstant().getEpochSecond();
-        return "<t:" + timeCreated + ":F>";
-    }
+    private @NotNull MessageEmbed handleTextChannel(@NotNull TextChannel textChannel) {
+        String isNsfw = textChannel.isNSFW() ? Constants.CHECK : Constants.CROSS;
+        String isNews = textChannel.isNews() ? Constants.CHECK : Constants.CROSS;
+        String isSynced = textChannel.isSynced() ? Constants.CHECK : Constants.CROSS;
+        String topic = textChannel.getTopic() == null ? "No Topic Set" : textChannel.getTopic();
+        String category = textChannel.getParent() == null ? "No Category" : textChannel.getParent().getName();
+        String position = "#" + textChannel.getPosition();
+        String miscString = """
+                Nsfw: $isNsfw
+                News: $isNews
+                Synced: $isSynced
+                """
+                .replace("$isNsfw", isNsfw)
+                .replace("$isNews", isNews)
+                .replace("$isSynced", isSynced);
+        String description = """
+                $channelMention
+                **Category:** $category
+                **Position:** $position
+                **Topic:** $topic
+                """
+                .replace("$channelMention", textChannel.getAsMention())
+                .replace("$category", category)
+                .replace("$position", position)
+                .replace("$topic", topic);
 
-    private @NotNull String getRegisteredDate(@NotNull Member member) {
-        long timeCreated = member.getTimeCreated().toInstant().getEpochSecond();
-        return "<t:" + timeCreated + ":F>";
-    }
-
-    private @NotNull String getJoinedDate(@NotNull Member member) {
-        long timeJoined = member.getTimeJoined().toInstant().getEpochSecond();
-        return "<t:" + timeJoined + ":F>";
+        return embedService.getBaseEmbed()
+                .setTitle("#" + textChannel.getName() + " Information")
+                .setDescription(description)
+                .setThumbnail(textChannel.getGuild().getIconUrl())
+                .addField("Creation At", infoUtil.getCreationDate(textChannel), false)
+                .addField("Misc", miscString, false)
+                .setFooter("ID: " + textChannel.getId())
+                .build();
     }
 }

@@ -4,9 +4,9 @@ import io.micronaut.inject.ExecutableMethod;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import java.util.Map;
+import me.goudham.domain.Pair;
 import net.dv8tion.jda.api.events.Event;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
-import net.dv8tion.jda.internal.utils.tuple.Pair;
 
 @Singleton
 public class SlashCommandHandler implements CommandHandler {
@@ -23,8 +23,8 @@ public class SlashCommandHandler implements CommandHandler {
         String commandPath = slashCommandEvent.getCommandPath();
 
         Pair<Object, ExecutableMethod<Object, Object>> slashCommandPair = commandMap.get(commandPath);
-        Object slashCommandBean = slashCommandPair.getLeft();
-        ExecutableMethod<Object, Object> slashCommandMethod = slashCommandPair.getRight();
+        Object slashCommandBean = slashCommandPair.left();
+        ExecutableMethod<Object, Object> slashCommandMethod = slashCommandPair.right();
 
         slashCommandMethod.invoke(slashCommandBean, slashCommandEvent);
     }

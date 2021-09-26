@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import javax.security.auth.login.LoginException;
 import me.goudham.command.CommandHandler;
+import me.goudham.domain.Pair;
 import me.goudham.listener.OnReadyListener;
 import me.goudham.listener.SlashCommandListener;
 import net.dv8tion.jda.api.JDA;
@@ -20,7 +21,6 @@ import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
-import net.dv8tion.jda.internal.utils.tuple.Pair;
 
 @Factory
 @Introspected

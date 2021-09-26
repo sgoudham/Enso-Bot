@@ -22,14 +22,13 @@ import me.goudham.command.annotation.Option;
 import me.goudham.command.annotation.SlashCommand;
 import me.goudham.command.annotation.SubCommand;
 import me.goudham.command.annotation.SubCommandGroup;
+import me.goudham.domain.Pair;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandGroupData;
-import net.dv8tion.jda.internal.utils.tuple.ImmutablePair;
-import net.dv8tion.jda.internal.utils.tuple.Pair;
 
 @Singleton
 public class SlashCommandLoader implements CommandLoader {
@@ -275,6 +274,6 @@ public class SlashCommandLoader implements CommandLoader {
             nsme.printStackTrace();
         }
 
-        commandMap.put(commandPath, new ImmutablePair<>(beanInstance, executableMethod));
+        commandMap.put(commandPath, new Pair<>(beanInstance, executableMethod));
     }
 }

@@ -20,6 +20,7 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 
 @Factory
@@ -46,21 +47,23 @@ public class BotConfig {
         return JDABuilder
                 .createDefault(token)
                 .setActivity(Activity.playing("With Hamothy"))
+                .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .addEventListeners(
                         new OnReadyListener(),
                         new SlashCommandListener(commandHandler)
                 )
                 .enableIntents(
                         List.of(
-                                GatewayIntent.GUILD_MEMBERS,
+                                GatewayIntent.GUILD_MESSAGE_REACTIONS,
+                                GatewayIntent.GUILD_VOICE_STATES,
                                 GatewayIntent.GUILD_PRESENCES,
                                 GatewayIntent.GUILD_MESSAGES,
-                                GatewayIntent.GUILD_VOICE_STATES,
-                                GatewayIntent.GUILD_EMOJIS,
-                                GatewayIntent.GUILD_MESSAGE_REACTIONS
+                                GatewayIntent.GUILD_MEMBERS,
+                                GatewayIntent.GUILD_EMOJIS
                         )
                 )
                 .enableCache(
+                        CacheFlag.MEMBER_OVERRIDES,
                         CacheFlag.ONLINE_STATUS,
                         CacheFlag.VOICE_STATE,
                         CacheFlag.ROLE_TAGS,

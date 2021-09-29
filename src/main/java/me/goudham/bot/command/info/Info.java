@@ -11,6 +11,7 @@ import me.goudham.domain.Constants;
 import me.goudham.service.EmbedService;
 import me.goudham.service.InfoUtil;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.Region;
 import net.dv8tion.jda.api.entities.ChannelType;
@@ -24,6 +25,7 @@ import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.utils.cache.MemberCacheView;
 import net.dv8tion.jda.api.utils.concurrent.Task;
 import org.jetbrains.annotations.NotNull;
 
@@ -184,6 +186,7 @@ public class Info {
         slashCommandEvent.replyEmbeds(messageEmbed).queue();
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Executable
     @SubCommand(
             name = "server",
@@ -191,6 +194,78 @@ public class Info {
     )
     public void serverCommand(SlashCommandEvent slashCommandEvent) {
         Guild guild = slashCommandEvent.getGuild();
+        MemberCacheView memberCache = guild.getMemberCache();
+
+
+        String owner = guild.getOwner() == null ? "Unknown Owner" : guild.getOwner().getAsMention();
+
+        long onlineMemberCount = infoUtil.getMemberStatusCount(guild, OnlineStatus.ONLINE);
+        long idleMemberCount = infoUtil.getMemberStatusCount(guild, OnlineStatus.IDLE);
+        long dndMemberCount = infoUtil.getMemberStatusCount(guild, OnlineStatus.DO_NOT_DISTURB);
+        long offlineMemberCount = infoUtil.getMemberStatusCount(guild, OnlineStatus.OFFLINE);
+        String statuses = Constants.STATUS_ONLINE + onlineMemberCount
+                + Constants.STATUS_IDLE + idleMemberCount
+                + Constants.STATUS_DND + dndMemberCount
+                + Constants.STATUS_OFFLINE + offlineMemberCount;
+
+        String humanCount = String.valueOf(memberCache.stream().filter(member -> !member.getUser().isBot()).count());
+        String botCount = String.valueOf(memberCache.stream().filter(member -> member.getUser().isBot()).count());
+        String bannedUsersCount = String.valueOf(guild.retrieveBanList().complete().size());
+        String membersString = """
+                Humans: $humans
+                Bots: $bots
+                Banned: $banned
+                """
+                .replace("$humans", humanCount)
+                .replace("$bots", botCount)
+                .replace("$banned", bannedUsersCount);
+
+        String textChannelCount = String.valueOf(infoUtil.getChannelCount(guild, ChannelType.TEXT));
+        String voiceChannelCount = String.valueOf(infoUtil.getChannelCount(guild, ChannelType.VOICE));
+        String categoryChannelCount = String.valueOf(infoUtil.getChannelCount(guild, ChannelType.CATEGORY));
+        String channelsString = """
+                Text: $text
+                Voice: $voice
+                Category: $category
+                """
+                .replace("$text", textChannelCount)
+                .replace("$voice", voiceChannelCount)
+                .replace("$category", categoryChannelCount);
+
+        String boostingMembers = infoUtil.getListOfMembers(guild.getBoosters(), 10);
+        String topRole = infoUtil.getTopRole(guild);
+        String allRoles = infoUtil.getGuildRoles(guild, 20);
+        String allEmotes = infoUtil.getGuildEmotes(guild, 20);
+
+        String boostCount = String.valueOf(guild.getBoostCount());
+        String boostTier = String.valueOf(guild.getBoostTier().getKey());
+        String verificationLevel = String.valueOf(guild.getVerificationLevel().getKey());
+        String miscString = """
+                Boost Tier: $tier
+                No. of Boosters: $count
+                Verification Level: $verifLevel
+                """
+                .replace("$tier", boostTier)
+                .replace("$count", boostCount)
+                .replace("$verifLevel", verificationLevel);
+
+        MessageEmbed messageEmbed = embedService.getBaseEmbed()
+                .setTitle("Server Information")
+                .setThumbnail(guild.getIconUrl())
+                .addField("Owner", owner, false)
+                .addField("Created", infoUtil.getCreationDate(guild), false)
+                .addField("Statuses", statuses, false)
+                .addField("Members (" + memberCache.size() + ")", membersString, true)
+                .addField("Channels (" + guild.getChannels().size() + ")", channelsString, true)
+                .addField("Misc", miscString, true)
+                .addField("Boosting Members (" + boostCount + ")", boostingMembers, false)
+                .addField("Top Role", topRole, false)
+                .addField("Roles (" + guild.getRoleCache().size() + ")", allRoles, false)
+                .addField("Emotes (" + guild.getEmoteCache().size() + ")", allEmotes, false)
+                .setFooter("ID: " + guild.getId())
+                .build();
+
+        slashCommandEvent.replyEmbeds(messageEmbed).queue();
     }
 
     private @NotNull MessageEmbed handleVoiceChannel(@NotNull VoiceChannel voiceChannel) {

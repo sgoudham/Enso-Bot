@@ -5,17 +5,23 @@ import java.awt.Color;
 import java.util.List;
 import java.util.StringJoiner;
 import me.goudham.domain.Constants;
+import net.dv8tion.jda.api.OnlineStatus;
+import net.dv8tion.jda.api.entities.ChannelType;
+import net.dv8tion.jda.api.entities.Emote;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.api.utils.cache.SnowflakeCacheView;
+import net.dv8tion.jda.api.utils.cache.SortedSnowflakeCacheView;
 import org.jetbrains.annotations.NotNull;
 
 @Singleton
 public class InfoUtil {
 
-    public @NotNull String getColorAsHex (@NotNull Color color) {
+    public @NotNull String getColorAsHex(@NotNull Color color) {
         return "#" + Integer.toHexString(color.getRGB()).toUpperCase();
     }
 
@@ -56,16 +62,30 @@ public class InfoUtil {
                 .replace("STREAMING", Constants.STATUS_STREAMING);
     }
 
-    public @NotNull String getTopRole(@NotNull Member member) {
-        List<Role> memberRoles = member.getRoles();
-        if (memberRoles.isEmpty()) return "No Roles";
+    public @NotNull String getTopRole(@NotNull Object object) {
+        String topRole = "";
 
-        return memberRoles.get(0).getAsMention();
+        if (object instanceof Member member) {
+            List<Role> memberRoles = member.getRoles();
+            if (memberRoles.isEmpty()) return "No Roles";
+            topRole =  memberRoles.get(0).getAsMention();
+        } else if (object instanceof Guild guild) {
+            StringJoiner topRoleJoiner = new StringJoiner("");
+            guild.getRoleCache().stream()
+                    .findFirst()
+                    .ifPresentOrElse(
+                            role -> topRoleJoiner.add(role.getAsMention()),
+                            () -> topRoleJoiner.setEmptyValue("No Roles")
+                    );
+            topRole = topRoleJoiner.toString();
+        }
+
+        return topRole;
     }
 
     public String getListOfMembers(@NotNull List<Member> members, int limit) {
         StringJoiner memberJoiner = new StringJoiner(" **|** ");
-        if (members.isEmpty()) return "No Members In Role";
+        if (members.isEmpty()) return "No Members";
 
         members.stream()
                 .limit(limit)
@@ -77,6 +97,44 @@ public class InfoUtil {
         }
 
         return memberJoiner.toString();
+    }
+
+    public String getGuildEmotes(@NotNull Guild guild, int limit) {
+        SnowflakeCacheView<Emote> emoteCache = guild.getEmoteCache();
+
+        StringJoiner guildEmoteJoiner = new StringJoiner(" ");
+        if (emoteCache.isEmpty()) {
+            guildEmoteJoiner.setEmptyValue("No Emojis");
+        } else {
+            emoteCache.stream()
+                    .limit(limit)
+                    .forEach(emote -> guildEmoteJoiner.add(emote.getAsMention()));
+        }
+        if (emoteCache.size() > limit) {
+            long leftOverEmojis = emoteCache.size() - limit;
+            guildEmoteJoiner.add(" and ** " + leftOverEmojis + " ** more");
+        }
+
+        return guildEmoteJoiner.toString();
+    }
+
+    public String getGuildRoles(@NotNull Guild guild, int limit) {
+        SortedSnowflakeCacheView<Role> roleCache = guild.getRoleCache();
+
+        StringJoiner guildRolesJoiner = new StringJoiner(" **|** ");
+        if (roleCache.isEmpty()) {
+            guildRolesJoiner.setEmptyValue("No Roles");
+        } else {
+            roleCache.stream()
+                    .limit(limit)
+                    .forEach(role -> guildRolesJoiner.add(role.getAsMention()));
+        }
+        if (roleCache.size() > limit) {
+            long leftOverRoles = roleCache.size() - limit;
+            guildRolesJoiner.add(" and ** " + leftOverRoles + " ** more ");
+        }
+
+        return guildRolesJoiner.toString();
     }
 
     public String getMemberRoles(@NotNull Member member, int limit) {
@@ -96,6 +154,18 @@ public class InfoUtil {
         return memberRolesJoiner.toString();
     }
 
+    public long getMemberStatusCount(@NotNull Guild guild, OnlineStatus onlineStatus) {
+        return guild.getMemberCache().stream()
+                .filter(member -> member.getOnlineStatus() == onlineStatus)
+                .count();
+    }
+
+    public long getChannelCount(@NotNull Guild guild, ChannelType channelType) {
+        return guild.getChannels().stream()
+                .filter(guildChannel -> guildChannel.getType() == channelType)
+                .count();
+    }
+
     public @NotNull String getJoinedDate(@NotNull Member member) {
         long timeJoined = member.getTimeJoined().toInstant().getEpochSecond();
         return "<t:" + timeJoined + ":F>";
@@ -105,9 +175,11 @@ public class InfoUtil {
         long time = 0L;
 
         if (object instanceof Role role) {
-           time = role.getTimeCreated().toInstant().getEpochSecond();
+            time = role.getTimeCreated().toInstant().getEpochSecond();
         } else if (object instanceof Member member) {
             time = member.getTimeCreated().toInstant().getEpochSecond();
+        } else if (object instanceof Guild guild) {
+            time = guild.getTimeCreated().toInstant().getEpochSecond();
         } else if (object instanceof VoiceChannel voiceChannel) {
             time = voiceChannel.getTimeCreated().toInstant().getEpochSecond();
         } else if (object instanceof TextChannel textChannel) {

@@ -1,4 +1,4 @@
-package me.goudham.service;
+package me.goudham.util;
 
 import jakarta.inject.Singleton;
 import java.awt.Color;
@@ -14,7 +14,7 @@ import java.io.InputStream;
 import javax.imageio.ImageIO;
 
 @Singleton
-public class EnsoImageService implements ImageService {
+public class EnsoImageUtil implements ImageUtil {
 
     @Override
     public BufferedImage resizeImage(BufferedImage bufferedImage, int height, int width) {

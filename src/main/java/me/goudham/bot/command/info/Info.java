@@ -8,8 +8,8 @@ import me.goudham.command.annotation.Option;
 import me.goudham.command.annotation.SlashCommand;
 import me.goudham.command.annotation.SubCommand;
 import me.goudham.domain.Constants;
-import me.goudham.service.EmbedService;
-import me.goudham.service.InfoUtil;
+import me.goudham.util.EmbedUtil;
+import me.goudham.util.InfoUtil;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.Permission;
@@ -31,12 +31,12 @@ import org.jetbrains.annotations.NotNull;
 
 @SlashCommand(name = "info")
 public class Info {
-    private final EmbedService embedService;
+    private final EmbedUtil embedUtil;
     private final InfoUtil infoUtil;
 
     @Inject
-    public Info(EmbedService embedService, InfoUtil infoUtil) {
-        this.embedService = embedService;
+    public Info(EmbedUtil embedUtil, InfoUtil infoUtil) {
+        this.embedUtil = embedUtil;
         this.infoUtil = infoUtil;
     }
 
@@ -58,7 +58,7 @@ public class Info {
         OptionMapping optionalMember = slashCommandEvent.getOption("member");
         Member member = optionalMember == null ? slashCommandEvent.getMember() : optionalMember.getAsMember();
 
-        MessageEmbed messageEmbed = embedService.getBaseEmbed()
+        MessageEmbed messageEmbed = embedUtil.getBaseEmbed()
                 .setTitle(infoUtil.getMemberOnlineStatus(member) + " " + member.getUser().getAsTag() + " " + infoUtil.getMemberBadges(member))
                 .setColor(infoUtil.getMemberColour(member))
                 .setThumbnail(member.getUser().getEffectiveAvatarUrl() + "?size=4096")
@@ -126,7 +126,7 @@ public class Info {
             long humanCount = members.stream().filter(member -> !member.getUser().isBot()).count();
             long botCount = members.stream().filter(member -> member.getUser().isBot()).count();
 
-            MessageEmbed messageEmbed = embedService.getBaseEmbed()
+            MessageEmbed messageEmbed = embedUtil.getBaseEmbed()
                     .setTitle("@" + role.getName() + " Information")
                     .setDescription(role.getAsMention() + "\n" + "**Colour:** " + roleColour)
                     .setColor(role.getColor())
@@ -249,7 +249,7 @@ public class Info {
                 .replace("$count", boostCount)
                 .replace("$verifLevel", verificationLevel);
 
-        MessageEmbed messageEmbed = embedService.getBaseEmbed()
+        MessageEmbed messageEmbed = embedUtil.getBaseEmbed()
                 .setTitle("Server Information")
                 .setThumbnail(guild.getIconUrl())
                 .addField("Owner", owner, false)
@@ -297,7 +297,7 @@ public class Info {
                 .replace("$region", region);
 
 
-        return embedService.getBaseEmbed()
+        return embedUtil.getBaseEmbed()
                 .setTitle("\uD83D\uDD08" + voiceChannel.getName() + " Information")
                 .setDescription(description)
                 .setThumbnail(voiceChannel.getGuild().getIconUrl())
@@ -333,7 +333,7 @@ public class Info {
                 .replace("$position", position)
                 .replace("$topic", topic);
 
-        return embedService.getBaseEmbed()
+        return embedUtil.getBaseEmbed()
                 .setTitle("#" + textChannel.getName() + " Information")
                 .setDescription(description)
                 .setThumbnail(textChannel.getGuild().getIconUrl())

@@ -1,4 +1,4 @@
-package me.goudham.service;
+package me.goudham.util;
 
 import jakarta.inject.Singleton;
 import java.awt.Color;
@@ -8,7 +8,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 
 @Singleton
-public class EnsoEmbedService implements EmbedService {
+public class EnsoEmbedUtil implements EmbedUtil {
     private final Random random = new Random();
 
     @Override

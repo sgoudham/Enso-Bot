@@ -1,10 +1,15 @@
+# 🚧 No Longer Maintained 🚧
+
+This was my first public repository on GitHub and my first time delving into development in my spare time.
+I have no intention of revisiting this but I met some great people and I'm grateful for that.
+
+Onwards & Upwards 🙌
+
 # Ensō~Chan
 
 ### Welcome to my passion project over quarantine! :P
 
 [![Discord Bots](https://top.gg/api/widget/716701699145728094.svg)](https://top.gg/bot/716701699145728094)
-
-##### (Disclaimer: Please remember that this bot is in active development so it can and will be unstable at times!!)
 
 # Main Features
 

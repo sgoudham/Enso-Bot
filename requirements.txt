@@ -41,7 +41,7 @@ lxml==4.6.3
 MarkupSafe==1.1.1
 multidict==4.7.6
 mysqlclient==2.0.1
-numpy==1.19.1
+numpy==1.22.0
 opencv-python==4.3.0.38
 owotext==1.0.2
 packaging==20.4
